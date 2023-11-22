@@ -65,7 +65,7 @@ model Txs {
     budgetgrupp String
     belopp      Decimal
     saldo       Decimal
-    konto       Konto    @relation(fields: [kontoId], references: [id])
+    konto       Konto    @relation(fields: [kontoId], references: [id], onDelete: Cascade)
     kontoId     String
 }
 
@@ -73,21 +73,21 @@ model Konto {
     id       String @id @default(cuid())
     namn     String
     Txs      Txs[]
-    Person   Person @relation(fields: [personId], references: [id])
+    Person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
     personId String
 }
 
 model Budgetgrupp {
     id     String @id @default(cuid())
     namn   String
-    user   User   @relation(fields: [userId], references: [id])
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String
 }
 
 model Person {
     id     String  @id @default(cuid())
     name   String
-    User   User    @relation(fields: [userId], references: [id])
+    User   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String
     Konto  Konto[]
 }
