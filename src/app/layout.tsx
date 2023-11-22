@@ -1,16 +1,9 @@
 import "~/styles/globals.css";
-
-import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import { SessionProviderWrapper } from "./SessionProviderWrapper";
-import Navbar from "./_components/nav/Navbar";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+import Header from "./_components/header/Header";
 
 export const metadata = {
   title: "Create T3 App",
@@ -25,13 +18,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`font-sans ${inter.variable}`}>
+      <body className="flex justify-center w-screen">
         <SessionProviderWrapper>
           <TRPCReactProvider cookies={cookies().toString()}>
-            <main>
-              <Navbar />
+            <main className="flex flex-col grow max-w-5xl">
+              <Header />
+              {children}
             </main>
-            {children}
           </TRPCReactProvider>
         </SessionProviderWrapper>
       </body>
