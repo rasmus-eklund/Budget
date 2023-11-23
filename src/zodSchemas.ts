@@ -9,6 +9,7 @@ export const txSchema = z.object({
   saldo: z.number(),
   konto: z.string(),
   person: z.string(),
+  index: z.number(),
 });
 
 export type Tx = z.infer<typeof txSchema>;
