@@ -10,13 +10,14 @@ const readData = async () => {
   const years = readdirSync(logsDir);
   const data: Tx[] = [];
   for (const year of years) {
-    const personAccounts = readdirSync(join(logsDir, year));
-    for (const personAccount of personAccounts) {
-      const [person, konto] = personAccount.replace(".csv", "").split("_") as [
+    const personKonton = readdirSync(join(logsDir, year));
+    for (const personKonto of personKonton) {
+      const [person, konto] = personKonto.replace(".csv", "").split("_") as [
         string,
         string,
       ];
-      const raw = readFileSync(join(logsDir, year, personAccount));
+      const raw = readFileSync(join(logsDir, year, personKonto));
+      const tmp: Tx[] = [];
       await parse(raw, { delimiter: ";", from_line: 2 }).forEach(
         (row: [string, string, string, string, string, string]) => {
           const [date, text, typ, budgetgrupp, bel, sal] = row;
@@ -36,14 +37,39 @@ const readData = async () => {
             saldo,
             person,
             konto,
+            index: 0,
           };
           const parsed = txSchema.safeParse(tx);
           if (!parsed.success) {
             throw new Error(parsed.error.message);
           }
-          data.push(parsed.data);
+          tmp.push(parsed.data);
         },
       );
+      const tmpData = [...tmp.reverse().map((i, index) => ({ ...i, index }))];
+      const reserved = tmpData.filter(({ typ }) => typ === "Reserverat Belopp");
+      if (!!reserved) {
+        reserved.forEach(({ belopp, index, datum }) => {
+          const prev = tmpData[index - 1];
+          if (!prev) {
+            throw new Error(
+              `Cannot iterpolate reserved for date: ${datum.toLocaleTimeString(
+                "sv-SE",
+                {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                },
+              )}, index: ${index}`,
+            );
+          }
+          tmpData[index]!.saldo = prev.saldo + belopp;
+        });
+      }
+      data.push(...tmpData);
     }
   }
   return data;
@@ -91,6 +117,7 @@ const main = async () => {
   const userId = "clp6vujm80000xg1d7we59x2c";
   const txs = await readData();
   backupToFile(txs);
+  await db.person.deleteMany();
   await createPersonsAccounts(txs, userId);
   await createTxs(txs);
 };
