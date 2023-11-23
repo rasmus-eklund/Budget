@@ -67,6 +67,7 @@ model Txs {
     saldo       Decimal
     konto       Konto    @relation(fields: [kontoId], references: [id], onDelete: Cascade)
     kontoId     String
+    index       Int
 }
 
 model Konto {
