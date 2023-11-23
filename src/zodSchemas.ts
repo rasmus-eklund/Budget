@@ -11,5 +11,10 @@ export const txSchema = z.object({
   person: z.string(),
   index: z.number(),
 });
-
 export type Tx = z.infer<typeof txSchema>;
+
+export const datesSchema = z.object({
+  from: z.coerce.date(),
+  to: z.coerce.date(),
+});
+export type tDatesSchema = z.infer<typeof datesSchema>;
