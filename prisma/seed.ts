@@ -90,7 +90,7 @@ const createPersonsAccounts = async (txs: Tx[], userId: string) => {
     ];
     await db.person.create({
       data: {
-        name: Person,
+        namn: Person,
         userId,
         Konto: { createMany: { data: uniqueKonton.map((i) => ({ namn: i })) } },
       },
@@ -107,7 +107,7 @@ const createTxs = async (txs: Tx[]) => {
     saldo: saldo.toFixed(2),
     belopp: belopp.toFixed(2),
     kontoId: persons
-      .find((p) => p.name === person)!
+      .find((p) => p.namn === person)!
       .Konto.find((k) => k.namn === konto)!.id,
   }));
   await db.txs.createMany({ data });
