@@ -87,7 +87,7 @@ model Budgetgrupp {
 
 model Person {
     id     String  @id @default(cuid())
-    name   String
+    namn   String
     User   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String
     Konto  Konto[]
