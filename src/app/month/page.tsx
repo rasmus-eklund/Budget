@@ -10,7 +10,6 @@ const Month = () => {
     from: new Date("2023-01-01"),
     to: new Date("2023-01-31"),
   });
-  console.log(dates);
   return (
     <section className="h-full">
       <MonthForm onSubmit={(d) => setDates(d)} />
