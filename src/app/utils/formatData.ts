@@ -1,4 +1,4 @@
-export const toDate = (date: Date) =>
+export const dateToString = (date: Date) =>
   date.toLocaleDateString("sv-SE", {
     dateStyle: "short",
   });
