@@ -1,6 +1,7 @@
 "use client";
 import { type ReactNode, useState } from "react";
-import { dateToString } from "~/app/utils/formatData";
+import Button from "~/app/_components/Button";
+import { dateToString } from "~/utils/formatData";
 
 type Filter = {
   from: Date;
@@ -54,7 +55,7 @@ const DateFilter = ({ children }: Props) => {
           />
         </div>
         <div className="flex justify-between">
-          <button
+          <Button
             onClick={() =>
               setFilter((p) => {
                 const from = new Date(p.from);
@@ -67,8 +68,36 @@ const DateFilter = ({ children }: Props) => {
             type="button"
           >
             {"<<<"}
-          </button>
-          <button
+          </Button>
+          <Button
+            onClick={() =>
+              setFilter((p) => {
+                const from = new Date(p.from);
+                const to = new Date(p.to);
+                from.setDate(from.getDate() - 1);
+                to.setDate(to.getDate() - 1);
+                return { from, to };
+              })
+            }
+            type="button"
+          >
+            {"<"}
+          </Button>
+          <Button
+            onClick={() =>
+              setFilter((p) => {
+                const from = new Date(p.from);
+                const to = new Date(p.to);
+                from.setDate(from.getDate() + 1);
+                to.setDate(to.getDate() + 1);
+                return { from, to };
+              })
+            }
+            type="button"
+          >
+            {">"}
+          </Button>
+          <Button
             onClick={() =>
               setFilter((p) => {
                 const from = new Date(p.from);
@@ -81,7 +110,7 @@ const DateFilter = ({ children }: Props) => {
             type="button"
           >
             {">>>"}
-          </button>
+          </Button>
         </div>
       </form>
       {children({ filter })}
