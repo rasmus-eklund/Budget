@@ -4,7 +4,6 @@ import { db } from "~/server/db";
 import { txSchema, type Tx } from "~/zodSchemas";
 import { join } from "path";
 import { parse } from "csv-parse";
-import { findInternal, isSameDate } from "./findInternal";
 
 const logsDir = "C:/Users/rasmu/Dropbox/BudgetPython/logs";
 
@@ -111,7 +110,6 @@ const createTxs = async (txs: Tx[]) => {
 };
 
 const createCategories = async (userId: string) => {
-  categories;
   await db.budgetgrupp.createMany({
     data: categories.map(({ key, values }) => ({
       namn: key,
@@ -121,34 +119,26 @@ const createCategories = async (userId: string) => {
   });
 };
 
-const categoriseTxs = async (userId: string) => {
-  const cats = await db.budgetgrupp.findMany({ where: { userId } });
-  for (const { matches, namn } of cats) {
-    await db.txs.updateMany({
-      where: {
-        AND: {
-          konto: { Person: { userId } },
-          OR: matches.map((match) => ({
-            text: { contains: match, mode: "insensitive" },
-          })),
-        },
-      },
-      data: { budgetgrupp: namn },
-    });
-  }
-};
+// const categoriseTxs = async (userId: string) => {
+//   const cats = await db.budgetgrupp.findMany({ where: { userId } });
+//   for (const { matches, namn } of cats) {
+//     await db.txs.updateMany({
+//       where: {
+//         AND: {
+//           konto: { Person: { userId } },
+//           OR: matches.map((match) => ({
+//             text: { contains: match, mode: "insensitive" },
+//           })),
+//         },
+//       },
+//       data: { budgetgrupp: namn },
+//     });
+//   }
+// };
 
 const backupToFile = (txs: Tx[]) => {
   const backupPath = join(__dirname, "/../backup/txs.json");
   writeFileSync(backupPath, JSON.stringify(txs, null, 2));
-};
-
-const markInternal = (txs: Tx[]) => {
-  const uniqueDates = new Set(txs.map(({ datum }) => datum));
-  uniqueDates.forEach((target) => {
-    const days = txs.filter((tx) => isSameDate(tx, target));
-    findInternal(days);
-  });
 };
 
 export const populateEverything = async () => {
