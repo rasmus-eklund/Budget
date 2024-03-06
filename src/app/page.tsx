@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getServerAuthSession } from "~/server/auth";
 
 const Home = async () => {
@@ -6,6 +7,7 @@ const Home = async () => {
   return (
     <main>
       {session ? <p>welcome {session.user.name}</p> : <p>Not logged in</p>}
+      {session && <Link href={"/month"} className="underline">Månatlig budget</Link>}
     </main>
   );
 };
