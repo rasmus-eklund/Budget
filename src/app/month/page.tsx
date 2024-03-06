@@ -1,37 +1,42 @@
 "use client";
 import { api } from "~/trpc/react";
-import { toDate, toSek } from "../utils/formatData";
-import MonthForm from "./components/MonthForm";
-import { useState } from "react";
-import { type tDatesSchema } from "~/zodSchemas";
+import DateFilter from "./components/DateFilter";
+import Tabs from "../_components/Tabs";
+import Transaction from "./components/Transaction";
 
 const Month = () => {
-  const [dates, setDates] = useState<tDatesSchema>({
-    from: new Date("2023-01-01"),
-    to: new Date("2023-01-31"),
-  });
   return (
     <section className="h-full">
-      <MonthForm onSubmit={(d) => setDates(d)} />
-      <Results dates={dates} />
+      <DateFilter>
+        {({ filter }) => (
+          <Tabs
+            tabs={[
+              { name: "Budget", tab: <Budget dates={filter} /> },
+              { name: "Transaktioner", tab: <Results dates={filter} /> },
+            ]}
+          />
+        )}
+      </DateFilter>
     </section>
   );
 };
 
-type ResultsProps = { dates: { from: Date; to: Date } };
-const Results = ({ dates }: ResultsProps) => {
+type Props = { dates: { from: Date; to: Date } };
+const Results = ({ dates }: Props) => {
   const { data, isSuccess, isLoading } = api.txs.getTxByDates.useQuery(dates);
   return (
-    <ul className="h-full overflow-y-auto">
-      {isSuccess &&
-        data.map(({ datum, belopp, id }) => (
-          <li className="grid grid-cols-2" key={id}>
-            <p>{toDate(datum)}</p>
-            <p className={`text-right font-mono ${belopp < 0 && "text-red"}`}>
-              {toSek(belopp)}
-            </p>
-          </li>
-        ))}
+    <ul className="flex h-[calc(100%-40px)] flex-col gap-1 overflow-y-auto">
+      {isSuccess && data.map((d) => <Transaction key={d.id} data={d} />)}
+      {isLoading && <p>Laddar...</p>}
+    </ul>
+  );
+};
+
+const Budget = ({ dates }: Props) => {
+  const { data, isSuccess, isLoading } = api.txs.getTxByDates.useQuery(dates);
+  return (
+    <ul className="flex h-[calc(100%-40px)] flex-col gap-1 overflow-y-auto">
+      {isSuccess && <p>budget</p>}
       {isLoading && <p>Laddar...</p>}
     </ul>
   );
