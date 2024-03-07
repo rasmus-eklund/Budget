@@ -1,5 +1,6 @@
 "use client";
-import { type ReactNode, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import Button from "~/app/_components/Button";
 import { dateToString } from "~/utils/formatData";
 
@@ -7,11 +8,9 @@ type Filter = {
   from: Date;
   to: Date;
 };
-type Props = {
-  children: ({ filter }: { filter: Filter }) => ReactNode;
-};
 
-const DateFilter = ({ children }: Props) => {
+const DateFilter = () => {
+  const router = useRouter();
   const firstDayOfThisMonth = new Date();
   const lastDayOfThisMonth = new Date(
     firstDayOfThisMonth.getFullYear(),
@@ -23,6 +22,12 @@ const DateFilter = ({ children }: Props) => {
     from: firstDayOfThisMonth,
     to: lastDayOfThisMonth,
   });
+
+  useEffect(() => {
+    router.push(
+      `/month/?from=${dateToString(filter.from)}&to=${dateToString(filter.to)}`,
+    );
+  }, [router, filter]);
 
   return (
     <div>
@@ -113,7 +118,6 @@ const DateFilter = ({ children }: Props) => {
           </Button>
         </div>
       </form>
-      {children({ filter })}
     </div>
   );
 };
