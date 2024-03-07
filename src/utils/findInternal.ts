@@ -52,7 +52,7 @@ export const countDuplicates = <T extends { belopp: number; id: string }>(
 
 export const stringToDate = (s: string) => new Date(s);
 
-export const getDay = (txs: (Tx & { id: string })[], target: Date) =>
+export const getDay = <T extends { datum: Date }>(txs: T[], target: Date) =>
   txs.filter((tx) => isSameDate(tx, target));
 
 export const distinctDates = <T extends { datum: Date }>(dates: T[]) =>
@@ -62,7 +62,6 @@ export const markInternal = (txs: (Tx & { id: string })[]) => {
   const internal = distinctDates(txs).flatMap((date) =>
     findInternal(getDay(txs, date)).flatMap((i) => i.ids),
   );
-  console.log({ internal, txs });
   return txs.map((tx) => ({
     ...tx,
     budgetgrupp: internal.some((i) => i === tx.id) ? "inom" : tx.budgetgrupp,
