@@ -1,9 +1,7 @@
-import React from "react";
-import { type RouterOutputs } from "~/trpc/shared";
 import { dateToString, toSek } from "~/utils/formatData";
-type Data = RouterOutputs["txs"]["getTxByDates"][number];
+import { type Tx } from "~/zodSchemas";
 
-type Props = { data: Data };
+type Props = { data: Tx };
 
 const Transaction = ({
   data: { belopp, datum, budgetgrupp, person, konto, typ, text },
