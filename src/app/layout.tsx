@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="w-screen">
       <body className="flex w-screen flex-col items-center">
         <SessionProviderWrapper>
           <TRPCReactProvider cookies={cookies().toString()}>
