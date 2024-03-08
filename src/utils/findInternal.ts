@@ -2,9 +2,8 @@ import { dateToString } from "~/utils/formatData";
 import { type Tx } from "~/zodSchemas";
 
 export const findInternal = (day: (Tx & { id: string })[]) => {
-  const data = day.map((tx) => ({ ...tx, budgetgrupp: "övrigt" }));
   // abs belopp and count.
-  const counts = countDuplicates(data);
+  const counts = countDuplicates(day);
   const internal = counts.filter(({ ids }) => {
     const txs = day.filter((tx) => ids.some((id) => id === tx.id));
     if (txs.length % 2 === 0 && sumBelopp(txs) === 0) {
