@@ -18,3 +18,9 @@ export const datesSchema = z.object({
   to: z.coerce.date(),
 });
 export type tDatesSchema = z.infer<typeof datesSchema>;
+
+export const categorySchema = z.object({
+  name: z.string().min(2),
+  matches: z.array(z.object({ name: z.string().min(2) })).min(1),
+});
+export type tCategortSchema = z.infer<typeof categorySchema>;
