@@ -18,6 +18,6 @@ describe("categorize", () => {
     ];
     const result = categorize("McDonalds", cats);
 
-    expect(result).toStrictEqual("Övrigt");
+    expect(result).toStrictEqual("övrigt");
   });
 });
