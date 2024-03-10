@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "~/app/_components/Button";
 import { dateToString } from "~/utils/formatData";
 
@@ -65,22 +65,22 @@ const DateFilter = () => {
     to.setMonth(to.getMonth() + 1);
     return { from, to };
   };
-  useEffect(() => {
-    router.push(
-      `/month/?from=${dateToString(filter.from)}&to=${dateToString(filter.to)}`,
-    );
-  }, [router, filter]);
+  const onSubmit = ({ from, to }: Filter) => {
+    console.log({ from, to });
+    router.push(`/month/?from=${dateToString(from)}&to=${dateToString(to)}`);
+  };
 
   return (
     <div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          onSubmit(filter);
         }}
         className="bg-c3 flex flex-col gap-2 rounded-md p-3"
       >
-        <div className="flex gap-2">
-          <label htmlFor="start-date">From</label>
+        <div className="flex items-center gap-2">
+          <label htmlFor="start-date">Från</label>
           <input
             id="start-date"
             type="date"
@@ -91,7 +91,7 @@ const DateFilter = () => {
             }
           />
 
-          <label htmlFor="end-date">To</label>
+          <label htmlFor="end-date">Till</label>
           <input
             id="end-date"
             type="date"
@@ -100,6 +100,7 @@ const DateFilter = () => {
               setFilter((p) => ({ ...p, to: new Date(value) }))
             }
           />
+          <Button type="submit">Ok</Button>
         </div>
         <div className="flex justify-between">
           <Button onClick={() => setFilter(minusOneMonth)} type="button">
