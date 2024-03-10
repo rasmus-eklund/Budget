@@ -1,4 +1,5 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import timeDelta from "~/utils/calculateTimeDelta";
 import categorize from "~/utils/categorize";
 import { markInternal } from "~/utils/findInternal";
 import { decimalToNumber } from "~/utils/formatData";
@@ -12,6 +13,7 @@ export const txsRouter = createTRPCRouter({
         ctx,
         input: { from, to },
       }): Promise<(Tx & { id: string })[]> => {
+        const start = new Date();
         const userId = ctx.session.user.id;
         const response = await ctx.db.budgetgrupp.findMany({
           where: { userId },
@@ -48,7 +50,7 @@ export const txsRouter = createTRPCRouter({
               ? "inkomst"
               : i.budgetgrupp,
         }));
-        return internal.map((tx) => {
+        const final = internal.map((tx) => {
           if (tx.budgetgrupp === "övrigt") {
             return {
               ...tx,
@@ -57,6 +59,9 @@ export const txsRouter = createTRPCRouter({
           }
           return tx;
         });
+        const end = new Date();
+        console.log(timeDelta({ start, end }));
+        return final;
       },
     ),
 });
