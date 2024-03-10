@@ -110,13 +110,17 @@ const createTxs = async (txs: Tx[]) => {
 };
 
 const createCategories = async (userId: string) => {
-  await db.budgetgrupp.createMany({
-    data: categories.map(({ key, values }) => ({
-      namn: key,
-      matches: values,
-      userId,
-    })),
-  });
+  await Promise.all(
+    categories.map(({ key, values }) =>
+      db.budgetgrupp.create({
+        data: {
+          namn: key,
+          matches: { createMany: { data: values.map((namn) => ({ namn })) } },
+          userId,
+        },
+      }),
+    ),
+  );
 };
 
 // const categoriseTxs = async (userId: string) => {
@@ -137,7 +141,7 @@ const createCategories = async (userId: string) => {
 // };
 
 const backupToFile = (txs: Tx[]) => {
-  const backupPath = join(__dirname, "/../backup/txs.json");
+  const backupPath = join(__dirname, "/../../backup/txs.json");
   writeFileSync(backupPath, JSON.stringify(txs, null, 2));
 };
 
