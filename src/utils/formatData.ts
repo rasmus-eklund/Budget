@@ -13,10 +13,9 @@ export const toSek = (num: number) =>
   });
 
 export const decimalToNumber = <T extends { belopp: Decimal; saldo: Decimal }>(
-  txs: T[],
-) =>
-  txs.map(({ belopp, saldo, ...rest }) => ({
-    ...rest,
-    belopp: Number(belopp),
-    saldo: Number(saldo),
-  }));
+  tx: T,
+) => ({
+  ...tx,
+  belopp: Number(tx.belopp),
+  saldo: Number(tx.saldo),
+});
