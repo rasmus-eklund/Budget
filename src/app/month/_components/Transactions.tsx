@@ -26,7 +26,7 @@ const Transactions = ({ data }: Data) => {
               if (!sortFilter.belopp) {
                 return 0;
               }
-              if (sortFilter.belopp === "0-9") {
+              if (sortFilter.belopp === "Belopp (Lågt-Högt)") {
                 return a.belopp - b.belopp;
               }
               return b.belopp - a.belopp;
