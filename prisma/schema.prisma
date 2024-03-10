@@ -79,11 +79,18 @@ model Konto {
 }
 
 model Budgetgrupp {
-    id      String   @id @default(cuid())
-    namn    String
-    matches String[]
-    user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id      String  @id @default(cuid())
+    namn    String  @unique
+    matches Match[]
+    user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId  String
+}
+
+model Match {
+    id            String      @id @default(cuid())
+    namn          String      @unique
+    Budgetgrupp   Budgetgrupp @relation(fields: [budgetgruppId], references: [id], onDelete: Cascade)
+    budgetgruppId String
 }
 
 model Person {
