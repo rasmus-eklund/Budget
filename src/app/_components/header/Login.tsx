@@ -1,9 +1,10 @@
 "use client";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import Button from "../Button";
+import { type Session } from "next-auth";
 
-const Login = () => {
-  const { data: session } = useSession();
+type Props = { session: Session | null };
+const Login = ({ session }: Props) => {
   if (!!session) {
     return (
       <Button onClick={() => void signOut({ callbackUrl: "/" })}>
