@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
+import Button from "~/app/_components/Button";
 // import { api } from "~/trpc/react";
 import { categorySchema, type tCategortSchema } from "~/zodSchemas";
 
@@ -19,11 +20,12 @@ const AddCategory = () => {
   // const { mutate, isLoading } = api.categories.create.useMutation();
   if (open) {
     return (
-      <form className="bg-red" onSubmit={handleSubmit(onSubmit)}>
+      <form className="p-2 flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex gap-2">
           <label htmlFor="name">Kategori</label>
-          <input id="name" {...register("name")} />
+          <input className="outline-none border-b border-b-red" id="name" {...register("name")} placeholder="Ny kategori" />
         </div>
+        <h2>Matchande ord:</h2>
         {fields.map((field, index) => (
           <div key={field.id}>
             <input {...register(`matches.${index}.name` as const)} />
@@ -32,19 +34,27 @@ const AddCategory = () => {
             </button>
           </div>
         ))}
-        <div>
-          <button type="button" onClick={() => append({ name: "namn" })}>
-            Lägg till
-          </button>
-          <button type="submit">Spara</button>
-          <button onClick={() => setOpen(false)} type="button">
+        <Button type="button" onClick={() => append({ name: "namn" })}>
+          Lägg till
+        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setOpen(false)} type="button">
             Avbryt
-          </button>
+          </Button>
+          <Button callToAction type="submit">
+            Spara
+          </Button>
         </div>
       </form>
     );
   }
-  return <button onClick={() => setOpen(true)}>Lägg till</button>;
+  return (
+    <div className="p-2">
+      <Button callToAction onClick={() => setOpen(true)}>
+        Lägg till
+      </Button>
+    </div>
+  );
 };
 
 export default AddCategory;

@@ -5,8 +5,8 @@ const Home = async () => {
   const session = await getServerAuthSession();
 
   return (
-    <main>
-      {session ? <p>welcome {session.user.name}</p> : <p>Not logged in</p>}
+    <main className="p-2">
+      {session ? <p>Välkommen {session.user.name}</p> : <p>Logga in för att se din budget.</p>}
       {session && (
         <ul>
           <li>
