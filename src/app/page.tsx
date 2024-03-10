@@ -7,7 +7,20 @@ const Home = async () => {
   return (
     <main>
       {session ? <p>welcome {session.user.name}</p> : <p>Not logged in</p>}
-      {session && <Link href={"/month"} className="underline">Månatlig budget</Link>}
+      {session && (
+        <ul>
+          <li>
+            <Link href={"/month"} className="underline">
+              Månatlig budget
+            </Link>
+          </li>
+          <li>
+            <Link href={"/categories"} className="underline">
+              Kategorier
+            </Link>
+          </li>
+        </ul>
+      )}
     </main>
   );
 };
