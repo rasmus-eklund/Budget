@@ -15,10 +15,11 @@ export const txsRouter = createTRPCRouter({
         const userId = ctx.session.user.id;
         const response = await ctx.db.budgetgrupp.findMany({
           where: { userId },
+          include: { matches: true },
         });
         const categories = response.map(({ namn, matches }) => ({
           namn,
-          matches,
+          matches: matches.map(({ namn }) => namn),
         }));
         const data = await ctx.db.txs.findMany({
           where: {
@@ -34,15 +35,21 @@ export const txsRouter = createTRPCRouter({
             },
           },
         });
-        const kontoPerson = data.map(({ konto, kontoId: _, ...rest }) => ({
-          ...rest,
+        const formattedData = data.map(({ konto, kontoId: _, ...rest }) => ({
+          ...decimalToNumber(rest),
           konto: konto.namn,
           person: konto.Person.namn,
+          budgetgrupp: "övrigt",
         }));
-        const toNumber = decimalToNumber(kontoPerson);
-        const internal = markInternal(toNumber);
+        const internal = markInternal(formattedData).map((i) => ({
+          ...i,
+          budgetgrupp:
+            i.budgetgrupp !== "inom" && i.belopp > 0
+              ? "inkomst"
+              : i.budgetgrupp,
+        }));
         return internal.map((tx) => {
-          if (tx.budgetgrupp === "Övrigt") {
+          if (tx.budgetgrupp === "övrigt") {
             return {
               ...tx,
               budgetgrupp: categorize(tx.text, categories),
@@ -52,9 +59,4 @@ export const txsRouter = createTRPCRouter({
         });
       },
     ),
-  getCategories: protectedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session.user.id;
-    const data = await ctx.db.budgetgrupp.findMany({ where: { userId } });
-    return data.map(({ namn }) => namn);
-  }),
 });
