@@ -2,7 +2,6 @@ import "~/styles/globals.css";
 import { cookies } from "next/headers";
 
 import { TRPCReactProvider } from "~/trpc/react";
-import { SessionProviderWrapper } from "./SessionProviderWrapper";
 import Header from "./_components/header/Header";
 
 export const metadata = {
@@ -19,14 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="w-screen">
       <body className="flex w-screen flex-col items-center">
-        <SessionProviderWrapper>
           <TRPCReactProvider cookies={cookies().toString()}>
             <Header />
             <main className="flex h-[calc(100vh-56px)] w-full max-w-5xl flex-col">
               {children}
             </main>
           </TRPCReactProvider>
-        </SessionProviderWrapper>
       </body>
     </html>
   );
