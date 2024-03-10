@@ -9,7 +9,7 @@ function categorize(
       }
     }
   }
-  return "Övrigt";
+  return "övrigt";
 }
 
 export default categorize;
