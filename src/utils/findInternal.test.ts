@@ -7,7 +7,7 @@ import {
   isSameDate,
   sumBelopp,
 } from "./findInternal";
-import { type Typ } from "~/types";
+import { type Typ } from "~/zodSchemas";
 
 type Data = { id: string; belopp: number; typ: Typ; konto: string };
 
