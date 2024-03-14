@@ -1,9 +1,23 @@
 import { z } from "zod";
 
+export const types = [
+  "Insättning",
+  "Korttransaktion",
+  "Övrigt",
+  "Uttag",
+  "Autogiro",
+  "Pg-bg",
+  "E-faktura",
+  "Pg-Bg",
+  "Utlandsbetalning",
+] as const;
+
+export type Typ = (typeof types)[number];
+
 export const txSchema = z.object({
   datum: z.date(),
   text: z.string(),
-  typ: z.string(),
+  typ: z.enum(types),
   budgetgrupp: z.string(),
   belopp: z.number(),
   saldo: z.number(),
