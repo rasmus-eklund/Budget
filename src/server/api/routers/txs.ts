@@ -1,8 +1,8 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { type Typ } from "~/zodSchemas";
 import timeDelta from "~/utils/calculateTimeDelta";
 import categorize from "~/utils/categorize";
 import { markInternal } from "~/utils/findInternal";
-import { decimalToNumber } from "~/utils/formatData";
 import { type Tx, datesSchema } from "~/zodSchemas";
 
 export const txsRouter = createTRPCRouter({
@@ -37,12 +37,17 @@ export const txsRouter = createTRPCRouter({
             },
           },
         });
-        const formattedData = data.map(({ konto, kontoId: _, ...rest }) => ({
-          ...decimalToNumber(rest),
-          konto: konto.namn,
-          person: konto.Person.namn,
-          budgetgrupp: "övrigt",
-        }));
+        const formattedData = data.map(
+          ({ konto, kontoId: _, belopp, saldo, typ, ...rest }) => ({
+            ...rest,
+            belopp: Number(belopp),
+            saldo: Number(saldo),
+            konto: konto.namn,
+            person: konto.Person.namn,
+            budgetgrupp: "övrigt",
+            typ: typ as Typ,
+          }),
+        );
         const internal = markInternal(formattedData).map((i) => ({
           ...i,
           budgetgrupp:
