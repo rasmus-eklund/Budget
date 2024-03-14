@@ -1,39 +1,128 @@
 import { describe, expect, it } from "vitest";
-import data from "../../backup/txs.json";
 import {
   countDuplicates,
   distinctDates,
   findInternal,
-  getDay,
+  hasDuplicates,
   isSameDate,
-  stringToDate,
   sumBelopp,
 } from "./findInternal";
-import { randomUUID } from "crypto";
+import { type Typ } from "~/types";
 
-const processData = <T extends { datum: string }>(data: T[]) =>
-  data.map(({ datum, ...rest }) => ({
-    ...rest,
-    id: randomUUID(),
-    datum: stringToDate(datum),
-  }));
+type Data = { id: string; belopp: number; typ: Typ; konto: string };
 
 describe("find internal", () => {
-  it("should find 4 on 23-08-04", () => {
-    const txs = processData(data);
-    const target = new Date("2023-08-04");
-    const day = getDay(txs, target);
-    const testdata = findInternal(day).flatMap((i) => i.ids);
-    expect(day.length).toStrictEqual(6);
-    expect(testdata.length).toStrictEqual(4);
+  describe("even number of txs", () => {
+    it("should find 2", () => {
+      const txs: Data[] = [
+        { id: "1", belopp: -100, typ: "Övrigt", konto: "A" },
+        { id: "2", belopp: 100, typ: "Insättning", konto: "B" },
+        { id: "3", belopp: 50, typ: "Övrigt", konto: "A" },
+      ];
+      const ids = findInternal(txs);
+      expect(ids).toEqual(["1", "2"]);
+    });
+    it("should find 4", () => {
+      const txs: Data[] = [
+        { id: "1", belopp: -100, typ: "Övrigt", konto: "A" },
+        { id: "2", belopp: 100, typ: "Insättning", konto: "B" },
+        { id: "3", belopp: -200, typ: "Övrigt", konto: "A" },
+        { id: "4", belopp: 200, typ: "Insättning", konto: "B" },
+        { id: "5", belopp: -400, typ: "Övrigt", konto: "A" },
+        { id: "6", belopp: -250, typ: "E-faktura", konto: "A" },
+        { id: "7", belopp: -199, typ: "Autogiro", konto: "A" },
+        { id: "8", belopp: -340, typ: "Uttag", konto: "A" },
+      ];
+      const ids = findInternal(txs);
+      expect(ids).toEqual(["1", "2", "3", "4"]);
+    });
+    it("should find 6", () => {
+      const txs: Data[] = [
+        { id: "1", belopp: -100, typ: "Övrigt", konto: "A" },
+        { id: "2", belopp: 100, typ: "Insättning", konto: "B" },
+        { id: "3", belopp: -200, typ: "Övrigt", konto: "A" },
+        { id: "4", belopp: 200, typ: "Insättning", konto: "B" },
+        { id: "5", belopp: -300, typ: "Övrigt", konto: "A" },
+        { id: "6", belopp: 300, typ: "Insättning", konto: "B" },
+        { id: "7", belopp: -400, typ: "Övrigt", konto: "A" },
+        { id: "8", belopp: -250, typ: "E-faktura", konto: "A" },
+        { id: "9", belopp: -199, typ: "Autogiro", konto: "A" },
+        { id: "10", belopp: -340, typ: "Uttag", konto: "A" },
+      ];
+      const ids = findInternal(txs);
+      expect(ids).toEqual(["1", "2", "3", "4", "5", "6"]);
+    });
+    it("should find 0", () => {
+      const txs: Data[] = [
+        { id: "1", belopp: 100, typ: "Insättning", konto: "A" },
+        { id: "2", belopp: 100, typ: "Insättning", konto: "B" },
+        { id: "3", belopp: 50, typ: "Övrigt", konto: "A" },
+      ];
+      const ids = findInternal(txs);
+      expect(ids).toEqual([]);
+    });
   });
-  it("should find 6 on 23-08-14", () => {
-    const txs = processData(data);
-    const target = new Date("2023-08-14");
-    const day = getDay(txs, target);
-    const testdata = findInternal(day).flatMap((i) => i.ids);
-    expect(day.length).toStrictEqual(7);
-    expect(testdata.length).toStrictEqual(6);
+  describe("odd number of txs", () => {
+    it("should find 0", () => {
+      const txs: Data[] = [
+        { id: "1", belopp: 650, typ: "Insättning", konto: "A" },
+        { id: "2", belopp: 650, typ: "Insättning", konto: "A" },
+        { id: "3", belopp: 650, typ: "Insättning", konto: "B" },
+        { id: "4", belopp: -250, typ: "E-faktura", konto: "A" },
+        { id: "5", belopp: -199, typ: "Autogiro", konto: "A" },
+        { id: "6", belopp: -340, typ: "Uttag", konto: "A" },
+      ];
+      const ids = findInternal(txs);
+      expect(ids).toEqual([]);
+    });
+    it("should find 2 internal, income", () => {
+      const txs: Data[] = [
+        { id: "1", belopp: 650, typ: "Insättning", konto: "A" },
+        { id: "2", belopp: -650, typ: "Övrigt", konto: "A" },
+        { id: "3", belopp: 650, typ: "Insättning", konto: "B" },
+        { id: "4", belopp: -250, typ: "E-faktura", konto: "A" },
+        { id: "5", belopp: -199, typ: "Autogiro", konto: "A" },
+        { id: "6", belopp: -340, typ: "Uttag", konto: "A" },
+      ];
+      const ids = findInternal(txs);
+      expect(ids).toEqual(["2", "3"]);
+    });
+    it("should find 2 internal, expense", () => {
+      const txs: Data[] = [
+        { id: "1", belopp: -650, typ: "Övrigt", konto: "A" },
+        { id: "2", belopp: 650, typ: "Insättning", konto: "B" },
+        { id: "3", belopp: -650, typ: "Pg-Bg", konto: "B" },
+        { id: "4", belopp: -250, typ: "E-faktura", konto: "A" },
+        { id: "5", belopp: -199, typ: "Autogiro", konto: "A" },
+        { id: "6", belopp: -340, typ: "Uttag", konto: "A" },
+      ];
+      const ids = findInternal(txs);
+      expect(ids).toEqual(["1", "2"]);
+    });
+    it("should find 4 internal, income", () => {
+      const txs: Data[] = [
+        { id: "1", belopp: 650, typ: "Insättning", konto: "A" },
+        { id: "2", belopp: -650, typ: "Övrigt", konto: "A" },
+        { id: "3", belopp: 650, typ: "Insättning", konto: "B" },
+        { id: "4", belopp: -650, typ: "Övrigt", konto: "B" },
+        { id: "5", belopp: 650, typ: "Insättning", konto: "C" },
+        { id: "6", belopp: -340, typ: "Uttag", konto: "A" },
+      ];
+      const ids = findInternal(txs);
+      expect(ids).toEqual(["2", "3", "4", "5"]);
+    });
+    it("should find 4 internal, expense", () => {
+      const txs: Data[] = [
+        { id: "1", belopp: -650, typ: "Övrigt", konto: "A" },
+        { id: "2", belopp: 650, typ: "Insättning", konto: "B" },
+        { id: "3", belopp: -650, typ: "Övrigt", konto: "B" },
+        { id: "4", belopp: 650, typ: "Insättning", konto: "C" },
+        { id: "5", belopp: -650, typ: "Övrigt", konto: "C" },
+        { id: "6", belopp: -340, typ: "Uttag", konto: "A" },
+      ];
+      const ids = findInternal(txs);
+      expect(ids).toEqual(["1", "2", "3", "4"]);
+    });
   });
 });
 
@@ -97,5 +186,18 @@ describe("distinctDates", () => {
     const expected = [new Date("2024-01-01"), new Date("2024-01-02")];
     const result = distinctDates(dates);
     expect(result).toEqual(expected);
+  });
+});
+
+describe("has duplicates", () => {
+  it("should find duplicates", () => {
+    const data = [{ belopp: 1 }, { belopp: 2 }, { belopp: 2 }];
+    const result = hasDuplicates(data);
+    expect(result).toBe(true);
+  });
+  it("should not find duplicates", () => {
+    const data = [{ belopp: 1 }, { belopp: 2 }];
+    const result = hasDuplicates(data);
+    expect(result).toBe(false);
   });
 });
