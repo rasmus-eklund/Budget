@@ -66,7 +66,6 @@ const DateFilter = () => {
     return { from, to };
   };
   const onSubmit = ({ from, to }: Filter) => {
-    console.log({ from, to });
     router.push(`/month/?from=${dateToString(from)}&to=${dateToString(to)}`);
   };
 
