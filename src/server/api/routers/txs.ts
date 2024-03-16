@@ -13,7 +13,6 @@ export const txsRouter = createTRPCRouter({
         ctx,
         input: { from, to },
       }): Promise<(Tx & { id: string })[]> => {
-        const start = new Date();
         const userId = ctx.session.user.id;
         const response = await ctx.db.budgetgrupp.findMany({
           where: { userId },
@@ -48,6 +47,7 @@ export const txsRouter = createTRPCRouter({
             typ: typ as Typ,
           }),
         );
+        const start = new Date();
         const internal = markInternal(formattedData).map((i) => ({
           ...i,
           budgetgrupp:
@@ -65,7 +65,9 @@ export const txsRouter = createTRPCRouter({
           return tx;
         });
         const end = new Date();
-        console.log(timeDelta({ start, end }));
+        console.log(
+          `Transactions ${final.length} took ${timeDelta({ start, end })}.`,
+        );
         return final;
       },
     ),
