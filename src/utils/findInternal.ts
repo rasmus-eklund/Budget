@@ -18,9 +18,7 @@ export const findInternal = (day: Internal[]) => {
     } else if (txs.length % 2 === 1) {
       if (txs.length === 3) {
         const theOne = findInternalOddThree(txs);
-        if (theOne) {
-          return theOne;
-        }
+        return theOne ? theOne : [];
       }
     }
     return [];

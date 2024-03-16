@@ -7,14 +7,22 @@ import {
   isSameDate,
   sumBelopp,
 } from "./findInternal";
-import { type Typ } from "~/zodSchemas";
+import { type Internal } from "~/types";
 
-type Data = { id: string; belopp: number; typ: Typ; konto: string };
+// describe("test", () => {
+//   const txs: Internal[] = [
+//     { id: "1", belopp: -100, typ: "Övrigt", konto: "A" },
+//     { id: "2", belopp: 100, typ: "Insättning", konto: "B" },
+//     { id: "3", belopp: 50, typ: "Övrigt", konto: "A" },
+//   ];
+
+//   const grouped = Object.groupBy
+// });
 
 describe("find internal", () => {
   describe("even number of txs", () => {
     it("should find 2", () => {
-      const txs: Data[] = [
+      const txs: Internal[] = [
         { id: "1", belopp: -100, typ: "Övrigt", konto: "A" },
         { id: "2", belopp: 100, typ: "Insättning", konto: "B" },
         { id: "3", belopp: 50, typ: "Övrigt", konto: "A" },
@@ -23,7 +31,7 @@ describe("find internal", () => {
       expect(ids).toEqual(["1", "2"]);
     });
     it("should find 4", () => {
-      const txs: Data[] = [
+      const txs: Internal[] = [
         { id: "1", belopp: -100, typ: "Övrigt", konto: "A" },
         { id: "2", belopp: 100, typ: "Insättning", konto: "B" },
         { id: "3", belopp: -200, typ: "Övrigt", konto: "A" },
@@ -37,7 +45,7 @@ describe("find internal", () => {
       expect(ids).toEqual(["1", "2", "3", "4"]);
     });
     it("should find 6", () => {
-      const txs: Data[] = [
+      const txs: Internal[] = [
         { id: "1", belopp: -100, typ: "Övrigt", konto: "A" },
         { id: "2", belopp: 100, typ: "Insättning", konto: "B" },
         { id: "3", belopp: -200, typ: "Övrigt", konto: "A" },
@@ -53,7 +61,7 @@ describe("find internal", () => {
       expect(ids).toEqual(["1", "2", "3", "4", "5", "6"]);
     });
     it("should find 0", () => {
-      const txs: Data[] = [
+      const txs: Internal[] = [
         { id: "1", belopp: 100, typ: "Insättning", konto: "A" },
         { id: "2", belopp: 100, typ: "Insättning", konto: "B" },
         { id: "3", belopp: 50, typ: "Övrigt", konto: "A" },
@@ -64,7 +72,7 @@ describe("find internal", () => {
   });
   describe("odd number of txs", () => {
     it("should find 0", () => {
-      const txs: Data[] = [
+      const txs: Internal[] = [
         { id: "1", belopp: 650, typ: "Insättning", konto: "A" },
         { id: "2", belopp: 650, typ: "Insättning", konto: "A" },
         { id: "3", belopp: 650, typ: "Insättning", konto: "B" },
@@ -76,7 +84,7 @@ describe("find internal", () => {
       expect(ids).toEqual([]);
     });
     it("should find 2 internal, income", () => {
-      const txs: Data[] = [
+      const txs: Internal[] = [
         { id: "1", belopp: 650, typ: "Insättning", konto: "A" },
         { id: "2", belopp: -650, typ: "Övrigt", konto: "A" },
         { id: "3", belopp: 650, typ: "Insättning", konto: "B" },
@@ -88,7 +96,7 @@ describe("find internal", () => {
       expect(ids).toEqual(["2", "3"]);
     });
     it("should find 2 internal, expense", () => {
-      const txs: Data[] = [
+      const txs: Internal[] = [
         { id: "1", belopp: -650, typ: "Övrigt", konto: "A" },
         { id: "2", belopp: 650, typ: "Insättning", konto: "B" },
         { id: "3", belopp: -650, typ: "Pg-Bg", konto: "B" },
@@ -100,7 +108,7 @@ describe("find internal", () => {
       expect(ids).toEqual(["1", "2"]);
     });
     it("should find 4 internal, income", () => {
-      const txs: Data[] = [
+      const txs: Internal[] = [
         { id: "1", belopp: 650, typ: "Insättning", konto: "A" },
         { id: "2", belopp: -650, typ: "Övrigt", konto: "A" },
         { id: "3", belopp: 650, typ: "Insättning", konto: "B" },
@@ -112,7 +120,7 @@ describe("find internal", () => {
       expect(ids).toEqual(["2", "3", "4", "5"]);
     });
     it("should find 4 internal, expense", () => {
-      const txs: Data[] = [
+      const txs: Internal[] = [
         { id: "1", belopp: -650, typ: "Övrigt", konto: "A" },
         { id: "2", belopp: 650, typ: "Insättning", konto: "B" },
         { id: "3", belopp: -650, typ: "Övrigt", konto: "B" },
