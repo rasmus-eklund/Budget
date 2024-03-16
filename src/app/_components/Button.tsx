@@ -1,4 +1,6 @@
 import type { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
+import { ClipLoader } from "react-spinners";
+import { twMerge } from "tailwind-merge";
 
 type ButtonProps = {
   callToAction?: boolean;
@@ -11,6 +13,7 @@ type ButtonProps = {
 export function Button({
   className: inClass = "",
   callToAction = false,
+  disabled,
   ...props
 }: ButtonProps) {
   const className = {
@@ -19,10 +22,18 @@ export function Button({
       : "bg-white md:hover:bg-red text-black md:hover:text-white active:bg-black",
   };
   return (
-    <button
-      className={`${className.colors} ${inClass} lg:text-md flex justify-center items-center rounded-sm px-4 py-[6px] font-secondary text-sm tracking-wide disabled:cursor-not-allowed disabled:opacity-50 xs:px-2 xs:py-[6px] lg:h-9 lg:px-6`}
-      {...props}
-    ></button>
+    <div
+      className={twMerge(
+        `${className.colors} ${inClass} flex h-8 gap-2 items-center justify-between rounded-sm px-4 text-sm`,
+      )}
+    >
+      {disabled ? <ClipLoader size={20} color="white" className="shrink-0" /> : null}
+      <button
+        disabled={disabled}
+        className="w-full disabled:cursor-not-allowed disabled:opacity-50"
+        {...props}
+      ></button>
+    </div>
   );
 }
 
