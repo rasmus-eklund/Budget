@@ -2,7 +2,12 @@ import { useState, type ReactNode } from "react";
 import { type TxFilter } from "~/types";
 import capitalize from "~/utils/capitalize";
 
-const sortOptions = ["", "Belopp (Lågt-Högt)", "Belopp (Högt-Lågt)"] as const;
+const sortOptions = [
+  "Datum (Lågt-Högt)",
+  "Datum (Högt-Lågt)",
+  "Belopp (Lågt-Högt)",
+  "Belopp (Högt-Lågt)",
+] as const;
 type tOption = (typeof sortOptions)[number];
 type TxSort = { belopp: tOption };
 
@@ -19,7 +24,7 @@ type Props = {
 const TransactionFilter = ({ options, children }: Props) => {
   const defaultTxFilter: TxFilter = { category: "", person: "", inom: false };
   const [txFilter, setTxFilter] = useState<TxFilter>(defaultTxFilter);
-  const defaultSortFilter: TxSort = { belopp: "" };
+  const defaultSortFilter: TxSort = { belopp: "Datum (Lågt-Högt)" };
   const [sortFilter, setSortFilter] = useState<TxSort>(defaultSortFilter);
   const className = {
     select: "bg-gray-50",
@@ -86,15 +91,11 @@ const TransactionFilter = ({ options, children }: Props) => {
           <select
             id="sort"
             className={className.select}
-            defaultValue={""}
             onChange={({ target: { value } }) =>
               setSortFilter((p) => ({ ...p, belopp: value as tOption }))
             }
           >
-            <option className={className.option} value={""}>
-              Datum
-            </option>
-            {sortOptions.slice(1).map((i) => (
+            {sortOptions.map((i) => (
               <option className={className.option} key={i} value={i}>
                 {capitalize(i)}
               </option>
