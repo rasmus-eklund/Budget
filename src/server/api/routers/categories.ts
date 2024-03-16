@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { nameSchema } from "~/zodSchemas";
 
 export const categoriesRouter = createTRPCRouter({
   get: protectedProcedure
@@ -25,18 +26,12 @@ export const categoriesRouter = createTRPCRouter({
     return data.map(({ namn, id }) => ({ namn, id }));
   }),
   create: protectedProcedure
-    .input(
-      z.object({
-        name: z.string().min(2),
-        matches: z.array(z.string().min(2)),
-      }),
-    )
-    .mutation(async ({ ctx, input: { name, matches } }) => {
+    .input(nameSchema)
+    .mutation(async ({ ctx, input: { name } }) => {
       const userId = ctx.session.user.id;
       await ctx.db.budgetgrupp.create({
         data: {
           namn: name,
-          matches: { createMany: { data: matches.map((namn) => ({ namn })) } },
           userId,
         },
       });
@@ -46,19 +41,14 @@ export const categoriesRouter = createTRPCRouter({
       z.object({
         id: z.string().cuid(),
         name: z.string().min(2),
-        matches: z.array(z.string().min(2)),
       }),
     )
-    .mutation(async ({ ctx, input: { name, matches, id } }) => {
+    .mutation(async ({ ctx, input: { name, id } }) => {
       const userId = ctx.session.user.id;
       await ctx.db.budgetgrupp.update({
         where: { id, userId },
         data: {
           namn: name,
-          matches: {
-            deleteMany: { budgetgruppId: id },
-            createMany: { data: matches.map((namn) => ({ namn })) },
-          },
         },
       });
     }),
