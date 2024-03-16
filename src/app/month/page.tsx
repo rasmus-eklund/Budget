@@ -35,12 +35,10 @@ const Month = async ({ searchParams }: Props) => {
           {
             name: "Budget",
             tab: (
-              <Suspense fallback={<p>Laddar...</p>}>
-                <Budget
-                  categories={categories.map(({ namn }) => namn)}
-                  data={data}
-                />
-              </Suspense>
+              <Budget
+                categories={categories.map(({ namn }) => namn)}
+                data={data}
+              />
             ),
           },
           {
