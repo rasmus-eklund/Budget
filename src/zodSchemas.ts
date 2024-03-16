@@ -31,10 +31,14 @@ export const datesSchema = z.object({
   from: z.coerce.date(),
   to: z.coerce.date(),
 });
-export type tDatesSchema = z.infer<typeof datesSchema>;
+export type FromTo = z.infer<typeof datesSchema>;
 
-export const categorySchema = z.object({
+export const nameSchema = z.object({
   name: z.string().min(2),
-  matches: z.array(z.object({ name: z.string().min(2) })).min(1),
 });
-export type tCategortSchema = z.infer<typeof categorySchema>;
+export type Name = z.infer<typeof nameSchema>;
+
+export const matchSchema = z.object({
+  name: z.string().min(2),
+  budgetgruppId: z.string().cuid2(),
+});
