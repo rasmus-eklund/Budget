@@ -1,9 +1,9 @@
 import { readFileSync, readdirSync, writeFileSync } from "fs";
 import categories from "../categories";
 import { db } from "~/server/db";
-import { txSchema, type Tx } from "~/zodSchemas";
+import { type Tx} from "~/zodSchemas";
 import { join } from "path";
-import { parse } from "csv-parse";
+import parseTxs from "~/utils/parseTxs";
 
 const logsDir = "C:/Users/rasmu/Dropbox/BudgetPython/logs";
 
@@ -17,60 +17,9 @@ const readData = async () => {
         string,
         string,
       ];
-      const raw = readFileSync(join(logsDir, year, personKonto));
-      const tmp: Tx[] = [];
-      await parse(raw, { delimiter: ";", from_line: 2 }).forEach(
-        (row: [string, string, string, string, string, string]) => {
-          const [date, text, typ, budgetgrupp, bel, sal] = row;
-          const datum = new Date(date);
-          const belopp = Number(
-            bel.replace("kr", "").replace(",", ".").replace(" ", ""),
-          );
-          const saldo = Number(
-            sal.replace("kr", "").replace(",", ".").replace(" ", ""),
-          );
-          const tx: Tx = {
-            datum,
-            text,
-            typ,
-            budgetgrupp,
-            belopp,
-            saldo,
-            person,
-            konto,
-            index: 0,
-          };
-          const parsed = txSchema.safeParse(tx);
-          if (!parsed.success) {
-            throw new Error(parsed.error.message);
-          }
-          tmp.push(parsed.data);
-        },
-      );
-      const tmpData = [...tmp.reverse().map((i, index) => ({ ...i, index }))];
-      const reserved = tmpData.filter(({ typ }) => typ === "Reserverat Belopp");
-      if (!!reserved) {
-        reserved.forEach(({ belopp, index, datum }) => {
-          const prev = tmpData[index - 1];
-          if (!prev) {
-            throw new Error(
-              `Cannot iterpolate reserved for date: ${datum.toLocaleTimeString(
-                "sv-SE",
-                {
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
-                },
-              )}, index: ${index}`,
-            );
-          }
-          tmpData[index]!.saldo = prev.saldo + belopp;
-        });
-      }
-      data.push(...tmpData);
+      const buffer = readFileSync(join(logsDir, year, personKonto));
+      const tmp = await parseTxs(buffer, person, konto)
+      data.push(...tmp);
     }
   }
   return data;
