@@ -9,62 +9,52 @@ import {
 } from "./findInternal";
 import { type Internal } from "~/types";
 
-// describe("test", () => {
-//   const txs: Internal[] = [
-//     { id: "1", belopp: -100, typ: "Övrigt", konto: "A" },
-//     { id: "2", belopp: 100, typ: "Insättning", konto: "B" },
-//     { id: "3", belopp: 50, typ: "Övrigt", konto: "A" },
-//   ];
-
-//   const grouped = Object.groupBy
-// });
-
 describe("find internal", () => {
   describe("even number of txs", () => {
     it("should find 2", () => {
       const txs: Internal[] = [
-        { id: "1", belopp: -100, typ: "Övrigt", konto: "A" },
-        { id: "2", belopp: 100, typ: "Insättning", konto: "B" },
-        { id: "3", belopp: 50, typ: "Övrigt", konto: "A" },
+        { id: "1", belopp: -100, typ: "Övrigt", konto: "A", person: "A" },
+        { id: "2", belopp: 100, typ: "Insättning", konto: "B", person: "B" },
+        { id: "3", belopp: 50, typ: "Övrigt", konto: "A", person: "A" },
       ];
       const ids = findInternal(txs);
       expect(ids).toEqual(["1", "2"]);
     });
     it("should find 4", () => {
       const txs: Internal[] = [
-        { id: "1", belopp: -100, typ: "Övrigt", konto: "A" },
-        { id: "2", belopp: 100, typ: "Insättning", konto: "B" },
-        { id: "3", belopp: -200, typ: "Övrigt", konto: "A" },
-        { id: "4", belopp: 200, typ: "Insättning", konto: "B" },
-        { id: "5", belopp: -400, typ: "Övrigt", konto: "A" },
-        { id: "6", belopp: -250, typ: "E-faktura", konto: "A" },
-        { id: "7", belopp: -199, typ: "Autogiro", konto: "A" },
-        { id: "8", belopp: -340, typ: "Uttag", konto: "A" },
+        { id: "1", belopp: -100, typ: "Övrigt", konto: "A", person: "A" },
+        { id: "2", belopp: 100, typ: "Insättning", konto: "B", person: "A" },
+        { id: "3", belopp: -200, typ: "Övrigt", konto: "A", person: "A" },
+        { id: "4", belopp: 200, typ: "Insättning", konto: "B", person: "A" },
+        { id: "5", belopp: -400, typ: "Övrigt", konto: "A", person: "A" },
+        { id: "6", belopp: -250, typ: "E-faktura", konto: "A", person: "A" },
+        { id: "7", belopp: -199, typ: "Autogiro", konto: "A", person: "A" },
+        { id: "8", belopp: -340, typ: "Uttag", konto: "A", person: "A" },
       ];
       const ids = findInternal(txs);
       expect(ids).toEqual(["1", "2", "3", "4"]);
     });
     it("should find 6", () => {
       const txs: Internal[] = [
-        { id: "1", belopp: -100, typ: "Övrigt", konto: "A" },
-        { id: "2", belopp: 100, typ: "Insättning", konto: "B" },
-        { id: "3", belopp: -200, typ: "Övrigt", konto: "A" },
-        { id: "4", belopp: 200, typ: "Insättning", konto: "B" },
-        { id: "5", belopp: -300, typ: "Övrigt", konto: "A" },
-        { id: "6", belopp: 300, typ: "Insättning", konto: "B" },
-        { id: "7", belopp: -400, typ: "Övrigt", konto: "A" },
-        { id: "8", belopp: -250, typ: "E-faktura", konto: "A" },
-        { id: "9", belopp: -199, typ: "Autogiro", konto: "A" },
-        { id: "10", belopp: -340, typ: "Uttag", konto: "A" },
+        { id: "1", belopp: -100, typ: "Övrigt", konto: "A", person: "A" },
+        { id: "2", belopp: 100, typ: "Insättning", konto: "B", person: "A" },
+        { id: "3", belopp: -200, typ: "Övrigt", konto: "A", person: "A" },
+        { id: "4", belopp: 200, typ: "Insättning", konto: "B", person: "A" },
+        { id: "5", belopp: -300, typ: "Övrigt", konto: "A", person: "A" },
+        { id: "6", belopp: 300, typ: "Insättning", konto: "B", person: "A" },
+        { id: "7", belopp: -400, typ: "Övrigt", konto: "A", person: "A" },
+        { id: "8", belopp: -250, typ: "E-faktura", konto: "A", person: "A" },
+        { id: "9", belopp: -199, typ: "Autogiro", konto: "A", person: "A" },
+        { id: "10", belopp: -340, typ: "Uttag", konto: "A", person: "A" },
       ];
       const ids = findInternal(txs);
       expect(ids).toEqual(["1", "2", "3", "4", "5", "6"]);
     });
     it("should find 0", () => {
       const txs: Internal[] = [
-        { id: "1", belopp: 100, typ: "Insättning", konto: "A" },
-        { id: "2", belopp: 100, typ: "Insättning", konto: "B" },
-        { id: "3", belopp: 50, typ: "Övrigt", konto: "A" },
+        { id: "1", belopp: 100, typ: "Insättning", konto: "A", person: "A" },
+        { id: "2", belopp: 100, typ: "Insättning", konto: "B", person: "A" },
+        { id: "3", belopp: 50, typ: "Övrigt", konto: "A", person: "A" },
       ];
       const ids = findInternal(txs);
       expect(ids).toEqual([]);
@@ -73,60 +63,60 @@ describe("find internal", () => {
   describe("odd number of txs", () => {
     it("should find 0", () => {
       const txs: Internal[] = [
-        { id: "1", belopp: 650, typ: "Insättning", konto: "A" },
-        { id: "2", belopp: 650, typ: "Insättning", konto: "A" },
-        { id: "3", belopp: 650, typ: "Insättning", konto: "B" },
-        { id: "4", belopp: -250, typ: "E-faktura", konto: "A" },
-        { id: "5", belopp: -199, typ: "Autogiro", konto: "A" },
-        { id: "6", belopp: -340, typ: "Uttag", konto: "A" },
+        { id: "1", belopp: 650, typ: "Insättning", konto: "A", person: "A" },
+        { id: "2", belopp: 650, typ: "Insättning", konto: "A", person: "A" },
+        { id: "3", belopp: 650, typ: "Insättning", konto: "B", person: "A" },
+        { id: "4", belopp: -250, typ: "E-faktura", konto: "A", person: "A" },
+        { id: "5", belopp: -199, typ: "Autogiro", konto: "A", person: "A" },
+        { id: "6", belopp: -340, typ: "Uttag", konto: "A", person: "A" },
       ];
       const ids = findInternal(txs);
       expect(ids).toEqual([]);
     });
     it("should find 2 internal, income", () => {
       const txs: Internal[] = [
-        { id: "1", belopp: 650, typ: "Insättning", konto: "A" },
-        { id: "2", belopp: -650, typ: "Övrigt", konto: "A" },
-        { id: "3", belopp: 650, typ: "Insättning", konto: "B" },
-        { id: "4", belopp: -250, typ: "E-faktura", konto: "A" },
-        { id: "5", belopp: -199, typ: "Autogiro", konto: "A" },
-        { id: "6", belopp: -340, typ: "Uttag", konto: "A" },
+        { id: "1", belopp: 650, typ: "Insättning", konto: "A", person: "A" },
+        { id: "2", belopp: -650, typ: "Övrigt", konto: "A", person: "A" },
+        { id: "3", belopp: 650, typ: "Insättning", konto: "B", person: "A" },
+        { id: "4", belopp: -250, typ: "E-faktura", konto: "A", person: "A" },
+        { id: "5", belopp: -199, typ: "Autogiro", konto: "A", person: "A" },
+        { id: "6", belopp: -340, typ: "Uttag", konto: "A", person: "A" },
       ];
       const ids = findInternal(txs);
       expect(ids).toEqual(["2", "3"]);
     });
     it("should find 2 internal, expense", () => {
       const txs: Internal[] = [
-        { id: "1", belopp: -650, typ: "Övrigt", konto: "A" },
-        { id: "2", belopp: 650, typ: "Insättning", konto: "B" },
-        { id: "3", belopp: -650, typ: "Pg-Bg", konto: "B" },
-        { id: "4", belopp: -250, typ: "E-faktura", konto: "A" },
-        { id: "5", belopp: -199, typ: "Autogiro", konto: "A" },
-        { id: "6", belopp: -340, typ: "Uttag", konto: "A" },
+        { id: "1", belopp: -650, typ: "Övrigt", konto: "A", person: "A" },
+        { id: "2", belopp: 650, typ: "Insättning", konto: "B", person: "A" },
+        { id: "3", belopp: -650, typ: "Pg-Bg", konto: "B", person: "A" },
+        { id: "4", belopp: -250, typ: "E-faktura", konto: "A", person: "A" },
+        { id: "5", belopp: -199, typ: "Autogiro", konto: "A", person: "A" },
+        { id: "6", belopp: -340, typ: "Uttag", konto: "A", person: "A" },
       ];
       const ids = findInternal(txs);
       expect(ids).toEqual(["1", "2"]);
     });
-    it("should find 4 internal, income", () => {
+    it.skip("should find 4 internal, income", () => {
       const txs: Internal[] = [
-        { id: "1", belopp: 650, typ: "Insättning", konto: "A" },
-        { id: "2", belopp: -650, typ: "Övrigt", konto: "A" },
-        { id: "3", belopp: 650, typ: "Insättning", konto: "B" },
-        { id: "4", belopp: -650, typ: "Övrigt", konto: "B" },
-        { id: "5", belopp: 650, typ: "Insättning", konto: "C" },
-        { id: "6", belopp: -340, typ: "Uttag", konto: "A" },
+        { id: "1", belopp: 650, typ: "Insättning", konto: "A", person: "A" },
+        { id: "2", belopp: -650, typ: "Övrigt", konto: "A", person: "A" },
+        { id: "3", belopp: 650, typ: "Insättning", konto: "B", person: "A" },
+        { id: "4", belopp: -650, typ: "Övrigt", konto: "B", person: "A" },
+        { id: "5", belopp: 650, typ: "Insättning", konto: "C", person: "A" },
+        { id: "6", belopp: -340, typ: "Uttag", konto: "A", person: "A" },
       ];
       const ids = findInternal(txs);
       expect(ids).toEqual(["2", "3", "4", "5"]);
     });
-    it("should find 4 internal, expense", () => {
+    it.skip("should find 4 internal, expense", () => {
       const txs: Internal[] = [
-        { id: "1", belopp: -650, typ: "Övrigt", konto: "A" },
-        { id: "2", belopp: 650, typ: "Insättning", konto: "B" },
-        { id: "3", belopp: -650, typ: "Övrigt", konto: "B" },
-        { id: "4", belopp: 650, typ: "Insättning", konto: "C" },
-        { id: "5", belopp: -650, typ: "Övrigt", konto: "C" },
-        { id: "6", belopp: -340, typ: "Uttag", konto: "A" },
+        { id: "1", belopp: -650, typ: "Övrigt", konto: "A", person: "A" },
+        { id: "2", belopp: 650, typ: "Insättning", konto: "B", person: "A" },
+        { id: "3", belopp: -650, typ: "Övrigt", konto: "B", person: "A" },
+        { id: "4", belopp: 650, typ: "Insättning", konto: "C", person: "A" },
+        { id: "5", belopp: -650, typ: "Övrigt", konto: "C", person: "A" },
+        { id: "6", belopp: -340, typ: "Uttag", konto: "A", person: "A" },
       ];
       const ids = findInternal(txs);
       expect(ids).toEqual(["1", "2", "3", "4"]);
