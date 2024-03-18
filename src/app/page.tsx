@@ -19,6 +19,11 @@ const Home = async () => {
               Kategorier
             </Link>
           </li>
+          <li>
+            <Link href={"/upload"} className="underline">
+              Ladda upp filer
+            </Link>
+          </li>
         </ul>
       )}
     </main>
