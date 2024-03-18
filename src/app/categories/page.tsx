@@ -4,7 +4,7 @@ import { api } from "~/trpc/server";
 import Link from "next/link";
 import capitalize from "~/utils/capitalize";
 import { addCategory, removeCategory } from "./actions/categoriesActions";
-import SubmitButton from "./_components/SubmitButton";
+import SubmitButton from "../_components/SubmitButton";
 import DeleteButton from "./_components/DeleteButton";
 
 const Categories = async () => {
