@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 import { addMatch, removeMatch } from "../actions/categoriesActions";
-import SubmitButton from "../_components/SubmitButton";
+import SubmitButton from "../../_components/SubmitButton";
 import DeleteButton from "../_components/DeleteButton";
 import capitalize from "~/utils/capitalize";
 
