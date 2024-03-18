@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync, writeFileSync } from "fs";
-import categories from "../categories";
+import categories from "../../backup/categories";
 import { db } from "~/server/db";
 import { type Tx} from "~/zodSchemas";
 import { join } from "path";
