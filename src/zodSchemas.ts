@@ -10,6 +10,7 @@ export const types = [
   "E-faktura",
   "Pg-Bg",
   "Utlandsbetalning",
+  "Reserverat Belopp",
 ] as const;
 
 export type Typ = (typeof types)[number];
