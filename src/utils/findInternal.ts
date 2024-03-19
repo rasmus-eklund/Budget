@@ -78,7 +78,7 @@ export const countDuplicates = <T extends { belopp: number; id: string }>(
   return Object.values(tracker).filter(({ count }) => count > 1);
 };
 
-export const markInternal = (txs: (Tx & { id: string })[]) => {
+export const markInternal = (txs: Tx[]) => {
   let internal: string[] = [];
   const dates = distinctDates(txs);
   for (const date of dates) {
