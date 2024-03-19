@@ -12,7 +12,7 @@ type tOption = (typeof sortOptions)[number];
 type TxSort = { belopp: tOption };
 
 type Props = {
-  options: { categories: string[]; people: string[] };
+  options: { categories: string[]; people: string[]; accounts: string[] };
   children: ({
     txFilter,
     sortFilter,
@@ -22,14 +22,19 @@ type Props = {
   }) => ReactNode;
 };
 const TransactionFilter = ({ options, children }: Props) => {
-  const defaultTxFilter: TxFilter = { category: "", person: "", inom: false };
+  const defaultTxFilter: TxFilter = {
+    category: "",
+    person: "",
+    account: "",
+    inom: false,
+  };
   const [txFilter, setTxFilter] = useState<TxFilter>(defaultTxFilter);
   const defaultSortFilter: TxSort = { belopp: "Datum (Lågt-Högt)" };
   const [sortFilter, setSortFilter] = useState<TxSort>(defaultSortFilter);
   const className = {
-    select: "bg-gray-50",
+    select: "bg-black/5",
     label: "text-black/70",
-    option: "bg-gray-100",
+    option: "bg-black/50",
   };
   return (
     <>
@@ -39,7 +44,7 @@ const TransactionFilter = ({ options, children }: Props) => {
       >
         <div className="flex gap-2">
           <select
-            defaultValue={""}
+            value={txFilter.category}
             className={className.select}
             onChange={({ target: { value } }) =>
               setTxFilter((p) => ({ ...p, category: value }))
@@ -55,7 +60,7 @@ const TransactionFilter = ({ options, children }: Props) => {
             ))}
           </select>
           <select
-            defaultValue={""}
+            value={txFilter.person}
             onChange={({ target: { value } }) =>
               setTxFilter((p) => ({ ...p, person: value }))
             }
@@ -66,6 +71,25 @@ const TransactionFilter = ({ options, children }: Props) => {
             {options.people.map((person) => (
               <option className={className.option} key={person} value={person}>
                 {capitalize(person)}
+              </option>
+            ))}
+          </select>
+          <select
+            value={txFilter.account}
+            onChange={({ target: { value } }) =>
+              setTxFilter((p) => ({ ...p, account: value }))
+            }
+          >
+            <option className={className.option} value={""}>
+              Konto
+            </option>
+            {options.accounts.map((account) => (
+              <option
+                className={className.option}
+                key={account}
+                value={account}
+              >
+                {capitalize(account)}
               </option>
             ))}
           </select>
