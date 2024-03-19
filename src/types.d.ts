@@ -1,6 +1,7 @@
 export type TxFilter = {
   category: string;
   person: string;
+  account: string;
   inom: boolean;
 };
 
