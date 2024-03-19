@@ -1,6 +1,6 @@
 "use client";
 import { signIn, signOut } from "next-auth/react";
-import Button from "../Button";
+import { Button } from "~/components/ui/button";
 import { type Session } from "next-auth";
 
 type Props = { session: Session | null };
@@ -14,7 +14,7 @@ const Login = ({ session }: Props) => {
   }
   return (
     <Button
-      callToAction
+      variant={"secondary"}
       data-cy="salt-sign-in"
       onClick={() => void signIn("google")}
     >
