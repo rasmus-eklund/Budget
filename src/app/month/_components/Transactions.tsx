@@ -1,9 +1,10 @@
 "use client";
 import { type RouterOutputs } from "~/trpc/shared";
 import { dateToString, toSek } from "~/utils/formatData";
-import { type Tx } from "~/zodSchemas";
+import type { FromTo, Tx } from "~/zodSchemas";
 import TransactionFilter from "./TransactionFilter";
 import transactionFilter from "~/utils/transactionFilter";
+import { useRouter } from "next/navigation";
 
 type Props = { data: Tx };
 type Data = {
@@ -14,12 +15,12 @@ const Transactions = ({ data }: Data) => {
   const options = {
     people: [...new Set(data.map(({ person }) => person))],
     categories: [...new Set(data.map(({ budgetgrupp }) => budgetgrupp))],
+    accounts: [...new Set(data.map(({ konto }) => konto))],
   };
-
   return (
     <TransactionFilter options={options}>
       {({ txFilter, sortFilter }) => (
-        <ul className="flex h-[calc(100%-40px)] flex-col gap-1 overflow-y-auto">
+        <ul className="flex flex-col gap-1">
           {data
             .filter((d) => transactionFilter({ ...d, filter: txFilter }))
             .sort((a, b) => {
@@ -46,10 +47,21 @@ const Transactions = ({ data }: Data) => {
 const Transaction = ({
   data: { belopp, datum, budgetgrupp, person, konto, typ, text },
 }: Props) => {
+  const router = useRouter();
+  const changeDate = ({ from, to }: FromTo) => {
+    router.push(`/month/?from=${dateToString(from)}&to=${dateToString(to)}`);
+  };
   return (
-    <li className="flex flex-col bg-slate-200 p-1">
+    <li className="flex flex-col rounded-sm bg-black/20 p-1">
       <div className="grid grid-cols-2">
-        <p>{dateToString(datum)}</p>
+        <div>
+          <button
+            className="underline"
+            onClick={() => changeDate({ from: datum, to: datum })}
+          >
+            {dateToString(datum)}
+          </button>
+        </div>
         <p className={`text-right font-mono ${belopp < 0 && "text-red"}`}>
           {toSek(belopp)}
         </p>
