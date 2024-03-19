@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { parse } from "csv-parse";
 import { type Tx, type Typ, txSchema } from "~/zodSchemas";
 
@@ -5,7 +6,7 @@ const parseTxs = async (buffer: Buffer, person: string, konto: string) => {
   const tmp: Tx[] = [];
   await parse(buffer, { delimiter: ";", from_line: 2 }).forEach(
     (row: [string, string, Typ, string, string, string]) => {
-      const [date, text, typ, budgetgrupp, bel, sal] = row;
+      const [date, text, typ, _, bel, sal] = row;
       const datum = new Date(date);
       const belopp = Number(
         bel.replace("kr", "").replace(",", ".").replace(" ", ""),
@@ -14,10 +15,11 @@ const parseTxs = async (buffer: Buffer, person: string, konto: string) => {
         sal.replace("kr", "").replace(",", ".").replace(" ", ""),
       );
       const tx: Tx = {
+        id: randomUUID(),
         datum,
         text,
         typ,
-        budgetgrupp,
+        budgetgrupp: "övrigt",
         belopp,
         saldo,
         person,
