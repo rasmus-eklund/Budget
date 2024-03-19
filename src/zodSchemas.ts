@@ -16,6 +16,7 @@ export const types = [
 export type Typ = (typeof types)[number];
 
 export const txSchema = z.object({
+  id: z.string(),
   datum: z.date(),
   text: z.string(),
   typ: z.enum(types),
