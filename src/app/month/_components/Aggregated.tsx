@@ -2,7 +2,7 @@ import { randomUUID } from "crypto";
 import { toSek } from "~/utils/formatData";
 import { type Tx } from "~/zodSchemas";
 
-type Props = { data: (Tx & { id: string })[]; categories: string[] };
+type Props = { data: Tx[]; categories: string[] };
 
 const Aggregated = ({ data, categories }: Props) => {
   const people = [...new Set(data.map(({ person }) => person))];
