@@ -2,17 +2,10 @@ import { api } from "~/trpc/server";
 import DateFilter from "./_components/DateFilter";
 import Tabs from "../_components/Tabs";
 import Aggregated from "./_components/Aggregated";
-import { Suspense } from "react";
 import parseSearch from "~/utils/parseUrlDates";
-import { type RouterOutputs } from "~/trpc/shared";
 import Transactions from "./_components/Transactions";
 import { getServerAuthSession } from "~/server/auth";
 import { redirect } from "next/navigation";
-
-type Data = {
-  data: RouterOutputs["txs"]["getTxByDates"];
-  categories: string[];
-};
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -28,16 +21,16 @@ const Month = async ({ searchParams }: Props) => {
     api.categories.getAll.query(),
   ]);
   return (
-    <section className="h-full">
+    <section className="flex h-full flex-col gap-5 pt-2">
       <DateFilter />
       <Tabs
         tabs={[
           {
             name: "Budget",
             tab: (
-              <Budget
-                categories={categories.map(({ namn }) => namn)}
+              <Aggregated
                 data={data}
+                categories={categories.map(({ namn }) => namn)}
               />
             ),
           },
@@ -48,16 +41,6 @@ const Month = async ({ searchParams }: Props) => {
         ]}
       />
     </section>
-  );
-};
-
-const Budget = ({ categories, data }: Data) => {
-  return (
-    <div className="flex h-[calc(100%-40px)] flex-col gap-1 overflow-y-auto">
-      <Suspense fallback={<p>Laddar...</p>}>
-        <Aggregated data={data} categories={categories} />
-      </Suspense>
-    </div>
   );
 };
 
