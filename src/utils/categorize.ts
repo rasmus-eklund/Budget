@@ -1,7 +1,7 @@
-function categorize(
+const categorize = (
   text: string,
   categories: { namn: string; matches: string[] }[],
-): string {
+) => {
   for (const { namn, matches } of categories) {
     for (const match of matches) {
       if (text.toLowerCase().includes(match.toLowerCase())) {
@@ -9,7 +9,7 @@ function categorize(
       }
     }
   }
-  return "övrigt";
-}
+  return null;
+};
 
 export default categorize;
