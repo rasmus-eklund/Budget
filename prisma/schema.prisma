@@ -45,7 +45,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
-    Personer      Person[]
+    txs           Txs[]
     Budgetgrupp   Budgetgrupp[]
 }
 
@@ -65,17 +65,11 @@ model Txs {
     budgetgrupp String
     belopp      Decimal
     saldo       Decimal
-    konto       Konto    @relation(fields: [kontoId], references: [id], onDelete: Cascade)
-    kontoId     String
+    konto       String
+    person      String
     index       Int
-}
-
-model Konto {
-    id       String @id @default(cuid())
-    namn     String
-    Txs      Txs[]
-    Person   Person @relation(fields: [personId], references: [id], onDelete: Cascade)
-    personId String
+    User        User     @relation(fields: [userId], references: [id])
+    userId      String
 }
 
 model Budgetgrupp {
@@ -91,12 +85,4 @@ model Match {
     namn          String      @unique
     Budgetgrupp   Budgetgrupp @relation(fields: [budgetgruppId], references: [id], onDelete: Cascade)
     budgetgruppId String
-}
-
-model Person {
-    id     String  @id @default(cuid())
-    namn   String
-    User   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String
-    Konto  Konto[]
 }
