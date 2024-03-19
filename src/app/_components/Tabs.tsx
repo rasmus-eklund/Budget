@@ -7,12 +7,12 @@ type Props = { tabs: { name: string; tab: React.ReactNode }[] };
 const Tabs = ({ tabs }: Props) => {
   const [openTab, setOpenTab] = useState(0);
   return (
-    <div className="flex grow flex-col">
+    <div className="flex flex-col">
       <nav className="flex">
         {tabs.map((tab, n) => (
           <button
             className={`${
-              n === openTab ? "bg-red text-white" : "bg-white text-black"
+              n === openTab ? "bg-red/10 text-black" : "bg-white text-black"
             } rounded-t-md px-4 py-2`}
             key={tab.name}
             onClick={() => setOpenTab(n)}
@@ -21,7 +21,7 @@ const Tabs = ({ tabs }: Props) => {
           </button>
         ))}
       </nav>
-      <div className="grow bg-white">{tabs[openTab]?.tab}</div>
+      <div className="bg-white">{tabs[openTab]?.tab}</div>
     </div>
   );
 };
