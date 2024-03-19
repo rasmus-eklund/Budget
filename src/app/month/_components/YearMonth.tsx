@@ -1,22 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import Button from "~/app/_components/Button";
+import { type ReactNode, useState } from "react";
 import { months } from "~/constants/months";
 import capitalize from "~/utils/capitalize";
 import { decrementMonth, incrementMonth } from "~/utils/datePicker";
 import { type FromTo } from "~/zodSchemas";
 
-type Props = { changeDate: (dates: FromTo) => void };
+type Props = { children: ReactNode; changeDate: (dates: FromTo) => void };
 
-const YearMonth = ({ changeDate }: Props) => {
+const YearMonth = ({ changeDate, children }: Props) => {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
   const [year, setYear] = useState(currentYear);
   const [month, setMonth] = useState(currentMonth);
   return (
     <form
-      className="bg-c3 flex flex-col gap-2 p-3"
+      className="bg-red/10 flex flex-col gap-2 p-3"
       onSubmit={(e) => {
         e.preventDefault();
         changeDate({
@@ -53,9 +52,7 @@ const YearMonth = ({ changeDate }: Props) => {
             </option>
           ))}
         </select>
-        <Button callToAction type="submit">
-          Ok
-        </Button>
+        {children}
       </div>
       <div className="flex items-center gap-5">
         <button
