@@ -4,6 +4,7 @@ import Tabs from "~/app/_components/Tabs";
 import { dateToString } from "~/utils/formatData";
 import FreeDates from "./FreeDates";
 import YearMonth from "./YearMonth";
+import { Button } from "~/components/ui/button";
 
 type FromTo = {
   from: Date;
@@ -18,14 +19,30 @@ const DateFilter = () => {
   };
 
   return (
-    <div>
-      <Tabs
-        tabs={[
-          { name: "År månad", tab: <YearMonth changeDate={changeDate} /> },
-          { name: "Fritt spann", tab: <FreeDates changeDate={changeDate} /> },
-        ]}
-      />
-    </div>
+    <Tabs
+      tabs={[
+        {
+          name: "År månad",
+          tab: (
+            <YearMonth changeDate={changeDate}>
+              <Button variant={"secondary"} type="submit">
+                Ok
+              </Button>
+            </YearMonth>
+          ),
+        },
+        {
+          name: "Fritt spann",
+          tab: (
+            <FreeDates changeDate={changeDate}>
+              <Button variant={"secondary"} type="submit">
+                Ok
+              </Button>
+            </FreeDates>
+          ),
+        },
+      ]}
+    />
   );
 };
 
