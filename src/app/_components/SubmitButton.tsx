@@ -1,14 +1,19 @@
 "use client";
 import { useFormStatus } from "react-dom";
-import Button from "~/app/_components/Button";
+import { ClipLoader } from "react-spinners";
+import { Button } from "~/components/ui/button";
 
 const SubmitButton = () => {
   const { pending } = useFormStatus();
-  return (
-    <Button disabled={pending} callToAction type="submit">
-      Lägg till
-    </Button>
-  );
+  if (pending) {
+    return (
+      <Button disabled>
+        <ClipLoader size={20} className="mr-2" />
+        Vänta
+      </Button>
+    );
+  }
+  return <Button>Lägg till</Button>;
 };
 
 export default SubmitButton;
