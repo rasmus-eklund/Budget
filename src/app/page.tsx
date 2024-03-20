@@ -1,33 +1,14 @@
-import Link from "next/link";
 import { getServerAuthSession } from "~/server/auth";
+import Login from "./_components/header/Login";
+import { redirect } from "next/navigation";
 
 const Home = async () => {
   const session = await getServerAuthSession();
+  if (session) {
+    redirect("/month");
+  }
 
-  return (
-    <main className="p-2">
-      {session ? <p>Välkommen {session.user.name}</p> : <p>Logga in för att se din budget.</p>}
-      {session && (
-        <ul>
-          <li>
-            <Link href={"/month"} className="underline">
-              Månatlig budget
-            </Link>
-          </li>
-          <li>
-            <Link href={"/categories"} className="underline">
-              Kategorier
-            </Link>
-          </li>
-          <li>
-            <Link href={"/upload"} className="underline">
-              Ladda upp filer
-            </Link>
-          </li>
-        </ul>
-      )}
-    </main>
-  );
+  return <main className="p-2">{!session && <Login session={session} />}</main>;
 };
 
 export default Home;
