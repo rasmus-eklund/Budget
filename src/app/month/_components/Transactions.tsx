@@ -5,6 +5,7 @@ import type { FromTo, Tx } from "~/zodSchemas";
 import TransactionFilter from "./TransactionFilter";
 import transactionFilter from "~/utils/transactionFilter";
 import { useRouter } from "next/navigation";
+import transactionSort from "~/utils/transactionSort";
 
 type Props = { data: Tx };
 type Data = {
@@ -23,18 +24,7 @@ const Transactions = ({ data }: Data) => {
         <ul className="flex flex-col gap-1">
           {data
             .filter((d) => transactionFilter({ ...d, filter: txFilter }))
-            .sort((a, b) => {
-              if (sortFilter.belopp === "Datum (Lågt-Högt)") {
-                return Number(a.datum) - Number(b.datum);
-              }
-              if (sortFilter.belopp === "Datum (Högt-Lågt)") {
-                return Number(b.datum) - Number(a.datum);
-              }
-              if (sortFilter.belopp === "Belopp (Lågt-Högt)") {
-                return a.belopp - b.belopp;
-              }
-              return b.belopp - a.belopp;
-            })
+            .sort((a, b) => transactionSort(a, b, sortFilter))
             .map((d) => (
               <Transaction key={d.id} data={d} />
             ))}
@@ -45,7 +35,7 @@ const Transactions = ({ data }: Data) => {
 };
 
 const Transaction = ({
-  data: { belopp, datum, budgetgrupp, person, konto, typ, text },
+  data: { belopp, datum, budgetgrupp, person, konto, text },
 }: Props) => {
   const router = useRouter();
   const changeDate = ({ from, to }: FromTo) => {
@@ -72,7 +62,7 @@ const Transaction = ({
           <p>{budgetgrupp}</p>
         </div>
         <p>
-          {person} ({konto}, {typ})
+          {person} ({konto})
         </p>
       </div>
     </li>
