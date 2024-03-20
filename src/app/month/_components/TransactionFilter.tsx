@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { type TxFilter } from "~/types";
+import type { TxSort, TxFilter } from "~/types";
 import capitalize from "~/utils/capitalize";
 
 const sortOptions = [
@@ -9,7 +9,6 @@ const sortOptions = [
   "Belopp (Högt-Lågt)",
 ] as const;
 type tOption = (typeof sortOptions)[number];
-type TxSort = { belopp: tOption };
 
 type Props = {
   options: { categories: string[]; people: string[]; accounts: string[] };
