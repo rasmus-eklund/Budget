@@ -53,7 +53,7 @@ const Transaction = ({
             {dateToString(datum)}
           </button>
         </div>
-        <p className={`text-right font-mono ${belopp < 0 && "text-red"}`}>
+        <p className={`text-right font-mono ${belopp < 0 && "text-red-600"}`}>
           {toSek(belopp)}
         </p>
       </div>

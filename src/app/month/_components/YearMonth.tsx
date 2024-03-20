@@ -17,7 +17,7 @@ const YearMonth = ({ changeDate, children }: Props) => {
   const [month, setMonth] = useState(currentMonth);
   return (
     <form
-      className="flex flex-col gap-2 bg-red/10 p-3"
+      className="bg-red-200 flex flex-col gap-2 p-3"
       onSubmit={(e) => {
         e.preventDefault();
         changeDate({

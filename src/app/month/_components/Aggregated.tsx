@@ -44,7 +44,7 @@ const Aggregated = ({ data }: Props) => {
                 const sum = sums.find((i) => i.person === person)!.sum;
                 return (
                   <td
-                    className={`text-right ${sum < 0 ? "text-red" : ""}`}
+                    className={`text-right ${sum < 0 ? "text-red-600" : ""}`}
                     key={randomUUID()}
                   >
                     {toSek(sum)}

@@ -12,7 +12,7 @@ const Tabs = ({ tabs }: Props) => {
         {tabs.map((tab, n) => (
           <button
             className={`${
-              n === openTab ? "bg-red/10 text-black" : "bg-white text-black"
+              n === openTab ? "bg-red-200 text-black" : "bg-white text-black"
             } rounded-t-md px-4 py-2`}
             key={tab.name}
             onClick={() => setOpenTab(n)}
