@@ -1,7 +1,9 @@
 "use client";
 
 import { type ReactNode, useState } from "react";
+import { Button } from "~/components/ui/button";
 import { months } from "~/constants/months";
+import Icon from "~/icons/Icon";
 import capitalize from "~/utils/capitalize";
 import { decrementMonth, incrementMonth } from "~/utils/datePicker";
 import { type FromTo } from "~/zodSchemas";
@@ -15,7 +17,7 @@ const YearMonth = ({ changeDate, children }: Props) => {
   const [month, setMonth] = useState(currentMonth);
   return (
     <form
-      className="bg-red/10 flex flex-col gap-2 p-3"
+      className="flex flex-col gap-2 bg-red/10 p-3"
       onSubmit={(e) => {
         e.preventDefault();
         changeDate({
@@ -55,32 +57,36 @@ const YearMonth = ({ changeDate, children }: Props) => {
         {children}
       </div>
       <div className="flex items-center gap-5">
-        <button
+        <Button
+          variant="outline"
+          size="icon"
           onClick={() => {
             const [newYear, newMonth] = decrementMonth(year, month);
             setYear(newYear);
             setMonth(newMonth);
           }}
         >
-          {"<<<"}
-        </button>
-        <button
+          <Icon icon="caretLeft" className="size-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
           onClick={() => {
             const [newYear, newMonth] = incrementMonth(year, month);
             setYear(newYear);
             setMonth(newMonth);
           }}
         >
-          {">>>"}
-        </button>
-        <button
+          <Icon icon="caretRight" className="size-4" />
+        </Button>
+        <Button
           onClick={() => {
             setYear(currentYear);
             setMonth(currentMonth);
           }}
         >
           Nuvarande månad
-        </button>
+        </Button>
       </div>
     </form>
   );
