@@ -48,3 +48,12 @@ export const decrementMonth = (
     return [year - 1, 11];
   }
 };
+
+export const getCurrentYearMonth = () => {
+  const year = new Date().getFullYear();
+  const month = new Date().getMonth();
+  return {
+    from: new Date(year, month, 1),
+    to: new Date(year, month + 1, 0),
+  };
+};
