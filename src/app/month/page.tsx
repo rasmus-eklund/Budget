@@ -16,10 +16,7 @@ const Month = async ({ searchParams }: Props) => {
     redirect("/");
   }
   const dates = parseSearch({ searchParams });
-  const [data, categories] = await Promise.all([
-    api.txs.getTxByDates.query(dates),
-    api.categories.getAll.query(),
-  ]);
+  const data = await api.txs.getTxByDates.query(dates);
   return (
     <section className="flex h-full flex-col gap-5 pt-2">
       <DateFilter />
@@ -27,12 +24,7 @@ const Month = async ({ searchParams }: Props) => {
         tabs={[
           {
             name: "Budget",
-            tab: (
-              <Aggregated
-                data={data}
-                categories={categories.map(({ namn }) => namn)}
-              />
-            ),
+            tab: <Aggregated data={data} />,
           },
           {
             name: "Transaktioner",
