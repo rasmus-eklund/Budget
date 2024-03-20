@@ -1,11 +1,15 @@
 import { randomUUID } from "crypto";
+import capitalize from "~/utils/capitalize";
 import { toSek } from "~/utils/formatData";
 import { type Tx } from "~/zodSchemas";
 
-type Props = { data: Tx[]; categories: string[] };
+type Props = { data: Tx[] };
 
-const Aggregated = ({ data, categories }: Props) => {
+const Aggregated = ({ data }: Props) => {
   const people = [...new Set(data.map(({ person }) => person))];
+  const categories = [
+    ...new Set(data.map(({ budgetgrupp }) => budgetgrupp)),
+  ].filter((i) => i != "inom");
   const getPersonCatSum = (person: string, category: string) =>
     data
       .filter((tx) => tx.person === person && tx.budgetgrupp === category)
@@ -30,7 +34,7 @@ const Aggregated = ({ data, categories }: Props) => {
           }));
           return (
             <tr key={randomUUID()}>
-              <td>{category}</td>
+              <td>{capitalize(category)}</td>
               {people.map((person) => {
                 const sum = sums.find((i) => i.person === person)!.sum;
                 return (
