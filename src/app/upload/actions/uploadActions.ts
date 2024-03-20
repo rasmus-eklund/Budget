@@ -4,6 +4,7 @@ import { markInternal } from "~/utils/findInternal";
 import { type Tx } from "~/zodSchemas";
 import parseTxs from "~/utils/parseTxs";
 import { api } from "~/trpc/server";
+import { revalidatePath } from "next/cache";
 
 export const upload = async (formData: FormData) => {
   const files = formData.getAll("files") as File[];
@@ -25,4 +26,5 @@ export const upload = async (formData: FormData) => {
   }
   const internal = markInternal(data);
   await api.txs.replaceYear.mutate({ txs: internal, year: Number(year) });
+  revalidatePath("/upload");
 };
