@@ -30,9 +30,9 @@ describe("Transaction filter", () => {
       account: "",
     };
     const expected = [
-      { person: "A", budgetgrupp: "mat" },
-      { person: "A", budgetgrupp: "transport" },
-      { person: "A", budgetgrupp: "inom" },
+      { person: "A", budgetgrupp: "mat", konto: "A" },
+      { person: "A", budgetgrupp: "transport", konto: "B" },
+      { person: "A", budgetgrupp: "inom", konto: "A" },
     ];
     const result = data.filter((d) => transactionFilter({ ...d, filter }));
     expect(result).toEqual(expected);
@@ -44,7 +44,7 @@ describe("Transaction filter", () => {
       person: "A",
       account: "",
     };
-    const expected = [{ person: "A", budgetgrupp: "mat" }];
+    const expected = [{ person: "A", budgetgrupp: "mat", konto: "A" }];
     const result = data.filter((d) => transactionFilter({ ...d, filter }));
     expect(result).toEqual(expected);
   });
@@ -56,10 +56,10 @@ describe("Transaction filter", () => {
       account: "",
     };
     const expected = [
-      { person: "A", budgetgrupp: "mat" },
-      { person: "A", budgetgrupp: "transport" },
-      { person: "B", budgetgrupp: "mat" },
-      { person: "B", budgetgrupp: "transport" },
+      { person: "A", budgetgrupp: "mat", konto: "A" },
+      { person: "A", budgetgrupp: "transport", konto: "B" },
+      { person: "B", budgetgrupp: "mat", konto: "B" },
+      { person: "B", budgetgrupp: "transport", konto: "A" },
     ];
     const result = data.filter((d) => transactionFilter({ ...d, filter }));
     expect(result).toEqual(expected);
@@ -72,8 +72,21 @@ describe("Transaction filter", () => {
       account: "",
     };
     const expected = [
-      { person: "A", budgetgrupp: "mat" },
-      { person: "A", budgetgrupp: "transport" },
+      { person: "A", budgetgrupp: "mat", konto: "A" },
+      { person: "A", budgetgrupp: "transport", konto: "B" },
+    ];
+    const result = data.filter((d) => transactionFilter({ ...d, filter }));
+    expect(result).toEqual(expected);
+  });
+  it("should show only person A and account A and hide inom", () => {
+    const filter: TxFilter = {
+      category: "",
+      inom: false,
+      person: "A",
+      account: "A",
+    };
+    const expected = [
+      { person: "A", budgetgrupp: "mat", konto: "A" },
     ];
     const result = data.filter((d) => transactionFilter({ ...d, filter }));
     expect(result).toEqual(expected);
