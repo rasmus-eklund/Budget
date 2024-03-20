@@ -56,7 +56,7 @@ const YearMonth = ({ changeDate, children }: Props) => {
         </select>
         {children}
       </div>
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-2">
         <Button
           variant="outline"
           size="icon"
@@ -68,6 +68,7 @@ const YearMonth = ({ changeDate, children }: Props) => {
         >
           <Icon icon="caretLeft" className="size-4" />
         </Button>
+        <p>Månad</p>
         <Button
           variant="outline"
           size="icon"
