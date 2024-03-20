@@ -25,12 +25,12 @@ const readData = async () => {
   return data;
 };
 
-const createTxs = async (txs: Tx[], kontoId: string) => {
+const createTxs = async (txs: Tx[], userId: string) => {
   const data = txs.map(({ saldo, belopp, ...rest }) => ({
     ...rest,
     saldo: saldo.toFixed(2),
     belopp: belopp.toFixed(2),
-    kontoId,
+    userId,
   }));
   await db.txs.createMany({ data });
 };
