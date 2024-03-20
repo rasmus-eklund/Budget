@@ -6,6 +6,7 @@ import TransactionFilter from "./TransactionFilter";
 import transactionFilter from "~/utils/transactionFilter";
 import { useRouter } from "next/navigation";
 import transactionSort from "~/utils/transactionSort";
+import capitalize from "~/utils/capitalize";
 
 type Props = { data: Tx };
 type Data = {
@@ -46,7 +47,7 @@ const Transaction = ({
       <div className="grid grid-cols-2">
         <div>
           <button
-            className="underline"
+            className="font-bold"
             onClick={() => changeDate({ from: datum, to: datum })}
           >
             {dateToString(datum)}
@@ -59,7 +60,9 @@ const Transaction = ({
       <div className="flex justify-between gap-2">
         <div className="flex gap-2">
           <p className="whitespace-nowrap">{text} - </p>
-          <p>{budgetgrupp}</p>
+          <p>
+            <i>{capitalize(budgetgrupp)}</i>
+          </p>
         </div>
         <p>
           {person} ({konto})
