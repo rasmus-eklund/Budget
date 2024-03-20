@@ -60,6 +60,7 @@ const FreeDates = ({ children, changeDate }: Props) => {
         >
           <Icon icon="caretLeft" className="size-4" />
         </Button>
+        <p>Dag</p>
         <Button
           variant="outline"
           size="icon"
