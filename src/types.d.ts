@@ -5,6 +5,8 @@ export type TxFilter = {
   inom: boolean;
 };
 
+type TxSort = { belopp: tOption };
+
 export type Internal = {
   id: string;
   belopp: number;
