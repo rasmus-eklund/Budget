@@ -7,9 +7,14 @@ type Props = { data: Tx[] };
 
 const Aggregated = ({ data }: Props) => {
   const people = [...new Set(data.map(({ person }) => person))];
+  const cats = [...new Set(data.map(({ budgetgrupp }) => budgetgrupp))].filter(
+    (i) => i != "inom",
+  );
   const categories = [
-    ...new Set(data.map(({ budgetgrupp }) => budgetgrupp)),
-  ].filter((i) => i != "inom");
+    ...cats.filter((x) => x === "inkomst"),
+    ...cats.filter((x) => x !== "inkomst" && x !== "övrigt"),
+    ...cats.filter((x) => x === "övrigt"),
+  ];
   const getPersonCatSum = (person: string, category: string) =>
     data
       .filter((tx) => tx.person === person && tx.budgetgrupp === category)
