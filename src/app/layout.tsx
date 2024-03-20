@@ -18,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="w-screen">
-      <body className="flex w-screen flex-col items-center">
+    <html lang="en">
+      <body className="flex flex-col items-center">
         <TRPCReactProvider cookies={cookies().toString()}>
           <Header />
           <Toaster position="bottom-center" />
