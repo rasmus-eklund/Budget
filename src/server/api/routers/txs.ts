@@ -63,4 +63,15 @@ export const txsRouter = createTRPCRouter({
       }));
       await ctx.db.txs.createMany({ data });
     }),
+  getCountsPerYear: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+    const result: CountPerYear[] = await ctx.db
+      .$queryRaw`SELECT COUNT(*), EXTRACT(YEAR FROM "public"."Txs"."datum") as year 
+      FROM "public"."Txs" 
+      WHERE "public"."Txs"."userId" = ${userId} 
+      GROUP BY year;`;
+    return result.map((i) => ({ ...i, count: Number(i.count) }));
+  }),
 });
+
+type CountPerYear = { count: bigint; year: number };
