@@ -33,7 +33,7 @@ const TransactionFilter = ({ options, children }: Props) => {
   const className = {
     select: "bg-black/5",
     label: "text-black/70",
-    option: "bg-black/50",
+    option: "bg-black/5",
   };
   return (
     <>

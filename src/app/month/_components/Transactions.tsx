@@ -22,7 +22,7 @@ const Transactions = ({ data }: Data) => {
   return (
     <TransactionFilter options={options}>
       {({ txFilter, sortFilter }) => (
-        <ul className="flex flex-col gap-1">
+        <ul className="flex flex-col gap-2">
           {data
             .filter((d) => transactionFilter({ ...d, filter: txFilter }))
             .sort((a, b) => transactionSort(a, b, sortFilter))
@@ -43,7 +43,7 @@ const Transaction = ({
     router.push(`/month/?from=${dateToString(from)}&to=${dateToString(to)}`);
   };
   return (
-    <li className="flex flex-col rounded-sm bg-black/20 p-1">
+    <li className="bg-red-50 flex flex-col rounded-sm p-1">
       <div className="grid grid-cols-2">
         <div>
           <button
@@ -59,7 +59,7 @@ const Transaction = ({
       </div>
       <div className="flex justify-between gap-2">
         <div className="flex gap-2">
-          <p className="whitespace-nowrap">{text} - </p>
+          <p className="text-clip whitespace-nowrap">{text} - </p>
           <p>
             <i>{capitalize(budgetgrupp)}</i>
           </p>
