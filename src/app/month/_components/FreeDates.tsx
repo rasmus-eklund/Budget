@@ -1,6 +1,8 @@
 "use client";
 
 import { type ReactNode, useState } from "react";
+import { Button } from "~/components/ui/button";
+import Icon from "~/icons/Icon";
 import { minusOneDay, plusOneDay } from "~/utils/datePicker";
 import { dateToString } from "~/utils/formatData";
 import { type FromTo } from "~/zodSchemas";
@@ -51,8 +53,20 @@ const FreeDates = ({ children, changeDate }: Props) => {
         {children}
       </div>
       <div className="flex items-center gap-4">
-        <button onClick={() => setFilter(minusOneDay)}>{"<"}</button>
-        <button onClick={() => setFilter(plusOneDay)}>{">"}</button>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setFilter(minusOneDay)}
+        >
+          <Icon icon="caretLeft" className="size-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setFilter(plusOneDay)}
+        >
+          <Icon icon="caretRight" className="size-4" />
+        </Button>
       </div>
     </form>
   );
