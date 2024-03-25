@@ -7,6 +7,7 @@ import transactionFilter from "~/utils/transactionFilter";
 import { useRouter } from "next/navigation";
 import transactionSort from "~/utils/transactionSort";
 import capitalize from "~/utils/capitalize";
+import { useMemo } from "react";
 
 type Props = { data: Tx };
 type Data = {
@@ -14,11 +15,21 @@ type Data = {
 };
 
 const Transactions = ({ data }: Data) => {
-  const options = {
-    people: [...new Set(data.map(({ person }) => person))],
-    categories: [...new Set(data.map(({ budgetgrupp }) => budgetgrupp))],
-    accounts: [...new Set(data.map(({ konto }) => konto))],
-  };
+  const options = useMemo(() => {
+    const people = new Set<string>();
+    const categories = new Set<string>();
+    const accounts = new Set<string>();
+    data.forEach(({ person, budgetgrupp, konto }) => {
+      people.add(person);
+      categories.add(budgetgrupp);
+      accounts.add(konto);
+    });
+    return {
+      people: [...people],
+      categories: [...categories],
+      accounts: [...accounts],
+    };
+  }, [data]);
   return (
     <TransactionFilter options={options}>
       {({ txFilter, sortFilter }) => (
@@ -47,7 +58,7 @@ const Transaction = ({
       <div className="grid grid-cols-2">
         <div>
           <button
-            className="font-bold"
+            className="font-semibold"
             onClick={() => changeDate({ from: datum, to: datum })}
           >
             {dateToString(datum)}
@@ -58,13 +69,10 @@ const Transaction = ({
         </p>
       </div>
       <div className="flex justify-between gap-2">
-        <div className="flex gap-2">
-          <p className="text-clip whitespace-nowrap">{text} - </p>
-          <p>
-            <i>{capitalize(budgetgrupp)}</i>
-          </p>
-        </div>
-        <p>
+        <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+          {text} - <i>{capitalize(budgetgrupp)}</i>
+        </p>
+        <p className="whitespace-nowrap">
           {person} ({konto})
         </p>
       </div>

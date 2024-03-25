@@ -38,7 +38,7 @@ const TransactionFilter = ({ options, children }: Props) => {
   return (
     <>
       <form
-        className="flex justify-between p-1"
+        className="flex flex-col p-1 md:flex-row gap-2 md:justify-between"
         onSubmit={(e) => e.preventDefault()}
       >
         <div className="flex gap-2">
@@ -59,6 +59,7 @@ const TransactionFilter = ({ options, children }: Props) => {
             ))}
           </select>
           <select
+            className={className.select}
             value={txFilter.person}
             onChange={({ target: { value } }) =>
               setTxFilter((p) => ({ ...p, person: value }))
@@ -74,6 +75,7 @@ const TransactionFilter = ({ options, children }: Props) => {
             ))}
           </select>
           <select
+            className={className.select}
             value={txFilter.account}
             onChange={({ target: { value } }) =>
               setTxFilter((p) => ({ ...p, account: value }))
