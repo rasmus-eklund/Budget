@@ -1,21 +1,18 @@
 "use client";
 import { useRouter } from "next/navigation";
-import Tabs from "~/app/_components/Tabs";
-import { dateToString } from "~/utils/formatData";
+import Tabs from "~/components/common/Tabs";
+import { dateToString } from "~/lib/utils/formatData";
 import FreeDates from "./FreeDates";
 import YearMonth from "./YearMonth";
 import { Button } from "~/components/ui/button";
+import type { FromTo } from "~/lib/zodSchemas";
 
-type FromTo = {
-  from: Date;
-  to: Date;
-};
-
-const DateFilter = () => {
+type Props = { path: string };
+const DateFilter = ({ path }: Props) => {
   const router = useRouter();
 
   const changeDate = ({ from, to }: FromTo) => {
-    router.push(`/month/?from=${dateToString(from)}&to=${dateToString(to)}`);
+    router.push(`/${path}/?from=${dateToString(from)}&to=${dateToString(to)}`);
   };
 
   return (

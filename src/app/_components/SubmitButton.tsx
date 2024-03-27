@@ -3,7 +3,7 @@ import { useFormStatus } from "react-dom";
 import { ClipLoader } from "react-spinners";
 import { Button } from "~/components/ui/button";
 
-const SubmitButton = () => {
+const SubmitButton = ({ text }: { text: string }) => {
   const { pending } = useFormStatus();
   if (pending) {
     return (
@@ -13,7 +13,7 @@ const SubmitButton = () => {
       </Button>
     );
   }
-  return <Button>Lägg till</Button>;
+  return <Button>{text}</Button>;
 };
 
 export default SubmitButton;

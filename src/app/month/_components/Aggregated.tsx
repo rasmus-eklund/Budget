@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
-import capitalize from "~/utils/capitalize";
-import { toSek } from "~/utils/formatData";
-import { type Tx } from "~/zodSchemas";
+import capitalize from "~/lib/utils/capitalize";
+import { toSek } from "~/lib/utils/formatData";
+import { type Tx } from "~/lib/zodSchemas";
 
 type Props = { data: Tx[] };
 

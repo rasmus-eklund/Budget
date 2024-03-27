@@ -14,3 +14,5 @@ export type Internal = {
   konto: string;
   person: string;
 };
+
+export type DbTx = { year: number; date: Date; data: string };

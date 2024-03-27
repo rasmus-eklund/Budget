@@ -2,11 +2,11 @@
 
 import { type ReactNode, useState } from "react";
 import { Button } from "~/components/ui/button";
-import { months } from "~/constants/months";
-import Icon from "~/icons/Icon";
-import capitalize from "~/utils/capitalize";
-import { decrementMonth, incrementMonth } from "~/utils/datePicker";
-import { type FromTo } from "~/zodSchemas";
+import { months } from "~/lib/constants/months";
+import Icon from "~/lib/icons/Icon";
+import capitalize from "~/lib/utils/capitalize";
+import { decrementMonth, incrementMonth } from "~/lib/utils/datePicker";
+import { type FromTo } from "~/lib/zodSchemas";
 
 type Props = { children: ReactNode; changeDate: (dates: FromTo) => void };
 
@@ -17,7 +17,7 @@ const YearMonth = ({ changeDate, children }: Props) => {
   const [month, setMonth] = useState(currentMonth);
   return (
     <form
-      className="bg-red-200 flex flex-col gap-2 p-3"
+      className="flex flex-col gap-2 bg-red-200 p-3"
       onSubmit={(e) => {
         e.preventDefault();
         changeDate({

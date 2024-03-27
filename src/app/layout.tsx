@@ -1,12 +1,14 @@
 import "~/styles/globals.css";
-import { cookies } from "next/headers";
-import { Toaster } from "react-hot-toast";
-import { type Metadata } from "next";
 
-import { TRPCReactProvider } from "~/trpc/react";
+import { Inter } from "next/font/google";
 import Header from "./_components/header/Header";
 
-export const metadata: Metadata = {
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
+export const metadata = {
   title: "RICA Banken",
   description: "Hantera din privatekonomi",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
@@ -19,14 +21,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="flex flex-col items-center">
-        <TRPCReactProvider cookies={cookies().toString()}>
-          <Header />
-          <Toaster position="bottom-center" />
-          <main className="flex h-[calc(100vh-56px)] w-full max-w-5xl flex-col">
-            {children}
-          </main>
-        </TRPCReactProvider>
+      <body className={`font-sans ${inter.variable}`}>
+        <Header />
+        <main className="flex h-[calc(100vh-56px)] w-full max-w-5xl flex-col">
+          {children}
+        </main>
       </body>
     </html>
   );

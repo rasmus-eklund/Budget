@@ -1,9 +1,12 @@
 import { redirect } from "next/navigation";
 import { getServerAuthSession } from "~/server/auth";
-import { api } from "~/trpc/server";
 import Link from "next/link";
-import capitalize from "~/utils/capitalize";
-import { addCategory, removeCategory } from "./actions/categoriesActions";
+import capitalize from "~/lib/utils/capitalize";
+import {
+  addCategory,
+  getAllCategories,
+  removeCategory,
+} from "./actions/categoriesActions";
 import SubmitButton from "../_components/SubmitButton";
 import DeleteButton from "./_components/DeleteButton";
 
@@ -12,16 +15,16 @@ const Categories = async () => {
   if (!session) {
     redirect("/");
   }
-  const data = await api.categories.getAll.query();
+  const data = await getAllCategories();
   return (
     <div className="flex flex-col gap-4">
       <ul className="flex flex-col gap-1 p-2">
-        {data.map(({ id, namn }) => (
+        {data.map(({ id, name }) => (
           <li
-            className="flex h-8 items-center justify-between border-b border-b-red"
+            className="border-b-red flex h-8 items-center justify-between border-b"
             key={id}
           >
-            <Link href={`/categories/${id}`}>{capitalize(namn)}</Link>
+            <Link href={`/categories/${id}`}>{capitalize(name)}</Link>
             <form action={removeCategory}>
               <input hidden name="id" type="text" defaultValue={id} />
               <DeleteButton />
@@ -32,12 +35,12 @@ const Categories = async () => {
       <form className="flex items-center gap-2" action={addCategory}>
         <label htmlFor="name">Kategori</label>
         <input
-          className="border-b border-b-red outline-none"
+          className="border-b-red border-b outline-none"
           id="name"
           name="name"
           placeholder="Ny kategori"
         />
-        <SubmitButton />
+        <SubmitButton text="Lägg till" />
       </form>
     </div>
   );

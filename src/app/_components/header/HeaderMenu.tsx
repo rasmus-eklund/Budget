@@ -11,7 +11,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import Icon from "~/icons/Icon";
+import Icon from "~/lib/icons/Icon";
 
 const Menu = () => {
   const [page, setPage] = React.useState("month");
@@ -39,6 +39,10 @@ const Menu = () => {
           <DropdownMenuRadioItem value="categories">
             <Icon icon="cog" className="mr-2 size-6" />
             Kategorier
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="test">
+            <Icon icon="cog" className="mr-2 size-6" />
+            Test
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>

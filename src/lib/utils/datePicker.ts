@@ -1,4 +1,4 @@
-import { type FromTo } from "~/zodSchemas";
+import { type FromTo } from "~/lib/zodSchemas";
 
 export const minusOneMonth = (p: FromTo) => {
   const from = new Date(p.from);

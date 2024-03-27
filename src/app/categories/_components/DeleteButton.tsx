@@ -1,7 +1,7 @@
 "use client";
 import { useFormStatus } from "react-dom";
 import { ClipLoader } from "react-spinners";
-import Icon from "~/icons/Icon";
+import Icon from "~/lib/icons/Icon";
 
 const DeleteButton = () => {
   const { pending } = useFormStatus();

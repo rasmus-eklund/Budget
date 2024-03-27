@@ -2,10 +2,10 @@
 
 import { type ReactNode, useState } from "react";
 import { Button } from "~/components/ui/button";
-import Icon from "~/icons/Icon";
-import { minusOneDay, plusOneDay } from "~/utils/datePicker";
-import { dateToString } from "~/utils/formatData";
-import { type FromTo } from "~/zodSchemas";
+import Icon from "~/lib/icons/Icon";
+import { minusOneDay, plusOneDay } from "~/lib/utils/datePicker";
+import { dateToString } from "~/lib/utils/formatData";
+import { type FromTo } from "~/lib/zodSchemas";
 
 type Props = { children: ReactNode; changeDate: (dates: FromTo) => void };
 
@@ -27,7 +27,7 @@ const FreeDates = ({ children, changeDate }: Props) => {
         e.preventDefault();
         changeDate(filter);
       }}
-      className="bg-red-200 flex flex-col p-3"
+      className="flex flex-col bg-red-200 p-3"
     >
       <div className="flex items-center gap-2">
         <label htmlFor="start-date">Från</label>

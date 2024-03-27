@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import type { TxSort, TxFilter } from "~/types";
-import capitalize from "~/utils/capitalize";
+import capitalize from "~/lib/utils/capitalize";
 
 const sortOptions = [
   "Datum (Lågt-Högt)",

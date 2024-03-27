@@ -1,6 +1,6 @@
 import { type Internal } from "~/types";
-import { dateToString } from "~/utils/formatData";
-import { type Tx } from "~/zodSchemas";
+import { dateToString } from "~/lib/utils/formatData";
+import { type Tx } from "~/lib/zodSchemas";
 
 export const findInternal = (day: Internal[]) => {
   const internal: Internal[] = [];

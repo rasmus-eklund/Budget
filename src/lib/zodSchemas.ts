@@ -44,3 +44,14 @@ export const matchSchema = z.object({
   name: z.string().min(2),
   budgetgruppId: z.string().cuid2(),
 });
+
+export const dbTxSchema = z.object({
+  text: z.string(),
+  typ: z.enum(types),
+  budgetgrupp: z.string(),
+  belopp: z.coerce.number(),
+  saldo: z.coerce.number(),
+  konto: z.string(),
+  person: z.string(),
+  index: z.coerce.number(),
+});

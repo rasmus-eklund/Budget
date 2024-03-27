@@ -1,13 +1,16 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
-
-import { env } from "~/env.mjs";
-import { db } from "~/server/db";
+import { type Adapter } from "next-auth/adapters";
 import GoogleProvider from "next-auth/providers/google";
+
+import { env } from "~/env";
+import { db } from "~/server/db";
+import { createTable } from "~/server/db/schema";
+
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -44,7 +47,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
-  adapter: PrismaAdapter(db),
+  adapter: DrizzleAdapter(db, createTable) as Adapter,
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,

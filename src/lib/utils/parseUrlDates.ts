@@ -1,4 +1,4 @@
-import { datesSchema, type FromTo } from "~/zodSchemas";
+import { datesSchema, type FromTo } from "~/lib/zodSchemas";
 import { getCurrentYearMonth } from "./datePicker";
 
 type Props = {
