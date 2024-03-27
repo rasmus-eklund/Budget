@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 
 import { Button } from "~/components/ui/button";
@@ -14,7 +14,9 @@ import {
 import Icon from "~/lib/icons/Icon";
 
 const Menu = () => {
-  const [page, setPage] = React.useState("month");
+  const pathname = usePathname();
+  const currentPath = pathname.split("/")[1];
+  const [page, setPage] = React.useState(currentPath ?? "month");
   const router = useRouter();
   React.useEffect(() => {
     router.push(`/${page}`);
@@ -39,10 +41,6 @@ const Menu = () => {
           <DropdownMenuRadioItem value="categories">
             <Icon icon="cog" className="mr-2 size-6" />
             Kategorier
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="test">
-            <Icon icon="cog" className="mr-2 size-6" />
-            Test
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
