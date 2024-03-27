@@ -20,9 +20,9 @@ const Menu = () => {
     router.push(`/${page}`);
   }, [page, router]);
   return (
-    <DropdownMenu className="bg-white">
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon">
+        <Button size="icon" className="bg-white">
           <Icon icon="hamburgerMenu" className="size-8" />
         </Button>
       </DropdownMenuTrigger>
