@@ -1,5 +1,6 @@
 import { parse } from "papaparse";
 import { type Tx, type Typ, txSchema } from "~/lib/zodSchemas";
+import { v4 as uuid } from "uuid";
 
 const parseTxs = async (buffer: Buffer, person: string, konto: string) => {
   const decoder = new TextDecoder("utf-8");
@@ -33,7 +34,7 @@ const parseTxs = async (buffer: Buffer, person: string, konto: string) => {
             sal.replace("kr", "").replace(",", ".").replace(" ", ""),
           );
           const tx: Tx = {
-            id: row_nr.toString(),
+            id: uuid(),
             datum,
             text,
             typ,
