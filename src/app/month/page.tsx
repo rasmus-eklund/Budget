@@ -10,11 +10,7 @@ const Month = async () => {
   if (!session) {
     redirect("/");
   }
-  return (
-    <section className="flex h-full flex-col gap-5 pt-2">
-      <PasswordLayer/>
-    </section>
-  );
+  return <PasswordLayer />;
 };
 
 export default Month;

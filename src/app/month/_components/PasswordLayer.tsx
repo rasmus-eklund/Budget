@@ -19,7 +19,7 @@ const PasswordLayer = () => {
   };
 
   return (
-    <div>
+    <section className="flex h-full flex-col gap-5 p-2">
       <PasswordForm
         submitPassword={(password) => {
           setPassword(password);
@@ -45,7 +45,7 @@ const PasswordLayer = () => {
       ) : (
         <p>{data.message}</p>
       )}
-    </div>
+    </section>
   );
 };
 
