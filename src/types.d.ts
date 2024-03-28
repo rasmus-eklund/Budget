@@ -15,4 +15,4 @@ export type Internal = {
   person: string;
 };
 
-export type DbTx = { year: number; date: Date; data: string };
+export type DbTx = { id: string; year: number; date: Date; data: string };
