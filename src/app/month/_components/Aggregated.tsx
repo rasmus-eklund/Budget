@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { v4 as uuid } from "uuid";
 import capitalize from "~/lib/utils/capitalize";
 import { toSek } from "~/lib/utils/formatData";
 import { type Tx } from "~/lib/zodSchemas";
@@ -25,7 +25,7 @@ const Aggregated = ({ data }: Props) => {
         <tr>
           <th className="text-left">Kategori</th>
           {people.map((person) => (
-            <th className="text-right" key={randomUUID()}>
+            <th className="text-right" key={uuid()}>
               {person}
             </th>
           ))}
@@ -38,14 +38,14 @@ const Aggregated = ({ data }: Props) => {
             sum: getPersonCatSum(person, category),
           }));
           return (
-            <tr key={randomUUID()}>
+            <tr key={uuid()}>
               <td>{capitalize(category)}</td>
               {people.map((person) => {
                 const sum = sums.find((i) => i.person === person)!.sum;
                 return (
                   <td
                     className={`text-right ${sum < 0 ? "text-red-600" : ""}`}
-                    key={randomUUID()}
+                    key={uuid()}
                   >
                     {toSek(sum)}
                   </td>
