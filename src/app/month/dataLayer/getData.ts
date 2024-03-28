@@ -54,10 +54,16 @@ const getTxByDates = async ({
     );
   try {
     const decryptedData = await decryptTxs(encryptedData, password);
-    const data = decryptedData.map((i) => ({
-      ...i,
-      budgetgrupp: categorize(i.text, categories) ?? i.budgetgrupp,
-    }));
+    const data = decryptedData.map((i) => {
+      const budgetgrupp =
+        i.belopp > 0
+          ? "inkomst"
+          : categorize(i.text, categories) ?? i.budgetgrupp;
+      return {
+        ...i,
+        budgetgrupp,
+      };
+    });
     return { success: true, data, message: "success" };
   } catch (error) {
     const message = getErrorMessage(error);
