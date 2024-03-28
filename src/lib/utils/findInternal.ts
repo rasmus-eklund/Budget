@@ -8,7 +8,6 @@ export const findInternal = (day: Internal[]) => {
 
   for (const { ids } of counts) {
     const txs = day.filter((tx) => ids.includes(tx.id));
-
     if (txs.length % 2 === 0 && sumBelopp(txs) === 0) {
       const halfIncome = txs
         .map((i) => (i.typ === "Insättning" ? -1 : 1))
@@ -44,7 +43,7 @@ const findInternalOddThree = (txs: Internal[]) => {
     (key) => accounts[key]!.length > 1,
   );
   if (!groupAccount) {
-    throw new Error("Cound not find the one...");
+    throw new Error("Cound not find the one...\n" + JSON.stringify(txs));
   }
   const matchingTransaction = accounts[groupAccount]!.find(
     (transaction) => transaction.belopp === totalSum,
