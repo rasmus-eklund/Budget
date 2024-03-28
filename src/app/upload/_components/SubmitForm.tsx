@@ -18,6 +18,7 @@ const SubmitForm = ({ txs, year }: Props) => {
         year,
         date: datum,
         data: encrypted.toString(),
+        id: "1",
       };
       transactions.push(tx);
     }
