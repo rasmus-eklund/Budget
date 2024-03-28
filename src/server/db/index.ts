@@ -8,7 +8,6 @@ import * as schema from "./schema";
  * Cache the database connection in development. This avoids creating a new connection on every HMR
  * update.
  */
-console.log("Init db: " + env.DATABASE_URL);
 const globalForDb = globalThis as unknown as {
   conn: postgres.Sql | undefined;
 };
