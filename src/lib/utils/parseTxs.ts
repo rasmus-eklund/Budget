@@ -17,12 +17,12 @@ const parseTxs = async (buffer: Buffer, person: string, konto: string) => {
         }
 
         const tmp: Tx[] = [];
-        result.data.slice(1).forEach((row, row_nr) => {
-          const [date, text, typ, _, bel, sal] = row as [
+        result.data.slice(1).forEach((row) => {
+          const [date, text, typ, , bel, sal] = row as [
             string,
             string,
             Typ,
-            string,
+            undefined,
             string,
             string,
           ];
