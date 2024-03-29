@@ -46,19 +46,12 @@ const Transaction = ({
   data: { belopp, datum, budgetgrupp, person, konto, text },
 }: Props) => {
   const router = useRouter();
-  const changeDate = ({ from, to }: FromTo) => {
-    router.push(`/month/?from=${dateToString(from)}&to=${dateToString(to)}`);
-  };
+
   return (
     <li className="flex flex-col rounded-sm bg-red-50 p-1 shadow-lg">
       <div className="grid grid-cols-2">
         <div>
-          <button
-            className="font-semibold"
-            onClick={() => changeDate({ from: datum, to: datum })}
-          >
-            {dateToString(datum)}
-          </button>
+          <p className="font-semibold">{dateToString(datum)}</p>
         </div>
         <p className={`text-right font-mono ${belopp < 0 && "text-red-600"}`}>
           {toSek(belopp)}
