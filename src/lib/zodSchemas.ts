@@ -55,3 +55,13 @@ export const dbTxSchema = z.object({
   person: z.string(),
   index: z.coerce.number(),
 });
+
+export const passwordsSchema = z
+  .object({
+    password: z.string().min(4, "Minst 4 tecken"),
+    confirm: z.string().min(4, "Minst 4 tecken"),
+  })
+  .refine((data) => data.confirm === data.password, {
+    path: ["confirm"],
+    message: "Lösenorden matchar inte",
+  });
