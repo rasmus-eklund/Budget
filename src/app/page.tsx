@@ -1,16 +1,16 @@
-"use client";
-// import { redirect } from "next/navigation";
-import Login from "~/components/common/Login";
-// import { getServerAuthSession } from "~/server/auth";
+import { redirect } from "next/navigation";
+import { getServerAuthSession } from "~/server/auth";
 
-const HomePage = () => {
-  // const session = await getServerAuthSession();
-  // if (session) {
-  //   redirect("/month");
-  // }
-
-  // return <main className="p-2">{!session && <Login session={session} />}</main>;
-  return <Login session={null} />;
+const HomePage = async () => {
+  const session = await getServerAuthSession();
+  if (session) {
+    redirect("/month");
+  }
+  return (
+    <main className="p-2">
+      {!session && <p>Välkommen till din RICA Banken!</p>}
+    </main>
+  );
 };
 
 export default HomePage;
