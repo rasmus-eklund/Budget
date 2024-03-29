@@ -7,7 +7,7 @@ import { dbTxSchema, type FromTo, type Tx } from "~/lib/zodSchemas";
 import { db } from "~/server/db";
 import { category, txs } from "~/server/db/schema";
 import getUserId from "~/server/getUserId";
-import { DbTx } from "~/types";
+import type { DbTx } from "~/types";
 
 const decryptTxs = async (
   encryptedData: DbTx[],

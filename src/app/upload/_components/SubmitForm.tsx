@@ -4,7 +4,7 @@ import type { DbTx } from "~/types";
 import { encryptWithAES } from "~/lib/utils/encryption";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import type { z } from "zod";
 import { ErrorMessage } from "@hookform/error-message";
 import { Button } from "~/components/ui/button";
 import { ClipLoader } from "react-spinners";
@@ -32,7 +32,7 @@ const SubmitForm = ({ txs, onSubmit }: Props) => {
         year,
         date: datum,
         data: encrypted.toString(),
-        id: "1",
+        id,
       };
       transactions.push(tx);
       years.add(year);

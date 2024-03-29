@@ -1,9 +1,8 @@
 "use client";
 import { dateToString, toSek } from "~/lib/utils/formatData";
-import type { FromTo, Tx } from "~/lib/zodSchemas";
+import type { Tx } from "~/lib/zodSchemas";
 import TransactionFilter from "./TransactionFilter";
 import transactionFilter from "~/lib/utils/transactionFilter";
-import { useRouter } from "next/navigation";
 import transactionSort from "~/lib/utils/transactionSort";
 import capitalize from "~/lib/utils/capitalize";
 import { useMemo } from "react";
@@ -45,8 +44,6 @@ const Transactions = ({ data }: { data: Tx[] }) => {
 const Transaction = ({
   data: { belopp, datum, budgetgrupp, person, konto, text },
 }: Props) => {
-  const router = useRouter();
-
   return (
     <li className="flex flex-col rounded-sm bg-red-50 p-1 shadow-lg">
       <div className="grid grid-cols-2">
