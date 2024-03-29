@@ -7,9 +7,9 @@ import { Button } from "~/components/ui/button";
 import { markInternal } from "~/lib/utils/findInternal";
 import parseTxs from "~/lib/utils/parseTxs";
 import type { Tx } from "~/lib/zodSchemas";
-import { upload } from "../actions/uploadActions";
-import SubmitButton from "~/app/_components/SubmitButton";
 import SubmitForm from "./SubmitForm";
+import { getFileNames, hasCorrectFilenames } from "./fileFormHelpers";
+import toast from "react-hot-toast";
 
 const readFiles = async (files: FileList) => {
   const data: Tx[] = [];
@@ -26,20 +26,10 @@ const readFiles = async (files: FileList) => {
 };
 
 const FileForm = () => {
-  const [year, setYear] = useState(new Date().getFullYear());
-  const [files, setFiles] = useState<FileList | undefined>();
-  const [txs, setTxs] = useState<Tx[] | undefined>();
+  const [files, setFiles] = useState<FileList | null>(null);
+  const [txs, setTxs] = useState<Tx[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const getFileNames = (files: FileList | undefined) => {
-    if (!files) {
-      return [];
-    }
-    const names: string[] = [];
-    for (const file of files) {
-      names.push(file.name);
-    }
-    return names;
-  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!files) {
@@ -50,8 +40,8 @@ const FileForm = () => {
     const y = new Set(data.map((i) => i.datum.getFullYear()));
     if (y.size !== 1) {
       setLoading(false);
+      throw new Error("Ett år per uppladdning");
     }
-    setYear([...y][0]!);
     setLoading(false);
     setTxs(data);
   };
@@ -64,9 +54,17 @@ const FileForm = () => {
           <i> Person_Konto.csv</i>
         </p>
         <input
+          onClick={() => {
+            setTxs(null);
+            setFiles(null);
+          }}
           onChange={(e) => {
             const files = e.target.files;
             if (files) {
+              const test = hasCorrectFilenames(files);
+              if (!test.success) {
+                return toast.error(`Felaktigt formaterat filnamn ${test.name}`);
+              }
               setFiles(files);
             }
           }}
@@ -75,11 +73,13 @@ const FileForm = () => {
           multiple
           accept=".csv"
         />
-        <ul>
-          {getFileNames(files).map((name, i) => (
-            <li key={`${name}_${i}`}>{name}</li>
-          ))}
-        </ul>
+        {files && (
+          <ul>
+            {getFileNames(files).map((name, i) => (
+              <li key={`${name}_${i}`}>{name}</li>
+            ))}
+          </ul>
+        )}
         <div>
           <p>Att bearbeta filer kan ta flera minuter.</p>
           {loading ? (
@@ -88,13 +88,19 @@ const FileForm = () => {
               Vänta
             </Button>
           ) : (
-            <Button>Bearbeta</Button>
+            <Button disabled={!files || files.length === 0}>Bearbeta</Button>
           )}
         </div>
       </form>
       {txs ? (
         <div>
-          <SubmitForm txs={txs} year={year} />
+          <SubmitForm
+            txs={txs}
+            onSubmit={() => {
+              setFiles(null);
+              setTxs(null);
+            }}
+          />
           <Transactions data={txs} />
         </div>
       ) : null}
