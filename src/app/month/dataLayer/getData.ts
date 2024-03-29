@@ -55,13 +55,15 @@ const getTxByDates = async ({
   try {
     const decryptedData = await decryptTxs(encryptedData, password);
     const data = decryptedData.map((i) => {
-      const budgetgrupp =
-        i.belopp > 0
-          ? "inkomst"
-          : categorize(i.text, categories) ?? i.budgetgrupp;
+      if (i.budgetgrupp === "inom") {
+        return i;
+      }
+      if (i.belopp > 0) {
+        return { ...i, budgetgrupp: "inkomst" };
+      }
       return {
         ...i,
-        budgetgrupp,
+        budgetgrupp: categorize(i.text, categories) ?? i.budgetgrupp,
       };
     });
     return { success: true, data, message: "success" };
