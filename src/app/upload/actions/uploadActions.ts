@@ -6,7 +6,6 @@ import { and, eq, sql } from "drizzle-orm";
 import { txs } from "~/server/db/schema";
 import getUserId from "~/server/getUserId";
 import type { DbTx } from "~/types";
-import { randomUUID } from "crypto";
 
 export const upload = async ({
   transactions,
@@ -19,9 +18,7 @@ export const upload = async ({
   await db
     .delete(txs)
     .where(and(eq(txs.year, Number(year)), eq(txs.userId, userId)));
-  await db
-    .insert(txs)
-    .values(transactions.map((i) => ({ ...i, id: randomUUID(), userId })));
+  await db.insert(txs).values(transactions.map((i) => ({ ...i, userId })));
   revalidatePath("/upload");
 };
 
