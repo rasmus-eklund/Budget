@@ -4,7 +4,7 @@ import DateFilter from "./DateFilter";
 import Tabs from "~/components/common/Tabs";
 import Aggregated from "./Aggregated";
 import Transactions from "./Transactions";
-import { FromTo, Tx } from "~/lib/zodSchemas";
+import type { FromTo, Tx } from "~/lib/zodSchemas";
 import getTxByDates from "../dataLayer/getData";
 
 const PasswordLayer = () => {
