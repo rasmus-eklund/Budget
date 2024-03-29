@@ -3,7 +3,13 @@ import { useFormStatus } from "react-dom";
 import { ClipLoader } from "react-spinners";
 import { Button } from "~/components/ui/button";
 
-const SubmitButton = ({ text }: { text: string }) => {
+const SubmitButton = ({
+  text,
+  disabled = false,
+}: {
+  text: string;
+  disabled?: boolean;
+}) => {
   const { pending } = useFormStatus();
   if (pending) {
     return (
@@ -13,7 +19,7 @@ const SubmitButton = ({ text }: { text: string }) => {
       </Button>
     );
   }
-  return <Button>{text}</Button>;
+  return <Button disabled={disabled}>{text}</Button>;
 };
 
 export default SubmitButton;
