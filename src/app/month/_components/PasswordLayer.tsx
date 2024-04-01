@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import DateFilter from "./DateFilter";
 import Tabs from "~/components/common/Tabs";
 import Aggregated from "./Aggregated";
@@ -34,7 +34,11 @@ const PasswordLayer = () => {
           tabs={[
             {
               name: "Budget",
-              tab: <Aggregated data={data.data} />,
+              tab: (
+                <Suspense fallback={<Loading />}>
+                  <Aggregated data={data.data} />
+                </Suspense>
+              ),
             },
             {
               name: "Transaktioner",
@@ -70,6 +74,10 @@ const PasswordForm = ({ submitPassword }: PasswordFormProps) => {
       <button type="submit">Ok</button>
     </form>
   );
+};
+
+const Loading = () => {
+  return <p>Laddar...</p>;
 };
 
 export default PasswordLayer;
