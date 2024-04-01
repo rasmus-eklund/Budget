@@ -50,7 +50,7 @@ const FileForm = () => {
       <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
         <p>
           Transaktionerna du laddar upp kommer att ersätta alla transaktioner
-          från året du väljer. Filnamn måste vara i form av
+          från året du väljer. Filnamn måste ha formatet
           <i> Person_Konto.csv</i>
         </p>
         <input
