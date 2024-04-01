@@ -18,9 +18,6 @@ const Menu = () => {
   const currentPath = pathname.split("/")[1];
   const [page, setPage] = React.useState(currentPath ?? "month");
   const router = useRouter();
-  React.useEffect(() => {
-    router.push(`/${page}`);
-  }, [page, router]);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -29,7 +26,13 @@ const Menu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-44">
-        <DropdownMenuRadioGroup value={page} onValueChange={setPage}>
+        <DropdownMenuRadioGroup
+          value={page}
+          onValueChange={(newPage) => {
+            setPage(newPage);
+            router.push(`/${newPage}`);
+          }}
+        >
           <DropdownMenuRadioItem value="month">
             <Icon icon="cash" className="mr-2 size-6" />
             Transaktioner
