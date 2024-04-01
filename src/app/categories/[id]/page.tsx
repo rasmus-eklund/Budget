@@ -46,10 +46,13 @@ const page = async ({ params: { id: categoryId } }: Props) => {
           </li>
         ))}
       </ul>
-      <form className="flex items-center gap-2" action={addMatch}>
+      <form
+        className="flex items-center justify-between gap-2"
+        action={addMatch}
+      >
         <label htmlFor="name">Match</label>
         <input
-          className="border-b-red border-b outline-none"
+          className="border-b-red min-w-0 border-b outline-none"
           id="name"
           name="name"
           type="text"
