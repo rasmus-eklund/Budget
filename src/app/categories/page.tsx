@@ -17,8 +17,8 @@ const Categories = async () => {
   }
   const data = await getAllCategories();
   return (
-    <div className="flex flex-col gap-4">
-      <ul className="flex flex-col gap-1 p-2">
+    <div className="flex flex-col gap-6 p-2">
+      <ul className="flex flex-col gap-1">
         {data.map(({ id, name }) => (
           <li
             className="border-b-red flex h-8 items-center justify-between border-b"
@@ -32,10 +32,13 @@ const Categories = async () => {
           </li>
         ))}
       </ul>
-      <form className="flex items-center gap-2" action={addCategory}>
+      <form
+        className="flex items-center justify-between gap-2"
+        action={addCategory}
+      >
         <label htmlFor="name">Kategori</label>
         <input
-          className="border-b-red border-b outline-none"
+          className="border-b-red min-w-0 border-b outline-none"
           id="name"
           name="name"
           placeholder="Ny kategori"
