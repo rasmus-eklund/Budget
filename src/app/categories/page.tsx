@@ -33,7 +33,7 @@ const Categories = async () => {
         ))}
       </ul>
       <form
-        className="flex items-center justify-between gap-2"
+        className="flex items-center justify-between gap-2 md:justify-start"
         action={addCategory}
       >
         <label htmlFor="name">Kategori</label>
