@@ -76,15 +76,24 @@ export const countDuplicates = <T extends { belopp: number; id: string }>(
   }
   return Object.values(tracker).filter(({ count }) => count > 1);
 };
-
-export const markInternal = (txs: Tx[]) => {
+const pause = () => {
+  return new Promise((r) => setTimeout(r, 0));
+};
+export const markInternal = async (
+  txs: Tx[],
+  update: (percent: number) => void,
+) => {
   let internal: string[] = [];
   const dates = distinctDates(txs);
+  let counter = 0;
   for (const date of dates) {
+    await pause();
+    update(counter / dates.length);
     const day = getDay(txs, date);
     if (hasDuplicates(day)) {
       internal = [...internal, ...findInternal(day)];
     }
+    counter++;
   }
   return txs.map((tx) => ({
     ...tx,

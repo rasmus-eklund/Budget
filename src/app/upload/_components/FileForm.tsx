@@ -11,7 +11,10 @@ import SubmitForm from "./SubmitForm";
 import { getFileNames, hasCorrectFilenames } from "./fileFormHelpers";
 import toast from "react-hot-toast";
 
-const readFiles = async (files: FileList) => {
+const readFiles = async (
+  files: FileList,
+  updatePercent: (percent: number) => void,
+) => {
   const data: Tx[] = [];
   for (const file of files) {
     const bytes = await file.arrayBuffer();
@@ -21,29 +24,33 @@ const readFiles = async (files: FileList) => {
     const txs = await parseTxs(buffer, person, konto);
     data.push(...txs);
   }
-  const internal = markInternal(data);
+  const internal = markInternal(data, updatePercent);
   return internal;
 };
 
 const FileForm = () => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [txs, setTxs] = useState<Tx[] | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState({ loading: false, percent: 0 });
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!files) {
       throw new Error("no files");
     }
-    setLoading(true);
-    const data = await readFiles(files);
+    setLoading({ loading: true, percent: 0 });
+    const data = await readFiles(files, (percent) => {
+      if (percent) {
+        setLoading({ loading: true, percent });
+      }
+    });
     const y = new Set(data.map((i) => i.datum.getFullYear()));
     if (y.size !== 1) {
-      setLoading(false);
+      setLoading({ loading: false, percent: 0 });
       throw new Error("Ett år per uppladdning");
     }
-    setLoading(false);
     setTxs(data);
+    setLoading({ loading: false, percent: 0 });
   };
   return (
     <div>
@@ -82,10 +89,10 @@ const FileForm = () => {
         )}
         <div>
           <p>Att bearbeta filer kan ta flera minuter.</p>
-          {loading ? (
+          {loading.loading ? (
             <Button disabled>
               <ClipLoader size={20} className="mr-2" />
-              Vänta
+              Vänta {(loading.percent * 100).toFixed(0)} %
             </Button>
           ) : (
             <Button disabled={!files || files.length === 0}>Bearbeta</Button>
