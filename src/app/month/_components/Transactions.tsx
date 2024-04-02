@@ -7,9 +7,9 @@ import transactionSort from "~/lib/utils/transactionSort";
 import capitalize from "~/lib/utils/capitalize";
 import { useMemo } from "react";
 
-type Props = { data: Tx };
+type Props = { data: Tx[] };
 
-const Transactions = ({ data }: { data: Tx[] }) => {
+const Transactions = ({ data }: Props) => {
   const options = useMemo(() => {
     const people = new Set<string>();
     const categories = new Set<string>();
@@ -41,9 +41,11 @@ const Transactions = ({ data }: { data: Tx[] }) => {
   );
 };
 
+type TransactionProps = { data: Tx };
+
 const Transaction = ({
   data: { belopp, datum, budgetgrupp, person, konto, text },
-}: Props) => {
+}: TransactionProps) => {
   return (
     <li className="flex flex-col rounded-sm bg-red-50 p-1 shadow-lg">
       <div className="grid grid-cols-2">

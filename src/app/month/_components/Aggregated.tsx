@@ -3,9 +3,12 @@ import capitalize from "~/lib/utils/capitalize";
 import { toSek } from "~/lib/utils/formatData";
 import { type Tx } from "~/lib/zodSchemas";
 
-type Props = { data: Tx[] };
+type Props = { data: Tx[]; loading: boolean };
 
-const Aggregated = ({ data }: Props) => {
+const Aggregated = ({ loading, data }: Props) => {
+  if (loading) {
+    return <p>Laddar...</p>;
+  }
   const people = [...new Set(data.map(({ person }) => person))];
   const cats = [...new Set(data.map(({ budgetgrupp }) => budgetgrupp))].filter(
     (i) => i != "inom",

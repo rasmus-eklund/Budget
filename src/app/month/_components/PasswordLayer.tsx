@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import DateFilter from "./DateFilter";
 import Tabs from "~/components/common/Tabs";
 import Aggregated from "./Aggregated";
@@ -9,13 +9,16 @@ import getTxByDates from "../dataLayer/getData";
 
 const PasswordLayer = () => {
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<{
     success: boolean;
     data: Tx[];
     message: string;
   }>({ success: false, data: [], message: "Ange lösenord" });
   const handlePwSubmit = async (password: string, dates: FromTo) => {
+    setLoading(true);
     setData(await getTxByDates({ dates, password }));
+    setLoading(false);
   };
 
   return (
@@ -34,15 +37,11 @@ const PasswordLayer = () => {
           tabs={[
             {
               name: "Budget",
-              tab: (
-                <Suspense fallback={<Loading />}>
-                  <Aggregated data={data.data} />
-                </Suspense>
-              ),
+              tab: <Aggregated data={data.data} loading={loading} />,
             },
             {
               name: "Transaktioner",
-              tab: <Transactions data={data.data} />,
+              tab: <TxsLoading data={data.data} loading={loading} />,
             },
           ]}
         />
@@ -51,6 +50,14 @@ const PasswordLayer = () => {
       )}
     </section>
   );
+};
+
+type TxsLoadingProps = { data: Tx[]; loading: boolean };
+const TxsLoading = ({ data, loading }: TxsLoadingProps) => {
+  if (loading) {
+    return <p>Laddar...</p>;
+  }
+  return <Transactions data={data} />;
 };
 
 type PasswordFormProps = { submitPassword: (password: string) => void };
@@ -74,10 +81,6 @@ const PasswordForm = ({ submitPassword }: PasswordFormProps) => {
       <button type="submit">Ok</button>
     </form>
   );
-};
-
-const Loading = () => {
-  return <p>Laddar...</p>;
 };
 
 export default PasswordLayer;
