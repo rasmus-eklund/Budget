@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
 import DateFilter from "./DateFilter";
-import Tabs from "~/components/common/Tabs";
 import Aggregated from "./Aggregated";
 import Transactions from "./Transactions";
 import type { FromTo, Tx } from "~/lib/zodSchemas";
 import getTxByDates from "../dataLayer/getData";
 import { getCurrentYearMonth } from "~/lib/utils/datePicker";
 import getUnique from "~/lib/utils/getUnique";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 const PasswordLayer = () => {
   const [password, setPassword] = useState("");
@@ -18,7 +18,7 @@ const PasswordLayer = () => {
     message: string;
   }>({ success: false, data: [], message: "Ange lösenord" });
   const options = getUnique(data.data);
-  const handlePwSubmit = async (password: string, dates: FromTo) => {
+  const getData = async (password: string, dates: FromTo) => {
     setLoading(true);
     setData(await getTxByDates({ dates, password }));
     setLoading(false);
@@ -29,37 +29,29 @@ const PasswordLayer = () => {
         submitPassword={async (password) => {
           const dates = getCurrentYearMonth();
           setPassword(password);
-          await handlePwSubmit(password, dates);
+          await getData(password, dates);
         }}
       />
       {password ? (
-        <DateFilter changeDates={(dates) => handlePwSubmit(password, dates)} />
+        <DateFilter changeDates={(dates) => getData(password, dates)} />
       ) : null}
       {data.success ? (
-        <Tabs
-          tabs={[
-            {
-              name: "Budget",
-              tab: (
-                <Aggregated
-                  data={data.data}
-                  options={options}
-                  loading={loading}
-                />
-              ),
-            },
-            {
-              name: "Transaktioner",
-              tab: (
-                <Transactions
-                  data={data.data}
-                  options={options}
-                  loading={loading}
-                />
-              ),
-            },
-          ]}
-        />
+        <Tabs defaultValue="aggregated">
+          <TabsList>
+            <TabsTrigger value="aggregated">Budget</TabsTrigger>
+            <TabsTrigger value="transactions">Transaktioner</TabsTrigger>
+          </TabsList>
+          <TabsContent value="aggregated">
+            <Aggregated data={data.data} options={options} loading={loading} />
+          </TabsContent>
+          <TabsContent value="transactions">
+            <Transactions
+              data={data.data}
+              options={options}
+              loading={loading}
+            />
+          </TabsContent>
+        </Tabs>
       ) : (
         <p>{data.message}</p>
       )}
