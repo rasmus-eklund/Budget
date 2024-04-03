@@ -94,6 +94,8 @@ const TransactionFilter = ({ options, children }: Props) => {
               </option>
             ))}
           </select>
+        </div>
+        <div className="mr-auto flex gap-2">
           <label className={className.label} htmlFor="inomCheck">
             Visa inom
           </label>

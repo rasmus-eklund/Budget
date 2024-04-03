@@ -26,7 +26,7 @@ const YearMonth = ({ changeDate, children }: Props) => {
         });
       }}
     >
-      <div className="flex items-center gap-2 rounded-md">
+      <div className="flex items-center justify-between gap-2 rounded-md md:justify-normal">
         <label htmlFor="year">År</label>
         <select
           id="year"
@@ -56,7 +56,7 @@ const YearMonth = ({ changeDate, children }: Props) => {
         </select>
         {children}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-2 md:justify-normal">
         <Button
           variant="outline"
           size="icon"

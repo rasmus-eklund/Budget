@@ -27,7 +27,7 @@ const FreeDates = ({ children, changeDate }: Props) => {
         e.preventDefault();
         changeDate(filter);
       }}
-      className="flex flex-col p-3"
+      className="flex flex-col gap-2 p-3"
     >
       <div className="flex flex-col gap-2 md:flex-row md:items-center">
         <div className="flex gap-2">
@@ -55,7 +55,7 @@ const FreeDates = ({ children, changeDate }: Props) => {
         </div>
         {children}
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between gap-4 md:justify-normal">
         <Button
           variant="outline"
           size="icon"
