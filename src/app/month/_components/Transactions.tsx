@@ -5,26 +5,14 @@ import TransactionFilter from "./TransactionFilter";
 import transactionFilter from "~/lib/utils/transactionFilter";
 import transactionSort from "~/lib/utils/transactionSort";
 import capitalize from "~/lib/utils/capitalize";
-import { useMemo } from "react";
+import type { Uniques } from "~/types";
 
-type Props = { data: Tx[] };
+type Props = { data: Tx[]; options: Uniques; loading: boolean };
 
-const Transactions = ({ data }: Props) => {
-  const options = useMemo(() => {
-    const people = new Set<string>();
-    const categories = new Set<string>();
-    const accounts = new Set<string>();
-    data.forEach(({ person, budgetgrupp, konto }) => {
-      people.add(person);
-      categories.add(budgetgrupp);
-      accounts.add(konto);
-    });
-    return {
-      people: [...people],
-      categories: [...categories],
-      accounts: [...accounts],
-    };
-  }, [data]);
+const Transactions = ({ data, options, loading }: Props) => {
+  if (loading) {
+    return <p>Laddar...</p>;
+  }
   return (
     <TransactionFilter options={options}>
       {({ txFilter, sortFilter }) => (
