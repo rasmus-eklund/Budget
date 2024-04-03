@@ -7,6 +7,7 @@ import Transactions from "./Transactions";
 import type { FromTo, Tx } from "~/lib/zodSchemas";
 import getTxByDates from "../dataLayer/getData";
 import { getCurrentYearMonth } from "~/lib/utils/datePicker";
+import getUnique from "~/lib/utils/getUnique";
 
 const PasswordLayer = () => {
   const [password, setPassword] = useState("");
@@ -16,12 +17,12 @@ const PasswordLayer = () => {
     data: Tx[];
     message: string;
   }>({ success: false, data: [], message: "Ange lösenord" });
+  const options = getUnique(data.data);
   const handlePwSubmit = async (password: string, dates: FromTo) => {
     setLoading(true);
     setData(await getTxByDates({ dates, password }));
     setLoading(false);
   };
-
   return (
     <section className="flex h-full flex-col gap-5 p-2">
       <PasswordForm
@@ -39,11 +40,23 @@ const PasswordLayer = () => {
           tabs={[
             {
               name: "Budget",
-              tab: <Aggregated data={data.data} loading={loading} />,
+              tab: (
+                <Aggregated
+                  data={data.data}
+                  options={options}
+                  loading={loading}
+                />
+              ),
             },
             {
               name: "Transaktioner",
-              tab: <TxsLoading data={data.data} loading={loading} />,
+              tab: (
+                <Transactions
+                  data={data.data}
+                  options={options}
+                  loading={loading}
+                />
+              ),
             },
           ]}
         />
@@ -52,14 +65,6 @@ const PasswordLayer = () => {
       )}
     </section>
   );
-};
-
-type TxsLoadingProps = { data: Tx[]; loading: boolean };
-const TxsLoading = ({ data, loading }: TxsLoadingProps) => {
-  if (loading) {
-    return <p>Laddar...</p>;
-  }
-  return <Transactions data={data} />;
 };
 
 type PasswordFormProps = { submitPassword: (password: string) => void };
