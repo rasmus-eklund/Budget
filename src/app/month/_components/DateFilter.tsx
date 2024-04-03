@@ -15,14 +15,14 @@ const DateFilter = ({ changeDates }: Props) => {
       </TabsList>
       <TabsContent value="month">
         <YearMonth changeDate={changeDates}>
-          <Button variant={"secondary"} type="submit">
+          <Button variant={"default"} type="submit">
             Ok
           </Button>
         </YearMonth>
       </TabsContent>
       <TabsContent value="free">
         <FreeDates changeDate={changeDates}>
-          <Button variant={"secondary"} type="submit">
+          <Button variant={"default"} type="submit">
             Ok
           </Button>
         </FreeDates>

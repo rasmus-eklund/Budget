@@ -17,7 +17,7 @@ const YearMonth = ({ changeDate, children }: Props) => {
   const [month, setMonth] = useState(currentMonth);
   return (
     <form
-      className="flex flex-col gap-2 bg-red-200 p-3"
+      className="flex flex-col gap-2 p-3"
       onSubmit={(e) => {
         e.preventDefault();
         changeDate({
@@ -81,6 +81,7 @@ const YearMonth = ({ changeDate, children }: Props) => {
           <Icon icon="caretRight" className="size-4" />
         </Button>
         <Button
+          variant={"secondary"}
           onClick={() => {
             setYear(currentYear);
             setMonth(currentMonth);

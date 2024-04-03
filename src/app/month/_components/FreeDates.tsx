@@ -27,7 +27,7 @@ const FreeDates = ({ children, changeDate }: Props) => {
         e.preventDefault();
         changeDate(filter);
       }}
-      className="flex flex-col bg-red-200 p-3"
+      className="flex flex-col p-3"
     >
       <div className="flex items-center gap-2">
         <label htmlFor="start-date">Från</label>
