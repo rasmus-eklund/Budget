@@ -5,7 +5,7 @@ import TransactionFilter from "./TransactionFilter";
 import transactionFilter from "~/lib/utils/transactionFilter";
 import transactionSort from "~/lib/utils/transactionSort";
 import capitalize from "~/lib/utils/capitalize";
-import type { Uniques } from "~/types";
+import type { TxFilter, TxSort, Uniques } from "~/types";
 
 type Props = { data: Tx[]; options: Uniques; loading: boolean };
 
@@ -13,16 +13,23 @@ const Transactions = ({ data, options, loading }: Props) => {
   if (loading) {
     return <p>Laddar...</p>;
   }
+  const applyTransactionFilters = ({
+    data,
+    filters: { txFilter, txSort },
+  }: {
+    data: Tx[];
+    filters: { txFilter: TxFilter; txSort: TxSort };
+  }) =>
+    data
+      .filter((d) => transactionFilter({ ...d, filter: txFilter }))
+      .sort((a, b) => transactionSort(a, b, txSort));
   return (
     <TransactionFilter options={options}>
-      {({ txFilter, sortFilter }) => (
+      {(filters) => (
         <ul className="flex flex-col gap-2">
-          {data
-            .filter((d) => transactionFilter({ ...d, filter: txFilter }))
-            .sort((a, b) => transactionSort(a, b, sortFilter))
-            .map((d) => (
-              <Transaction key={d.id} data={d} />
-            ))}
+          {applyTransactionFilters({ data, filters }).map((d) => (
+            <Transaction key={d.id} data={d} />
+          ))}
         </ul>
       )}
     </TransactionFilter>
