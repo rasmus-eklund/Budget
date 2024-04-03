@@ -29,27 +29,30 @@ const FreeDates = ({ children, changeDate }: Props) => {
       }}
       className="flex flex-col p-3"
     >
-      <div className="flex items-center gap-2">
-        <label htmlFor="start-date">Från</label>
-        <input
-          id="start-date"
-          type="date"
-          className="px-1"
-          value={dateToString(filter.from)}
-          onChange={({ target: { value } }) =>
-            setFilter((p) => ({ ...p, from: new Date(value) }))
-          }
-        />
-
-        <label htmlFor="end-date">Till</label>
-        <input
-          id="end-date"
-          type="date"
-          value={dateToString(filter.to)}
-          onChange={({ target: { value } }) =>
-            setFilter((p) => ({ ...p, to: new Date(value) }))
-          }
-        />
+      <div className="flex flex-col gap-2 md:flex-row md:items-center">
+        <div className="flex gap-2">
+          <label htmlFor="start-date">Från</label>
+          <input
+            id="start-date"
+            type="date"
+            className="px-1"
+            value={dateToString(filter.from)}
+            onChange={({ target: { value } }) =>
+              setFilter((p) => ({ ...p, from: new Date(value) }))
+            }
+          />
+        </div>
+        <div className="flex gap-2">
+          <label htmlFor="end-date">Till</label>
+          <input
+            id="end-date"
+            type="date"
+            value={dateToString(filter.to)}
+            onChange={({ target: { value } }) =>
+              setFilter((p) => ({ ...p, to: new Date(value) }))
+            }
+          />
+        </div>
         {children}
       </div>
       <div className="flex items-center gap-4">
