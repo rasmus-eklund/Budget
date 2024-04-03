@@ -2,22 +2,19 @@ import { v4 as uuid } from "uuid";
 import capitalize from "~/lib/utils/capitalize";
 import { toSek } from "~/lib/utils/formatData";
 import { type Tx } from "~/lib/zodSchemas";
+import type { Uniques } from "~/types";
 
-type Props = { data: Tx[]; loading: boolean };
+type Props = { data: Tx[]; options: Uniques; loading: boolean };
 
-const Aggregated = ({ loading, data }: Props) => {
+const Aggregated = ({
+  loading,
+  data,
+  options: { people, categories: cats },
+}: Props) => {
   if (loading) {
     return <p>Laddar...</p>;
   }
-  const people = [...new Set(data.map(({ person }) => person))];
-  const cats = [...new Set(data.map(({ budgetgrupp }) => budgetgrupp))].filter(
-    (i) => i != "inom",
-  );
-  const categories = [
-    ...cats.filter((x) => x === "inkomst"),
-    ...cats.filter((x) => x !== "inkomst" && x !== "övrigt"),
-    ...cats.filter((x) => x === "övrigt"),
-  ];
+  const categories = cats.filter((i) => i != "inom");
   const getPersonCatSum = (person: string, category: string) =>
     data
       .filter((tx) => tx.person === person && tx.budgetgrupp === category)
