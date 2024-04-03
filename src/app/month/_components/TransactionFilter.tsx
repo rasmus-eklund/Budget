@@ -14,10 +14,10 @@ type Props = {
   options: { categories: string[]; people: string[]; accounts: string[] };
   children: ({
     txFilter,
-    sortFilter,
+    txSort,
   }: {
     txFilter: TxFilter;
-    sortFilter: TxSort;
+    txSort: TxSort;
   }) => ReactNode;
 };
 const TransactionFilter = ({ options, children }: Props) => {
@@ -29,7 +29,7 @@ const TransactionFilter = ({ options, children }: Props) => {
   };
   const [txFilter, setTxFilter] = useState<TxFilter>(defaultTxFilter);
   const defaultSortFilter: TxSort = { belopp: "Datum (Lågt-Högt)" };
-  const [sortFilter, setSortFilter] = useState<TxSort>(defaultSortFilter);
+  const [txSort, setTxSort] = useState<TxSort>(defaultSortFilter);
   const className = {
     select: "bg-black/5",
     label: "text-black/70",
@@ -38,7 +38,7 @@ const TransactionFilter = ({ options, children }: Props) => {
   return (
     <>
       <form
-        className="flex flex-col p-1 md:flex-row gap-2 md:justify-between"
+        className="flex flex-col gap-2 p-1 md:flex-row md:justify-between"
         onSubmit={(e) => e.preventDefault()}
       >
         <div className="flex gap-2">
@@ -117,7 +117,7 @@ const TransactionFilter = ({ options, children }: Props) => {
             id="sort"
             className={className.select}
             onChange={({ target: { value } }) =>
-              setSortFilter((p) => ({ ...p, belopp: value as tOption }))
+              setTxSort((p) => ({ ...p, belopp: value as tOption }))
             }
           >
             {sortOptions.map((i) => (
@@ -128,7 +128,7 @@ const TransactionFilter = ({ options, children }: Props) => {
           </select>
         </div>
       </form>
-      {children({ txFilter, sortFilter })}
+      {children({ txFilter, txSort })}
     </>
   );
 };
