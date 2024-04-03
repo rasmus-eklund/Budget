@@ -72,7 +72,7 @@ const getTxByDates = async ({
     if (message === "The operation failed for an operation-specific reason") {
       return { success: false, data: [], message: "Fel lösenord" };
     }
-    return { success: false, data: [], message };
+    return { success: false, data: [], message: "Något gick fel" };
   }
 };
 
