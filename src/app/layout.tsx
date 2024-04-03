@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { Inter } from "next/font/google";
 import Header from "./_components/header/Header";
 import { Toaster } from "react-hot-toast";
+import { env } from "~/env";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -10,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "RICA Banken",
+  title: env.NODE_ENV === "development" ? "DEV:RICA Banken" : "RICA Banken",
   description: "Hantera din privatekonomi",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
