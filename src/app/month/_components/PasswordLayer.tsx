@@ -6,6 +6,7 @@ import Aggregated from "./Aggregated";
 import Transactions from "./Transactions";
 import type { FromTo, Tx } from "~/lib/zodSchemas";
 import getTxByDates from "../dataLayer/getData";
+import { getCurrentYearMonth } from "~/lib/utils/datePicker";
 
 const PasswordLayer = () => {
   const [password, setPassword] = useState("");
@@ -24,9 +25,10 @@ const PasswordLayer = () => {
   return (
     <section className="flex h-full flex-col gap-5 p-2">
       <PasswordForm
-        submitPassword={(password) => {
+        submitPassword={async (password) => {
+          const dates = getCurrentYearMonth();
           setPassword(password);
-          setData({ success: false, data: [], message: "Välj månad" });
+          await handlePwSubmit(password, dates);
         }}
       />
       {password ? (
