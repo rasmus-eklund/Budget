@@ -10,6 +10,7 @@ import type { Tx } from "~/lib/zodSchemas";
 import SubmitForm from "./SubmitForm";
 import { getFileNames, hasCorrectFilenames } from "./fileFormHelpers";
 import toast from "react-hot-toast";
+import getUnique from "~/lib/utils/getUnique";
 
 const readFiles = async (
   files: FileList,
@@ -108,7 +109,7 @@ const FileForm = () => {
               setTxs(null);
             }}
           />
-          <Transactions data={txs} />
+          <Transactions options={getUnique(txs)} data={txs} loading={false} />
         </div>
       ) : null}
     </div>
