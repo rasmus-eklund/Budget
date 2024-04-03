@@ -16,3 +16,9 @@ export type Internal = {
 };
 
 export type DbTx = { id: string; year: number; date: Date; data: string };
+
+export type Uniques = {
+  people: string[];
+  categories: string[];
+  accounts: string[];
+};
