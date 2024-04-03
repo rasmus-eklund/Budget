@@ -18,7 +18,7 @@ const getUnique = <
   categoriesSet.forEach((category) => {
     if (category === "inkomst") {
       categories.unshift(category);
-    } else if (category === "övrigt") {
+    } else if (category !== "övrigt") {
       categories.push(category);
     } else {
       otherCategories.push(category);
