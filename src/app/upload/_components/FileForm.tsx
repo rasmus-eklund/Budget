@@ -10,6 +10,8 @@ import type { Tx } from "~/lib/zodSchemas";
 import SubmitForm from "./SubmitForm";
 import { getFileNames, hasCorrectFilenames } from "./fileFormHelpers";
 import toast from "react-hot-toast";
+import TransactionFilter from "~/app/month/_components/TransactionFilter";
+import applyTransactionFilters from "~/lib/utils/transactionFilter";
 import getUnique from "~/lib/utils/getUnique";
 
 const readFiles = async (
@@ -31,9 +33,9 @@ const readFiles = async (
 
 const FileForm = () => {
   const [files, setFiles] = useState<FileList | null>(null);
-  const [txs, setTxs] = useState<Tx[] | null>(null);
+  const [txs, setTxs] = useState<Tx[]>([]);
   const [loading, setLoading] = useState({ loading: false, percent: 0 });
-
+  const options = getUnique(txs);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!files) {
@@ -63,7 +65,7 @@ const FileForm = () => {
         </p>
         <input
           onClick={() => {
-            setTxs(null);
+            setTxs([]);
             setFiles(null);
           }}
           onChange={(e) => {
@@ -100,16 +102,24 @@ const FileForm = () => {
           )}
         </div>
       </form>
-      {txs ? (
+      {txs.length !== 0 ? (
         <div>
           <SubmitForm
             txs={txs}
             onSubmit={() => {
               setFiles(null);
-              setTxs(null);
+              setTxs([]);
             }}
           />
-          <Transactions options={getUnique(txs)} data={txs} loading={false} />
+          <TransactionFilter options={options}>
+            {(filters) => {
+              const data = applyTransactionFilters({
+                data: txs,
+                filters,
+              });
+              return <Transactions data={data} loading={false} />;
+            }}
+          </TransactionFilter>
         </div>
       ) : null}
     </div>
