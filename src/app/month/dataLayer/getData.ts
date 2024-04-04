@@ -7,7 +7,7 @@ import { dbTxSchema, type FromTo, type Tx } from "~/lib/zodSchemas";
 import { db } from "~/server/db";
 import { category, txs } from "~/server/db/schema";
 import getUserId from "~/server/getUserId";
-import type { DbTx } from "~/types";
+import type { DbTx, TxReturn } from "~/types";
 
 const decryptTxs = async (
   encryptedData: DbTx[],
@@ -32,7 +32,7 @@ const getTxByDates = async ({
 }: {
   dates: FromTo;
   password: string;
-}) => {
+}): Promise<TxReturn> => {
   const userId = await getUserId();
   const cats = await db.query.category.findMany({
     where: eq(category.userId, userId),
@@ -66,7 +66,7 @@ const getTxByDates = async ({
         budgetgrupp: categorize(i.text, categories) ?? i.budgetgrupp,
       };
     });
-    return { success: true, data, message: "success" };
+    return { success: true, data, message: "Success" };
   } catch (error) {
     const message = getErrorMessage(error);
     if (message === "The operation failed for an operation-specific reason") {
