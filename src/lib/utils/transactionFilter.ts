@@ -1,13 +1,14 @@
-import { type TxFilter } from "~/types";
+import type { TxFilter, TxSort } from "~/types";
 
-const transactionFilter = <
-  T extends {
-    person: string;
-    budgetgrupp: string;
-    konto: string;
-    filter: TxFilter;
-  },
->({
+type TransactionFilter = {
+  person: string;
+  budgetgrupp: string;
+  konto: string;
+  filter: TxFilter;
+};
+
+type TransactionSort = { datum: Date; belopp: number };
+export const transactionFilter = <T extends TransactionFilter>({
   konto,
   person,
   budgetgrupp,
@@ -21,4 +22,34 @@ const transactionFilter = <
   return personMatch && categoryMatch && accountMatch && inomMatch;
 };
 
-export default transactionFilter;
+export const transactionSort = <T extends TransactionSort>(
+  a: T,
+  b: T,
+  sortFilter: TxSort,
+) => {
+  if (sortFilter.belopp === "Datum (Lågt-Högt)") {
+    return Number(a.datum) - Number(b.datum);
+  }
+  if (sortFilter.belopp === "Datum (Högt-Lågt)") {
+    return Number(b.datum) - Number(a.datum);
+  }
+  if (sortFilter.belopp === "Belopp (Lågt-Högt)") {
+    return a.belopp - b.belopp;
+  }
+  return b.belopp - a.belopp;
+};
+
+const applyTransactionFilters = <
+  T extends TransactionFilter & TransactionSort,
+>({
+  data,
+  filters: { txFilter, txSort },
+}: {
+  data: T[];
+  filters: { txFilter: TxFilter; txSort: TxSort };
+}) =>
+  data
+    .filter((d) => transactionFilter({ ...d, filter: txFilter }))
+    .sort((a, b) => transactionSort(a, b, txSort));
+
+export default applyTransactionFilters;
