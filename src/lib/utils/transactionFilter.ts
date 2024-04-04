@@ -1,14 +1,14 @@
 import type { TxFilter, TxSort } from "~/types";
 
-type TransactionFilter = {
+type Part = {
   person: string;
   budgetgrupp: string;
   konto: string;
-  filter: TxFilter;
 };
 
 type TransactionSort = { datum: Date; belopp: number };
-export const transactionFilter = <T extends TransactionFilter>({
+
+export const transactionFilter = <T extends Part & { filter: TxFilter }>({
   konto,
   person,
   budgetgrupp,
@@ -39,9 +39,7 @@ export const transactionSort = <T extends TransactionSort>(
   return b.belopp - a.belopp;
 };
 
-const applyTransactionFilters = <
-  T extends TransactionFilter & TransactionSort,
->({
+const applyTransactionFilters = <T extends TransactionSort & Part>({
   data,
   filters: { txFilter, txSort },
 }: {
