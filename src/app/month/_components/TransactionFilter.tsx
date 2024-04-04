@@ -1,6 +1,6 @@
-import { useState, type ReactNode } from "react";
 import type { TxSort, TxFilter } from "~/types";
 import capitalize from "~/lib/utils/capitalize";
+import { type ReactNode, useState } from "react";
 
 const sortOptions = [
   "Datum (Lågt-Högt)",
@@ -9,27 +9,19 @@ const sortOptions = [
   "Belopp (Högt-Lågt)",
 ] as const;
 type tOption = (typeof sortOptions)[number];
-
+type Filters = { txFilter: TxFilter; txSort: TxSort };
 type Props = {
   options: { categories: string[]; people: string[]; accounts: string[] };
-  children: ({
-    txFilter,
-    txSort,
-  }: {
-    txFilter: TxFilter;
-    txSort: TxSort;
-  }) => ReactNode;
+  children: (filters: Filters) => ReactNode;
 };
 const TransactionFilter = ({ options, children }: Props) => {
-  const defaultTxFilter: TxFilter = {
-    category: "",
-    person: "",
-    account: "",
-    inom: false,
+  const defaults: { txFilter: TxFilter; txSort: TxSort } = {
+    txFilter: { category: "", person: "", account: "", inom: false },
+    txSort: { belopp: "Datum (Lågt-Högt)" },
   };
-  const [txFilter, setTxFilter] = useState<TxFilter>(defaultTxFilter);
-  const defaultSortFilter: TxSort = { belopp: "Datum (Lågt-Högt)" };
-  const [txSort, setTxSort] = useState<TxSort>(defaultSortFilter);
+  const [txFilter, setTxFilter] = useState<TxFilter>(defaults.txFilter);
+  const [txSort, setTxSort] = useState<TxSort>(defaults.txSort);
+
   const className = {
     select: "bg-black/5",
     label: "text-black/70",
@@ -46,7 +38,7 @@ const TransactionFilter = ({ options, children }: Props) => {
             value={txFilter.category}
             className={className.select}
             onChange={({ target: { value } }) =>
-              setTxFilter((p) => ({ ...p, category: value }))
+              setTxFilter({ ...txFilter, category: value })
             }
           >
             <option className={className.option} value={""}>
@@ -62,7 +54,7 @@ const TransactionFilter = ({ options, children }: Props) => {
             className={className.select}
             value={txFilter.person}
             onChange={({ target: { value } }) =>
-              setTxFilter((p) => ({ ...p, person: value }))
+              setTxFilter({ ...txFilter, person: value })
             }
           >
             <option className={className.option} value={""}>
@@ -78,7 +70,7 @@ const TransactionFilter = ({ options, children }: Props) => {
             className={className.select}
             value={txFilter.account}
             onChange={({ target: { value } }) =>
-              setTxFilter((p) => ({ ...p, account: value }))
+              setTxFilter({ ...txFilter, account: value })
             }
           >
             <option className={className.option} value={""}>
@@ -103,10 +95,13 @@ const TransactionFilter = ({ options, children }: Props) => {
             id="inomCheck"
             type="checkbox"
             checked={txFilter.inom}
-            onChange={() => setTxFilter((p) => ({ ...p, inom: !p.inom }))}
+            onChange={() => setTxFilter({ ...txFilter, inom: !txFilter.inom })}
           />
           {Object.values(txFilter).some((i) => i) && (
-            <button type="button" onClick={() => setTxFilter(defaultTxFilter)}>
+            <button
+              type="button"
+              onClick={() => setTxFilter(defaults.txFilter)}
+            >
               Återställ
             </button>
           )}
@@ -119,7 +114,7 @@ const TransactionFilter = ({ options, children }: Props) => {
             id="sort"
             className={className.select}
             onChange={({ target: { value } }) =>
-              setTxSort((p) => ({ ...p, belopp: value as tOption }))
+              setTxSort({ ...txSort, belopp: value as tOption })
             }
           >
             {sortOptions.map((i) => (
