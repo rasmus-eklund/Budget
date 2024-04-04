@@ -3,40 +3,47 @@ import { useState } from "react";
 import DateFilter from "./DateFilter";
 import Aggregated from "./Aggregated";
 import Transactions from "./Transactions";
-import type { FromTo, Tx } from "~/lib/zodSchemas";
+import type { FromTo } from "~/lib/zodSchemas";
 import getTxByDates from "../dataLayer/getData";
 import { getCurrentYearMonth } from "~/lib/utils/datePicker";
 import getUnique from "~/lib/utils/getUnique";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import TransactionFilter from "./TransactionFilter";
+import applyTransactionFilters from "~/lib/utils/transactionFilter";
+import type { TxReturn } from "~/types";
 
 const PasswordLayer = () => {
+  const [tab, setTab] = useState("aggregated");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<{
-    success: boolean;
-    data: Tx[];
-    message: string;
-  }>({ success: false, data: [], message: "Ange lösenord" });
+  const [data, setData] = useState<TxReturn>({
+    success: false,
+    data: [],
+    message: "Fel lösenord",
+  });
   const options = getUnique(data.data);
   const getData = async (password: string, dates: FromTo) => {
     setLoading(true);
     setData(await getTxByDates({ dates, password }));
     setLoading(false);
   };
+
   return (
     <section className="flex h-full flex-col gap-5 p-2">
-      <PasswordForm
-        submitPassword={async (password) => {
-          const dates = getCurrentYearMonth();
-          setPassword(password);
-          await getData(password, dates);
-        }}
-      />
+      {data.message !== "Success" && (
+        <PasswordForm
+          submitPassword={async (password) => {
+            const dates = getCurrentYearMonth();
+            setPassword(password);
+            await getData(password, dates);
+          }}
+        />
+      )}
       {password ? (
         <DateFilter changeDates={(dates) => getData(password, dates)} />
       ) : null}
       {data.success ? (
-        <Tabs defaultValue="aggregated">
+        <Tabs value={tab} onValueChange={(value) => setTab(value)}>
           <TabsList>
             <TabsTrigger value="aggregated">Budget</TabsTrigger>
             <TabsTrigger value="transactions">Transaktioner</TabsTrigger>
@@ -45,11 +52,15 @@ const PasswordLayer = () => {
             <Aggregated data={data.data} options={options} loading={loading} />
           </TabsContent>
           <TabsContent value="transactions">
-            <Transactions
-              data={data.data}
-              options={options}
-              loading={loading}
-            />
+            <TransactionFilter options={options}>
+              {(filters) => {
+                const txs = applyTransactionFilters({
+                  data: data.data,
+                  filters,
+                });
+                return <Transactions data={txs} loading={loading} />;
+              }}
+            </TransactionFilter>
           </TabsContent>
         </Tabs>
       ) : (
