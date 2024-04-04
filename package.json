@@ -34,6 +34,7 @@
     "react-hook-form": "^7.51.2",
     "react-hot-toast": "^2.4.1",
     "react-spinners": "^0.13.8",
+    "react-virtuoso": "^4.7.7",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1",
