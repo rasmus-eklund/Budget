@@ -1,5 +1,5 @@
 import { it, describe, expect } from "vitest";
-import transactionFilter from "./transactionFilter";
+import { transactionFilter } from "./transactionFilter";
 import { type TxFilter } from "~/types";
 
 const data = [
@@ -85,9 +85,7 @@ describe("Transaction filter", () => {
       person: "A",
       account: "A",
     };
-    const expected = [
-      { person: "A", budgetgrupp: "mat", konto: "A" },
-    ];
+    const expected = [{ person: "A", budgetgrupp: "mat", konto: "A" }];
     const result = data.filter((d) => transactionFilter({ ...d, filter }));
     expect(result).toEqual(expected);
   });
