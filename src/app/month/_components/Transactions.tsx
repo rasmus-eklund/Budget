@@ -1,38 +1,24 @@
 "use client";
 import { dateToString, toSek } from "~/lib/utils/formatData";
+import { Virtuoso } from "react-virtuoso";
 import type { Tx } from "~/lib/zodSchemas";
-import TransactionFilter from "./TransactionFilter";
-import transactionFilter from "~/lib/utils/transactionFilter";
-import transactionSort from "~/lib/utils/transactionSort";
 import capitalize from "~/lib/utils/capitalize";
-import type { TxFilter, TxSort, Uniques } from "~/types";
 
-type Props = { data: Tx[]; options: Uniques; loading: boolean };
+type Props = { data: Tx[]; loading: boolean };
 
-const Transactions = ({ data, options, loading }: Props) => {
+const Transactions = ({ data, loading }: Props) => {
   if (loading) {
     return <p>Laddar...</p>;
   }
-  const applyTransactionFilters = ({
-    data,
-    filters: { txFilter, txSort },
-  }: {
-    data: Tx[];
-    filters: { txFilter: TxFilter; txSort: TxSort };
-  }) =>
-    data
-      .filter((d) => transactionFilter({ ...d, filter: txFilter }))
-      .sort((a, b) => transactionSort(a, b, txSort));
+
   return (
-    <TransactionFilter options={options}>
-      {(filters) => (
-        <ul className="flex flex-col gap-2">
-          {applyTransactionFilters({ data, filters }).map((d) => (
-            <Transaction key={d.id} data={d} />
-          ))}
-        </ul>
-      )}
-    </TransactionFilter>
+    <ul className="flex flex-col gap-2">
+      <Virtuoso
+        className="!h-[500px]"
+        data={data}
+        itemContent={(_, tx) => <Transaction key={tx.id} data={tx} />}
+      />
+    </ul>
   );
 };
 
@@ -42,7 +28,7 @@ const Transaction = ({
   data: { belopp, datum, budgetgrupp, person, konto, text },
 }: TransactionProps) => {
   return (
-    <li className="flex flex-col rounded-sm bg-red-50 p-1 shadow-lg">
+    <li className="mb-2 mt-2 flex flex-col rounded-sm bg-red-50 p-1 shadow-lg">
       <div className="grid grid-cols-2">
         <div>
           <p className="font-semibold">{dateToString(datum)}</p>
