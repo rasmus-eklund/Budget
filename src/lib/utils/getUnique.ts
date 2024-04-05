@@ -14,18 +14,20 @@ const getUnique = <
   });
   const categories: string[] = [];
   const otherCategories: string[] = [];
+  const rest: string[] = [];
 
   categoriesSet.forEach((category) => {
     if (category === "inkomst") {
-      categories.unshift(category);
-    } else if (category !== "övrigt") {
       categories.push(category);
-    } else {
+    } else if (category === "övrigt") {
       otherCategories.push(category);
+    } else {
+      rest.push(category);
     }
   });
 
-  categories.push(...otherCategories.sort());
+  categories.push(...rest.sort());
+  categories.push(...otherCategories);
 
   return {
     people: [...people].sort(),
