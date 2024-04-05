@@ -10,7 +10,7 @@ import getUnique from "~/lib/utils/getUnique";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import TransactionFilter from "./TransactionFilter";
 import applyTransactionFilters from "~/lib/utils/transactionFilter";
-import type { TxReturn } from "~/types";
+import type { TxFilter, TxReturn, TxSort } from "~/types";
 
 const PasswordLayer = () => {
   const [tab, setTab] = useState("aggregated");
@@ -27,17 +27,24 @@ const PasswordLayer = () => {
     setData(await getTxByDates({ dates, password }));
     setLoading(false);
   };
+  const submitPassword = async (password: string) => {
+    const dates = getCurrentYearMonth();
+    setPassword(password);
+    await getData(password, dates);
+  };
+
+  const applyFilters = (filters: { txFilter: TxFilter; txSort: TxSort }) => {
+    const txs = applyTransactionFilters({
+      data: data.data,
+      filters,
+    });
+    return <Transactions data={txs} loading={loading} />;
+  };
 
   return (
     <section className="flex h-full flex-col gap-5 p-2">
       {data.message !== "Success" && (
-        <PasswordForm
-          submitPassword={async (password) => {
-            const dates = getCurrentYearMonth();
-            setPassword(password);
-            await getData(password, dates);
-          }}
-        />
+        <PasswordForm submitPassword={submitPassword} />
       )}
       {password ? (
         <DateFilter changeDates={(dates) => getData(password, dates)} />
@@ -53,13 +60,7 @@ const PasswordLayer = () => {
           </TabsContent>
           <TabsContent value="transactions">
             <TransactionFilter options={options}>
-              {(filters) => {
-                const txs = applyTransactionFilters({
-                  data: data.data,
-                  filters,
-                });
-                return <Transactions data={txs} loading={loading} />;
-              }}
+              {applyFilters}
             </TransactionFilter>
           </TabsContent>
         </Tabs>
