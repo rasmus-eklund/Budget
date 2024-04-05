@@ -12,8 +12,10 @@ import TransactionFilter from "./TransactionFilter";
 import applyTransactionFilters from "~/lib/utils/transactionFilter";
 import type { TxFilter, TxReturn, TxSort } from "~/types";
 
+type Tab = "aggregated" | "transactions";
+
 const PasswordLayer = () => {
-  const [tab, setTab] = useState("aggregated");
+  const [tab, setTab] = useState<Tab>("aggregated");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<TxReturn>({
@@ -21,6 +23,12 @@ const PasswordLayer = () => {
     data: [],
     message: "Fel lösenord",
   });
+  const defaults: { txFilter: TxFilter; txSort: TxSort } = {
+    txFilter: { category: "", person: "", account: "", inom: false },
+    txSort: { belopp: "Datum (Lågt-Högt)" },
+  };
+  const [txFilter, setTxFilter] = useState<TxFilter>(defaults.txFilter);
+  const [txSort, setTxSort] = useState<TxSort>(defaults.txSort);
   const options = getUnique(data.data);
   const getData = async (password: string, dates: FromTo) => {
     setLoading(true);
@@ -33,10 +41,10 @@ const PasswordLayer = () => {
     await getData(password, dates);
   };
 
-  const applyFilters = (filters: { txFilter: TxFilter; txSort: TxSort }) => {
+  const applyFilters = () => {
     const txs = applyTransactionFilters({
       data: data.data,
-      filters,
+      filters: { txFilter, txSort },
     });
     return <Transactions data={txs} loading={loading} />;
   };
@@ -50,18 +58,30 @@ const PasswordLayer = () => {
         <DateFilter changeDates={(dates) => getData(password, dates)} />
       ) : null}
       {data.success ? (
-        <Tabs value={tab} onValueChange={(value) => setTab(value)}>
+        <Tabs value={tab} onValueChange={(value) => setTab(value as Tab)}>
           <TabsList>
             <TabsTrigger value="aggregated">Budget</TabsTrigger>
             <TabsTrigger value="transactions">Transaktioner</TabsTrigger>
           </TabsList>
           <TabsContent value="aggregated">
-            <Aggregated data={data.data} options={options} loading={loading} />
+            <Aggregated
+              data={data.data}
+              options={options}
+              loading={loading}
+              setFilter={(filter) => {
+                setTxFilter(filter);
+                setTab("transactions");
+              }}
+            />
           </TabsContent>
           <TabsContent value="transactions">
-            <TransactionFilter options={options}>
-              {applyFilters}
-            </TransactionFilter>
+            <TransactionFilter
+              options={options}
+              defaults={defaults}
+              filters={{ txFilter, txSort }}
+              setFilters={{ setTxFilter, setTxSort }}
+            />
+            {applyFilters()}
           </TabsContent>
         </Tabs>
       ) : (
