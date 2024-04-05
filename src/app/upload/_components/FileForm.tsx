@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import TransactionFilter from "~/app/month/_components/TransactionFilter";
 import applyTransactionFilters from "~/lib/utils/transactionFilter";
 import getUnique from "~/lib/utils/getUnique";
+import type { TxFilter, TxSort } from "~/types";
 
 const readFiles = async (
   files: FileList,
@@ -34,8 +35,21 @@ const readFiles = async (
 const FileForm = () => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [txs, setTxs] = useState<Tx[]>([]);
+  const defaults: { txFilter: TxFilter; txSort: TxSort } = {
+    txFilter: { category: "", person: "", account: "", inom: false },
+    txSort: { belopp: "Datum (Lågt-Högt)" },
+  };
+  const [txFilter, setTxFilter] = useState<TxFilter>(defaults.txFilter);
+  const [txSort, setTxSort] = useState<TxSort>(defaults.txSort);
   const [loading, setLoading] = useState({ loading: false, percent: 0 });
   const options = getUnique(txs);
+  const applyFilters = () => {
+    const filtered = applyTransactionFilters({
+      data: txs,
+      filters: { txFilter, txSort },
+    });
+    return <Transactions data={filtered} loading={false} />;
+  };
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!files) {
@@ -111,15 +125,13 @@ const FileForm = () => {
               setTxs([]);
             }}
           />
-          <TransactionFilter options={options}>
-            {(filters) => {
-              const data = applyTransactionFilters({
-                data: txs,
-                filters,
-              });
-              return <Transactions data={data} loading={false} />;
-            }}
-          </TransactionFilter>
+          <TransactionFilter
+            options={options}
+            defaults={defaults}
+            filters={{ txFilter, txSort }}
+            setFilters={{ setTxFilter, setTxSort }}
+          />
+          {applyFilters()}
         </div>
       ) : null}
     </div>
