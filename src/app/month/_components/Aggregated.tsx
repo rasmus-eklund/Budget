@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import { v4 as uuid } from "uuid";
+import calculateSums from "~/lib/utils/calculateSums";
 import capitalize from "~/lib/utils/capitalize";
 import { toSek } from "~/lib/utils/formatData";
 import { type Tx } from "~/lib/zodSchemas";
@@ -13,40 +14,10 @@ const Aggregated = ({
   data,
   options: { people, categories },
 }: Props) => {
-  const sumsMemo = useMemo(() => {
-    const sums: Record<string, Record<string, number>> = {};
-    for (const category of categories) {
-      sums[category] = {};
-      for (const person of people) {
-        sums[category]![person] = 0;
-      }
-      sums[category]!.total = 0;
-    }
-    for (const { budgetgrupp, person, belopp } of data) {
-      if (budgetgrupp !== "inom") {
-        sums[budgetgrupp]![person] += belopp;
-      }
-    }
-    for (const category of categories) {
-      sums[category]!.total = Object.keys(sums[category]!).reduce(
-        (acc, person) => (acc += sums[category]![person]!),
-        0,
-      );
-    }
-    const total: Record<string, number> = {};
-    for (const person of people) {
-      total[person] = categories.reduce(
-        (acc, category) => (acc += sums[category]![person]!),
-        0,
-      );
-    }
-    total.total = Object.keys(total).reduce(
-      (acc, person) => (acc += total[person]!),
-      0,
-    );
-    sums.total = total;
-    return sums;
-  }, [data, people, categories]);
+  const sumsMemo = useMemo(
+    () => calculateSums({ data, categories, people }),
+    [data, people, categories],
+  );
 
   if (loading) {
     return <p>Laddar...</p>;
