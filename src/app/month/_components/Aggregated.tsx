@@ -5,14 +5,20 @@ import calculateSums from "~/lib/utils/calculateSums";
 import capitalize from "~/lib/utils/capitalize";
 import { toSek } from "~/lib/utils/formatData";
 import { type Tx } from "~/lib/zodSchemas";
-import type { Uniques } from "~/types";
+import type { TxFilter, Uniques } from "~/types";
 
-type Props = { data: Tx[]; options: Uniques; loading: boolean };
+type Props = {
+  data: Tx[];
+  options: Uniques;
+  loading: boolean;
+  setFilter: (txFilter: TxFilter) => void;
+};
 
 const Aggregated = ({
   loading,
   data,
   options: { people, categories },
+  setFilter,
 }: Props) => {
   const sumsMemo = useMemo(
     () => calculateSums({ data, categories, people }),
@@ -49,16 +55,35 @@ const Aggregated = ({
               <td className="whitespace-nowrap px-4 font-semibold tracking-wider">
                 {capitalize(category)}
               </td>
-              {peopleTotal.map((person, index) => (
-                <td
-                  className={twMerge(
-                    `px-4 py-1 text-right ${sumsMemo[category]![person]! < 0 ? "text-red-600" : ""} ${index === peopleTotal.length - 1 ? "font-semibold" : ""} ${categoryIndex === categoriesTotal.length - 1 ? "py-2 font-semibold" : ""}`,
-                  )}
-                  key={uuid()}
-                >
-                  {toSek(sumsMemo[category]![person]!)}
-                </td>
-              ))}
+              {peopleTotal.map((person, index) => {
+                const sek = sumsMemo[category]![person]!;
+                return (
+                  <td
+                    className={twMerge(
+                      `px-4 py-1 text-right ${sek < 0 ? "text-red-600" : ""} ${index === peopleTotal.length - 1 ? "font-semibold" : ""} ${categoryIndex === categoriesTotal.length - 1 ? "py-2 font-semibold" : ""}`,
+                    )}
+                    key={uuid()}
+                  >
+                    {category === "total" || person === "total" ? (
+                      <p>{toSek(sek)}</p>
+                    ) : (
+                      <button
+                        className="hover:scale-110"
+                        onClick={() =>
+                          setFilter({
+                            account: "",
+                            category,
+                            inom: false,
+                            person,
+                          })
+                        }
+                      >
+                        {toSek(sek)}
+                      </button>
+                    )}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>
