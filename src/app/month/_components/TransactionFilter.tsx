@@ -1,6 +1,5 @@
 import type { TxSort, TxFilter } from "~/types";
 import capitalize from "~/lib/utils/capitalize";
-import { type ReactNode, useState } from "react";
 
 const sortOptions = [
   "Datum (Lågt-Högt)",
@@ -12,16 +11,19 @@ type tOption = (typeof sortOptions)[number];
 type Filters = { txFilter: TxFilter; txSort: TxSort };
 type Props = {
   options: { categories: string[]; people: string[]; accounts: string[] };
-  children: (filters: Filters) => ReactNode;
-};
-const TransactionFilter = ({ options, children }: Props) => {
-  const defaults: { txFilter: TxFilter; txSort: TxSort } = {
-    txFilter: { category: "", person: "", account: "", inom: false },
-    txSort: { belopp: "Datum (Lågt-Högt)" },
+  filters: Filters;
+  defaults: Filters;
+  setFilters: {
+    setTxFilter: (txFilter: TxFilter) => void;
+    setTxSort: (txSort: TxSort) => void;
   };
-  const [txFilter, setTxFilter] = useState<TxFilter>(defaults.txFilter);
-  const [txSort, setTxSort] = useState<TxSort>(defaults.txSort);
-
+};
+const TransactionFilter = ({
+  options,
+  defaults,
+  filters: { txFilter, txSort },
+  setFilters: { setTxFilter, setTxSort },
+}: Props) => {
   const className = {
     select: "bg-black/5",
     label: "text-black/70",
@@ -125,7 +127,6 @@ const TransactionFilter = ({ options, children }: Props) => {
           </select>
         </div>
       </form>
-      {children({ txFilter, txSort })}
     </>
   );
 };
