@@ -18,7 +18,7 @@ import capitalize from "~/lib/utils/capitalize";
 import { type Name, nameSchema } from "~/lib/zodSchemas";
 
 type Props = {
-  onSubmit: (name: Name) => void;
+  onSubmit: (name: Name) => Promise<void>;
   formInfo: { label: string; description: string };
   uniques: string[];
 };
@@ -32,15 +32,15 @@ const AddItemForm = ({
     resolver: zodResolver(nameSchema),
     defaultValues: { name: "" },
   });
-  const isUnique = ({ name }: Name) => {
+  const isUnique = async ({ name }: Name) => {
     if (uniques.includes(name)) {
       form.setError("name", {
         message: `${capitalize(name)} finns redan som ${label.toLowerCase()}`,
       });
       return;
     }
+    await onSubmit({ name });
     form.reset();
-    return onSubmit({ name });
   };
   return (
     <Form {...form}>
@@ -59,7 +59,7 @@ const AddItemForm = ({
             </FormItem>
           )}
         />
-        {form.formState.isLoading ? (
+        {form.formState.isSubmitting ? (
           <Button disabled>
             <ClipLoader size={20} className="mr-2" />
             Vänta
