@@ -1,14 +1,16 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getServerAuthSession } from "~/server/auth";
 import {
   addMatch,
+  getAllCategories,
   getMatches,
   removeMatch,
-} from "../actions/categoriesActions";
-import SubmitButton from "../../_components/SubmitButton";
+} from "../dataLayer/categoriesActions";
 import DeleteButton from "../_components/DeleteButton";
 import capitalize from "~/lib/utils/capitalize";
+import BreadcrumbWithDropdown from "./_components/Breadcrumb";
+import AddItemForm from "../_components/AddItemForm";
+import type { Name } from "~/lib/zodSchemas";
 
 type Props = { params: { id: string } };
 
@@ -17,15 +19,15 @@ const page = async ({ params: { id: categoryId } }: Props) => {
   if (!session) {
     redirect("/");
   }
-  const { name, matches } = await getMatches({ categoryId });
+  const options = await getAllCategories();
+  const { name, matches, unique } = await getMatches({ categoryId });
+  const onSubmit = async ({ name }: Name) => {
+    "use server";
+    await addMatch({ name, categoryId });
+  };
   return (
     <div className="flex flex-col gap-4 p-2">
-      <nav className="flex w-fit gap-2 border p-1">
-        <Link href={"/categories"}>kategori</Link>
-        <p>{">"}</p>
-        <p>{name}</p>
-      </nav>
-
+      <BreadcrumbWithDropdown options={options} current={name} />
       <ul>
         {matches.map(({ name, id }) => (
           <li
@@ -46,26 +48,14 @@ const page = async ({ params: { id: categoryId } }: Props) => {
           </li>
         ))}
       </ul>
-      <form
-        className="flex items-center justify-between gap-2 md:justify-start"
-        action={addMatch}
-      >
-        <label htmlFor="name">Match</label>
-        <input
-          className="border-b-red min-w-0 border-b outline-none"
-          id="name"
-          name="name"
-          type="text"
-          placeholder="Ny match"
-        />
-        <input
-          hidden
-          type="text"
-          name="budgetgruppId"
-          defaultValue={categoryId}
-        />
-        <SubmitButton text="Lägg till" />
-      </form>
+      <AddItemForm
+        onSubmit={onSubmit}
+        formInfo={{
+          label: "Nyckelord",
+          description: `Lägg till nyckelord för att kategorisera transaktion som ${name.toLowerCase()}`,
+        }}
+        uniques={unique.map((i) => i.name)}
+      />
     </div>
   );
 };
