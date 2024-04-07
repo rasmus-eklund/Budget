@@ -6,6 +6,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  unique,
   varchar,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
@@ -42,7 +43,7 @@ export const accounts = createTable(
   {
     userId: varchar("userId", { length: 255 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     type: varchar("type", { length: 255 })
       .$type<AdapterAccount["type"]>()
       .notNull(),
@@ -76,7 +77,7 @@ export const sessions = createTable(
       .primaryKey(),
     userId: varchar("userId", { length: 255 })
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (session) => ({
@@ -101,33 +102,57 @@ export const verificationTokens = createTable(
 );
 
 export const txs = createTable("txs", {
-  id: varchar("id", { length: 256 }).primaryKey(),
+  id: varchar("id", { length: 255 }).primaryKey(),
   year: integer("year").notNull(),
   date: timestamp("date").notNull(),
   data: text("data").notNull(),
-  userId: varchar("userId").notNull(),
+  userId: varchar("userId", { length: 255 })
+    .references(() => users.id)
+    .notNull(),
 });
 
 export const txsRelations = relations(txs, ({ one }) => ({
   user: one(users, { fields: [txs.userId], references: [users.id] }),
 }));
 
-export const category = createTable("category", {
-  id: varchar("id").notNull().primaryKey(),
-  name: varchar("name").unique().notNull(),
-  userId: varchar("userId").notNull(),
-});
+export const category = createTable(
+  "category",
+  {
+    id: varchar("id", { length: 255 }).primaryKey(),
+    name: varchar("name", { length: 255 }).notNull(),
+    userId: varchar("userId", { length: 255 })
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+  },
+  (table) => {
+    return {
+      userCategory: unique("userCategory").on(table.name, table.userId),
+    };
+  },
+);
 
-export const categoryRelations = relations(category, ({ one, many }) => ({
-  users: one(users, { fields: [category.userId], references: [users.id] }),
-  matches: many(match),
+export const categoryRelations = relations(category, ({ many }) => ({
+  match: many(match),
 }));
 
-export const match = createTable("match", {
-  id: varchar("id").notNull().primaryKey(),
-  name: varchar("name").unique().notNull(),
-  categoryId: varchar("categoryId").notNull(),
-});
+export const match = createTable(
+  "match",
+  {
+    id: varchar("id", { length: 255 }).primaryKey(),
+    name: varchar("name", { length: 255 }).notNull(),
+    categoryId: varchar("categoryId", { length: 255 })
+      .references(() => category.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: varchar("userId", { length: 255 })
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+  },
+  (table) => {
+    return {
+      userMatch: unique("userMatch").on(table.name, table.userId),
+    };
+  },
+);
 
 export const matchRelations = relations(match, ({ one }) => ({
   category: one(category, {
