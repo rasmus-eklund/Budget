@@ -4,8 +4,8 @@ import categorize from "./categorize";
 describe("categorize", () => {
   it("should categorize Ica as mat", () => {
     const cats = [
-      { namn: "mat", matches: ["ica", "willys"] },
-      { namn: "transport", matches: ["sl"] },
+      { name: "mat", matches: ["ica", "willys"] },
+      { name: "transport", matches: ["sl"] },
     ];
     const result = categorize("Ica Nära Kragstalund", cats);
 
@@ -13,9 +13,9 @@ describe("categorize", () => {
   });
   it("should categorize Lön as Lön", () => {
     const cats = [
-      { namn: "lön", matches: ["lön"] },
-      { namn: "mat", matches: ["ica", "willys"] },
-      { namn: "transport", matches: ["sl"] },
+      { name: "lön", matches: ["lön"] },
+      { name: "mat", matches: ["ica", "willys"] },
+      { name: "transport", matches: ["sl"] },
     ];
     const result = categorize("Lön", cats);
 
@@ -23,8 +23,8 @@ describe("categorize", () => {
   });
   it("should handle no match", () => {
     const cats = [
-      { namn: "mat", matches: ["ica", "willys"] },
-      { namn: "transport", matches: ["sl"] },
+      { name: "mat", matches: ["ica", "willys"] },
+      { name: "transport", matches: ["sl"] },
     ];
     const result = categorize("McDonalds", cats);
 
