@@ -6,9 +6,9 @@ import {
   addCategory,
   getAllCategories,
   removeCategory,
-} from "./actions/categoriesActions";
-import SubmitButton from "../_components/SubmitButton";
+} from "./dataLayer/categoriesActions";
 import DeleteButton from "./_components/DeleteButton";
+import AddItemForm from "./_components/AddItemForm";
 
 const Categories = async () => {
   const session = await getServerAuthSession();
@@ -18,6 +18,7 @@ const Categories = async () => {
   const data = await getAllCategories();
   return (
     <div className="flex flex-col gap-6 p-2">
+      <h2>Dina kategorier:</h2>
       <ul className="flex flex-col gap-1">
         {data.map(({ id, name }) => (
           <li
@@ -31,20 +32,16 @@ const Categories = async () => {
             </form>
           </li>
         ))}
+        {data.length === 0 ? <li>Du har inga kategorier än.</li> : null}
       </ul>
-      <form
-        className="flex items-center justify-between gap-2 md:justify-start"
-        action={addCategory}
-      >
-        <label htmlFor="name">Kategori</label>
-        <input
-          className="border-b-red min-w-0 border-b outline-none"
-          id="name"
-          name="name"
-          placeholder="Ny kategori"
-        />
-        <SubmitButton text="Lägg till" />
-      </form>
+      <AddItemForm
+        onSubmit={addCategory}
+        formInfo={{
+          label: "Kategori",
+          description: "Lägg till en ny kategori.",
+        }}
+        uniques={data.map((i) => i.name)}
+      />
     </div>
   );
 };
