@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { twMerge } from "tailwind-merge";
-import { v4 as uuid } from "uuid";
 import calculateSums from "~/lib/utils/calculateSums";
 import capitalize from "~/lib/utils/capitalize";
 import { toSek } from "~/lib/utils/formatData";
@@ -42,7 +41,7 @@ const Aggregated = ({
             {peopleTotal.map((person) => (
               <th
                 className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500"
-                key={uuid()}
+                key={person}
               >
                 {person}
               </th>
@@ -51,7 +50,7 @@ const Aggregated = ({
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white">
           {categoriesTotal.map((category, categoryIndex) => (
-            <tr key={uuid()}>
+            <tr key={category}>
               <td className="whitespace-nowrap px-4 font-semibold tracking-wider">
                 {capitalize(category)}
               </td>
@@ -62,7 +61,7 @@ const Aggregated = ({
                     className={twMerge(
                       `px-4 py-1 text-right ${sek < 0 ? "text-red-600" : ""} ${index === peopleTotal.length - 1 ? "font-semibold" : ""} ${categoryIndex === categoriesTotal.length - 1 ? "py-2 font-semibold" : ""}`,
                     )}
-                    key={uuid()}
+                    key={`${category}${person}`}
                   >
                     {category === "total" || person === "total" ? (
                       <p>{toSek(sek)}</p>
