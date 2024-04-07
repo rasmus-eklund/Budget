@@ -16,9 +16,10 @@ const Categories = async () => {
     redirect("/");
   }
   const data = await getAllCategories();
+  data.sort((a, b) => a.name.localeCompare(b.name));
   return (
     <div className="flex flex-col gap-6 p-2">
-      <h2>Dina kategorier:</h2>
+      <h2 className="text-lg font-semibold">Dina kategorier:</h2>
       <ul className="flex flex-col gap-1">
         {data.map(({ id, name }) => (
           <li
