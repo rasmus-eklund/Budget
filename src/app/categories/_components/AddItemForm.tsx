@@ -59,7 +59,7 @@ const AddItemForm = ({
             </FormItem>
           )}
         />
-        {form.formState.isSubmitting ? (
+        {form.formState.isLoading ? (
           <Button disabled>
             <ClipLoader size={20} className="mr-2" />
             Vänta
