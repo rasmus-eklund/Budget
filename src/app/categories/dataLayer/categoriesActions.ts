@@ -6,6 +6,7 @@ import getUserId from "~/server/getUserId";
 import { and, eq } from "drizzle-orm";
 import { type Name } from "~/lib/zodSchemas";
 import { randomUUID } from "crypto";
+import { redirect } from "next/navigation";
 
 export const addMatch = async ({
   name,
@@ -26,10 +27,9 @@ export const removeMatch = async (formData: FormData) => {
 
 export const addCategory = async ({ name }: Name) => {
   const userId = await getUserId();
-  await db
-    .insert(category)
-    .values({ name: name.toLowerCase(), id: randomUUID(), userId });
-  revalidatePath("/categories");
+  const id = randomUUID();
+  await db.insert(category).values({ name: name.toLowerCase(), id, userId });
+  redirect(`/categories/${id}`);
 };
 
 export const removeCategory = async (formData: FormData) => {
