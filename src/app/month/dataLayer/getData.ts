@@ -36,11 +36,11 @@ const getTxByDates = async ({
   const userId = await getUserId();
   const cats = await db.query.category.findMany({
     where: eq(category.userId, userId),
-    with: { matches: true },
+    with: { match: true },
   });
-  const categories = cats.map((i) => ({
-    namn: i.name,
-    matches: i.matches.map((i) => i.name),
+  const categories = cats.map(({ name, match }) => ({
+    name,
+    matches: match.map(({ name }) => name),
   }));
   const encryptedData = await db
     .select()
