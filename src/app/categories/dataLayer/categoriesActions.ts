@@ -1,16 +1,18 @@
 "use server";
 import { db } from "~/server/db";
-
 import { revalidatePath } from "next/cache";
 import { category, match } from "~/server/db/schema";
 import getUserId from "~/server/getUserId";
-import { randomUUID } from "crypto";
 import { and, eq } from "drizzle-orm";
+import { type Name } from "~/lib/zodSchemas";
+import { randomUUID } from "crypto";
 
-export const addMatch = async (formData: FormData) => {
-  const name = formData.get("name") as string;
-  const categoryId = formData.get("budgetgruppId") as string;
-  await db.insert(match).values({ categoryId, name, id: randomUUID() });
+export const addMatch = async ({
+  name,
+  categoryId,
+}: Name & { categoryId: string }) => {
+  const userId = await getUserId();
+  await db.insert(match).values({ categoryId, name, id: randomUUID(), userId });
   revalidatePath(`/categories/${categoryId}`);
 };
 
@@ -22,10 +24,11 @@ export const removeMatch = async (formData: FormData) => {
   revalidatePath(`/categories/${categoryId}`);
 };
 
-export const addCategory = async (formData: FormData) => {
+export const addCategory = async ({ name }: Name) => {
   const userId = await getUserId();
-  const name = formData.get("name") as string;
-  await db.insert(category).values({ name, userId, id: randomUUID() });
+  await db
+    .insert(category)
+    .values({ name: name.toLowerCase(), id: randomUUID(), userId });
   revalidatePath("/categories");
 };
 
@@ -48,12 +51,20 @@ export const getAllCategories = async () => {
 
 export const getMatches = async ({ categoryId }: { categoryId: string }) => {
   const userId = await getUserId();
-  const data = await db.query.category.findFirst({
+  const name = await db.query.category.findFirst({
     where: and(eq(category.id, categoryId), eq(category.userId, userId)),
-    with: { matches: true },
   });
-  if (!data) {
+  const unique = await db
+    .select({ name: match.name })
+    .from(match)
+    .where(eq(match.userId, userId));
+  if (!name) {
     throw new Error("Not found");
   }
-  return data;
+  const matches = await db
+    .select({ id: match.id, name: match.name })
+    .from(match)
+    .where(and(eq(match.categoryId, categoryId), eq(match.userId, userId)));
+
+  return { name: name.name, matches, unique };
 };
