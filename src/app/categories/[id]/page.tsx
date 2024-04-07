@@ -21,6 +21,7 @@ const page = async ({ params: { id: categoryId } }: Props) => {
   }
   const options = await getAllCategories();
   const { name, matches, unique } = await getMatches({ categoryId });
+  matches.sort((a, b) => a.name.localeCompare(b.name));
   const onSubmit = async ({ name }: Name) => {
     "use server";
     await addMatch({ name, categoryId });
