@@ -29,6 +29,7 @@ const page = async ({ params: { id: categoryId } }: Props) => {
   return (
     <div className="flex flex-col gap-4 p-2">
       <BreadcrumbWithDropdown options={options} current={name} />
+      <h2 className="text-lg font-semibold">{capitalize(name)}</h2>
       <ul>
         {matches.map(({ name, id }) => (
           <li
