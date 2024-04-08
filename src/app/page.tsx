@@ -7,9 +7,9 @@ const HomePage = async () => {
     redirect("/month");
   }
   return (
-    <main className="p-2">
+    <div className="p-2">
       {!session && <p>Välkommen till din RICA Banken!</p>}
-    </main>
+    </div>
   );
 };
 
