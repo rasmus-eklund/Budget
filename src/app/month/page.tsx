@@ -1,13 +1,13 @@
 import { getServerAuthSession } from "~/server/auth";
 import { redirect } from "next/navigation";
-import PasswordLayer from "./_components/PasswordLayer";
+import FilterLayer from "./_components/FilterLayer";
 
 const Month = async () => {
   const session = await getServerAuthSession();
   if (!session) {
     redirect("/");
   }
-  return <PasswordLayer />;
+  return <FilterLayer />;
 };
 
 export default Month;
