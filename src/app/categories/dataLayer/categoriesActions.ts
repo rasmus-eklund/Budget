@@ -6,14 +6,18 @@ import getUserId from "~/server/getUserId";
 import { and, eq } from "drizzle-orm";
 import { type Name } from "~/lib/zodSchemas";
 import { randomUUID } from "crypto";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export const addMatch = async ({
   name,
   categoryId,
 }: Name & { categoryId: string }) => {
   const userId = await getUserId();
-  await db.insert(match).values({ categoryId, name, id: randomUUID(), userId });
+  await db
+    .insert(match)
+    .values({ categoryId, name, id: randomUUID(), userId })
+    .returning({ categoryId: match.categoryId });
+
   revalidatePath(`/categories/${categoryId}`);
 };
 
@@ -27,8 +31,14 @@ export const removeMatch = async (formData: FormData) => {
 
 export const addCategory = async ({ name }: Name) => {
   const userId = await getUserId();
-  const id = randomUUID();
-  await db.insert(category).values({ name: name.toLowerCase(), id, userId });
+  const response = await db
+    .insert(category)
+    .values({ name: name.toLowerCase(), id: randomUUID(), userId })
+    .returning({ id: category.id });
+  if (!response[0]) {
+    throw new Error("Kunde inte lägga till");
+  }
+  const id = response[0].id;
   redirect(`/categories/${id}`);
 };
 
@@ -59,7 +69,7 @@ export const getMatches = async ({ categoryId }: { categoryId: string }) => {
     .from(match)
     .where(eq(match.userId, userId));
   if (!name) {
-    throw new Error("Not found");
+    notFound();
   }
   const matches = await db
     .select({ id: match.id, name: match.name })
