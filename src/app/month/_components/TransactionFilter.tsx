@@ -1,13 +1,19 @@
 import type { TxSort, TxFilter } from "~/types";
 import capitalize from "~/lib/utils/capitalize";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectValue,
+} from "~/components/ui/select";
+import { SelectTrigger } from "@radix-ui/react-select";
+import { Button } from "~/components/ui/button";
+import { useState } from "react";
 
-const sortOptions = [
-  "Datum (Lågt-Högt)",
-  "Datum (Högt-Lågt)",
-  "Belopp (Lågt-Högt)",
-  "Belopp (Högt-Lågt)",
-] as const;
-type tOption = (typeof sortOptions)[number];
 type Filters = { txFilter: TxFilter; txSort: TxSort };
 type Props = {
   options: { categories: string[]; people: string[]; accounts: string[] };
@@ -24,107 +30,120 @@ const TransactionFilter = ({
   filters: { txFilter, txSort },
   setFilters: { setTxFilter, setTxSort },
 }: Props) => {
-  const className = {
-    select: "bg-black/5",
-    label: "text-black/70",
-    option: "bg-black/5",
-  };
+  const [search, setSearch] = useState("");
+
   return (
     <>
       <form
         className="flex flex-col gap-2 p-1 md:flex-row md:justify-between"
-        onSubmit={(e) => e.preventDefault()}
+        onSubmit={(e) => {
+          e.preventDefault();
+          setTxFilter({ ...txFilter, search });
+        }}
       >
-        <div className="flex gap-2">
-          <select
+        <div className="flex items-center gap-2">
+          <Select
             value={txFilter.category}
-            className={className.select}
-            onChange={({ target: { value } }) =>
+            onValueChange={(value) =>
               setTxFilter({ ...txFilter, category: value })
             }
           >
-            <option className={className.option} value={""}>
-              Kategori
-            </option>
-            {options.categories.map((i) => (
-              <option className={className.option} key={i} value={i}>
-                {capitalize(i)}
-              </option>
-            ))}
-          </select>
-          <select
-            className={className.select}
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Kategori" />
+            </SelectTrigger>
+            <SelectContent>
+              {options.categories.map((i) => (
+                <SelectItem key={i} value={i}>
+                  {capitalize(i)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
             value={txFilter.person}
-            onChange={({ target: { value } }) =>
+            onValueChange={(value) =>
               setTxFilter({ ...txFilter, person: value })
             }
           >
-            <option className={className.option} value={""}>
-              Person
-            </option>
-            {options.people.map((person) => (
-              <option className={className.option} key={person} value={person}>
-                {capitalize(person)}
-              </option>
-            ))}
-          </select>
-          <select
-            className={className.select}
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Person" />
+            </SelectTrigger>
+            <SelectContent>
+              {options.people.map((i) => (
+                <SelectItem key={i} value={i}>
+                  {capitalize(i)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
             value={txFilter.account}
-            onChange={({ target: { value } }) =>
+            onValueChange={(value) =>
               setTxFilter({ ...txFilter, account: value })
             }
           >
-            <option className={className.option} value={""}>
-              Konto
-            </option>
-            {options.accounts.map((account) => (
-              <option
-                className={className.option}
-                key={account}
-                value={account}
-              >
-                {capitalize(account)}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Konto" />
+            </SelectTrigger>
+            <SelectContent>
+              {options.accounts.map((i) => (
+                <SelectItem key={i} value={i}>
+                  {capitalize(i)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Input
+            placeholder="Sök"
+            value={search}
+            onChange={({ target: { value } }) => setSearch(value)}
+          />
         </div>
-        <div className="mr-auto flex gap-2">
-          <label className={className.label} htmlFor="inomCheck">
+        <div className="mr-auto flex items-center gap-2">
+          <Label className="text-nowrap" htmlFor="inomCheck">
             Visa inom
-          </label>
-          <input
-            id="inomCheck"
-            type="checkbox"
+          </Label>
+          <Input
+            className="size-5"
             checked={txFilter.inom}
             onChange={() => setTxFilter({ ...txFilter, inom: !txFilter.inom })}
+            id="inomCheck"
+            type="checkbox"
           />
           {Object.values(txFilter).some((i) => i) && (
-            <button
+            <Button
               type="button"
               onClick={() => setTxFilter(defaults.txFilter)}
             >
-              Återställ
-            </button>
+              Rensa filter
+            </Button>
           )}
         </div>
-        <div className="flex gap-2">
-          <label className={className.label} htmlFor="sort">
-            Sortera efter:
-          </label>
-          <select
-            id="sort"
-            className={className.select}
-            onChange={({ target: { value } }) =>
-              setTxSort({ ...txSort, belopp: value as tOption })
-            }
+        <div className="flex items-center gap-2">
+          <Label htmlFor="sort">Sortera efter:</Label>
+          <Select
+            value={txSort.belopp as string}
+            defaultValue={"Datum (Lågt-Högt)"}
+            onValueChange={(value) => setTxSort({ ...txSort, belopp: value })}
           >
-            {sortOptions.map((i) => (
-              <option className={className.option} key={i} value={i}>
-                {capitalize(i)}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue defaultValue={""} placeholder="Konto" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Datum</SelectLabel>
+                <SelectItem value={"Datum (Lågt-Högt)"}>
+                  Senast först
+                </SelectItem>
+                <SelectItem value={"Datum (Högt-Lågt)"}>Älst först</SelectItem>
+              </SelectGroup>
+              <SelectGroup>
+                <SelectLabel>Belopp</SelectLabel>
+                <SelectItem value={"Belopp (Lågt-Högt)"}>Lågt-Högt</SelectItem>
+                <SelectItem value={"Belopp (Högt-Lågt)"}>Högt-Lågt</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </form>
     </>

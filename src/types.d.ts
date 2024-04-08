@@ -3,6 +3,7 @@ export type TxFilter = {
   person: string;
   account: string;
   inom: boolean;
+  search: string;
 };
 
 type TxSort = { belopp: tOption };

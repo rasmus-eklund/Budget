@@ -1,9 +1,10 @@
 import type { TxFilter, TxSort } from "~/types";
 
-type Part = {
+export type Part = {
   person: string;
   budgetgrupp: string;
   konto: string;
+  text: string;
 };
 
 type TransactionSort = { datum: Date; belopp: number };
@@ -12,6 +13,7 @@ export const transactionFilter = <T extends Part & { filter: TxFilter }>({
   konto,
   person,
   budgetgrupp,
+  text,
   filter,
 }: T) => {
   const personMatch = filter.person === "" || person === filter.person;
@@ -19,7 +21,10 @@ export const transactionFilter = <T extends Part & { filter: TxFilter }>({
     filter.category === "" || budgetgrupp === filter.category;
   const accountMatch = filter.account === "" || konto === filter.account;
   const inomMatch = filter.inom || budgetgrupp !== "inom";
-  return personMatch && categoryMatch && accountMatch && inomMatch;
+  const search =
+    filter.search === "" ||
+    text.toLowerCase().includes(filter.search.toLowerCase());
+  return search && personMatch && categoryMatch && accountMatch && inomMatch;
 };
 
 export const transactionSort = <T extends TransactionSort>(
