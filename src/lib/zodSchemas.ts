@@ -36,12 +36,12 @@ export const datesSchema = z.object({
 export type FromTo = z.infer<typeof datesSchema>;
 
 export const nameSchema = z.object({
-  name: z.string().min(2),
+  name: z.string().min(2, 'Minst 2 tecken.'),
 });
 export type Name = z.infer<typeof nameSchema>;
 
 export const matchSchema = z.object({
-  name: z.string().min(2),
+  name: z.string().min(2, 'Minst 2 tecken.'),
   budgetgruppId: z.string().cuid2(),
 });
 
