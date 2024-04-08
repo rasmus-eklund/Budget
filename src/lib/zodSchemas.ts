@@ -36,12 +36,12 @@ export const datesSchema = z.object({
 export type FromTo = z.infer<typeof datesSchema>;
 
 export const nameSchema = z.object({
-  name: z.string().min(2, 'Minst 2 tecken.'),
+  name: z.string().min(2, "Minst 2 tecken."),
 });
 export type Name = z.infer<typeof nameSchema>;
 
 export const matchSchema = z.object({
-  name: z.string().min(2, 'Minst 2 tecken.'),
+  name: z.string().min(2, "Minst 2 tecken."),
   budgetgruppId: z.string().cuid2(),
 });
 
@@ -65,3 +65,5 @@ export const passwordsSchema = z
     path: ["confirm"],
     message: "Lösenorden matchar inte",
   });
+
+export type Passwords = z.infer<typeof passwordsSchema>;
