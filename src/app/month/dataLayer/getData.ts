@@ -34,14 +34,11 @@ const getTxByDates = async ({
   password: string;
 }): Promise<TxReturn> => {
   const userId = await getUserId();
-  const cats = await db.query.category.findMany({
+  const categories = await db.query.category.findMany({
+    columns: { name: true },
     where: eq(category.userId, userId),
-    with: { match: true },
+    with: { match: { columns: { name: true } } },
   });
-  const categories = cats.map(({ name, match }) => ({
-    name,
-    matches: match.map(({ name }) => name),
-  }));
   const encryptedData = await db
     .select()
     .from(txs)
