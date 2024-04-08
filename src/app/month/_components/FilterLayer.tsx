@@ -12,6 +12,7 @@ import TransactionFilter from "./TransactionFilter";
 import applyTransactionFilters from "~/lib/utils/transactionFilter";
 import type { TxFilter, TxReturn, TxSort } from "~/types";
 import { usePassword } from "~/app/_components/PasswordContext";
+import { sortOptions } from "~/lib/utils";
 
 type Tab = "aggregated" | "transactions";
 
@@ -32,7 +33,7 @@ const FilterLayer = () => {
       inom: false,
       search: "",
     },
-    txSort: { belopp: "Datum (Lågt-Högt)" },
+    txSort: { sort: sortOptions.dateAsc },
   };
   const [txFilter, setTxFilter] = useState<TxFilter>(defaults.txFilter);
   const [txSort, setTxSort] = useState<TxSort>(defaults.txSort);

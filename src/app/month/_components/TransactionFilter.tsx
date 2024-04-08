@@ -1,4 +1,4 @@
-import type { TxSort, TxFilter } from "~/types";
+import type { TxSort, TxFilter, SortOption } from "~/types";
 import capitalize from "~/lib/utils/capitalize";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -13,6 +13,7 @@ import {
 import { SelectTrigger } from "@radix-ui/react-select";
 import { Button } from "~/components/ui/button";
 import { useState } from "react";
+import { sortOptions } from "~/lib/utils";
 
 type Filters = { txFilter: TxFilter; txSort: TxSort };
 type Props = {
@@ -122,9 +123,11 @@ const TransactionFilter = ({
         <div className="flex items-center gap-2">
           <Label htmlFor="sort">Sortera efter:</Label>
           <Select
-            value={txSort.belopp as string}
+            value={txSort.sort}
             defaultValue={"Datum (Lågt-Högt)"}
-            onValueChange={(value) => setTxSort({ ...txSort, belopp: value })}
+            onValueChange={(value) =>
+              setTxSort({ ...txSort, sort: value as SortOption })
+            }
           >
             <SelectTrigger className="w-[160px]">
               <SelectValue defaultValue={""} placeholder="Konto" />
@@ -132,15 +135,21 @@ const TransactionFilter = ({
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Datum</SelectLabel>
-                <SelectItem value={"Datum (Lågt-Högt)"}>
-                  Senast först
+                <SelectItem value={sortOptions.dateAsc}>
+                  Datumstigande
                 </SelectItem>
-                <SelectItem value={"Datum (Högt-Lågt)"}>Älst först</SelectItem>
+                <SelectItem value={sortOptions.dateDesc}>
+                  Datumfallande
+                </SelectItem>
               </SelectGroup>
               <SelectGroup>
                 <SelectLabel>Belopp</SelectLabel>
-                <SelectItem value={"Belopp (Lågt-Högt)"}>Lågt-Högt</SelectItem>
-                <SelectItem value={"Belopp (Högt-Lågt)"}>Högt-Lågt</SelectItem>
+                <SelectItem value={sortOptions.amountAsc}>
+                  Lågt till högt
+                </SelectItem>
+                <SelectItem value={sortOptions.amountDesc}>
+                  Högt till lågt
+                </SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

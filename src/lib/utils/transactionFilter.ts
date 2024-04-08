@@ -1,4 +1,5 @@
 import type { TxFilter, TxSort } from "~/types";
+import { sortOptions } from "../utils";
 
 export type Part = {
   person: string;
@@ -32,13 +33,13 @@ export const transactionSort = <T extends TransactionSort>(
   b: T,
   sortFilter: TxSort,
 ) => {
-  if (sortFilter.belopp === "Datum (Lågt-Högt)") {
+  if (sortFilter.sort === sortOptions.dateAsc) {
     return Number(a.datum) - Number(b.datum);
   }
-  if (sortFilter.belopp === "Datum (Högt-Lågt)") {
+  if (sortFilter.sort === sortOptions.dateDesc) {
     return Number(b.datum) - Number(a.datum);
   }
-  if (sortFilter.belopp === "Belopp (Lågt-Högt)") {
+  if (sortFilter.sort === sortOptions.amountAsc) {
     return a.belopp - b.belopp;
   }
   return b.belopp - a.belopp;
