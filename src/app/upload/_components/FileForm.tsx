@@ -36,7 +36,13 @@ const FileForm = () => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [txs, setTxs] = useState<Tx[]>([]);
   const defaults: { txFilter: TxFilter; txSort: TxSort } = {
-    txFilter: { category: "", person: "", account: "", inom: false },
+    txFilter: {
+      category: "",
+      person: "",
+      account: "",
+      inom: false,
+      search: "",
+    },
     txSort: { belopp: "Datum (Lågt-Högt)" },
   };
   const [txFilter, setTxFilter] = useState<TxFilter>(defaults.txFilter);
