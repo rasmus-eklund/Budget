@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import Icon from "~/lib/icons/Icon";
+import capitalize from "~/lib/utils/capitalize";
 
 type Props = { options: { id: string; name: string }[]; current: string };
 const BreadcrumbWithDropdown = ({ options, current }: Props) => {
@@ -35,7 +36,7 @@ const BreadcrumbWithDropdown = ({ options, current }: Props) => {
               {options.map(({ id, name }) => (
                 <DropdownMenuItem key={id}>
                   <BreadcrumbLink href={`/categories/${id}`}>
-                    {name}
+                    {capitalize(name)}
                   </BreadcrumbLink>
                 </DropdownMenuItem>
               ))}
