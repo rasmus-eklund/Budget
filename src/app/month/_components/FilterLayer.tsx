@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DateFilter from "./DateFilter";
 import Aggregated from "./Aggregated";
 import Transactions from "./Transactions";
@@ -11,16 +11,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import TransactionFilter from "./TransactionFilter";
 import applyTransactionFilters from "~/lib/utils/transactionFilter";
 import type { TxFilter, TxReturn, TxSort } from "~/types";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import { Button } from "~/components/ui/button";
+import { usePassword } from "~/app/_components/PasswordContext";
 
 type Tab = "aggregated" | "transactions";
 
-const PasswordLayer = () => {
+const FilterLayer = () => {
   const [tab, setTab] = useState<Tab>("aggregated");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { password, showDialog } = usePassword();
   const [data, setData] = useState<TxReturn>({
     success: false,
     data: [],
@@ -39,15 +37,12 @@ const PasswordLayer = () => {
   const [txFilter, setTxFilter] = useState<TxFilter>(defaults.txFilter);
   const [txSort, setTxSort] = useState<TxSort>(defaults.txSort);
   const options = getUnique(data.data);
+
   const getData = async (password: string, dates: FromTo) => {
     setLoading(true);
-    setData(await getTxByDates({ dates, password }));
+    const res = await getTxByDates({ dates, password });
+    setData(res);
     setLoading(false);
-  };
-  const submitPassword = async (password: string) => {
-    const dates = getCurrentYearMonth();
-    setPassword(password);
-    await getData(password, dates);
   };
 
   const applyFilters = () => {
@@ -58,11 +53,24 @@ const PasswordLayer = () => {
     return <Transactions data={txs} loading={loading} />;
   };
 
+  useEffect(() => {
+    const dates = getCurrentYearMonth();
+    getTxByDates({ password, dates })
+      .then((data) => {
+        setData(data);
+        if (data.message === "Fel lösenord") {
+          showDialog({ open: true });
+        } else {
+          showDialog({ open: false });
+        }
+      })
+      .catch(() => {
+        setData({ data: [], message: "Något gick fel", success: false });
+      });
+  }, [password, showDialog]);
+
   return (
     <section className="flex h-full flex-col gap-5 p-2">
-      {data.message !== "Success" && (
-        <PasswordForm submitPassword={submitPassword} />
-      )}
       {password ? (
         <DateFilter changeDates={(dates) => getData(password, dates)} />
       ) : null}
@@ -100,28 +108,4 @@ const PasswordLayer = () => {
   );
 };
 
-type PasswordFormProps = { submitPassword: (password: string) => void };
-const PasswordForm = ({ submitPassword }: PasswordFormProps) => {
-  const [pw, setPw] = useState("");
-  return (
-    <form
-      className="flex flex-col gap-2"
-      onSubmit={(e) => {
-        e.preventDefault();
-        submitPassword(pw);
-      }}
-    >
-      <Label htmlFor="pw">Lösenord</Label>
-      <Input
-        type="password"
-        name="password"
-        id="pw"
-        value={pw}
-        onChange={({ target: { value } }) => setPw(value)}
-      />
-      <Button type="submit">Ok</Button>
-    </form>
-  );
-};
-
-export default PasswordLayer;
+export default FilterLayer;
