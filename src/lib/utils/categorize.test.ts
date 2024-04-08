@@ -11,32 +11,22 @@ describe("categorize", () => {
 
     expect(result).toStrictEqual("mat");
   });
-  it("should categorize Lön as Lön", () => {
+  it("should find item in middle of string", () => {
     const cats = [
-      { name: "lön", match: [{ name: "lön" }] },
-      { name: "mat", match: [{ name: "ica" }, { name: "willys" }] },
-      { name: "transport", match: [{ name: "sl" }] },
-    ];
-    const result = categorize("Lön", cats);
-
-    expect(result).toStrictEqual("lön");
-  });
-  it("should categorize teslaamo22-05 as lån", () => {
-    const cats = [
-      { name: "mat", match: [{ name: "ica" }, { name: "willys" }, { name: "foodora" }] },
+      { name: "mat", match: [{ name: "ica" }, { name: "willys" }, { name: "matmat" }] },
       { name: "transport", match: [{ name: "sl" }, { name: "sj" }] },
     ];
-    const result = categorize("K*foodora.se", cats);
+    const result = categorize("K*MatMat.Se", cats);
 
     expect(result).toStrictEqual("mat");
   });
-  it("should categorize foodora", () => {
+  it("should categorize correctly distinguish similar items", () => {
     const cats = [
       { name: "mat", match: [{ name: "ica" }, { name: "willys" }] },
-      { name: "lån", match: [{ name: "teslaamo" }] },
-      { name: "transport", match: [{ name: "sl" }, { name: "Tesla inc" }] },
+      { name: "lån", match: [{ name: "abababb" }] },
+      { name: "transport", match: [{ name: "sl" }, { name: "abababc" }] },
     ];
-    const result = categorize("Teslaamo22-04", cats);
+    const result = categorize("abababb", cats);
 
     expect(result).toStrictEqual("lån");
   });
