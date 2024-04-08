@@ -6,7 +6,8 @@ export type TxFilter = {
   search: string;
 };
 
-type TxSort = { belopp: tOption };
+type SortOption = "date-asc" | "date-desc" | "amount-asc" | "amount-desc";
+type TxSort = { sort: SortOption };
 
 export type Internal = {
   id: string;
