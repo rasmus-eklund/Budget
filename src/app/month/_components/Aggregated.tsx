@@ -74,6 +74,7 @@ const Aggregated = ({
                             category,
                             inom: false,
                             person,
+                            search: "",
                           })
                         }
                       >
