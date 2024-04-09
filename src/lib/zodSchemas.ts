@@ -29,11 +29,11 @@ export const txSchema = z.object({
 });
 export type Tx = z.infer<typeof txSchema>;
 
-export const datesSchema = z.object({
+export const fromToSchema = z.object({
   from: z.coerce.date(),
   to: z.coerce.date(),
 });
-export type FromTo = z.infer<typeof datesSchema>;
+export type FromTo = z.infer<typeof fromToSchema>;
 
 export const nameSchema = z.object({
   name: z.string().min(2, "Minst 2 tecken."),
