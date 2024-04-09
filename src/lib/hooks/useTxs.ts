@@ -17,9 +17,9 @@ export const useTxs = () => {
 
   const defaults: { txFilter: TxFilter; txSort: TxSort; txDate: FromTo } = {
     txFilter: {
-      category: "",
-      person: "",
-      account: "",
+      category: "none",
+      person: "none",
+      account: "none",
       inom: false,
       search: "",
     },
