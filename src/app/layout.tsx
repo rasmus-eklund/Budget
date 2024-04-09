@@ -2,7 +2,7 @@ import "~/styles/globals.css";
 
 import { Inter } from "next/font/google";
 import Header from "./_components/header/Header";
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "~/components/ui/toaster";
 import { env } from "~/env";
 import PasswordProvider from "./_components/PasswordContext";
 import SessionWrapper from "./SessionWrapper";
