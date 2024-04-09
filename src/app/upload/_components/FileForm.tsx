@@ -11,7 +11,6 @@ import {
   readFiles,
   uploadFiles,
 } from "./fileFormHelpers";
-import { toast } from "~/components/ui/use-toast";
 import TransactionFilter from "~/app/month/_components/TransactionFilter";
 import applyTransactionFilters from "~/lib/utils/transactionFilter";
 import getUnique from "~/lib/utils/getUnique";
@@ -76,17 +75,12 @@ const FileForm = () => {
             if (files) {
               const test = hasCorrectFilenames(files);
               if (!test.success) {
-                return toast({
-                  title: "Fel filnamn",
-                  description: (
-                    <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                      <p className="text-white">
-                        {`Felaktigt formaterat filnamn ${test.name}`}
-                      </p>
-                    </pre>
-                  ),
+                return setError({
+                  error: true,
+                  message: `Felaktigt formaterat filnamn ${test.name}`,
                 });
               }
+              setError({ error: false, message: "" });
               setFiles(files);
             }
           }}
