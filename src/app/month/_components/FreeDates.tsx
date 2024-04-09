@@ -27,7 +27,7 @@ const FreeDates = ({ changeDate }: Props) => {
         e.preventDefault();
         changeDate(filter);
       }}
-      className="flex flex-col gap-2 p-3"
+      className="flex flex-col gap-2 p-3 md:flex-row md:justify-between"
     >
       <div className="flex flex-col gap-2 md:flex-row md:items-center">
         <div className="flex gap-2">
