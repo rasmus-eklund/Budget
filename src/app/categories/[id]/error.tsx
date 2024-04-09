@@ -1,13 +1,6 @@
 "use client";
 
-const ErrorBoundary = ({
-  error,
-  reset,
-}: {
-  error: Error;
-  reset: () => void;
-}) => {
-  console.log(error.message);
+const ErrorBoundary = ({ reset }: { error: Error; reset: () => void }) => {
   return (
     <div>
       <p>Något gick fel</p>

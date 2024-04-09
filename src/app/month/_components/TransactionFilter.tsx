@@ -33,7 +33,6 @@ const TransactionFilter = ({
   setFilters: { setTxFilter, setTxSort },
 }: Props) => {
   const [search, setSearch] = useState("");
-  console.log({ default: defaults.txFilter, txFilter });
   return (
     <form
       className="flex flex-col gap-2 p-1 md:flex-row md:justify-between"
