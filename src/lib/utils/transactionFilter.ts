@@ -17,10 +17,10 @@ export const transactionFilter = <T extends Part & { filter: TxFilter }>({
   text,
   filter,
 }: T) => {
-  const personMatch = filter.person === "" || person === filter.person;
+  const personMatch = filter.person === "none" || person === filter.person;
   const categoryMatch =
-    filter.category === "" || budgetgrupp === filter.category;
-  const accountMatch = filter.account === "" || konto === filter.account;
+    filter.category === "none" || budgetgrupp === filter.category;
+  const accountMatch = filter.account === "none" || konto === filter.account;
   const inomMatch = filter.inom || budgetgrupp !== "inom";
   const search =
     filter.search === "" ||

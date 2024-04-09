@@ -15,10 +15,10 @@ const data: Part[] = [
 describe("Transaction filter", () => {
   it("should show all", () => {
     const filter: TxFilter = {
-      category: "",
+      category: "none",
       inom: true,
-      person: "",
-      account: "",
+      person: "none",
+      account: "none",
       search: "",
     };
     const result = data.filter((d) => transactionFilter({ ...d, filter }));
@@ -26,10 +26,10 @@ describe("Transaction filter", () => {
   });
   it("should show only person A", () => {
     const filter: TxFilter = {
-      category: "",
+      category: "none",
       inom: true,
       person: "A",
-      account: "",
+      account: "none",
       search: "",
     };
     const expected: Part[] = [
@@ -46,7 +46,7 @@ describe("Transaction filter", () => {
       category: "mat",
       inom: true,
       person: "A",
-      account: "",
+      account: "none",
       search: "",
     };
     const expected: Part[] = [
@@ -57,10 +57,10 @@ describe("Transaction filter", () => {
   });
   it("should hide inom", () => {
     const filter: TxFilter = {
-      category: "",
+      category: "none",
       inom: false,
-      person: "",
-      account: "",
+      person: "none",
+      account: "none",
       search: "",
     };
     const expected: Part[] = [
@@ -74,10 +74,10 @@ describe("Transaction filter", () => {
   });
   it("should show only person A and hide inom", () => {
     const filter: TxFilter = {
-      category: "",
+      category: "none",
       inom: false,
       person: "A",
-      account: "",
+      account: "none",
       search: "",
     };
     const expected: Part[] = [
@@ -89,7 +89,7 @@ describe("Transaction filter", () => {
   });
   it("should show only person A and account A and hide inom", () => {
     const filter: TxFilter = {
-      category: "",
+      category: "none",
       inom: false,
       person: "A",
       account: "A",
@@ -103,10 +103,10 @@ describe("Transaction filter", () => {
   });
   it("should show sl", () => {
     const filter: TxFilter = {
-      category: "",
+      category: "none",
       inom: false,
-      person: "",
-      account: "",
+      person: "none",
+      account: "none",
       search: "sl",
     };
     const expected: Part[] = [
