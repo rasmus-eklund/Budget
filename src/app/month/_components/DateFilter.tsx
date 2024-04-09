@@ -1,12 +1,11 @@
 "use client";
 import FreeDates from "./FreeDates";
 import YearMonth from "./YearMonth";
-import { Button } from "~/components/ui/button";
 import type { FromTo } from "~/lib/zodSchemas";
 import { TabsContent, TabsList, TabsTrigger, Tabs } from "~/components/ui/tabs";
 
-type Props = { changeDates: (dates: FromTo) => void };
-const DateFilter = ({ changeDates }: Props) => {
+type Props = { changeDates: (dates: FromTo) => void; years: number[] };
+const DateFilter = ({ changeDates, years }: Props) => {
   return (
     <Tabs defaultValue="month">
       <TabsList>
@@ -14,18 +13,10 @@ const DateFilter = ({ changeDates }: Props) => {
         <TabsTrigger value="free">Fritt spann</TabsTrigger>
       </TabsList>
       <TabsContent value="month">
-        <YearMonth changeDate={changeDates}>
-          <Button variant={"default"} type="submit">
-            Ok
-          </Button>
-        </YearMonth>
+        <YearMonth changeDate={changeDates} years={years} />
       </TabsContent>
       <TabsContent value="free">
-        <FreeDates changeDate={changeDates}>
-          <Button variant={"default"} type="submit">
-            Ok
-          </Button>
-        </FreeDates>
+        <FreeDates changeDate={changeDates} />
       </TabsContent>
     </Tabs>
   );
