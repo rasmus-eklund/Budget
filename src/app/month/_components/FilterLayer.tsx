@@ -1,79 +1,36 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DateFilter from "./DateFilter";
 import Aggregated from "./Aggregated";
 import Transactions from "./Transactions";
-import type { FromTo } from "~/lib/zodSchemas";
-import getTxByDates from "../dataLayer/getData";
-import { getCurrentYearMonth } from "~/lib/utils/datePicker";
+
 import getUnique from "~/lib/utils/getUnique";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import TransactionFilter from "./TransactionFilter";
 import applyTransactionFilters from "~/lib/utils/transactionFilter";
-import type { TxFilter, TxReturn, TxSort } from "~/types";
-import { usePassword } from "~/app/_components/PasswordContext";
-import { sortOptions } from "~/lib/utils";
+
+import { useTxs } from "~/lib/hooks/useTxs";
 
 type Tab = "aggregated" | "transactions";
 
-const FilterLayer = () => {
+type Props = { years: number[] };
+const FilterLayer = ({ years }: Props) => {
   const [tab, setTab] = useState<Tab>("aggregated");
-  const [loading, setLoading] = useState(false);
-  const { password, showDialog } = usePassword();
-  const [data, setData] = useState<TxReturn>({
-    success: false,
-    data: [],
-    message: "Fel lösenord",
-  });
-  const defaults: { txFilter: TxFilter; txSort: TxSort } = {
-    txFilter: {
-      category: "",
-      person: "",
-      account: "",
-      inom: false,
-      search: "",
-    },
-    txSort: { sort: sortOptions.dateAsc },
-  };
-  const [txFilter, setTxFilter] = useState<TxFilter>(defaults.txFilter);
-  const [txSort, setTxSort] = useState<TxSort>(defaults.txSort);
+  const { data, loading, filters } = useTxs();
   const options = getUnique(data.data);
 
-  const getData = async (password: string, dates: FromTo) => {
-    setLoading(true);
-    const res = await getTxByDates({ dates, password });
-    setData(res);
-    setLoading(false);
-  };
-
-  const applyFilters = () => {
-    const txs = applyTransactionFilters({
-      data: data.data,
-      filters: { txFilter, txSort },
-    });
-    return <Transactions data={txs} loading={loading} />;
-  };
-
-  useEffect(() => {
-    const dates = getCurrentYearMonth();
-    getTxByDates({ password, dates })
-      .then((data) => {
-        setData(data);
-        if (data.message === "Fel lösenord") {
-          showDialog({ open: true });
-        } else {
-          showDialog({ open: false });
-        }
-      })
-      .catch(() => {
-        setData({ data: [], message: "Något gick fel", success: false });
-      });
-  }, [password, showDialog]);
+  const txs = applyTransactionFilters({
+    data: data.data,
+    filters: filters.get,
+  });
 
   return (
     <section className="flex h-full flex-col gap-5 p-2">
-      {password ? (
-        <DateFilter changeDates={(dates) => getData(password, dates)} />
+      {data.message !== "Fel lösenord" ? (
+        <DateFilter
+          years={years}
+          changeDates={(dates) => filters.set.setTxDate(dates)}
+        />
       ) : null}
       {data.success ? (
         <Tabs value={tab} onValueChange={(value) => setTab(value as Tab)}>
@@ -87,7 +44,7 @@ const FilterLayer = () => {
               options={options}
               loading={loading}
               setFilter={(filter) => {
-                setTxFilter(filter);
+                filters.set.setTxFilter(filter);
                 setTab("transactions");
               }}
             />
@@ -95,11 +52,11 @@ const FilterLayer = () => {
           <TabsContent value="transactions">
             <TransactionFilter
               options={options}
-              defaults={defaults}
-              filters={{ txFilter, txSort }}
-              setFilters={{ setTxFilter, setTxSort }}
+              defaults={filters.defaults}
+              filters={filters.get}
+              setFilters={filters.set}
             />
-            {applyFilters()}
+            <Transactions data={txs} loading={loading} />
           </TabsContent>
         </Tabs>
       ) : (
