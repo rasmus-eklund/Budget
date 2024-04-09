@@ -13,18 +13,22 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { env } from "~/env";
 
 import { type Passwords, passwordsSchema } from "~/lib/zodSchemas";
 
 type Props = {
   onSubmit: (password: string) => void;
 };
-
+const defaultValues = {
+  password: env.NEXT_PUBLIC_PASS ?? "",
+  confirm: env.NEXT_PUBLIC_PASS ?? "",
+};
 const PasswordForm = ({ onSubmit }: Props) => {
   const form = useForm<Passwords>({
     mode: "all",
     resolver: zodResolver(passwordsSchema),
-    defaultValues: { password: "", confirm: "" },
+    defaultValues,
   });
 
   const handleSubmit = async (data: Passwords) => {
