@@ -24,7 +24,7 @@ const YearMonth = ({ changeDate, years }: Props) => {
   const [month, setMonth] = useState(currentMonth);
   return (
     <form
-      className="flex flex-col gap-2 p-3"
+      className="flex flex-col gap-2 p-3 md:flex-row md:justify-between"
       onSubmit={(e) => {
         e.preventDefault();
         changeDate({
@@ -33,13 +33,13 @@ const YearMonth = ({ changeDate, years }: Props) => {
         });
       }}
     >
-      <div className="flex items-center justify-between gap-2 rounded-md md:justify-normal">
+      <div className="flex items-center justify-between gap-2 md:justify-normal">
         <Select
           value={year.toString()}
           onValueChange={(value) => setYear(Number(value))}
         >
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="År" />
+            <SelectValue placeholder="" />
           </SelectTrigger>
           <SelectContent>
             {years.map((year) => (
@@ -54,7 +54,7 @@ const YearMonth = ({ changeDate, years }: Props) => {
           onValueChange={(value) => setMonth(Number(value))}
         >
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="Månad" />
+            <SelectValue placeholder="" />
           </SelectTrigger>
           <SelectContent>
             {months.map((m, n) => (
