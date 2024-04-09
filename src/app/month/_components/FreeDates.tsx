@@ -1,15 +1,15 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
+import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import Icon from "~/lib/icons/Icon";
 import { minusOneDay, plusOneDay } from "~/lib/utils/datePicker";
 import { dateToString } from "~/lib/utils/formatData";
 import { type FromTo } from "~/lib/zodSchemas";
 
-type Props = { children: ReactNode; changeDate: (dates: FromTo) => void };
+type Props = { changeDate: (dates: FromTo) => void };
 
-const FreeDates = ({ children, changeDate }: Props) => {
+const FreeDates = ({ changeDate }: Props) => {
   const firstDayOfThisMonth = new Date();
   const lastDayOfThisMonth = new Date(
     firstDayOfThisMonth.getFullYear(),
@@ -53,7 +53,9 @@ const FreeDates = ({ children, changeDate }: Props) => {
             }
           />
         </div>
-        {children}
+        <Button variant={"default"} type="submit">
+          Ok
+        </Button>
       </div>
       <div className="flex items-center justify-between gap-4 md:justify-normal">
         <Button

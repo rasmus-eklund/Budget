@@ -1,16 +1,23 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
+import { useState } from "react";
 import { Button } from "~/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { months } from "~/lib/constants/months";
 import Icon from "~/lib/icons/Icon";
 import capitalize from "~/lib/utils/capitalize";
 import { decrementMonth, incrementMonth } from "~/lib/utils/datePicker";
 import { type FromTo } from "~/lib/zodSchemas";
 
-type Props = { children: ReactNode; changeDate: (dates: FromTo) => void };
+type Props = { changeDate: (dates: FromTo) => void; years: number[] };
 
-const YearMonth = ({ changeDate, children }: Props) => {
+const YearMonth = ({ changeDate, years }: Props) => {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
   const [year, setYear] = useState(currentYear);
@@ -27,34 +34,39 @@ const YearMonth = ({ changeDate, children }: Props) => {
       }}
     >
       <div className="flex items-center justify-between gap-2 rounded-md md:justify-normal">
-        <label htmlFor="year">År</label>
-        <select
-          id="year"
-          className="px-1"
-          value={year}
-          onChange={({ target: { value } }) => setYear(Number(value))}
+        <Select
+          value={year.toString()}
+          onValueChange={(value) => setYear(Number(value))}
         >
-          {Array(currentYear - 2013)
-            .fill(0)
-            .map((_, n) => (
-              <option key={`year-${n}`} value={currentYear - n}>
-                {currentYear - n}
-              </option>
+          <SelectTrigger className="w-[160px]">
+            <SelectValue placeholder="År" />
+          </SelectTrigger>
+          <SelectContent>
+            {years.map((year) => (
+              <SelectItem key={`year-${year}`} value={year.toString()}>
+                {year}
+              </SelectItem>
             ))}
-        </select>
-        <label htmlFor="month">Månad</label>
-        <select
-          id="month"
-          value={month}
-          onChange={({ target: { value } }) => setMonth(Number(value))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={month.toString()}
+          onValueChange={(value) => setMonth(Number(value))}
         >
-          {months.map((month, n) => (
-            <option key={month} value={n}>
-              {capitalize(month)}
-            </option>
-          ))}
-        </select>
-        {children}
+          <SelectTrigger className="w-[160px]">
+            <SelectValue placeholder="Månad" />
+          </SelectTrigger>
+          <SelectContent>
+            {months.map((m, n) => (
+              <SelectItem key={`month-${m}`} value={n.toString()}>
+                {capitalize(m)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button variant={"default"} type="submit">
+          Ok
+        </Button>
       </div>
       <div className="flex items-center justify-between gap-2 md:justify-normal">
         <Button
