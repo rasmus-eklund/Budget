@@ -2,7 +2,6 @@ import "~/styles/globals.css";
 
 import { Inter } from "next/font/google";
 import Header from "./_components/header/Header";
-import { Toaster } from "~/components/ui/toaster";
 import { env } from "~/env";
 import PasswordProvider from "./_components/PasswordContext";
 import SessionWrapper from "./SessionWrapper";
@@ -28,7 +27,6 @@ export default function RootLayout({
       <body
         className={`font-sans ${inter.variable} flex flex-col items-center`}
       >
-        <Toaster />
         <Header />
         <SessionWrapper>
           <PasswordProvider>
