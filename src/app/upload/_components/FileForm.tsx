@@ -11,7 +11,7 @@ import {
   readFiles,
   uploadFiles,
 } from "./fileFormHelpers";
-import toast from "react-hot-toast";
+import { toast } from "~/components/ui/use-toast";
 import TransactionFilter from "~/app/month/_components/TransactionFilter";
 import applyTransactionFilters from "~/lib/utils/transactionFilter";
 import getUnique from "~/lib/utils/getUnique";
@@ -76,7 +76,16 @@ const FileForm = () => {
             if (files) {
               const test = hasCorrectFilenames(files);
               if (!test.success) {
-                return toast.error(`Felaktigt formaterat filnamn ${test.name}`);
+                return toast({
+                  title: "Fel filnamn",
+                  description: (
+                    <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                      <p className="text-white">
+                        {`Felaktigt formaterat filnamn ${test.name}`}
+                      </p>
+                    </pre>
+                  ),
+                });
               }
               setFiles(files);
             }
@@ -123,9 +132,9 @@ const FileForm = () => {
 const ShowTransactions = ({ txs }: { txs: Tx[] }) => {
   const defaults: { txFilter: TxFilter; txSort: TxSort } = {
     txFilter: {
-      category: "",
-      person: "",
-      account: "",
+      category: "none",
+      person: "none",
+      account: "none",
       inom: false,
       search: "",
     },
