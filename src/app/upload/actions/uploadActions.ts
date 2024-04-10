@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { db } from "~/server/db";
 import { and, eq, sql } from "drizzle-orm";
-import { txs } from "~/server/db/schema";
+import { category, txs } from "~/server/db/schema";
 import getUserId from "~/server/getUserId";
 import type { DbTx } from "~/types";
 
@@ -34,4 +34,14 @@ export const getTxsPerYear = async () => {
     .groupBy(txs.year)
     .orderBy(txs.year);
   return data;
+};
+
+export const GetCategories = async () => {
+  const userId = await getUserId();
+  const categories = await db.query.category.findMany({
+    columns: { name: true },
+    where: eq(category.userId, userId),
+    with: { match: { columns: { name: true } } },
+  });
+  return categories;
 };
