@@ -64,7 +64,7 @@ const Aggregated = ({
                         className="hover:scale-110"
                         onClick={() =>
                           setFilter({
-                            account: "",
+                            account: "none",
                             category,
                             inom: false,
                             person,
