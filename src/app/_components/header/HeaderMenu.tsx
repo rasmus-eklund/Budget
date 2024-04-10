@@ -45,6 +45,10 @@ const Menu = () => {
             <Icon icon="cog" className="mr-2 size-6" />
             Kategorier
           </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="password">
+            <Icon icon="password" className="mr-2 size-6" />
+            Lösenord
+          </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
