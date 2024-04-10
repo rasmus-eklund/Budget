@@ -4,7 +4,7 @@ import { getServerAuthSession } from "~/server/auth";
 const HomePage = async () => {
   const session = await getServerAuthSession();
   if (session) {
-    redirect("/month");
+    redirect("/transactions");
   }
   return (
     <div className="p-2">
