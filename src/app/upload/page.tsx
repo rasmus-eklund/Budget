@@ -1,20 +1,26 @@
 import { Suspense } from "react";
 import FileForm from "./_components/FileForm";
-import { getTxsPerYear } from "./actions/uploadActions";
+import { GetCategories, getTxsPerYear } from "./actions/uploadActions";
 import Hide from "./_components/Hide";
 import YearCountTable from "./_components/YearCountTable";
 
 const page = async () => {
-  const data = await getTxsPerYear();
+  const [data, categories] = await Promise.all([
+    getTxsPerYear(),
+    GetCategories(),
+  ]);
+
   return (
     <div className="flex flex-col gap-4 p-4">
-      <Hide>
-        <h2>Din data:</h2>
-        <Suspense fallback={<Loading />}>
-          <YearCountTable data={data} />
-        </Suspense>
-      </Hide>
-      <FileForm />
+      <Suspense fallback={<Loading />}>
+        {data.length !== 0 && (
+          <Hide>
+            <h2>Din data:</h2>
+            <YearCountTable data={data} />
+          </Hide>
+        )}
+      </Suspense>
+      <FileForm categories={categories} />
     </div>
   );
 };
