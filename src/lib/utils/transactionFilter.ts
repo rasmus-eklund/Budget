@@ -10,6 +10,20 @@ export type Part = {
 
 type TransactionSort = { datum: Date; belopp: number };
 
+export const getDefaultFilter = () => {
+  const defaults: { txFilter: TxFilter; txSort: TxSort } = {
+    txFilter: {
+      category: "none",
+      person: "none",
+      account: "none",
+      inom: false,
+      search: "",
+    },
+    txSort: { sort: sortOptions.dateAsc },
+  };
+  return defaults;
+};
+
 export const transactionFilter = <T extends Part & { filter: TxFilter }>({
   konto,
   person,
