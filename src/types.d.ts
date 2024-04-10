@@ -30,3 +30,5 @@ export type TxReturn = {
   data: Tx[];
   message: "Success" | "Något gick fel" | "Fel lösenord";
 };
+
+export type Category = { name: string; match: { name: string }[] };
