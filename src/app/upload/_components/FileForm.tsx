@@ -15,14 +15,18 @@ import { usePassword } from "~/app/_components/PasswordContext";
 import { applyCategories } from "~/lib/utils/categorize";
 import ShowData from "~/app/transactions/_components/ShowData";
 import { getFromTo } from "~/lib/utils/getYearRange";
+import Link from "next/link";
 
 type Props = { categories: Category[] };
 const FileForm = ({ categories }: Props) => {
-  const { password, showDialog } = usePassword();
+  const { password } = usePassword();
   const [files, setFiles] = useState<FileList | null>(null);
   const [txs, setTxs] = useState<Tx[]>([]);
   const [loading, setLoading] = useState({ loading: false, percent: 0 });
-  const [error, setError] = useState({ error: false, message: "" });
+  const [error, setError] = useState({
+    error: false,
+    message: "",
+  });
 
   const processTxs = async () => {
     if (!files) {
@@ -52,10 +56,10 @@ const FileForm = ({ categories }: Props) => {
     setLoading({ loading: false, percent: 0 });
   };
   useEffect(() => {
-    if (!password) {
-      showDialog({ open: true });
+    if (!password && !error.error) {
+      setError({ error: true, message: "Inget lösenord valt" });
     }
-  }, [password, showDialog]);
+  }, [password, error.error]);
   return (
     <div>
       <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
@@ -96,6 +100,11 @@ const FileForm = ({ categories }: Props) => {
           </ul>
         )}
         {error.error && <p className="text-lg text-red-500">{error.message}</p>}
+        {!password && (
+          <Link className="underline" href={"/password"}>
+            Välj lösenord
+          </Link>
+        )}
         <p>Att bearbeta filer kan ta flera minuter.</p>
         <div className="flex gap-2">
           {loading.loading ? (
@@ -107,7 +116,7 @@ const FileForm = ({ categories }: Props) => {
             <Button
               onClick={processTxs}
               type="button"
-              disabled={!files || files.length === 0}
+              disabled={!files || files.length === 0 || error.error}
             >
               Bearbeta
             </Button>
