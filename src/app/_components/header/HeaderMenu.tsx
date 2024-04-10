@@ -16,7 +16,7 @@ import Icon from "~/lib/icons/Icon";
 const Menu = () => {
   const pathname = usePathname();
   const currentPath = pathname.split("/")[1];
-  const [page, setPage] = React.useState(currentPath ?? "month");
+  const [page, setPage] = React.useState(currentPath ?? "transactions");
   const router = useRouter();
   return (
     <DropdownMenu>
@@ -33,7 +33,7 @@ const Menu = () => {
             router.push(`/${newPage}`);
           }}
         >
-          <DropdownMenuRadioItem value="month">
+          <DropdownMenuRadioItem value="transactions">
             <Icon icon="cash" className="mr-2 size-6" />
             Transaktioner
           </DropdownMenuRadioItem>
