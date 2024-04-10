@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { usePassword } from "~/app/_components/PasswordContext";
-import type { TxFilter, TxSort, TxReturn } from "~/types";
+import type { TxReturn } from "~/types";
 import type { FromTo } from "../zodSchemas";
-import { sortOptions } from "../utils";
+import getTxByDates from "~/app/transactions/dataLayer/getData";
+
 import { getCurrentYearMonth } from "../utils/datePicker";
-import getTxByDates from "~/app/month/dataLayer/getData";
 
 export const useTxs = () => {
   const [loading, setLoading] = useState(false);
@@ -15,20 +15,7 @@ export const useTxs = () => {
     message: "Fel lösenord",
   });
 
-  const defaults: { txFilter: TxFilter; txSort: TxSort; txDate: FromTo } = {
-    txFilter: {
-      category: "none",
-      person: "none",
-      account: "none",
-      inom: false,
-      search: "",
-    },
-    txSort: { sort: sortOptions.dateAsc },
-    txDate: getCurrentYearMonth(),
-  };
-  const [txFilter, setTxFilter] = useState<TxFilter>(defaults.txFilter);
-  const [txSort, setTxSort] = useState<TxSort>(defaults.txSort);
-  const [txDate, setTxDate] = useState<FromTo>(defaults.txDate);
+  const [txDate, setTxDate] = useState<FromTo>(getCurrentYearMonth());
 
   const getData = useCallback(
     async (password: string, dates: FromTo) => {
@@ -52,10 +39,6 @@ export const useTxs = () => {
   return {
     data,
     loading,
-    filters: {
-      set: { setTxSort, setTxDate, setTxFilter },
-      get: { txFilter, txSort },
-      defaults,
-    },
+    setTxDate,
   };
 };
