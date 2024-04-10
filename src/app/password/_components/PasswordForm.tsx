@@ -16,6 +16,7 @@ import { Input } from "~/components/ui/input";
 import { env } from "~/env";
 
 import { type Passwords, passwordsSchema } from "~/lib/zodSchemas";
+import { usePassword } from "../../_components/PasswordContext";
 
 type Props = {
   onSubmit: (password: string) => void;
@@ -25,6 +26,7 @@ const defaultValues = {
   confirm: env.NEXT_PUBLIC_PASS ?? "",
 };
 const PasswordForm = ({ onSubmit }: Props) => {
+  const { password } = usePassword();
   const form = useForm<Passwords>({
     mode: "all",
     resolver: zodResolver(passwordsSchema),
