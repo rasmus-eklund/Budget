@@ -29,11 +29,9 @@ export default function RootLayout({
       >
         <Header />
         <SessionWrapper>
-          <PasswordProvider>
-            <main className="flex h-[calc(100vh-56px)] w-full max-w-5xl flex-col">
-              {children}
-            </main>
-          </PasswordProvider>
+          <main className="flex h-[calc(100vh-56px)] w-full max-w-5xl flex-col gap-4">
+            <PasswordProvider>{children}</PasswordProvider>
+          </main>
         </SessionWrapper>
       </body>
     </html>
