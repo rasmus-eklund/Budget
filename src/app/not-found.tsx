@@ -5,7 +5,7 @@ const NotFound = () => {
   return (
     <div>
       <p>Sidan finns inte</p>
-      <Link className="text-blue-500" href={"/month"}>
+      <Link className="text-blue-500" href={"/transactions"}>
         Gå tillbaks till dina bankloggar.
       </Link>
     </div>
