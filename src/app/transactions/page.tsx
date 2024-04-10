@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import GetTxsLayer from "./_components/GetTxsLayer";
 import { getDateRange } from "./dataLayer/getDateRange";
 import Link from "next/link";
+import { Suspense } from "react";
 
 const TransactionPage = async () => {
   const session = await getServerAuthSession();
@@ -12,7 +13,11 @@ const TransactionPage = async () => {
   const range = await getDateRange();
   const { from, to } = range;
   if (from && to) {
-    return <GetTxsLayer range={{ from, to }} />;
+    return (
+      <Suspense fallback={<p>Laddar...</p>}>
+        <GetTxsLayer range={{ from, to }} />
+      </Suspense>
+    );
   }
   return (
     <p className="p-2">
