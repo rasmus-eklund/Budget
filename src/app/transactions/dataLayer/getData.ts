@@ -52,13 +52,13 @@ const getTxByDates = async ({
   try {
     const decryptedData = await decryptTxs(encryptedData, password);
     const data = decryptedData.map((tx) => applyCategories({ tx, categories }));
-    return { success: true, data, message: "Success" };
+    return { data, status: "Success" };
   } catch (error) {
     const message = getErrorMessage(error);
     if (message === "The operation failed for an operation-specific reason") {
-      return { success: false, data: [], message: "Fel lösenord" };
+      return { data: [], status: "Wrong password" };
     }
-    return { success: false, data: [], message: "Något gick fel" };
+    return { data: [], status: "Error" };
   }
 };
 
