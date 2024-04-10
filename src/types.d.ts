@@ -26,9 +26,8 @@ export type Uniques = {
 };
 
 export type TxReturn = {
-  success: boolean;
   data: Tx[];
-  message: "Success" | "Något gick fel" | "Fel lösenord";
+  status: "Success" | "Error" | "Wrong password";
 };
 
 export type Category = { name: string; match: { name: string }[] };
