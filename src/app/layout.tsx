@@ -5,7 +5,6 @@ import Header from "./_components/header/Header";
 import { env } from "~/env";
 import PasswordProvider from "./_components/PasswordContext";
 import SessionWrapper from "./SessionWrapper";
-
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -16,7 +15,6 @@ export const metadata = {
   description: "Hantera din privatekonomi",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
-
 export default function RootLayout({
   children,
 }: {
@@ -29,9 +27,11 @@ export default function RootLayout({
       >
         <Header />
         <SessionWrapper>
-          <main className="flex h-[calc(100vh-56px)] w-full max-w-5xl flex-col gap-4">
-            <PasswordProvider>{children}</PasswordProvider>
-          </main>
+          <PasswordProvider>
+            <main className="flex h-[calc(100vh-56px)] w-full max-w-5xl flex-col gap-4">
+              {children}
+            </main>
+          </PasswordProvider>
         </SessionWrapper>
       </body>
     </html>
