@@ -1,12 +1,7 @@
-const categorize = (
-  text: string,
-  categories: {
-    name: string;
-    match: {
-      name: string;
-    }[];
-  }[],
-) => {
+import { type Category } from "~/types";
+import { type Tx } from "../zodSchemas";
+
+export const categorize = (text: string, categories: Category[]) => {
   for (const { name, match } of categories) {
     for (const m of match) {
       const regex = new RegExp(m.name.replace(/\*/g, ".*"), "i");
@@ -18,4 +13,21 @@ const categorize = (
   return null;
 };
 
-export default categorize;
+export const applyCategories = ({
+  tx,
+  categories,
+}: {
+  tx: Tx;
+  categories: Category[];
+}) => {
+  if (tx.budgetgrupp === "inom") {
+    return tx;
+  }
+  if (tx.belopp > 0) {
+    return { ...tx, budgetgrupp: "inkomst" };
+  }
+  return {
+    ...tx,
+    budgetgrupp: categorize(tx.text, categories) ?? tx.budgetgrupp,
+  };
+};
