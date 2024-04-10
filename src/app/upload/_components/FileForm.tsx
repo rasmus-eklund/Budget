@@ -2,23 +2,22 @@
 
 import { type FormEvent, useState, useEffect } from "react";
 import { ClipLoader } from "react-spinners";
-import Transactions from "~/app/month/_components/Transactions";
 import { Button } from "~/components/ui/button";
-import type { Tx } from "~/lib/zodSchemas";
+import type { FromTo, Tx } from "~/lib/zodSchemas";
 import {
   getFileNames,
   hasCorrectFilenames,
   readFiles,
   uploadFiles,
 } from "./fileFormHelpers";
-import TransactionFilter from "~/app/month/_components/TransactionFilter";
-import applyTransactionFilters from "~/lib/utils/transactionFilter";
-import getUnique from "~/lib/utils/getUnique";
-import type { TxFilter, TxSort } from "~/types";
+import type { Category } from "~/types";
 import { usePassword } from "~/app/_components/PasswordContext";
-import { sortOptions } from "~/lib/utils";
+import { applyCategories } from "~/lib/utils/categorize";
+import ShowData from "~/app/transactions/_components/ShowData";
+import { getFromTo } from "~/lib/utils/getYearRange";
 
-const FileForm = () => {
+type Props = { categories: Category[] };
+const FileForm = ({ categories }: Props) => {
   const { password, showDialog } = usePassword();
   const [files, setFiles] = useState<FileList | null>(null);
   const [txs, setTxs] = useState<Tx[]>([]);
@@ -118,42 +117,38 @@ const FileForm = () => {
           </Button>
         </div>
       </form>
-      {txs.length !== 0 ? <ShowTransactions txs={txs} /> : null}
+      {txs.length !== 0 ? (
+        <ShowTransactions txs={txs} categories={categories} />
+      ) : null}
     </div>
   );
 };
 
-const ShowTransactions = ({ txs }: { txs: Tx[] }) => {
-  const defaults: { txFilter: TxFilter; txSort: TxSort } = {
-    txFilter: {
-      category: "none",
-      person: "none",
-      account: "none",
-      inom: false,
-      search: "",
-    },
-    txSort: { sort: sortOptions.dateAsc },
-  };
-  const options = getUnique(txs);
-  const [txFilter, setTxFilter] = useState<TxFilter>(defaults.txFilter);
-  const [txSort, setTxSort] = useState<TxSort>(defaults.txSort);
-  const applyFilters = () => {
-    const filtered = applyTransactionFilters({
-      data: txs,
-      filters: { txFilter, txSort },
-    });
-    return <Transactions data={filtered} loading={false} />;
-  };
+const ShowTransactions = ({
+  txs,
+  categories,
+}: {
+  txs: Tx[];
+  categories: Category[];
+}) => {
+  const fromTo = getFromTo(txs);
+  const [{ from, to }, setDates] = useState<FromTo>(fromTo);
+  const data: Tx[] = [];
+  for (const tx of txs) {
+    if (tx.datum >= from && tx.datum <= to) {
+      data.push(applyCategories({ tx, categories }));
+    }
+  }
+
   return (
-    <div>
-      <TransactionFilter
-        options={options}
-        defaults={defaults}
-        filters={{ txFilter, txSort }}
-        setFilters={{ setTxFilter, setTxSort }}
-      />
-      {applyFilters()}
-    </div>
+    <ShowData
+      data={data}
+      range={fromTo}
+      setDates={(dates) => {
+        setDates(dates);
+      }}
+      defaultTab="transactions"
+    />
   );
 };
 
