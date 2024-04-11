@@ -14,19 +14,18 @@ import { getYearRange } from "~/lib/utils/getYearRange";
 import { type FromTo } from "~/lib/zodSchemas";
 
 type Props = {
-  changeDate: (dates: FromTo) => void;
+  changeDate: (dates: FromTo) => Promise<void>;
   fromTo: FromTo;
 };
 
 const Year = ({ changeDate, fromTo: { from, to } }: Props) => {
   const mostRecentYear = to.getFullYear();
   const [year, setYear] = useState(mostRecentYear);
-  const submitYear = (year: number) => {
-    changeDate({
+  const submitYear = async (year: number) => {
+    await changeDate({
       from: new Date(year, 0, 1),
       to: new Date(year + 1, 0, 0),
     });
-    return year;
   };
   const years = getYearRange({ from, to });
   return (
@@ -40,13 +39,21 @@ const Year = ({ changeDate, fromTo: { from, to } }: Props) => {
           variant="outline"
           type="button"
           size="icon"
-          onClick={() => setYear((p) => submitYear(p - 1))}
+          onClick={async () => {
+            const newYear = year - 1;
+            setYear(newYear);
+            await submitYear(newYear);
+          }}
         >
           <Icon icon="caretLeft" className="size-4" />
         </Button>
         <Select
           value={year.toString()}
-          onValueChange={(year) => setYear(() => submitYear(Number(year)))}
+          onValueChange={async (year) => {
+            const y = Number(year);
+            setYear(y);
+            await submitYear(y);
+          }}
         >
           <SelectTrigger className="w-[160px]">
             <SelectValue placeholder="" />
@@ -64,7 +71,11 @@ const Year = ({ changeDate, fromTo: { from, to } }: Props) => {
           variant="outline"
           size="icon"
           type="button"
-          onClick={() => setYear((p) => submitYear(p + 1))}
+          onClick={async () => {
+            const newYear = year + 1;
+            setYear(newYear);
+            await submitYear(newYear);
+          }}
         >
           <Icon icon="caretRight" className="size-4" />
         </Button>
@@ -73,7 +84,10 @@ const Year = ({ changeDate, fromTo: { from, to } }: Props) => {
         disabled={mostRecentYear === year}
         variant={"secondary"}
         type="button"
-        onClick={() => setYear(() => submitYear(mostRecentYear))}
+        onClick={async () => {
+          setYear(mostRecentYear);
+          await submitYear(mostRecentYear);
+        }}
       >
         Senaste året
       </Button>

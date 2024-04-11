@@ -6,15 +6,15 @@ import { Button } from "~/components/ui/button";
 import { dateToString } from "~/lib/utils/formatData";
 import { type FromTo } from "~/lib/zodSchemas";
 
-type Props = { changeDate: (dates: FromTo) => void; fromTo: FromTo };
+type Props = { changeDate: (dates: FromTo) => Promise<void>; fromTo: FromTo };
 
 const FreeDates = ({ changeDate, fromTo: { from, to } }: Props) => {
   const [filter, setFilter] = useState<FromTo>({ from, to });
   return (
     <form
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
-        changeDate(filter);
+        await changeDate(filter);
       }}
       className="flex flex-col gap-2 p-3 md:flex-row md:justify-between"
     >

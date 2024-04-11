@@ -16,8 +16,10 @@ import { decrementMonth, incrementMonth } from "~/lib/utils/datePicker";
 import { getYearRange } from "~/lib/utils/getYearRange";
 import { type FromTo } from "~/lib/zodSchemas";
 
+type YearMonth = { year: number; month: number };
+
 type Props = {
-  changeDate: (dates: FromTo) => void;
+  changeDate: (dates: FromTo) => Promise<void>;
   fromTo: FromTo;
 };
 
@@ -29,12 +31,11 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
     month: mostRecentMonth,
   });
   const years = getYearRange({ from, to });
-  const submitDates = ({ year, month }: { year: number; month: number }) => {
-    changeDate({
+  const submitDates = async ({ year, month }: YearMonth) => {
+    await changeDate({
       from: new Date(year, month, 1),
       to: new Date(year, month + 1, 0),
     });
-    return { year, month };
   };
   return (
     <form
@@ -44,11 +45,10 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
       <div className="flex items-center justify-between gap-2 md:justify-normal">
         <Select
           value={year.toString()}
-          onValueChange={(value) =>
-            setYearMonth(({ month }) =>
-              submitDates({ year: Number(value), month }),
-            )
-          }
+          onValueChange={async (value) => {
+            setYearMonth({ year, month });
+            await submitDates({ year: Number(value), month });
+          }}
         >
           <SelectTrigger className="w-[160px]">
             <SelectValue placeholder="" />
@@ -65,19 +65,20 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
           disabled={year <= from.getFullYear() && month <= from.getMonth()}
           variant="outline"
           size="icon"
-          onClick={() =>
-            setYearMonth((dates) => submitDates(decrementMonth(dates)))
-          }
+          onClick={async () => {
+            const dates = decrementMonth({ year, month });
+            setYearMonth(dates);
+            await submitDates(dates);
+          }}
         >
           <Icon icon="caretLeft" className="size-4" />
         </Button>
         <Select
           value={month.toString()}
-          onValueChange={(value) =>
-            setYearMonth(({ year }) =>
-              submitDates({ year, month: Number(value) }),
-            )
-          }
+          onValueChange={async (value) => {
+            setYearMonth({ year, month: Number(value) });
+            await submitDates({ year, month: Number(value) });
+          }}
         >
           <SelectTrigger className="w-[160px]">
             <SelectValue placeholder="" />
@@ -94,9 +95,11 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
           disabled={year === mostRecentYear && month === mostRecentMonth}
           variant="outline"
           size="icon"
-          onClick={() =>
-            setYearMonth((dates) => submitDates(incrementMonth(dates)))
-          }
+          onClick={async () => {
+            const dates = incrementMonth({ month, year });
+            setYearMonth(dates);
+            await submitDates(dates);
+          }}
         >
           <Icon icon="caretRight" className="size-4" />
         </Button>
@@ -105,11 +108,10 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
         <Button
           disabled={year === mostRecentYear && month === mostRecentMonth}
           variant={"secondary"}
-          onClick={() =>
-            setYearMonth(
-              submitDates({ year: mostRecentYear, month: mostRecentMonth }),
-            )
-          }
+          onClick={async () => {
+            setYearMonth({ year: mostRecentYear, month: mostRecentMonth });
+            await submitDates({ year: mostRecentYear, month: mostRecentMonth });
+          }}
         >
           Senaste månaden
         </Button>
