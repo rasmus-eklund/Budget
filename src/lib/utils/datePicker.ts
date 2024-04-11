@@ -28,24 +28,30 @@ export const plusOneMonth = (p: FromTo) => {
   to.setMonth(to.getMonth() + 1);
   return { from, to };
 };
-export const incrementMonth = (
-  year: number,
-  month: number,
-): [number, number] => {
+export const incrementMonth = ({
+  year,
+  month,
+}: {
+  year: number;
+  month: number;
+}) => {
   if (month < 11) {
-    return [year, month + 1];
+    return { year, month: month + 1 };
   } else {
-    return [year + 1, 0];
+    return { year: year + 1, month: 0 };
   }
 };
-export const decrementMonth = (
-  year: number,
-  month: number,
-): [number, number] => {
+export const decrementMonth = ({
+  year,
+  month,
+}: {
+  year: number;
+  month: number;
+}) => {
   if (month > 0) {
-    return [year, month - 1];
+    return { year, month: month - 1 };
   } else {
-    return [year - 1, 11];
+    return { year: year - 1, month: 11 };
   }
 };
 
