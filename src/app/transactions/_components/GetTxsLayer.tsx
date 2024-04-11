@@ -11,22 +11,27 @@ import Link from "next/link";
 type Props = { range: FromTo };
 const GetTxsLayer = ({ range }: Props) => {
   const { password } = usePassword();
-  const [txDate, setTxDate] = useState<FromTo>(getCurrentYearMonth());
   const [loading, setLoading] = useState(false);
   const [{ data, status }, setData] = useState<TxReturn>({
     data: [],
     status: "Success",
   });
+  const getData = async (dates: FromTo) => {
+    setLoading(true);
+    const txs = await getTxByDates({ dates, password });
+    setData(txs);
+    setLoading(false);
+  };
 
   useEffect(() => {
     setLoading(true);
-    getTxByDates({ dates: txDate, password })
-      .then((data) => {
-        setData(data);
+    getTxByDates({ dates: getCurrentYearMonth(), password })
+      .then((txs) => {
+        setData(txs);
         setLoading(false);
       })
       .catch(() => setData({ data: [], status: "Error" }));
-  }, [password, txDate]);
+  }, [password]);
 
   if (status === "Wrong password") {
     return (
@@ -49,7 +54,9 @@ const GetTxsLayer = ({ range }: Props) => {
     <ShowData
       loading={loading}
       data={data}
-      setDates={async (dates) => setTxDate(dates)}
+      setDates={async (dates) => {
+        await getData(dates);
+      }}
       range={range}
     />
   );
