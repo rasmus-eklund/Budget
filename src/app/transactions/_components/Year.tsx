@@ -81,7 +81,6 @@ const Year = ({ changeDate, fromTo: { from, to } }: Props) => {
         </Button>
       </div>
       <Button
-        disabled={mostRecentYear === year}
         variant={"secondary"}
         type="button"
         onClick={async () => {

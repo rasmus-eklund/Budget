@@ -55,7 +55,6 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
         <Icon icon="caretRight" className="size-4" />
       </Button>
       <Button
-        disabled={day >= to}
         variant="secondary"
         onClick={async () => {
           setDay(to);

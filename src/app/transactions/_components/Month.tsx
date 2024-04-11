@@ -106,7 +106,6 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
       </div>
       <div className="flex items-center">
         <Button
-          disabled={year === mostRecentYear && month === mostRecentMonth}
           variant={"secondary"}
           onClick={async () => {
             setYearMonth({ year: mostRecentYear, month: mostRecentMonth });
