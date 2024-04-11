@@ -11,24 +11,24 @@ const TransactionPage = async () => {
     redirect("/");
   }
   const range = await getDateRange();
-  const { from, to } = range;
-  if (from && to) {
+  if (!range) {
     return (
-      <Suspense fallback={<p>Laddar...</p>}>
-        <GetTxsLayer range={{ from, to }} />
-      </Suspense>
+      <p className="p-2">
+        Du har ingen data att visa än. Klicka{" "}
+        <span>
+          <Link href={"/upload"} className="underline">
+            här
+          </Link>
+        </span>{" "}
+        för att ladda upp data
+      </p>
     );
   }
+
   return (
-    <p className="p-2">
-      Du har ingen data att visa än. Klicka{" "}
-      <span>
-        <Link href={"/upload"} className="underline">
-          här
-        </Link>
-      </span>{" "}
-      för att ladda upp data
-    </p>
+    <Suspense fallback={<p>Laddar...</p>}>
+      <GetTxsLayer range={range} />
+    </Suspense>
   );
 };
 

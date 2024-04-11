@@ -10,7 +10,11 @@ export const getDateRange = async () => {
     .from(txs)
     .where(eq(txs.userId, userId));
   if (range[0]) {
-    return range[0];
+    const { from, to } = range[0];
+    if (!from || !to) {
+      return false;
+    }
+    return { from, to };
   }
-  return { from: null, to: null };
+  return false;
 };
