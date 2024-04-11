@@ -3,14 +3,12 @@ import { useState } from "react";
 import DateFilter from "./DateFilter";
 import Aggregated from "./Aggregated";
 import Transactions from "./Transactions";
-
 import getUnique from "~/lib/utils/getUnique";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import TransactionFilter from "./TransactionFilter";
 import applyTransactionFilters, {
   getDefaultFilter,
 } from "~/lib/utils/transactionFilter";
-
 import type { TxFilter, TxSort } from "~/types";
 import type { FromTo, Tx } from "~/lib/zodSchemas";
 
@@ -19,7 +17,7 @@ type Tab = "aggregated" | "transactions";
 type Props = {
   data: Tx[];
   loading?: boolean;
-  setDates: (dates: FromTo) => void;
+  setDates: (dates: FromTo) => Promise<void>;
   range: FromTo;
   defaultTab?: Tab;
 };
