@@ -6,7 +6,7 @@ import { TabsContent, TabsList, TabsTrigger, Tabs } from "~/components/ui/tabs";
 import FreeDay from "./Day";
 import Year from "./Year";
 
-type Props = { changeDates: (dates: FromTo) => void; range: FromTo };
+type Props = { changeDates: (dates: FromTo) => Promise<void>; range: FromTo };
 const DateFilter = ({ changeDates, range }: Props) => {
   return (
     <Tabs defaultValue="month">
