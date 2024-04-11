@@ -30,7 +30,11 @@ const Menu = () => {
           value={page}
           onValueChange={(newPage) => {
             setPage(newPage);
-            router.push(`/${newPage}`);
+            if (newPage === "password") {
+              router.push(`/${newPage}?from=${currentPath}`);
+            } else {
+              router.push(`/${newPage}`);
+            }
           }}
         >
           <DropdownMenuRadioItem value="transactions">

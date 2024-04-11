@@ -35,10 +35,10 @@ const GetTxsLayer = ({ range }: Props) => {
 
   if (status === "Wrong password") {
     return (
-      <p>
-        Fel lösenord.{" "}
+      <p className="p-4">
+        Fel eller inget lösenord.{" "}
         <span>
-          <Link href={"/password"} className="underline">
+          <Link href={"/password?from=transactions"} className="underline">
             Ändra till rätt lösenord
           </Link>
         </span>

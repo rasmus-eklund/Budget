@@ -101,7 +101,7 @@ const FileForm = ({ categories }: Props) => {
         )}
         {error.error && <p className="text-lg text-red-500">{error.message}</p>}
         {!password && (
-          <Link className="underline" href={"/password"}>
+          <Link className="underline" href={"/password?from=upload"}>
             Välj lösenord
           </Link>
         )}

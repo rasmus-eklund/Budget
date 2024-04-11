@@ -17,17 +17,17 @@ import { env } from "~/env";
 
 import { type Passwords, passwordsSchema } from "~/lib/zodSchemas";
 import { usePassword } from "../../_components/PasswordContext";
-import { useState } from "react";
-import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const defaultValues = {
   password: env.NEXT_PUBLIC_PASS ?? "",
   confirm: env.NEXT_PUBLIC_PASS ?? "",
 };
-
 const PasswordForm = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from");
   const { password, updatePassword } = usePassword();
-  const [updated, setUpdated] = useState(false);
   const form = useForm<Passwords>({
     mode: "all",
     resolver: zodResolver(passwordsSchema),
@@ -39,7 +39,7 @@ const PasswordForm = () => {
 
   const handleSubmit = async (data: Passwords) => {
     updatePassword(data.password);
-    setUpdated(true);
+    router.push(`/${from ?? "transactions"}`);
   };
   return (
     <Form {...form}>
@@ -77,17 +77,6 @@ const PasswordForm = () => {
         <Button type="submit" disabled={!form.formState.isValid}>
           Använd lösenordet
         </Button>
-        {updated && (
-          <div className="flex flex-col gap-2">
-            <p>Lösenord updaterat. Gå tillbaks till:</p>
-            <Link className="underline" href={"/transactions"}>
-              Transaktioner
-            </Link>
-            <Link className="underline" href={"/upload"}>
-              Ladda upp
-            </Link>
-          </div>
-        )}
       </form>
     </Form>
   );
