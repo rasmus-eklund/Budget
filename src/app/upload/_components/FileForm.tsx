@@ -153,7 +153,7 @@ const ShowTransactions = ({
     <ShowData
       data={data}
       range={fromTo}
-      setDates={(dates) => {
+      setDates={async (dates) => {
         setDates(dates);
       }}
       defaultTab="transactions"
