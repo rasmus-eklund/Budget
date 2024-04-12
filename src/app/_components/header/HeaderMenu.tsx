@@ -13,7 +13,8 @@ import {
 } from "~/components/ui/dropdown-menu";
 import Icon from "~/lib/icons/Icon";
 
-const Menu = () => {
+type Props = { hidden: boolean };
+const Menu = ({ hidden }: Props) => {
   const pathname = usePathname();
   const currentPath = pathname.split("/")[1];
   const [page, setPage] = React.useState(currentPath ?? "transactions");
@@ -21,7 +22,7 @@ const Menu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon" className="bg-white">
+        <Button size="icon" className={`bg-white ${hidden ? "invisible" : ""}`}>
           <Icon icon="hamburgerMenu" className="size-8" />
         </Button>
       </DropdownMenuTrigger>
