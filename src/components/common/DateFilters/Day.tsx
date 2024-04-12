@@ -23,6 +23,7 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
     >
       <div className="flex items-center justify-between gap-2 md:justify-normal">
         <Button
+          type="button"
           disabled={day <= from}
           variant="outline"
           size="icon"
@@ -41,6 +42,7 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
           }
         />
         <Button
+          type="button"
           disabled={day >= to}
           variant="outline"
           size="icon"
@@ -49,7 +51,11 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
           <Icon icon="caretRight" className="size-4" />
         </Button>
       </div>
-      <Button variant="secondary" onClick={async () => await onChange(to)}>
+      <Button
+        type="button"
+        variant="secondary"
+        onClick={async () => await onChange(to)}
+      >
         Senaste dagen
       </Button>
     </form>
