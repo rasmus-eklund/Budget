@@ -6,50 +6,9 @@ import type { FromTo } from "~/lib/zodSchemas";
 import { TabsContent, TabsList, TabsTrigger, Tabs } from "~/components/ui/tabs";
 import FreeDay from "./Day";
 import Year from "./Year";
-import { useState } from "react";
-import { useMediaQuery } from "usehooks-ts";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "~/components/ui/drawer";
-import { Button } from "~/components/ui/button";
-import Icon from "~/lib/icons/Icon";
 
 type Props = { changeDates: (dates: FromTo) => Promise<void>; range: FromTo };
 const DateFilter = ({ changeDates, range }: Props) => {
-  const [open, setOpen] = useState(false);
-  const isDesktop = useMediaQuery("(min-width: 768px)");
-  if (isDesktop) {
-    return <TheTabs changeDates={changeDates} range={range} />;
-  }
-  return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <Button variant="outline">
-          <Icon icon="calendar" className="size-5 fill-slate-500" />
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>Välj datum</DrawerTitle>
-        </DrawerHeader>
-        <TheTabs changeDates={changeDates} range={range} />
-        <DrawerFooter>
-          <DrawerClose asChild>
-            <Button variant="outline">Stäng</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
-  );
-};
-
-const TheTabs = ({ changeDates, range }: Props) => {
   return (
     <Tabs defaultValue="month">
       <TabsList>
