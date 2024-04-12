@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 import calculateSums from "~/lib/utils/calculateSums";
 import capitalize from "~/lib/utils/capitalize";
 import { dateToString, toSek } from "~/lib/utils/formatData";
-import { getFromTo } from "~/lib/utils/getYearRange";
+import { getFromTo } from "~/lib/utils/dateCalculations";
 import { type Tx } from "~/lib/zodSchemas";
 import type { TxFilter, Uniques } from "~/types";
 

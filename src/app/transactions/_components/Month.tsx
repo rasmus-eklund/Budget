@@ -12,8 +12,8 @@ import {
 import { months } from "~/lib/constants/months";
 import Icon from "~/lib/icons/Icon";
 import capitalize from "~/lib/utils/capitalize";
-import { decrementMonth, incrementMonth } from "~/lib/utils/datePicker";
-import { getYearRange } from "~/lib/utils/getYearRange";
+import { decrementMonth, incrementMonth } from "~/lib/utils/dateCalculations";
+import { getYearRange } from "~/lib/utils/dateCalculations";
 import { type FromTo } from "~/lib/zodSchemas";
 
 type YearMonth = { year: number; month: number };

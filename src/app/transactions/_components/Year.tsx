@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import Icon from "~/lib/icons/Icon";
-import { getYearRange } from "~/lib/utils/getYearRange";
+import { getYearRange } from "~/lib/utils/dateCalculations";
 import { type FromTo } from "~/lib/zodSchemas";
 
 type Props = {
