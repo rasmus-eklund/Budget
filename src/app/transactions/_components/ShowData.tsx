@@ -33,7 +33,7 @@ const ShowData = ({
   const options = getUnique({ data, txFilter });
 
   return (
-    <section className="flex h-full flex-col gap-5 p-2">
+    <section className="flex h-full flex-col gap-2 p-2 md:gap-5">
       {children}
       <Tabs value={tab} onValueChange={(value) => setTab(value as Tab)}>
         <TabsList>
