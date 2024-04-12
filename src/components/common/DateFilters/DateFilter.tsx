@@ -25,7 +25,6 @@ const DateFilter = ({ changeDates, range }: Props) => {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   if (isDesktop) {
-    console.log('desktop')
     return <TheTabs changeDates={changeDates} range={range} />;
   }
   return (
