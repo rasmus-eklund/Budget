@@ -42,13 +42,7 @@ const getTxByDates = async ({
   const encryptedData = await db
     .select()
     .from(txs)
-    .where(
-      and(
-        eq(txs.userId, userId),
-        gte(txs.date, new Date(from)),
-        lte(txs.date, new Date(to)),
-      ),
-    );
+    .where(and(eq(txs.userId, userId), gte(txs.date, from), lte(txs.date, to)));
   try {
     const decryptedData = await decryptTxs(encryptedData, password);
     const data = decryptedData.map((tx) => applyCategories({ tx, categories }));
