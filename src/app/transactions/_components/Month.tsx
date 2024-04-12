@@ -39,7 +39,7 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
   };
   return (
     <form
-      className="flex flex-col gap-2 p-3 md:flex-row md:justify-between"
+      className="flex flex-col gap-2 p-3 md:flex-row"
       onSubmit={(e) => e.preventDefault()}
     >
       <div className="flex items-center justify-between gap-2 md:justify-normal">
