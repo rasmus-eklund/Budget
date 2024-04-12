@@ -13,10 +13,10 @@ import {
 import type { Category } from "~/types";
 import { usePassword } from "~/app/_components/PasswordContext";
 import { applyCategories } from "~/lib/utils/categorize";
-import ShowData from "~/app/transactions/_components/ShowData";
+import ShowData from "~/components/common/ShowData";
 import { getFromTo } from "~/lib/utils/dateCalculations";
 import Link from "next/link";
-import DateFilter from "~/app/transactions/_components/DateFilter";
+import DateFilter from "~/components/common/DateFilters/DateFilter";
 
 type Props = { categories: Category[] };
 const FileForm = ({ categories }: Props) => {

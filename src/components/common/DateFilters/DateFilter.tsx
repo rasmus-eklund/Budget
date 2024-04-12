@@ -7,7 +7,7 @@ import { TabsContent, TabsList, TabsTrigger, Tabs } from "~/components/ui/tabs";
 import FreeDay from "./Day";
 import Year from "./Year";
 import { useState } from "react";
-import { useMediaQuery } from "@uidotdev/usehooks";
+import { useMediaQuery } from "usehooks-ts";
 import {
   Drawer,
   DrawerClose,
@@ -25,11 +25,12 @@ const DateFilter = ({ changeDates, range }: Props) => {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   if (isDesktop) {
+    console.log('desktop')
     return <TheTabs changeDates={changeDates} range={range} />;
   }
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger>
+      <DrawerTrigger asChild>
         <Button variant="outline">
           <Icon icon="calendar" className="size-5 fill-slate-500" />
         </Button>
@@ -40,7 +41,7 @@ const DateFilter = ({ changeDates, range }: Props) => {
         </DrawerHeader>
         <TheTabs changeDates={changeDates} range={range} />
         <DrawerFooter>
-          <DrawerClose>
+          <DrawerClose asChild>
             <Button variant="outline">Stäng</Button>
           </DrawerClose>
         </DrawerFooter>

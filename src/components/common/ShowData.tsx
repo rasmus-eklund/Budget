@@ -1,10 +1,10 @@
 "use client";
 import { type ReactNode, useState } from "react";
-import Aggregated from "./Aggregated";
-import Transactions from "./Transactions";
+import Aggregated from "./DataTabs/Aggregated";
+import Transactions from "./DataTabs/Transactions";
 import getUnique from "~/lib/utils/getUnique";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import TransactionFilter from "./TransactionFilter";
+import TransactionFilter from "./DataTabs/TransactionFilter";
 import applyTransactionFilters, {
   getDefaultFilter,
 } from "~/lib/utils/transactionFilter";

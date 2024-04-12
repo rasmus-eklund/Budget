@@ -1,13 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import ShowData from "./ShowData";
+import ShowData from "../../../components/common/ShowData";
 import { type FromTo } from "~/lib/zodSchemas";
 import { usePassword } from "~/app/_components/PasswordContext";
 import { getCurrentYearMonth } from "~/lib/utils/dateCalculations";
 import getTxByDates from "../dataLayer/getData";
 import { type TxReturn } from "~/types";
 import Link from "next/link";
-import DateFilter from "./DateFilter";
+import DateFilter from "../../../components/common/DateFilters/DateFilter";
 
 type Props = { range: FromTo };
 const GetTxsLayer = ({ range }: Props) => {
