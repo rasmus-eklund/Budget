@@ -1,4 +1,5 @@
 import { type FromTo } from "~/lib/zodSchemas";
+import { dateToString } from "./formatData";
 
 export const minusOneMonth = (p: FromTo) => {
   const from = new Date(p.from);
@@ -7,19 +8,16 @@ export const minusOneMonth = (p: FromTo) => {
   to.setMonth(to.getMonth() - 1);
   return { from, to };
 };
-export const minusOneDay = (p: FromTo) => {
-  const from = new Date(p.from);
-  const to = new Date(p.to);
-  from.setDate(from.getDate() - 1);
-  to.setDate(to.getDate() - 1);
-  return { from, to };
+export const incrementDay = (date: Date) => {
+  const nextDate = new Date(date);
+  nextDate.setDate(date.getDate() + 1);
+  return nextDate;
 };
-export const plusOneDay = (p: FromTo) => {
-  const from = new Date(p.from);
-  const to = new Date(p.to);
-  from.setDate(from.getDate() + 1);
-  to.setDate(to.getDate() + 1);
-  return { from, to };
+
+export const decrementDay = (date: Date) => {
+  const prevDate = new Date(date);
+  prevDate.setDate(date.getDate() - 1);
+  return prevDate;
 };
 export const plusOneMonth = (p: FromTo) => {
   const from = new Date(p.from);
@@ -62,4 +60,39 @@ export const getCurrentYearMonth = () => {
     from: new Date(year, month, 1),
     to: new Date(year, month + 1, 0),
   };
+};
+
+export const getYearRange = ({ from, to }: FromTo) => {
+  const start = from.getFullYear();
+  const end = to.getFullYear();
+  const range: number[] = [];
+  for (let year = start; year <= end; year++) {
+    range.push(year);
+  }
+  return range;
+};
+
+export const getFromTo = <T extends { datum: Date }>(
+  txs: T[],
+): { from: Date; to: Date } => {
+  if (!txs[0]) {
+    throw new Error("No transactions");
+  }
+  let from = txs[0].datum;
+  let to = txs[0].datum;
+
+  for (const { datum } of txs) {
+    if (datum < from) {
+      from = datum;
+    }
+    if (datum > to) {
+      to = datum;
+    }
+  }
+
+  return { from, to };
+};
+
+export const FromToString = ({ from, to }: FromTo) => {
+  return `${dateToString(from)} - ${dateToString(to)}`;
 };
