@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import Icon from "~/lib/icons/Icon";
+import { decrementDay, incrementDay } from "~/lib/utils/dateCalculations";
 import { dateToString } from "~/lib/utils/formatData";
 import { type FromTo } from "~/lib/zodSchemas";
 
@@ -12,7 +13,9 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
   const [day, setDay] = useState(to);
   const onChange = async (date: Date) => {
     await changeDate({ from: date, to: date });
+    setDay(date);
   };
+
   return (
     <form
       onSubmit={(e) => e.preventDefault()}
@@ -22,11 +25,7 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
         disabled={day <= from}
         variant="outline"
         size="icon"
-        onClick={async () => {
-          const date = new Date(day.setDate(day.getDate() - 1));
-          setDay(date);
-          await onChange(date);
-        }}
+        onClick={async () => await onChange(decrementDay(day))}
       >
         <Icon icon="caretLeft" className="size-4" />
       </Button>
@@ -36,31 +35,19 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
         type="date"
         className="px-1"
         value={dateToString(day)}
-        onChange={async ({ target: { value } }) => {
-          const date = new Date(value);
-          setDay(date);
-          await onChange(date);
-        }}
+        onChange={async ({ target: { value } }) =>
+          await onChange(new Date(value))
+        }
       />
       <Button
         disabled={day >= to}
         variant="outline"
         size="icon"
-        onClick={async () => {
-          const date = new Date(day.setDate(day.getDate() + 1));
-          setDay(date);
-          await onChange(date);
-        }}
+        onClick={async () => await onChange(incrementDay(day))}
       >
         <Icon icon="caretRight" className="size-4" />
       </Button>
-      <Button
-        variant="secondary"
-        onClick={async () => {
-          setDay(to);
-          await onChange(to);
-        }}
-      >
+      <Button variant="secondary" onClick={async () => await onChange(to)}>
         Senaste dagen
       </Button>
     </form>
