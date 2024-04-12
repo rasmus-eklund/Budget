@@ -1,6 +1,5 @@
 "use client";
-import { useState } from "react";
-import DateFilter from "./DateFilter";
+import { type ReactNode, useState } from "react";
 import Aggregated from "./Aggregated";
 import Transactions from "./Transactions";
 import getUnique from "~/lib/utils/getUnique";
@@ -10,23 +9,21 @@ import applyTransactionFilters, {
   getDefaultFilter,
 } from "~/lib/utils/transactionFilter";
 import type { TxFilter, TxSort } from "~/types";
-import type { FromTo, Tx } from "~/lib/zodSchemas";
+import type { Tx } from "~/lib/zodSchemas";
 
 type Tab = "aggregated" | "transactions";
 
 type Props = {
   data: Tx[];
   loading?: boolean;
-  setDates: (dates: FromTo) => Promise<void>;
-  range: FromTo;
   defaultTab?: Tab;
+  children: ReactNode;
 };
 const ShowData = ({
-  range,
   data,
   loading = false,
-  setDates,
   defaultTab = "aggregated",
+  children,
 }: Props) => {
   const [tab, setTab] = useState<Tab>(defaultTab);
   const defaults = getDefaultFilter();
@@ -37,7 +34,7 @@ const ShowData = ({
 
   return (
     <section className="flex h-full flex-col gap-5 p-2">
-      <DateFilter range={range} changeDates={(dates) => setDates(dates)} />
+      {children}
       <Tabs value={tab} onValueChange={(value) => setTab(value as Tab)}>
         <TabsList>
           <TabsTrigger value="aggregated">Budget</TabsTrigger>
