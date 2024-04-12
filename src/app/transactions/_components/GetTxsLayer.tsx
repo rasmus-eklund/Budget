@@ -3,15 +3,16 @@ import React, { useEffect, useState } from "react";
 import ShowData from "./ShowData";
 import { type FromTo } from "~/lib/zodSchemas";
 import { usePassword } from "~/app/_components/PasswordContext";
-import { getCurrentYearMonth } from "~/lib/utils/datePicker";
+import { getCurrentYearMonth } from "~/lib/utils/dateCalculations";
 import getTxByDates from "../dataLayer/getData";
 import { type TxReturn } from "~/types";
 import Link from "next/link";
+import DateFilter from "./DateFilter";
 
 type Props = { range: FromTo };
 const GetTxsLayer = ({ range }: Props) => {
   const { password } = usePassword();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [{ data, status }, setData] = useState<TxReturn>({
     data: [],
     status: "Success",
@@ -49,16 +50,10 @@ const GetTxsLayer = ({ range }: Props) => {
   if (status === "Error") {
     return <p>Något gick fel</p>;
   }
-
   return (
-    <ShowData
-      loading={loading}
-      data={data}
-      setDates={async (dates) => {
-        await getData(dates);
-      }}
-      range={range}
-    />
+    <ShowData loading={loading} data={data}>
+      <DateFilter range={range} changeDates={getData} />
+    </ShowData>
   );
 };
 
