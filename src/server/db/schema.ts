@@ -131,7 +131,8 @@ export const category = createTable(
   },
 );
 
-export const categoryRelations = relations(category, ({ many }) => ({
+export const categoryRelations = relations(category, ({ many, one }) => ({
+  user: one(users, { fields: [category.userId], references: [users.id] }),
   match: many(match),
 }));
 
@@ -159,4 +160,5 @@ export const matchRelations = relations(match, ({ one }) => ({
     fields: [match.categoryId],
     references: [category.id],
   }),
+  users: one(users, { fields: [match.userId], references: [users.id] }),
 }));
