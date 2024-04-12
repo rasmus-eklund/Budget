@@ -7,17 +7,16 @@ type Props = { session: Session | null };
 const Login = ({ session }: Props) => {
   if (!!session) {
     return (
-      <Button onClick={() => void signOut({ callbackUrl: "/" })}>
+      <Button
+        variant="secondary"
+        onClick={() => void signOut({ callbackUrl: "/" })}
+      >
         Logga ut
       </Button>
     );
   }
   return (
-    <Button
-      variant={"secondary"}
-      data-cy="salt-sign-in"
-      onClick={() => void signIn("google")}
-    >
+    <Button data-cy="sign-in" onClick={() => void signIn("google")}>
       Logga in
     </Button>
   );
