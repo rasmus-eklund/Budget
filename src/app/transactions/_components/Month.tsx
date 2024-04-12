@@ -46,7 +46,7 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
         <Select
           value={year.toString()}
           onValueChange={async (value) => {
-            setYearMonth({ year, month });
+            setYearMonth({ year: Number(value), month });
             await submitDates({ year: Number(value), month });
           }}
         >
