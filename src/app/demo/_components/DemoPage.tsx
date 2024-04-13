@@ -7,11 +7,9 @@ import ShowData from "~/components/common/ShowData";
 import DateFilter from "~/components/common/DateFilters/DateFilter";
 import { categories } from "./_generateData/categories";
 import { generateData } from "./_generateData/generateData";
-import { getFromTo } from "~/lib/utils/dateCalculations";
 
 const DemoPage = () => {
-  const txs = useMemo(() => generateData(), []);
-  const range = getFromTo(txs);
+  const { txs, range } = useMemo(() => generateData(), []);
   const fromTo = { from: new Date("2023-12-01"), to: new Date("2023-12-31") };
   const [{ from, to }, setDates] = useState<FromTo>(fromTo);
   const data: Tx[] = [];
