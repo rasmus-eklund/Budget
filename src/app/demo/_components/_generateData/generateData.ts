@@ -1,28 +1,22 @@
 import type { Tx } from "~/lib/zodSchemas";
 import { categories } from "./categories";
+import { getFromTo } from "~/lib/utils/dateCalculations";
 
 export const generateData = () => {
   const txs: Tx[] = [];
+  console.log("Generating data");
   const people = ["Anna", "Per"] as const;
   for (let year = 2020; year < 2024; year++) {
     const raise = getRandomFloat(1.01, 1.15);
-    const salary = { Per: 24000 * raise, Anna: 17000 * raise } as const;
+    const salary = { Per: 22000 * raise, Anna: 17000 * raise } as const;
     for (let month = 0; month < 12; month++) {
       for (const person of people) {
         const firstDateOfMonth = new Date(year, month, 1);
-        const numberOfDates = getRandomNumber(6, 12);
-        const randomDates = getRandomDates(firstDateOfMonth, numberOfDates);
-        for (const datum of randomDates) {
-          const category = pickRandomNumberWithProbability(
-            [0, 1, 2, 3, 4],
-            [0.4, 0.1, 0.1, 0.2, 0.1],
-          );
-          const matches = categories[category]!.match;
-          const match = getRandomNumber(0, matches.length - 1);
-          const text = matches[match]!.name;
-          const belopp = getRandomFloat(-2000, -20);
-          const prefix = getRandomNumber(0, 1);
-
+        const spending = getSpending();
+        const randomDates = getRandomDates(firstDateOfMonth, spending.length);
+        for (let i = 0; i < randomDates.length; i++) {
+          const datum = randomDates[i]!;
+          const { belopp, text } = spending[i]!;
           const tx: Tx = {
             belopp,
             budgetgrupp: "övrigt",
@@ -32,7 +26,7 @@ export const generateData = () => {
             konto: "Kort",
             person,
             saldo: 0,
-            text: `${!!prefix ? "K*" : ""}${text}`,
+            text,
             typ: "Korttransaktion",
           };
           txs.push(tx);
@@ -67,7 +61,11 @@ export const generateData = () => {
     }
   }
   txs.map((tx, i) => ({ ...tx, id: i.toString(), index: i }));
-  return txs;
+  const range = getFromTo(txs);
+  if (!range) {
+    throw new Error("No data");
+  }
+  return { range, txs };
 };
 
 const getRandomDates = (
@@ -98,17 +96,28 @@ const getRandomFloat = (min: number, max: number): number => {
   return parseFloat(randomFloat.toFixed(2));
 };
 
-const pickRandomNumberWithProbability = (
-  numbers: number[],
-  probabilities: number[],
-): number => {
-  const randomValue = Math.random();
-  let cumulativeProbability = 0;
-  for (let i = 0; i < numbers.length; i++) {
-    cumulativeProbability += probabilities[i]!;
-    if (randomValue <= cumulativeProbability) {
-      return numbers[i]!;
+const getSpending = () => {
+  const spending: { text: string; belopp: number }[] = [];
+
+  for (const { category, amt, nrs } of [
+    { category: 0, amt: [-1000, -200], nrs: [3, 5] },
+    { category: 1, amt: [-250, -25], nrs: [1, 2] },
+    { category: 2, amt: [-1000, -400], nrs: [1, 1] },
+    { category: 3, amt: [-500, -50], nrs: [2, 5] },
+    { category: 4, amt: [-400, -50], nrs: [0, 2] },
+  ] as const) {
+    const categoryMatches = categories[category]!.match;
+    const matchLength = categoryMatches.length;
+
+    const nr = getRandomNumber(nrs[0], nrs[1]);
+    for (let i = 0; i < nr; i++) {
+      const amount = getRandomFloat(amt[0], amt[1]);
+      const matchIndex = getRandomNumber(0, matchLength - 1);
+      spending.push({
+        text: categoryMatches[matchIndex]!.name,
+        belopp: amount,
+      });
     }
   }
-  return numbers[numbers.length - 1]!;
+  return spending;
 };
