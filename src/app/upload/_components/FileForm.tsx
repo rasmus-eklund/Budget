@@ -11,7 +11,7 @@ import {
   uploadFiles,
 } from "./fileFormHelpers";
 import type { Category } from "~/types";
-import { usePassword } from "~/app/_components/PasswordContext";
+import { usePassword } from "~/components/password/PasswordContext";
 import { applyCategories } from "~/lib/utils/categorize";
 import ShowData from "~/components/common/ShowData";
 import { getFromTo } from "~/lib/utils/dateCalculations";

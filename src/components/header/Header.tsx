@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Login from "~/app/_components/header/Login";
+import Login from "~/components/header/Login";
 import { getServerAuthSession } from "~/server/auth";
 import Menu from "./HeaderMenu";
 

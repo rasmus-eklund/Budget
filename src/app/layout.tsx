@@ -1,9 +1,9 @@
 import "~/styles/globals.css";
 
 import { Inter } from "next/font/google";
-import Header from "./_components/header/Header";
+import Header from "../components/header/Header";
 import { env } from "~/env";
-import PasswordProvider from "./_components/PasswordContext";
+import PasswordProvider from "../components/password/PasswordContext";
 import SessionWrapper from "./SessionWrapper";
 const inter = Inter({
   subsets: ["latin"],

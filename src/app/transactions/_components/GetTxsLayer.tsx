@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import ShowData from "../../../components/common/ShowData";
 import { type FromTo } from "~/lib/zodSchemas";
-import { usePassword } from "~/app/_components/PasswordContext";
+import { usePassword } from "~/components/password/PasswordContext";
 import { getCurrentYearMonth } from "~/lib/utils/dateCalculations";
 import getTxByDates from "../dataLayer/getData";
 import { type TxReturn } from "~/types";
