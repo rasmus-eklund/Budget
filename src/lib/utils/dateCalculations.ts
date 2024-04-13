@@ -72,11 +72,9 @@ export const getYearRange = ({ from, to }: FromTo) => {
   return range;
 };
 
-export const getFromTo = <T extends { datum: Date }>(
-  txs: T[],
-): { from: Date; to: Date } => {
+export const getFromTo = <T extends { datum: Date }>(txs: T[]) => {
   if (!txs[0]) {
-    throw new Error("No transactions");
+    return false;
   }
   let from = txs[0].datum;
   let to = txs[0].datum;
