@@ -4,7 +4,7 @@ import calculateSums from "~/lib/utils/calculateSums";
 import capitalize from "~/lib/utils/capitalize";
 import { dateToString, toSek } from "~/lib/utils/formatData";
 import { getFromTo } from "~/lib/utils/dateCalculations";
-import { type Tx } from "~/lib/zodSchemas";
+import type { FromTo, Tx } from "~/lib/zodSchemas";
 import type { TxFilter, Uniques } from "~/types";
 
 type Props = {
@@ -24,18 +24,15 @@ const Aggregated = ({
   );
   const peopleTotal = [...people, "total"];
   const categoriesTotal = [...categories, "total"].filter((i) => i != "inom");
-  const showDates = () => {
-    if (data.length === 0) {
-      return null;
-    }
-    const { from, to } = getFromTo(data);
+  const dates = getFromTo(data);
+  const getDateString = ({ from, to }: FromTo) => {
     const f = dateToString(from);
     const t = dateToString(to);
-    return <h2 className="p-2 text-lg">{f !== t ? `${f} - ${t}` : f}</h2>;
+    return f !== t ? `${f} - ${t}` : f;
   };
   return (
     <div className="overflow-x-auto py-2">
-      {showDates()}
+      {dates ? <h2 className="p-2 text-lg">{getDateString(dates)}</h2> : null}
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-100">
           <tr>
