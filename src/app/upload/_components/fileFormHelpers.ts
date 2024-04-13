@@ -42,7 +42,8 @@ export const readFiles = async (
     const txs = await parseTxs(buffer, person, konto);
     data.push(...txs);
   }
-  const internal = markInternal(data, updatePercent);
+  const internal = await markInternal(data, updatePercent);
+
   return internal;
 };
 
