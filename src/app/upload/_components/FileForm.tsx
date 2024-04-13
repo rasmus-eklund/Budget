@@ -28,7 +28,7 @@ const FileForm = ({ categories }: Props) => {
     error: false,
     message: "",
   });
-
+  const range = getFromTo(txs);
   const processTxs = async () => {
     if (!files) {
       return setError({ error: true, message: "Inga filer valda" });
@@ -39,7 +39,7 @@ const FileForm = ({ categories }: Props) => {
         setLoading({ loading: true, percent });
       }
     });
-    const y = new Set(data.map((i) => i.datum.getFullYear()));
+    const y = new Set(data.map(({ datum }) => datum.getFullYear()));
     if (y.size !== 1) {
       setLoading({ loading: false, percent: 0 });
       setError({ error: true, message: "Ett år per uppladdning" });
@@ -127,8 +127,8 @@ const FileForm = ({ categories }: Props) => {
           </Button>
         </div>
       </form>
-      {txs.length !== 0 ? (
-        <ShowTransactions txs={txs} categories={categories} />
+      {txs.length !== 0 && range ? (
+        <ShowTransactions txs={txs} categories={categories} range={range} />
       ) : null}
     </div>
   );
@@ -137,12 +137,13 @@ const FileForm = ({ categories }: Props) => {
 const ShowTransactions = ({
   txs,
   categories,
+  range,
 }: {
   txs: Tx[];
   categories: Category[];
+  range: FromTo;
 }) => {
-  const fromTo = getFromTo(txs);
-  const [{ from, to }, setDates] = useState<FromTo>(fromTo);
+  const [{ from, to }, setDates] = useState<FromTo>(range);
   const data: Tx[] = [];
   for (const tx of txs) {
     if (tx.datum >= from && tx.datum <= to) {
@@ -153,7 +154,7 @@ const ShowTransactions = ({
   return (
     <ShowData data={data} defaultTab="transactions">
       <DateFilter
-        range={fromTo}
+        range={range}
         changeDates={async (dates) => setDates(dates)}
       />
     </ShowData>
