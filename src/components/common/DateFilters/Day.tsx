@@ -12,8 +12,8 @@ type Props = { changeDate: (dates: FromTo) => Promise<void>; fromTo: FromTo };
 const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
   const [day, setDay] = useState(to);
   const onChange = async (date: Date) => {
-    await changeDate({ from: date, to: date });
     setDay(date);
+    await changeDate({ from: date, to: date });
   };
 
   return (
