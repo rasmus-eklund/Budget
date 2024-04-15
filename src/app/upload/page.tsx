@@ -1,13 +1,18 @@
 import { Suspense } from "react";
 import FileForm from "./_components/FileForm";
-import { GetCategories, getTxsPerYear } from "./actions/uploadActions";
+import {
+  GetCategories,
+  getPersonAccounts,
+  getTxsPerYear,
+} from "./actions/uploadActions";
 import Hide from "./_components/Hide";
 import YearCountTable from "./_components/YearCountTable";
 
 const page = async () => {
-  const [data, categories] = await Promise.all([
+  const [data, categories, personAccounts] = await Promise.all([
     getTxsPerYear(),
     GetCategories(),
+    getPersonAccounts(),
   ]);
 
   return (
@@ -20,7 +25,7 @@ const page = async () => {
           </Hide>
         )}
       </Suspense>
-      <FileForm categories={categories} />
+      <FileForm categories={categories} people={personAccounts} />
     </div>
   );
 };
