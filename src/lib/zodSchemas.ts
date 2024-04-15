@@ -15,6 +15,18 @@ export const types = [
 
 export type Typ = (typeof types)[number];
 
+export const txBankAccount = z.object({
+  id: z.string(),
+  datum: z.date(),
+  text: z.string(),
+  typ: z.enum(types),
+  budgetgrupp: z.string(),
+  belopp: z.number(),
+  saldo: z.number(),
+  bankAccountId: z.string(),
+});
+export type TxBankAccount = z.infer<typeof txBankAccount>;
+
 export const txSchema = z.object({
   id: z.string(),
   datum: z.date(),
@@ -25,7 +37,6 @@ export const txSchema = z.object({
   saldo: z.number(),
   konto: z.string(),
   person: z.string(),
-  index: z.number(),
 });
 export type Tx = z.infer<typeof txSchema>;
 
@@ -45,16 +56,14 @@ export const matchSchema = z.object({
   budgetgruppId: z.string().cuid2(),
 });
 
-export const dbTxSchema = z.object({
+export const encryptedDataSchema = z.object({
   text: z.string(),
   typ: z.enum(types),
   budgetgrupp: z.string(),
   belopp: z.coerce.number(),
   saldo: z.coerce.number(),
-  konto: z.string(),
-  person: z.string(),
-  index: z.coerce.number(),
 });
+export type EncryptedDataSchema = z.infer<typeof encryptedDataSchema>;
 
 export const passwordsSchema = z
   .object({
