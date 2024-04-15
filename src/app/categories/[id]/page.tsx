@@ -6,10 +6,10 @@ import {
   getMatches,
   removeMatch,
 } from "../dataLayer/categoriesActions";
-import DeleteButton from "../_components/DeleteButton";
+import DeleteButton from "../../../components/common/Forms/DeleteButton";
 import capitalize from "~/lib/utils/capitalize";
-import BreadcrumbWithDropdown from "./_components/Breadcrumb";
-import AddItemForm from "../_components/AddItemForm";
+import BreadcrumbWithDropdown from "../../../components/common/Breadcrumb";
+import AddItemForm from "../../../components/common/Forms/AddItemForm";
 import type { Name } from "~/lib/zodSchemas";
 
 type Props = { params: { id: string } };
@@ -20,18 +20,23 @@ const page = async ({ params: { id: categoryId } }: Props) => {
     redirect("/");
   }
   const options = await getAllCategories();
-  const { name, matches, unique } = await getMatches({ categoryId });
-  matches.sort((a, b) => a.name.localeCompare(b.name));
+  const { name, match, unique } = await getMatches({ categoryId });
+  match.sort((a, b) => a.name.localeCompare(b.name));
   const onSubmit = async ({ name }: Name) => {
     "use server";
     await addMatch({ name, categoryId });
   };
   return (
     <div className="flex flex-col gap-4 p-2">
-      <BreadcrumbWithDropdown options={options} current={name} />
+      <BreadcrumbWithDropdown
+        href="\categories"
+        name="Kategorier"
+        options={options}
+        current={name}
+      />
       <h2 className="text-lg font-semibold">{capitalize(name)}</h2>
       <ul>
-        {matches.map(({ name, id }) => (
+        {match.map(({ name, id }) => (
           <li
             className="border-b-red flex h-8 items-center justify-between border-b"
             key={id}
