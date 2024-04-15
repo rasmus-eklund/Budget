@@ -50,6 +50,10 @@ const Menu = ({ hidden }: Props) => {
             <Icon icon="cog" className="mr-2 size-6" />
             Kategorier
           </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="people">
+            <Icon icon="user" className="mr-2 size-6" />
+            Personer
+          </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="password">
             <Icon icon="password" className="mr-2 size-6" />
             Lösenord
