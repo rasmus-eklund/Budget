@@ -34,8 +34,8 @@ export const users = createTable("user", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
-  txs: many(txs),
   categories: many(category),
+  persons: many(persons),
 }));
 
 export const accounts = createTable(
@@ -106,14 +106,67 @@ export const txs = createTable("txs", {
   year: integer("year").notNull(),
   date: timestamp("date").notNull(),
   data: text("data").notNull(),
-  userId: varchar("userId", { length: 255 })
-    .references(() => users.id)
+  bankAccountId: varchar("bankAccountId", { length: 255 })
+    .references(() => bankAccounts.id, { onDelete: "cascade" })
     .notNull(),
 });
 
+export type InsertTx = typeof txs.$inferInsert;
+
 export const txsRelations = relations(txs, ({ one }) => ({
-  user: one(users, { fields: [txs.userId], references: [users.id] }),
+  bankAccount: one(bankAccounts, {
+    fields: [txs.bankAccountId],
+    references: [bankAccounts.id],
+  }),
 }));
+
+export const persons = createTable(
+  "persons",
+  {
+    id: varchar("id", { length: 255 }).primaryKey(),
+    name: varchar("name", { length: 255 }).notNull(),
+    userId: varchar("userId", { length: 255 })
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+  },
+  (table) => {
+    return {
+      nameAccount: unique("nameAccount").on(table.name, table.userId),
+    };
+  },
+);
+
+export const personsRelations = relations(persons, ({ many, one }) => ({
+  user: one(users, { fields: [persons.userId], references: [users.id] }),
+  bankAccounts: many(bankAccounts),
+}));
+
+export const bankAccounts = createTable(
+  "bankAccounts",
+  {
+    id: varchar("id", { length: 255 }).primaryKey(),
+    name: varchar("name", { length: 255 }).notNull(),
+    personId: varchar("personId", { length: 255 })
+      .references(() => persons.id, { onDelete: "cascade" })
+      .notNull(),
+  },
+  (table) => {
+    return {
+      namePerson: unique("namePerson").on(table.name, table.personId),
+    };
+  },
+);
+
+export const bankAccountsRelations = relations(
+  bankAccounts,
+  ({ one, many }) => ({
+    txs: many(txs),
+    person: one(persons, {
+      fields: [bankAccounts.personId],
+      references: [persons.id],
+    }),
+  }),
+);
 
 export const category = createTable(
   "category",
@@ -136,29 +189,17 @@ export const categoryRelations = relations(category, ({ many, one }) => ({
   match: many(match),
 }));
 
-export const match = createTable(
-  "match",
-  {
-    id: varchar("id", { length: 255 }).primaryKey(),
-    name: varchar("name", { length: 255 }).notNull(),
-    categoryId: varchar("categoryId", { length: 255 })
-      .references(() => category.id, { onDelete: "cascade" })
-      .notNull(),
-    userId: varchar("userId", { length: 255 })
-      .references(() => users.id, { onDelete: "cascade" })
-      .notNull(),
-  },
-  (table) => {
-    return {
-      userMatch: unique("userMatch").on(table.name, table.userId),
-    };
-  },
-);
+export const match = createTable("match", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  categoryId: varchar("categoryId", { length: 255 })
+    .references(() => category.id, { onDelete: "cascade" })
+    .notNull(),
+});
 
 export const matchRelations = relations(match, ({ one }) => ({
   category: one(category, {
     fields: [match.categoryId],
     references: [category.id],
   }),
-  users: one(users, { fields: [match.userId], references: [users.id] }),
 }));
