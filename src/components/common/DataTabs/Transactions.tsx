@@ -38,7 +38,7 @@ const Transaction = ({
           {text} - <i>{capitalize(budgetgrupp)}</i>
         </p>
         <p className="whitespace-nowrap">
-          {person} ({konto})
+          {capitalize(person)} ({capitalize(konto)})
         </p>
       </div>
     </li>
