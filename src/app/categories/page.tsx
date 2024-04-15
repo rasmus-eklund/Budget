@@ -7,8 +7,8 @@ import {
   getAllCategories,
   removeCategory,
 } from "./dataLayer/categoriesActions";
-import DeleteButton from "./_components/DeleteButton";
-import AddItemForm from "./_components/AddItemForm";
+import DeleteButton from "~/components/common/Forms/DeleteButton";
+import AddItemForm from "~/components/common/Forms/AddItemForm";
 
 const Categories = async () => {
   const session = await getServerAuthSession();
