@@ -1,11 +1,11 @@
 import { parse } from "papaparse";
-import { type Tx, type Typ, txSchema } from "~/lib/zodSchemas";
+import { type Typ, type TxBankAccount, txBankAccount } from "~/lib/zodSchemas";
 import { v4 as uuid } from "uuid";
 
-const parseTxs = async (buffer: Buffer, person: string, konto: string) => {
+const parseTxs = async (buffer: Buffer, bankAccountId: string) => {
   const decoder = new TextDecoder("utf-8");
   const csvString = decoder.decode(buffer);
-  return new Promise<Tx[]>((resolve, reject) => {
+  return new Promise<TxBankAccount[]>((resolve, reject) => {
     parse(csvString, {
       delimiter: ";",
       header: false,
@@ -16,7 +16,7 @@ const parseTxs = async (buffer: Buffer, person: string, konto: string) => {
           return;
         }
 
-        const tmp: Tx[] = [];
+        const tmp: TxBankAccount[] = [];
         result.data.slice(1).forEach((row) => {
           const [date, text, typ, , bel, sal] = row as [
             string,
@@ -33,7 +33,7 @@ const parseTxs = async (buffer: Buffer, person: string, konto: string) => {
           const saldo = Number(
             sal.replace("kr", "").replace(",", ".").replace(" ", ""),
           );
-          const tx: Tx = {
+          const tx: TxBankAccount & { index: number } = {
             id: uuid(),
             datum,
             text,
@@ -41,11 +41,10 @@ const parseTxs = async (buffer: Buffer, person: string, konto: string) => {
             budgetgrupp: "övrigt",
             belopp,
             saldo,
-            person,
-            konto,
+            bankAccountId,
             index: 0,
           };
-          const parsed = txSchema.safeParse(tx);
+          const parsed = txBankAccount.safeParse(tx);
           if (!parsed.success) {
             reject(parsed.error.message);
             return;
