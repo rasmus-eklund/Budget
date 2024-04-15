@@ -1,6 +1,5 @@
 "use server";
 import { and, eq, gte, lte } from "drizzle-orm";
-import { notFound } from "next/navigation";
 import { applyCategory } from "~/lib/utils/categorize";
 import { decryptWithAES } from "~/lib/utils/encryption";
 import getErrorMessage from "~/lib/utils/handleError";
@@ -40,7 +39,7 @@ const getTxByDates = async ({
     where: eq(category.userId, userId),
     with: { match: { columns: { name: true } } },
   });
-  const response = await db.query.persons.findFirst({
+  const response = await db.query.persons.findMany({
     where: eq(persons.userId, userId),
     with: {
       bankAccounts: {
@@ -50,34 +49,34 @@ const getTxByDates = async ({
       },
     },
   });
-  if (!response) {
-    notFound();
-  }
+
   const out: TxReturn = { data: [], status: "Success" };
-  for (const account of response.bankAccounts) {
-    for (const { data, date, id } of account.txs) {
-      try {
-        const decrypted = await decryptTxs(data, password);
-        out.data.push(
-          applyCategory({
-            tx: {
-              ...decrypted,
-              datum: date,
-              person: response.name,
-              konto: account.name,
-              id,
-            },
-            categories,
-          }),
-        );
-      } catch (error) {
-        const message = getErrorMessage(error);
-        if (
-          message === "The operation failed for an operation-specific reason"
-        ) {
-          return { data: [], status: "Wrong password" };
+  for (const person of response) {
+    for (const account of person.bankAccounts) {
+      for (const { data, date, id } of account.txs) {
+        try {
+          const decrypted = await decryptTxs(data, password);
+          out.data.push(
+            applyCategory({
+              tx: {
+                ...decrypted,
+                datum: date,
+                person: person.name,
+                konto: account.name,
+                id,
+              },
+              categories,
+            }),
+          );
+        } catch (error) {
+          const message = getErrorMessage(error);
+          if (
+            message === "The operation failed for an operation-specific reason"
+          ) {
+            return { data: [], status: "Wrong password" };
+          }
+          return { data: [], status: "Error" };
         }
-        return { data: [], status: "Error" };
       }
     }
   }
