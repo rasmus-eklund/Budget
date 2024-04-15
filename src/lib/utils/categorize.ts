@@ -13,7 +13,7 @@ export const categorize = (text: string, categories: Category[]) => {
   return null;
 };
 
-export const applyCategories = ({
+export const applyCategory = ({
   tx,
   categories,
 }: {
