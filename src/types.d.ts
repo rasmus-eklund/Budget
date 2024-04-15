@@ -13,11 +13,8 @@ export type Internal = {
   id: string;
   belopp: number;
   typ: Typ;
-  konto: string;
-  person: string;
+  bankAccountId: string;
 };
-
-export type DbTx = { id: string; year: number; date: Date; data: string };
 
 export type Uniques = {
   people: string[];
@@ -31,3 +28,16 @@ export type TxReturn = {
 };
 
 export type Category = { name: string; match: { name: string }[] };
+export type PersonAccounts = {
+  id: string;
+  name: string;
+  bankAccounts: {
+    id: string;
+    name: string;
+  }[];
+}[];
+
+export type FileData = {
+  bankAccountId: string;
+  file: File;
+};
