@@ -1,29 +1,30 @@
 "use server";
 import { and, eq, gte, lte } from "drizzle-orm";
-import { applyCategories } from "~/lib/utils/categorize";
+import { notFound } from "next/navigation";
+import { applyCategory } from "~/lib/utils/categorize";
 import { decryptWithAES } from "~/lib/utils/encryption";
 import getErrorMessage from "~/lib/utils/handleError";
-import { dbTxSchema, type FromTo, type Tx } from "~/lib/zodSchemas";
+import {
+  type EncryptedDataSchema,
+  encryptedDataSchema,
+  type FromTo,
+} from "~/lib/zodSchemas";
 import { db } from "~/server/db";
-import { category, txs } from "~/server/db/schema";
+import { category, persons, txs } from "~/server/db/schema";
 import getUserId from "~/server/getUserId";
-import type { DbTx, TxReturn } from "~/types";
+import type { TxReturn } from "~/types";
 
 const decryptTxs = async (
-  encryptedData: DbTx[],
+  data: string,
   password: string,
-): Promise<Tx[]> => {
-  const decryptedData: Tx[] = [];
-  for (const { id, data, date } of encryptedData) {
-    const arr = new Uint8Array(data.split(",").map(Number));
-    const decrypted = await decryptWithAES(arr, password);
-    const parsed = dbTxSchema.safeParse(JSON.parse(decrypted));
-    if (!parsed.success) {
-      throw new Error("Korrupt data, ladda upp året igen.");
-    }
-    decryptedData.push({ datum: date, id, ...parsed.data });
+): Promise<EncryptedDataSchema> => {
+  const arr = new Uint8Array(data.split(",").map(Number));
+  const decrypted = await decryptWithAES(arr, password);
+  const parsed = encryptedDataSchema.safeParse(JSON.parse(decrypted));
+  if (!parsed.success) {
+    throw new Error("Korrupt data, ladda upp året igen.");
   }
-  return decryptedData;
+  return parsed.data;
 };
 
 const getTxByDates = async ({
@@ -39,21 +40,49 @@ const getTxByDates = async ({
     where: eq(category.userId, userId),
     with: { match: { columns: { name: true } } },
   });
-  const encryptedData = await db
-    .select()
-    .from(txs)
-    .where(and(eq(txs.userId, userId), gte(txs.date, from), lte(txs.date, to)));
-  try {
-    const decryptedData = await decryptTxs(encryptedData, password);
-    const data = decryptedData.map((tx) => applyCategories({ tx, categories }));
-    return { data, status: "Success" };
-  } catch (error) {
-    const message = getErrorMessage(error);
-    if (message === "The operation failed for an operation-specific reason") {
-      return { data: [], status: "Wrong password" };
-    }
-    return { data: [], status: "Error" };
+  const response = await db.query.persons.findFirst({
+    where: eq(persons.userId, userId),
+    with: {
+      bankAccounts: {
+        with: {
+          txs: { where: and(gte(txs.date, from), lte(txs.date, to)) },
+        },
+      },
+    },
+  });
+  if (!response) {
+    notFound();
   }
+  const out: TxReturn = { data: [], status: "Success" };
+  for (const account of response.bankAccounts) {
+    for (const { data, date, id } of account.txs) {
+      try {
+        const decrypted = await decryptTxs(data, password);
+        out.data.push(
+          applyCategory({
+            tx: {
+              ...decrypted,
+              datum: date,
+              person: response.name,
+              konto: account.name,
+              id,
+            },
+            categories,
+          }),
+        );
+      } catch (error) {
+        const message = getErrorMessage(error);
+        if (
+          message === "The operation failed for an operation-specific reason"
+        ) {
+          return { data: [], status: "Wrong password" };
+        }
+        return { data: [], status: "Error" };
+      }
+    }
+  }
+
+  return out;
 };
 
 export default getTxByDates;
