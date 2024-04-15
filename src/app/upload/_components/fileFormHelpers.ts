@@ -1,9 +1,10 @@
 import { encryptWithAES } from "~/lib/utils/encryption";
 import { markInternal } from "~/lib/utils/findInternal";
 import parseTxs from "~/lib/utils/parseTxs";
-import { type Tx } from "~/lib/zodSchemas";
-import { type DbTx } from "~/types";
+import type { Tx, TxBankAccount } from "~/lib/zodSchemas";
+import type { PersonAccounts, FileData } from "~/types";
 import { upload } from "../actions/uploadActions";
+import type { InsertTx } from "~/server/db/schema";
 
 export const getFileNames = (files: FileList | undefined) => {
   if (!files) {
@@ -30,16 +31,14 @@ export const hasCorrectFilenames = (
 };
 
 export const readFiles = async (
-  files: FileList,
+  files: FileData[],
   updatePercent: (percent: number) => void,
 ) => {
-  const data: Tx[] = [];
-  for (const file of files) {
+  const data: TxBankAccount[] = [];
+  for (const { file, bankAccountId } of files) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const [person, konto_end] = file.name.split("_") as [string, string];
-    const konto = konto_end.replace(".csv", "").replace("Ã¤", "ä");
-    const txs = await parseTxs(buffer, person, konto);
+    const txs = await parseTxs(buffer, bankAccountId);
     data.push(...txs);
   }
   const internal = await markInternal(data, updatePercent);
@@ -52,20 +51,21 @@ export const uploadFiles = async ({
   txs,
 }: {
   password: string;
-  txs: Tx[];
+  txs: TxBankAccount[];
 }) => {
   const years = new Set<number>();
-  const transactions: DbTx[] = [];
-  for (const { datum, id, ...rest } of txs) {
+  const transactions: InsertTx[] = [];
+  for (const { datum, id, bankAccountId, ...rest } of txs) {
     const encrypted = await encryptWithAES(JSON.stringify(rest), password);
     const year = datum.getFullYear();
-    const tx = {
+
+    transactions.push({
+      bankAccountId,
       year,
       date: datum,
       data: encrypted.toString(),
       id,
-    };
-    transactions.push(tx);
+    });
     years.add(year);
   }
   if (years.size !== 1) {
@@ -73,4 +73,49 @@ export const uploadFiles = async ({
   }
   const [year] = Array.from(years) as [number];
   await upload({ transactions, year });
+};
+
+export const addPersonAccount = (
+  people: PersonAccounts,
+  txs: TxBankAccount[],
+): Tx[] => {
+  const accounts: Record<string, { person: string; konto: string }> = {};
+  for (const person of people) {
+    for (const account of person.bankAccounts) {
+      accounts[account.id] = { person: person.name, konto: account.name };
+    }
+  }
+  const out: Tx[] = [];
+  for (const { bankAccountId, ...tx } of txs) {
+    const personKonto = accounts[bankAccountId];
+    if (!personKonto) {
+      throw new Error("Något gick fel");
+    }
+    out.push({ ...tx, ...personKonto });
+  }
+  return out;
+};
+
+export const findMatchingAccount = (
+  filename: string,
+  items: {
+    person: string;
+    account: string;
+    bankAccountId: string;
+  }[],
+) => {
+  const fname = filename.toLowerCase();
+  for (const item of items) {
+    const person = item.person.toLowerCase();
+    const account = item.account.toLowerCase();
+
+    if (
+      (fname.includes(person) && fname.includes(account)) ||
+      (fname.includes(account) && fname.includes(person))
+    ) {
+      return item.bankAccountId;
+    }
+  }
+
+  return "";
 };
