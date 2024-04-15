@@ -1,6 +1,6 @@
 import { type Internal } from "~/types";
 import { dateToString } from "~/lib/utils/formatData";
-import { type Tx } from "~/lib/zodSchemas";
+import type { TxBankAccount } from "~/lib/zodSchemas";
 
 export const findInternal = (day: Internal[]) => {
   const internal: Internal[] = [];
@@ -12,9 +12,7 @@ export const findInternal = (day: Internal[]) => {
       const halfIncome = txs
         .map((i) => (i.typ === "Insättning" ? -1 : 1))
         .reduce((p, c) => p + c, 0);
-      const differentAccounts = new Set(
-        txs.map((i) => `${i.konto}${i.person}`),
-      );
+      const differentAccounts = new Set(txs.map((i) => i.bankAccountId));
       if (halfIncome === 0 && differentAccounts.size > 1) {
         internal.push(...txs);
       }
@@ -33,11 +31,11 @@ const findInternalOddThree = (txs: Internal[]) => {
   const totalSum = sumBelopp(txs);
   const accounts: Record<string, Internal[]> = {};
   for (const tx of txs) {
-    const { konto } = tx;
-    if (!accounts[konto]) {
-      accounts[konto] = [];
+    const { bankAccountId } = tx;
+    if (!accounts[bankAccountId]) {
+      accounts[bankAccountId] = [];
     }
-    accounts[konto]!.push(tx);
+    accounts[bankAccountId]!.push(tx);
   }
   const groupAccount = Object.keys(accounts).find(
     (key) => accounts[key]!.length > 1,
@@ -80,7 +78,7 @@ const pause = () => {
   return new Promise((r) => setTimeout(r, 0));
 };
 export const markInternal = async (
-  txs: Tx[],
+  txs: TxBankAccount[],
   update: (percent: number) => void,
 ) => {
   let internal: string[] = [];
