@@ -2,7 +2,7 @@
 
 import type { FromTo, Tx } from "~/lib/zodSchemas";
 import { useMemo, useState } from "react";
-import { applyCategories } from "~/lib/utils/categorize";
+import { applyCategory } from "~/lib/utils/categorize";
 import ShowData from "~/components/common/ShowData";
 import DateFilter from "~/components/common/DateFilters/DateFilter";
 import { categories } from "./_generateData/categories";
@@ -15,7 +15,7 @@ const DemoPage = () => {
   const data: Tx[] = [];
   for (const tx of txs) {
     if (tx.datum >= from && tx.datum <= to) {
-      data.push(applyCategories({ tx, categories }));
+      data.push(applyCategory({ tx, categories }));
     }
   }
 
