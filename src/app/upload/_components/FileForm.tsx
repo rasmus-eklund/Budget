@@ -3,26 +3,34 @@
 import { type FormEvent, useState, useEffect } from "react";
 import { ClipLoader } from "react-spinners";
 import { Button } from "~/components/ui/button";
-import type { FromTo, Tx } from "~/lib/zodSchemas";
+import type { FromTo, Tx, TxBankAccount } from "~/lib/zodSchemas";
 import {
-  getFileNames,
-  hasCorrectFilenames,
   readFiles,
   uploadFiles,
+  addPersonAccount,
+  findMatchingAccount,
 } from "./fileFormHelpers";
-import type { Category } from "~/types";
+import type { Category, FileData, PersonAccounts } from "~/types";
 import { usePassword } from "~/components/password/PasswordContext";
-import { applyCategories } from "~/lib/utils/categorize";
+import { applyCategory } from "~/lib/utils/categorize";
 import ShowData from "~/components/common/ShowData";
 import { getFromTo } from "~/lib/utils/dateCalculations";
 import Link from "next/link";
 import DateFilter from "~/components/common/DateFilters/DateFilter";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import capitalize from "~/lib/utils/capitalize";
 
-type Props = { categories: Category[] };
-const FileForm = ({ categories }: Props) => {
+type Props = { categories: Category[]; people: PersonAccounts };
+const FileForm = ({ categories, people }: Props) => {
   const { password } = usePassword();
-  const [files, setFiles] = useState<FileList | null>(null);
-  const [txs, setTxs] = useState<Tx[]>([]);
+  const [files, setFiles] = useState<FileData[]>([]);
+  const [txs, setTxs] = useState<TxBankAccount[]>([]);
   const [loading, setLoading] = useState({ loading: false, percent: 0 });
   const [error, setError] = useState({
     error: false,
@@ -50,9 +58,9 @@ const FileForm = ({ categories }: Props) => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading({ loading: true, percent: 0.78 });
+    setLoading({ loading: true, percent: 0.5 });
     await uploadFiles({ password, txs });
-    setFiles(null);
+    setFiles([]);
     setTxs([]);
     setLoading({ loading: false, percent: 0 });
   };
@@ -61,42 +69,76 @@ const FileForm = ({ categories }: Props) => {
       setError({ error: true, message: "Inget lösenord valt" });
     }
   }, [password, error.error]);
+  const options = people.flatMap((p) =>
+    p.bankAccounts.map((a) => ({
+      person: p.name,
+      account: a.name,
+      bankAccountId: a.id,
+    })),
+  );
   return (
     <div>
       <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
         <p>
           Transaktionerna du laddar upp kommer att ersätta alla transaktioner
-          från året du väljer. Filnamn måste ha formatet
-          <i> Person_Konto.csv</i>
+          från året du väljer.
         </p>
-        <input
-          onClick={() => {
-            setTxs([]);
-            setFiles(null);
-          }}
-          onChange={(e) => {
-            const files = e.target.files;
-            if (files) {
-              const test = hasCorrectFilenames(files);
-              if (!test.success) {
-                return setError({
-                  error: true,
-                  message: `Felaktigt formaterat filnamn ${test.name}`,
-                });
+        {password && (
+          <input
+            onClick={() => {
+              setTxs([]);
+              setFiles([]);
+            }}
+            onChange={(e) => {
+              const files = e.target.files;
+              if (files) {
+                const data: FileData[] = [];
+                for (const file of files) {
+                  data.push({
+                    bankAccountId: findMatchingAccount(file.name, options),
+                    file,
+                  });
+                }
+                setFiles(data);
               }
-              setError({ error: false, message: "" });
-              setFiles(files);
-            }
-          }}
-          type="file"
-          name="files"
-          multiple
-          accept=".csv"
-        />
+            }}
+            type="file"
+            name="files"
+            multiple
+            accept=".csv"
+          />
+        )}
         {files && (
-          <ul>
-            {getFileNames(files).map((name, i) => (
-              <li key={`${name}_${i}`}>{name}</li>
+          <ul className="flex flex-col gap-2">
+            {files.map(({ file, bankAccountId }, i) => (
+              <li className="flex items-center gap-2" key={`${file.name}_${i}`}>
+                <h2>{file.name}</h2>
+                <Select
+                  value={bankAccountId}
+                  onValueChange={(value) => {
+                    setFiles((p) => {
+                      const newFiles = [...p];
+                      newFiles[i] = { ...newFiles[i]!, bankAccountId: value };
+                      return newFiles;
+                    });
+                  }}
+                >
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Person" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {options.map((option) => (
+                      <SelectItem
+                        key={option.bankAccountId}
+                        value={option.bankAccountId}
+                      >
+                        {capitalize(option.person)} -{" "}
+                        {capitalize(option.account)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </li>
             ))}
           </ul>
         )}
@@ -117,7 +159,11 @@ const FileForm = ({ categories }: Props) => {
             <Button
               onClick={processTxs}
               type="button"
-              disabled={!files || files.length === 0 || error.error}
+              disabled={
+                files.length === 0 ||
+                error.error ||
+                files.some((i) => i.bankAccountId === "")
+              }
             >
               Bearbeta
             </Button>
@@ -128,7 +174,11 @@ const FileForm = ({ categories }: Props) => {
         </div>
       </form>
       {txs.length !== 0 && range ? (
-        <ShowTransactions txs={txs} categories={categories} range={range} />
+        <ShowTransactions
+          txs={addPersonAccount(people, txs)}
+          categories={categories}
+          range={range}
+        />
       ) : null}
     </div>
   );
@@ -147,7 +197,7 @@ const ShowTransactions = ({
   const data: Tx[] = [];
   for (const tx of txs) {
     if (tx.datum >= from && tx.datum <= to) {
-      data.push(applyCategories({ tx, categories }));
+      data.push(applyCategory({ tx, categories }));
     }
   }
 
