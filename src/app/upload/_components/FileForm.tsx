@@ -76,6 +76,19 @@ const FileForm = ({ categories, people }: Props) => {
       bankAccountId: a.id,
     })),
   );
+  if (people.length === 0) {
+    return (
+      <p>
+        Klicka{" "}
+        <span>
+          <Link className="underline" href={"/people"}>
+            här
+          </Link>
+        </span>{" "}
+        för att lägga till personer och konton.
+      </p>
+    );
+  }
   return (
     <div>
       <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
@@ -124,7 +137,7 @@ const FileForm = ({ categories, people }: Props) => {
                   }}
                 >
                   <SelectTrigger className="w-[200px]">
-                    <SelectValue placeholder="Person" />
+                    <SelectValue placeholder="Välj konto" />
                   </SelectTrigger>
                   <SelectContent>
                     {options.map((option) => (
