@@ -49,7 +49,7 @@ const TransactionFilter = ({
           }
         >
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="" />
+            <SelectValue placeholder="Kategori" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="none">Kategori</SelectItem>
@@ -66,7 +66,7 @@ const TransactionFilter = ({
           onValueChange={(value) => setTxFilter({ ...txFilter, person: value })}
         >
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="" />
+            <SelectValue placeholder="Person" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="none">Person</SelectItem>
@@ -85,7 +85,7 @@ const TransactionFilter = ({
           }
         >
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="" />
+            <SelectValue placeholder="Konto" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="none">Konto</SelectItem>
@@ -118,7 +118,10 @@ const TransactionFilter = ({
           {JSON.stringify(txFilter) !== JSON.stringify(defaults.txFilter) && (
             <Button
               type="button"
-              onClick={() => setTxFilter(defaults.txFilter)}
+              onClick={() => {
+                setSearch("");
+                setTxFilter(defaults.txFilter);
+              }}
             >
               Rensa filter
             </Button>
@@ -131,7 +134,7 @@ const TransactionFilter = ({
           }
         >
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="" />
+            <SelectValue placeholder="Sortera" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
