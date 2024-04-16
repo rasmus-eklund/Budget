@@ -1,13 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { ClipLoader } from "react-spinners";
-import { Button } from "~/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,21 +15,36 @@ import {
 import { Input } from "~/components/ui/input";
 import capitalize from "~/lib/utils/capitalize";
 import { type Name, nameSchema } from "~/lib/zodSchemas";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
 
+import { Button } from "~/components/ui/button";
+import Icon from "~/lib/icons/Icon";
 type Props = {
-  onSubmit: (name: Name) => Promise<void>;
+  data: { name: string; id: string };
+  onSubmit: (data: { name: string; id: string }) => Promise<void>;
   formInfo: { label: string; description: string };
   uniques: string[];
 };
 
-const AddItemForm = ({
+const EditItemForm = ({
+  data,
   onSubmit,
   formInfo: { description, label },
   uniques,
 }: Props) => {
+  const [open, setOpen] = useState(false);
   const form = useForm<Name>({
     resolver: zodResolver(nameSchema),
-    defaultValues: { name: "" },
+    defaultValues: { name: data.name },
   });
   const isUnique = async ({ name }: Name) => {
     if (uniques.includes(name)) {
@@ -39,39 +53,62 @@ const AddItemForm = ({
       });
       return;
     }
-    await onSubmit({ name });
+    await onSubmit({ name, id: data.id });
     form.reset();
+    setOpen(false);
   };
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(isUnique)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{label}</FormLabel>
-              <FormControl>
-                <Input placeholder={`Ny ${label.toLowerCase()}`} {...field} />
-              </FormControl>
-              <FormDescription>{description}</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {form.formState.isSubmitting ? (
-          <Button disabled>
-            <ClipLoader size={20} className="mr-2" />
-            Vänta
-          </Button>
-        ) : (
-          <Button type="submit" disabled={!form.formState.isValid}>
-            Lägg till
-          </Button>
-        )}
-      </form>
-    </Form>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <button onClick={() => setOpen(true)}>
+          <Icon icon="edit" className="size-5 hover:scale-110" />
+        </button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Ändra {label.toLowerCase()}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(isUnique)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{label}</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder={`Ny ${label.toLowerCase()}`}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <DialogFooter className="flex flex-row justify-between md:justify-end">
+              <DialogClose asChild>
+                <Button type="button" variant="secondary">
+                  Stäng
+                </Button>
+              </DialogClose>
+              {form.formState.isSubmitting ? (
+                <Button disabled>
+                  <ClipLoader size={20} className="mr-2" />
+                  Vänta
+                </Button>
+              ) : (
+                <Button type="submit" disabled={!form.formState.isValid}>
+                  Ändra
+                </Button>
+              )}
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 };
 
-export default AddItemForm;
+export default EditItemForm;
