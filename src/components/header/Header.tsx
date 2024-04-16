@@ -10,7 +10,7 @@ const Header = async () => {
       <div className="flex w-1/3 items-center">
         <Menu hidden={!session} />
       </div>
-      <h1 className="w-1/3 text-center text-xl font-bold text-red-600">
+      <h1 className="w-1/3 text-nowrap text-center text-xl font-bold text-red-600">
         <Link href={"/"}>RICA Banken</Link>
       </h1>
       <div className="flex w-1/3 items-center justify-end">
