@@ -12,6 +12,8 @@ import DeleteButton from "~/components/common/Forms/DeleteButton";
 import AddItemForm from "~/components/common/Forms/AddItemForm";
 import DeleteDialog from "~/components/common/Forms/DeleteDialog";
 import EditItemForm from "~/components/common/Forms/EditItemForm";
+import { Suspense } from "react";
+import LoadingItems from "~/components/common/LoadingItems";
 
 const Categories = async () => {
   const session = await getServerAuthSession();
@@ -24,34 +26,36 @@ const Categories = async () => {
   return (
     <div className="flex flex-col gap-6 p-2">
       <h2 className="text-lg font-semibold">Dina personer:</h2>
-      <ul className="flex flex-col gap-1">
-        {data.map(({ id, name }) => (
-          <li
-            className="border-b-red flex h-8 items-center justify-between border-b"
-            key={id}
-          >
-            <Link href={`/people/${name}`}>{capitalize(name)}</Link>
-            <div className="flex items-center gap-2">
-              <EditItemForm
-                data={{ name, id }}
-                onSubmit={renamePerson}
-                formInfo={{
-                  description: "Detta kommer att ändra personens namn",
-                  label: "Namn",
-                }}
-                uniques={data.map((i) => i.name)}
-              />
-              <DeleteDialog info={{ title: "personen" }}>
-                <form action={removePerson} className="flex items-center">
-                  <input hidden name="id" type="text" defaultValue={id} />
-                  <DeleteButton icon={false} />
-                </form>
-              </DeleteDialog>
-            </div>
-          </li>
-        ))}
-        {data.length === 0 ? <li>Du har inga personer än.</li> : null}
-      </ul>
+      <Suspense fallback={<LoadingItems />}>
+        <ul className="flex flex-col gap-1">
+          {data.map(({ id, name }) => (
+            <li
+              className="border-b-red flex h-8 items-center justify-between border-b"
+              key={id}
+            >
+              <Link href={`/people/${name}`}>{capitalize(name)}</Link>
+              <div className="flex items-center gap-2">
+                <EditItemForm
+                  data={{ name, id }}
+                  onSubmit={renamePerson}
+                  formInfo={{
+                    description: "Detta kommer att ändra personens namn",
+                    label: "Namn",
+                  }}
+                  uniques={data.map((i) => i.name)}
+                />
+                <DeleteDialog info={{ title: "personen" }}>
+                  <form action={removePerson} className="flex items-center">
+                    <input hidden name="id" type="text" defaultValue={id} />
+                    <DeleteButton icon={false} />
+                  </form>
+                </DeleteDialog>
+              </div>
+            </li>
+          ))}
+          {data.length === 0 ? <li>Du har inga personer än.</li> : null}
+        </ul>
+      </Suspense>
       <AddItemForm
         onSubmit={addPerson}
         formInfo={{
