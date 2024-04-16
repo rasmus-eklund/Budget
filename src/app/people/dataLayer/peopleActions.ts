@@ -15,9 +15,25 @@ export const addBankAccount = async ({
   await getUserId();
   const [{ id }] = (await db
     .insert(bankAccounts)
-    .values({ personId, name, id: randomUUID() })
+    .values({ personId, name: name.toLowerCase(), id: randomUUID() })
     .returning({ id: bankAccounts.id })) as [{ id: string }];
   if (!id) {
+    throw new Error("Kunde inte lägga till bankkonto");
+  }
+  revalidatePath(`/people/${name}`);
+};
+
+export const renameBankAccount = async ({
+  name,
+  id,
+}: Name & { id: string }) => {
+  await getUserId();
+  const [{ id: newId }] = (await db
+    .update(bankAccounts)
+    .set({ name: name.toLowerCase() })
+    .where(eq(bankAccounts.id, id))
+    .returning({ id: bankAccounts.id })) as [{ id: string }];
+  if (!newId) {
     throw new Error("Kunde inte lägga till bankkonto");
   }
   revalidatePath(`/people/${name}`);
