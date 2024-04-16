@@ -5,12 +5,15 @@ import {
   getBankAccounts,
   getAllPeople,
   removeBankAccount,
+  renameBankAccount,
 } from "../dataLayer/peopleActions";
 import DeleteButton from "../../../components/common/Forms/DeleteButton";
 import capitalize from "~/lib/utils/capitalize";
 import BreadcrumbWithDropdown from "../../../components/common/Breadcrumb";
 import AddItemForm from "../../../components/common/Forms/AddItemForm";
 import type { Name } from "~/lib/zodSchemas";
+import EditItemForm from "~/components/common/Forms/EditItemForm";
+import DeleteDialog from "~/components/common/Forms/DeleteDialog";
 
 type Props = { params: { name: string } };
 
@@ -28,10 +31,11 @@ const page = async ({ params: { name: personName } }: Props) => {
     name: personName,
   });
   bankAccounts.sort((a, b) => a.name.localeCompare(b.name));
-  const onSubmit = async ({ name }: Name) => {
+  const addAccount = async ({ name }: Name) => {
     "use server";
     await addBankAccount({ name, personId });
   };
+
   return (
     <div className="flex flex-col gap-4 p-2">
       <BreadcrumbWithDropdown
@@ -48,16 +52,34 @@ const page = async ({ params: { name: personName } }: Props) => {
             key={id}
           >
             <p>{capitalize(name)}</p>
-            <form action={removeBankAccount}>
-              <input hidden name="id" type="text" defaultValue={id} />
-              <input hidden name="name" type="text" defaultValue={personName} />
-              <DeleteButton />
-            </form>
+            <div className="flex items-center gap-2">
+              <EditItemForm
+                data={{ name, id }}
+                uniques={bankAccounts.map(({ name }) => name)}
+                onSubmit={renameBankAccount}
+                formInfo={{
+                  description: "Detta kommer att ändra ditt kontonamn",
+                  label: "Kontonamn",
+                }}
+              />
+              <DeleteDialog info={{ title: "ditt bankkonto" }}>
+                <form action={removeBankAccount} className="flex items-center">
+                  <input hidden name="id" type="text" defaultValue={id} />
+                  <input
+                    hidden
+                    name="name"
+                    type="text"
+                    defaultValue={personName}
+                  />
+                  <DeleteButton icon={false} />
+                </form>
+              </DeleteDialog>
+            </div>
           </li>
         ))}
       </ul>
       <AddItemForm
-        onSubmit={onSubmit}
+        onSubmit={addAccount}
         formInfo={{
           label: "Konto",
           description: `Lägg till konto för ${personName.toLowerCase()}`,
