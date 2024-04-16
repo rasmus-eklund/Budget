@@ -8,7 +8,8 @@ export const findInternal = (day: Internal[]) => {
 
   for (const { ids } of counts) {
     const txs = day.filter((tx) => ids.includes(tx.id));
-    if (txs.length % 2 === 0 && sumBelopp(txs) === 0) {
+    const totalSum = sumBelopp(txs);
+    if (txs.length % 2 === 0 && totalSum === 0) {
       const halfIncome = txs
         .map((i) => (i.typ === "Insättning" ? -1 : 1))
         .reduce((p, c) => p + c, 0);
@@ -17,7 +18,7 @@ export const findInternal = (day: Internal[]) => {
         internal.push(...txs);
       }
     } else if (txs.length % 2 === 1 && txs.length === 3) {
-      const theOne = findInternalOddThree(txs);
+      const theOne = findInternalOddThree(txs, totalSum);
       if (theOne) {
         internal.push(...theOne);
       }
@@ -27,8 +28,7 @@ export const findInternal = (day: Internal[]) => {
   return internal.map((i) => i.id);
 };
 
-const findInternalOddThree = (txs: Internal[]) => {
-  const totalSum = sumBelopp(txs);
+const findInternalOddThree = (txs: Internal[], totalSum: number) => {
   const accounts: Record<string, Internal[]> = {};
   for (const tx of txs) {
     const { bankAccountId } = tx;
@@ -74,14 +74,16 @@ export const countDuplicates = <T extends { belopp: number; id: string }>(
   }
   return Object.values(tracker).filter(({ count }) => count > 1);
 };
+
 const pause = () => {
   return new Promise((r) => setTimeout(r, 0));
 };
+
 export const markInternal = async (
   txs: TxBankAccount[],
   update: (percent: number) => void,
 ) => {
-  let internal: string[] = [];
+  const internal: string[] = [];
   const dates = distinctDates(txs);
   let counter = 0;
   for (const date of dates) {
@@ -89,7 +91,10 @@ export const markInternal = async (
     update(counter / dates.length);
     const day = getDay(txs, date);
     if (hasDuplicates(day)) {
-      internal = [...internal, ...findInternal(day)];
+      const foundInternal = findInternal(day);
+      for (const tx of foundInternal) {
+        internal.push(tx);
+      }
     }
     counter++;
   }
