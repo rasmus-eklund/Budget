@@ -34,7 +34,7 @@ export const renameBankAccount = async ({
     .where(eq(bankAccounts.id, id))
     .returning({ id: bankAccounts.id })) as [{ id: string }];
   if (!newId) {
-    throw new Error("Kunde inte lägga till bankkonto");
+    throw new Error("Kunde inte byta bankkontots namn.");
   }
   revalidatePath(`/people/${name}`);
 };
@@ -66,6 +66,19 @@ export const removePerson = async (formData: FormData) => {
     .delete(persons)
     .where(and(eq(persons.id, id), eq(persons.userId, userId)));
   revalidatePath("/people");
+};
+
+export const renamePerson = async ({ name, id }: Name & { id: string }) => {
+  await getUserId();
+  const [{ id: newId }] = (await db
+    .update(persons)
+    .set({ name: name.toLowerCase() })
+    .where(eq(persons.id, id))
+    .returning({ id: persons.id })) as [{ id: string }];
+  if (!newId) {
+    throw new Error("Kunde inte ändra personens namn");
+  }
+  revalidatePath(`/people/${name}`);
 };
 
 export const getAllPeople = async () => {

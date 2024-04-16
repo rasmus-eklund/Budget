@@ -6,9 +6,12 @@ import {
   addPerson,
   getAllPeople,
   removePerson,
+  renamePerson,
 } from "./dataLayer/peopleActions";
 import DeleteButton from "~/components/common/Forms/DeleteButton";
 import AddItemForm from "~/components/common/Forms/AddItemForm";
+import DeleteDialog from "~/components/common/Forms/DeleteDialog";
+import EditItemForm from "~/components/common/Forms/EditItemForm";
 
 const Categories = async () => {
   const session = await getServerAuthSession();
@@ -28,10 +31,23 @@ const Categories = async () => {
             key={id}
           >
             <Link href={`/people/${name}`}>{capitalize(name)}</Link>
-            <form action={removePerson}>
-              <input type="text" name="id" hidden defaultValue={id} />
-              <DeleteButton />
-            </form>
+            <div className="flex items-center gap-2">
+              <EditItemForm
+                data={{ name, id }}
+                onSubmit={renamePerson}
+                formInfo={{
+                  description: "Detta kommer att ändra personens namn",
+                  label: "Namn",
+                }}
+                uniques={data.map((i) => i.name)}
+              />
+              <DeleteDialog info={{ title: "personen" }}>
+                <form action={removePerson} className="flex items-center">
+                  <input hidden name="id" type="text" defaultValue={id} />
+                  <DeleteButton icon={false} />
+                </form>
+              </DeleteDialog>
+            </div>
           </li>
         ))}
         {data.length === 0 ? <li>Du har inga personer än.</li> : null}
