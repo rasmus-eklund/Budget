@@ -19,7 +19,7 @@ const YearCountChart = ({ data }: Props) => {
         <Tooltip cursor={{ fill: "hsl(var(--muted))" }} />
         <XAxis dataKey={"year"} />
         <YAxis dataKey={"count"} />
-        <Bar dataKey={"count"} name={"Antal"} />
+        <Bar dataKey={"count"} name={"Antal"} fill="#dc2626" />
       </BarChart>
     </ResponsiveContainer>
   );
