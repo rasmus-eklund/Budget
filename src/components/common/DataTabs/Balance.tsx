@@ -22,7 +22,6 @@ type Props = {
 const Balance = (props: Props) => {
   const range = getRange(props.data);
   const persons = getPersonAccounts(props.data);
-  console.log(persons);
   const { data, personAccounts } = fillMissingDates(props.data, range, persons);
   return (
     <Card>
@@ -72,7 +71,6 @@ const getPersonAccounts = (txs: Tx[]) => {
       personAccounts[tx.person] = new Set([tx.konto]);
     }
   }
-  console.log(personAccounts);
   const out: Record<string, string[]> = {};
   for (const person in personAccounts) {
     out[person] = Array.from(personAccounts[person]!);
