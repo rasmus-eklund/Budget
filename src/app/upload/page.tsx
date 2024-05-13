@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import FileForm from "./_components/FileForm";
 import {
   GetCategories,
@@ -6,8 +5,12 @@ import {
   getTxsPerYear,
 } from "./actions/uploadActions";
 import Hide from "./_components/Hide";
-import YearCountTable from "./_components/YearCountTable";
+import dynamic from "next/dynamic";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
+const Chart = dynamic(() => import("./_components/YearCountChart"), {
+  ssr: false,
+});
 const page = async () => {
   const [data, categories, personAccounts] = await Promise.all([
     getTxsPerYear(),
@@ -17,20 +20,23 @@ const page = async () => {
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      <Suspense fallback={<Loading />}>
-        {data.length !== 0 && (
-          <Hide>
-            <h2>Din data:</h2>
-            <YearCountTable data={data} />
-          </Hide>
-        )}
-      </Suspense>
+      {data.length !== 0 && (
+        <Hide>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-red-600">
+                Transaktioner per år
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Chart data={data} />
+            </CardContent>
+          </Card>
+        </Hide>
+      )}
       <FileForm categories={categories} people={personAccounts} />
     </div>
   );
 };
 
-const Loading = () => {
-  return <p>Laddar...</p>;
-};
 export default page;
