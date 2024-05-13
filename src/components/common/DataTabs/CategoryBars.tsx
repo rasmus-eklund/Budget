@@ -45,7 +45,7 @@ const CategoryBars = ({ data, options }: Props) => {
         <CardTitle className="">Utgift per kategori</CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer height={200} minWidth={"100%"}>
+        <ResponsiveContainer height={300} minWidth={"100%"}>
           <BarChart data={sums} barCategoryGap={"30%"}>
             <Tooltip cursor={{ fill: "hsl(var(--muted))" }} />
             <CartesianGrid />

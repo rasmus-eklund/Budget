@@ -29,7 +29,7 @@ const Balance = (props: Props) => {
         <CardTitle>Saldo över tid</CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer height={200} minWidth={"100%"}>
+        <ResponsiveContainer height={300} minWidth={"100%"}>
           <LineChart data={data}>
             <Tooltip />
             <CartesianGrid />
