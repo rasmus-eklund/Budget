@@ -47,8 +47,8 @@ const ShowData = ({
         <TabsList>
           <TabsTrigger value="aggregated">Budget</TabsTrigger>
           <TabsTrigger value="transactions">Transaktioner</TabsTrigger>
-          <TabsTrigger value="categoryBars">Stapeldiagram</TabsTrigger>
-          <TabsTrigger value="balanceOverTime">Saldo över tid</TabsTrigger>
+          <TabsTrigger value="categoryBars">Utgifter</TabsTrigger>
+          <TabsTrigger value="balanceOverTime">Saldo</TabsTrigger>
         </TabsList>
         <TabsContent value="aggregated">
           {loading ? (
