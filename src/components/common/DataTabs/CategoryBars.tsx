@@ -10,6 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { colors } from "~/lib/constants/colors";
 import capitalize from "~/lib/utils/capitalize";
 import { type Tx } from "~/lib/zodSchemas";
 import type { Uniques } from "~/types";
@@ -20,18 +21,6 @@ type Props = {
 };
 
 const CategoryBars = ({ data, options }: Props) => {
-  const colors = [
-    "#FF0000",
-    "#FFCC00",
-    "#FF6633",
-    "#FF9966",
-    "#FF3300",
-    "#FFCC99",
-    "#FF3333",
-    "#FF6600",
-    "#FFCC99",
-    "#FF3333",
-  ];
   const sums: Record<string, string | number>[] = [];
   const cats = options.categories.filter(
     (c) => !(c === "inkomst" || c === "inom"),
