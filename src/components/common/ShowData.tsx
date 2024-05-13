@@ -15,8 +15,11 @@ import dynamic from "next/dynamic";
 const Bars = dynamic(() => import("./DataTabs/CategoryBars"), {
   ssr: false,
 });
+const Lines = dynamic(() => import("./DataTabs/Balance"), {
+  ssr: false,
+});
 
-type Tab = "aggregated" | "transactions" | "categoryBars";
+type Tab = "aggregated" | "transactions" | "categoryBars" | "balanceOverTime";
 
 type Props = {
   data: Tx[];
@@ -45,6 +48,7 @@ const ShowData = ({
           <TabsTrigger value="aggregated">Budget</TabsTrigger>
           <TabsTrigger value="transactions">Transaktioner</TabsTrigger>
           <TabsTrigger value="categoryBars">Stapeldiagram</TabsTrigger>
+          <TabsTrigger value="balanceOverTime">Saldo över tid</TabsTrigger>
         </TabsList>
         <TabsContent value="aggregated">
           {loading ? (
@@ -81,6 +85,9 @@ const ShowData = ({
           ) : (
             <Bars data={txs} options={options.aggregated} />
           )}
+        </TabsContent>
+        <TabsContent value="balanceOverTime">
+          {loading ? <p>Laddar...</p> : <Lines data={txs} />}
         </TabsContent>
       </Tabs>
     </section>
