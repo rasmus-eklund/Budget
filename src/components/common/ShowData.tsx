@@ -10,8 +10,13 @@ import applyTransactionFilters, {
 } from "~/lib/utils/transactionFilter";
 import type { TxFilter, TxSort } from "~/types";
 import type { Tx } from "~/lib/zodSchemas";
+import dynamic from "next/dynamic";
 
-type Tab = "aggregated" | "transactions";
+const Bars = dynamic(() => import("./DataTabs/CategoryBars"), {
+  ssr: false,
+});
+
+type Tab = "aggregated" | "transactions" | "categoryBars";
 
 type Props = {
   data: Tx[];
@@ -39,6 +44,7 @@ const ShowData = ({
         <TabsList>
           <TabsTrigger value="aggregated">Budget</TabsTrigger>
           <TabsTrigger value="transactions">Transaktioner</TabsTrigger>
+          <TabsTrigger value="categoryBars">Stapeldiagram</TabsTrigger>
         </TabsList>
         <TabsContent value="aggregated">
           {loading ? (
@@ -67,6 +73,13 @@ const ShowData = ({
               />
               <Transactions data={txs} />
             </>
+          )}
+        </TabsContent>
+        <TabsContent value="categoryBars">
+          {loading ? (
+            <p>Laddar...</p>
+          ) : (
+            <Bars data={txs} options={options.aggregated} />
           )}
         </TabsContent>
       </Tabs>
