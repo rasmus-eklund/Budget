@@ -6,6 +6,10 @@ export const generateData = () => {
   const txs: Tx[] = [];
   console.log("Generating data");
   const people = ["Anna", "Per"] as const;
+  const balance = {
+    Anna: { Kort: 10000, Spar: 40000 },
+    Per: { Kort: 10000, Spar: 40000 },
+  };
   for (let year = 2020; year < 2024; year++) {
     const raise = getRandomFloat(1.01, 1.15);
     const salary = { Per: 22000 * raise, Anna: 17000 * raise } as const;
@@ -17,6 +21,20 @@ export const generateData = () => {
         for (let i = 0; i < randomDates.length; i++) {
           const datum = randomDates[i]!;
           const { belopp, text } = spending[i]!;
+          if (balance[person].Kort < Math.abs(belopp)) {
+            const [from, to] = internal({
+              belopp,
+              datum,
+              kortBalance: balance[person].Kort,
+              person,
+              sparBalance: balance[person].Spar,
+            });
+            balance[person].Kort = to.saldo;
+            balance[person].Spar = from.saldo;
+            txs.push(from);
+            txs.push(to);
+          }
+          balance[person].Kort += belopp;
           const tx: Tx = {
             belopp,
             budgetgrupp: "övrigt",
@@ -24,12 +42,13 @@ export const generateData = () => {
             id: "0",
             konto: "Kort",
             person,
-            saldo: 0,
+            saldo: balance[person].Kort,
             text,
             typ: "Korttransaktion",
           };
           txs.push(tx);
         }
+        balance[person].Spar += salary[person];
         const income: Tx = {
           belopp: salary[person],
           budgetgrupp: "övrigt",
@@ -37,19 +56,21 @@ export const generateData = () => {
           id: "0",
           konto: "Spar",
           person,
-          saldo: 0,
+          saldo: balance[person].Spar,
           text: "Lön",
           typ: "Insättning",
         };
         txs.push(income);
+        const belopp = -4000 * raise;
+        balance[person].Spar += belopp;
         const rent: Tx = {
-          belopp: -4000 * raise,
+          belopp,
           budgetgrupp: "övrigt",
           datum: new Date(year, month + 1, 0),
           id: "0",
           konto: "Spar",
           person,
-          saldo: 0,
+          saldo: balance[person].Spar,
           text: "Hyra",
           typ: "Pg-Bg",
         };
@@ -117,4 +138,39 @@ const getSpending = () => {
     }
   }
   return spending;
+};
+
+type Internal = {
+  person: string;
+  belopp: number;
+  kortBalance: number;
+  sparBalance: number;
+  datum: Date;
+};
+const internal = (i: Internal): [Tx, Tx] => {
+  const { person, datum } = i;
+  const belopp = getRandomNumber(i.belopp, i.belopp * 10);
+  const from: Tx = {
+    belopp,
+    budgetgrupp: "inom",
+    datum,
+    id: "0",
+    konto: "Spar",
+    person,
+    saldo: i.sparBalance + belopp,
+    text: "Överföring",
+    typ: "Övrigt",
+  };
+  const to: Tx = {
+    belopp: -belopp,
+    budgetgrupp: "inom",
+    datum,
+    id: "0",
+    konto: "Kort",
+    person,
+    saldo: i.kortBalance + -belopp,
+    text: "Överföring Till Ica Banks Konto",
+    typ: "Korttransaktion",
+  };
+  return [from, to];
 };
