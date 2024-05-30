@@ -29,16 +29,27 @@ const calculateSums = ({
     );
   }
   const total: Record<string, number> = {};
+  const spending: Record<string, number> = {};
   for (const person of people) {
     total[person] = categories.reduce(
       (acc, category) => (acc += sums[category]![person]!),
       0,
     );
+    spending[person] = categories.reduce((acc, category) => {
+      const value = sums[category]![person]!;
+      acc += value < 0 ? value : 0;
+      return acc;
+    }, 0);
   }
   total.total = Object.keys(total).reduce(
     (acc, person) => (acc += total[person]!),
     0,
   );
+  spending.total = Object.keys(spending).reduce(
+    (acc, person) => (acc += spending[person]!),
+    0,
+  );
+  sums.spending = spending;
   sums.total = total;
   return sums;
 };

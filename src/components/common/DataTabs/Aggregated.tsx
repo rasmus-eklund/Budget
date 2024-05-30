@@ -23,7 +23,9 @@ const Aggregated = ({
     [data, people, categories],
   );
   const peopleTotal = [...people, "total"];
-  const categoriesTotal = [...categories, "total"].filter((i) => i != "inom");
+  const categoriesTotal = [...categories, "spending", "total"].filter(
+    (i) => i != "inom",
+  );
   const dates = getFromTo(data);
   const getDateString = ({ from, to }: FromTo) => {
     const f = dateToString(from);
@@ -53,18 +55,20 @@ const Aggregated = ({
           {categoriesTotal.map((category, categoryIndex) => (
             <tr key={category}>
               <td className="whitespace-nowrap px-4 font-semibold tracking-wider">
-                {capitalize(category)}
+                {capitalize(category === "spending" ? "Utgifter" : category)}
               </td>
               {peopleTotal.map((person, index) => {
                 const sek = sumsMemo[category]![person]!;
                 return (
                   <td
                     className={twMerge(
-                      `px-4 py-1 text-right ${sek < 0 ? "text-red-600" : ""} ${index === peopleTotal.length - 1 ? "font-semibold" : ""} ${categoryIndex === categoriesTotal.length - 1 ? "py-2 font-semibold" : ""}`,
+                      `px-4 py-1 text-right ${sek < 0 ? "text-red-600" : ""} ${index === peopleTotal.length - 1 ? "font-semibold" : ""} ${categoryIndex >= categoriesTotal.length - 2 ? "font-bold" : ""}`,
                     )}
                     key={`${category}${person}`}
                   >
-                    {category === "total" || person === "total" ? (
+                    {category === "total" ||
+                    category === "spending" ||
+                    person === "total" ? (
                       <p>{toSek(sek)}</p>
                     ) : (
                       <button
