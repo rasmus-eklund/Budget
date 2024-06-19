@@ -21,11 +21,12 @@ export const upload = async ({
   year: number;
 }) => {
   const userId = await getUserId();
-  const accounts = await db.query.bankAccounts.findMany({
-    columns: { id: true },
-    where: eq(bankAccounts.personId, userId),
+  const accounts = await db.query.persons.findMany({
+    columns: {},
+    with: { bankAccounts: {columns: {id: true}} },
+    where: eq(persons.userId, userId),
   });
-  const accountIds = accounts.map((a) => a.id);
+  const accountIds = accounts.flatMap((a) => a.bankAccounts.map((b) => b.id));
   if (accountIds.length !== 0) {
     await db
       .delete(txs)
