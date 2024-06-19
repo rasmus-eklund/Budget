@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "~/server/db";
-import { eq, sql } from "drizzle-orm";
+import { and, inArray, eq, sql } from "drizzle-orm";
 import {
   type InsertTx,
   category,
@@ -20,8 +20,19 @@ export const upload = async ({
   transactions: InsertTx[];
   year: number;
 }) => {
-  await getUserId();
-  await db.delete(txs).where(eq(txs.year, Number(year)));
+  const userId = await getUserId();
+  const accounts = await db.query.bankAccounts.findMany({
+    columns: { id: true },
+    where: eq(bankAccounts.personId, userId),
+  });
+  const accountIds = accounts.map((a) => a.id);
+  if (accountIds.length !== 0) {
+    await db
+      .delete(txs)
+      .where(
+        and(eq(txs.year, Number(year)), inArray(txs.bankAccountId, accountIds)),
+      );
+  }
   await db.insert(txs).values(transactions);
   revalidatePath("/upload");
 };
