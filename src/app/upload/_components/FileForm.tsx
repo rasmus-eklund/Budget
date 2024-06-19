@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useState, useEffect } from "react";
+import { type FormEvent, useState, useEffect, useRef } from "react";
 import { ClipLoader } from "react-spinners";
 import { Button } from "~/components/ui/button";
 import type { FromTo, Tx, TxBankAccount } from "~/lib/zodSchemas";
@@ -36,6 +36,7 @@ const FileForm = ({ categories, people }: Props) => {
     error: false,
     message: "",
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const range = getFromTo(txs);
   const processTxs = async () => {
     if (!files) {
@@ -63,6 +64,9 @@ const FileForm = ({ categories, people }: Props) => {
     setFiles([]);
     setTxs([]);
     setLoading({ loading: false, percent: 0 });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
   useEffect(() => {
     if (!password && !error.error) {
@@ -98,7 +102,10 @@ const FileForm = ({ categories, people }: Props) => {
         </p>
         {password && (
           <input
-            onClick={() => {
+            ref={fileInputRef}
+            onClick={(e) => {
+              const target = e.target as HTMLInputElement;
+              target.value = "";
               setTxs([]);
               setFiles([]);
             }}
