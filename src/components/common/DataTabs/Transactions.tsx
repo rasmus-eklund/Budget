@@ -26,7 +26,11 @@ type TransactionProps = { data: Tx };
 const ShowSum = ({ data }: Props) => {
   const sum = data.reduce((a, b) => a + b.belopp, 0);
   return (
-    <div className="flex justify-end p-4">
+    <div className="flex justify-between gap-4 p-4 md:justify-end">
+      <p>
+        Antal:
+        <span className="pl-2 font-mono">{data.length}</span>
+      </p>
       <p>
         Totalt:
         <span className={`pl-2 font-mono ${sum < 0 && "text-red-600"}`}>
