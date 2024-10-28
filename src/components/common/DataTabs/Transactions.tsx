@@ -8,17 +8,34 @@ type Props = { data: Tx[] };
 
 const Transactions = ({ data }: Props) => {
   return (
-    <ul className="flex flex-col gap-2">
-      <Virtuoso
-        className="!h-[500px]"
-        data={data}
-        itemContent={(_, tx) => <Transaction key={tx.id} data={tx} />}
-      />
-    </ul>
+    <>
+      <ul className="flex flex-col gap-2">
+        <Virtuoso
+          className="!h-[500px]"
+          data={data}
+          itemContent={(_, tx) => <Transaction key={tx.id} data={tx} />}
+        />
+      </ul>
+      <ShowSum data={data} />
+    </>
   );
 };
 
 type TransactionProps = { data: Tx };
+
+const ShowSum = ({ data }: Props) => {
+  const sum = data.reduce((a, b) => a + b.belopp, 0);
+  return (
+    <div className="flex justify-end p-4">
+      <p>
+        Totalt:
+        <span className={`pl-2 font-mono ${sum < 0 && "text-red-600"}`}>
+          {toSek(sum)}
+        </span>
+      </p>
+    </div>
+  );
+};
 
 const Transaction = ({
   data: { belopp, datum, budgetgrupp, person, konto, text },
