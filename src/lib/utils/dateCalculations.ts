@@ -1,13 +1,6 @@
 import { type FromTo } from "~/lib/zodSchemas";
 import { dateToString } from "./formatData";
 
-export const minusOneMonth = (p: FromTo) => {
-  const from = new Date(p.from);
-  const to = new Date(p.to);
-  from.setMonth(from.getMonth() - 1);
-  to.setMonth(to.getMonth() - 1);
-  return { from, to };
-};
 export const incrementDay = (date: Date) => {
   const nextDate = new Date(date);
   nextDate.setDate(date.getDate() + 1);
@@ -19,13 +12,7 @@ export const decrementDay = (date: Date) => {
   prevDate.setDate(date.getDate() - 1);
   return prevDate;
 };
-export const plusOneMonth = (p: FromTo) => {
-  const from = new Date(p.from);
-  const to = new Date(p.to);
-  from.setMonth(from.getMonth() + 1);
-  to.setMonth(to.getMonth() + 1);
-  return { from, to };
-};
+
 export const incrementMonth = ({
   year,
   month,
@@ -57,8 +44,8 @@ export const getCurrentYearMonth = () => {
   const year = new Date().getFullYear();
   const month = new Date().getMonth();
   return {
-    from: new Date(year, month, 1),
-    to: new Date(year, month + 1, 0),
+    from: new Date(Date.UTC(year, month, 1)),
+    to: new Date(Date.UTC(year, month + 1, 0)),
   };
 };
 
