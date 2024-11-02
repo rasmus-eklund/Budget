@@ -23,8 +23,8 @@ const Year = ({ changeDate, fromTo: { from, to } }: Props) => {
   const [year, setYear] = useState(mostRecentYear);
   const submitYear = async (year: number) => {
     await changeDate({
-      from: new Date(year, 0, 1),
-      to: new Date(year + 1, 0, 0),
+      from: new Date(Date.UTC(year, 0, 1)),
+      to: new Date(Date.UTC(year + 1, 0, 0)),
     });
   };
   const years = getYearRange({ from, to });
