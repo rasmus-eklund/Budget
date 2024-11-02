@@ -1,37 +1,64 @@
 import { describe, expect, it } from "vitest";
 import {
   decrementDay,
-  minusOneMonth,
   incrementDay,
-  plusOneMonth,
+  incrementMonth,
+  decrementMonth,
   getFromTo,
   getYearRange,
 } from "./dateCalculations";
 
 describe("Change date", () => {
   describe("month", () => {
-    it("should minus one month", () => {
-      const dates = {
-        from: new Date("2020-02-01"),
-        to: new Date("2020-03-01"),
+    it("should decrement one month", () => {
+      const date = {
+        year: 2020,
+        month: 2, // March (0-indexed)
       };
       const expected = {
-        from: new Date("2020-01-01"),
-        to: new Date("2020-02-01"),
+        year: 2020,
+        month: 1, // February
       };
-      const result = minusOneMonth(dates);
+      const result = decrementMonth(date);
       expect(result).toEqual(expected);
     });
-    it("should plus one month", () => {
-      const dates = {
-        from: new Date("2020-01-01"),
-        to: new Date("2020-02-01"),
+
+    it("should handle decrementing from January to December of the previous year", () => {
+      const date = {
+        year: 2020,
+        month: 0, // January
       };
       const expected = {
-        from: new Date("2020-02-01"),
-        to: new Date("2020-03-01"),
+        year: 2019,
+        month: 11, // December of the previous year
       };
-      const result = plusOneMonth(dates);
+      const result = decrementMonth(date);
+      expect(result).toEqual(expected);
+    });
+
+    it("should increment one month", () => {
+      const date = {
+        year: 2020,
+        month: 0, // January
+      };
+      const expected = {
+        year: 2020,
+        month: 1, // February
+      };
+      const result = incrementMonth(date);
+      expect(result).toEqual(expected);
+    });
+
+    it("should handle incrementing from December to January of the next year", () => {
+      const date = {
+        year: 2020,
+        month: 11, // December
+      };
+      const expected = {
+        year: 2021,
+        month: 0, // January of the next year
+      };
+      const result = incrementMonth(date);
       expect(result).toEqual(expected);
     });
   });
@@ -70,7 +97,11 @@ describe("Get max and min dates", () => {
       { datum: new Date("2023-03-01") },
       { datum: new Date("2024-04-01") },
     ];
-    const { from, to } = getFromTo(data);
+    const tmp = getFromTo(data);
+    if (!tmp) {
+      throw new Error("Could not get from and to");
+    }
+    const { from, to } = tmp;
     expect(from).toStrictEqual(data[0]?.datum);
     expect(to).toStrictEqual(data[3]?.datum);
   });
