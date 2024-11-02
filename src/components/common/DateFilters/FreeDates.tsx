@@ -28,9 +28,13 @@ const FreeDates = ({ changeDate, fromTo: { from, to } }: Props) => {
             type="date"
             className="px-1"
             value={dateToString(filter.from)}
-            onChange={({ target: { value } }) =>
-              setFilter((p) => ({ ...p, from: new Date(value) }))
-            }
+            onChange={({ target: { value } }) => {
+              const [year, month, day] = value.split("-").map(Number);
+              setFilter((p) => ({
+                ...p,
+                from: new Date(Date.UTC(year!, month! - 1, day)),
+              }));
+            }}
           />
         </div>
         <div className="flex gap-2">
@@ -41,9 +45,13 @@ const FreeDates = ({ changeDate, fromTo: { from, to } }: Props) => {
             id="end-date"
             type="date"
             value={dateToString(filter.to)}
-            onChange={({ target: { value } }) =>
-              setFilter((p) => ({ ...p, to: new Date(value) }))
-            }
+            onChange={({ target: { value } }) => {
+              const [year, month, day] = value.split("-").map(Number);
+              setFilter((p) => ({
+                ...p,
+                to: new Date(Date.UTC(year!, month! - 1, day)),
+              }));
+            }}
           />
         </div>
         <Button variant={"default"} type="submit">
