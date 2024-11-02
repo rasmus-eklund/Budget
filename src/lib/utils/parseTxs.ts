@@ -26,7 +26,8 @@ const parseTxs = async (buffer: Buffer, bankAccountId: string) => {
             string,
             string,
           ];
-          const datum = new Date(date);
+          const [year, month, day] = date.split("-").map(Number);
+          const datum = new Date(Date.UTC(year!, month! - 1, day));
           const belopp = Number(
             bel.replace("kr", "").replace(",", ".").replace(" ", ""),
           );
