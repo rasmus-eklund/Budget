@@ -37,9 +37,10 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
           type="date"
           className="px-1"
           value={dateToString(day)}
-          onChange={async ({ target: { value } }) =>
-            await onChange(new Date(value))
-          }
+          onChange={async ({ target: { value } }) => {
+            const [year, month, day] = value.split("-").map(Number);
+            await onChange(new Date(Date.UTC(year!, month! - 1, day)));
+          }}
         />
         <Button
           type="button"
