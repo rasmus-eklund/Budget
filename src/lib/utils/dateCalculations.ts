@@ -2,14 +2,16 @@ import { type FromTo } from "~/lib/zodSchemas";
 import { dateToString } from "./formatData";
 
 export const incrementDay = (date: Date) => {
-  const nextDate = new Date(date);
-  nextDate.setDate(date.getDate() + 1);
+  const nextDate = new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1),
+  );
   return nextDate;
 };
 
 export const decrementDay = (date: Date) => {
-  const prevDate = new Date(date);
-  prevDate.setDate(date.getDate() - 1);
+  const prevDate = new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() - 1),
+  );
   return prevDate;
 };
 
