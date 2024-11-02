@@ -33,8 +33,8 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
   const years = getYearRange({ from, to });
   const submitDates = async ({ year, month }: YearMonth) => {
     await changeDate({
-      from: new Date(year, month, 1),
-      to: new Date(year, month + 1, 0),
+      from: new Date(Date.UTC(year, month, 1)),
+      to: new Date(Date.UTC(year, month + 1, 0)),
     });
   };
   return (
