@@ -57,8 +57,12 @@ const formatter = (date: Date) => format(date, "yy-MM-dd");
 
 const getRange = (txs: Tx[]) => {
   const dates = txs.map((tx) => Number(tx.datum));
-  const startDate = new Date(Math.min(...dates));
-  const endDate = new Date(Math.max(...dates));
+  const startDate = new Date(Date.UTC(new Date(Math.min(...dates)).getUTCFullYear(), 
+                                      new Date(Math.min(...dates)).getUTCMonth(), 
+                                      new Date(Math.min(...dates)).getUTCDate()));
+  const endDate = new Date(Date.UTC(new Date(Math.max(...dates)).getUTCFullYear(), 
+                                    new Date(Math.max(...dates)).getUTCMonth(), 
+                                    new Date(Math.max(...dates)).getUTCDate()));
   return eachDayOfInterval({ start: startDate, end: endDate });
 };
 
