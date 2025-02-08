@@ -1,5 +1,3 @@
-import type { Tx } from "./lib/zodSchemas";
-
 export type TxFilter = {
   category: string;
   person: string;

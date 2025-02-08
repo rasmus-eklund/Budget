@@ -1,7 +1,7 @@
 "use client";
 import { dateToString, toSek } from "~/lib/utils/formatData";
 import { Virtuoso } from "react-virtuoso";
-import type { Tx } from "~/lib/zodSchemas";
+import type { Tx } from "~/types";
 import capitalize from "~/lib/utils/capitalize";
 
 type Props = { data: Tx[] };

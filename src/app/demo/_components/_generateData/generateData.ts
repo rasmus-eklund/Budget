@@ -1,4 +1,4 @@
-import type { Tx } from "~/lib/zodSchemas";
+import type { Tx } from "~/types";
 import { categories } from "./categories";
 import { getFromTo } from "~/lib/utils/dateCalculations";
 

@@ -8,8 +8,7 @@ import TransactionFilter from "./DataTabs/TransactionFilter";
 import applyTransactionFilters, {
   getDefaultFilter,
 } from "~/lib/utils/transactionFilter";
-import type { TxFilter, TxSort } from "~/types";
-import type { Tx } from "~/lib/zodSchemas";
+import type { TxFilter, TxSort, Tx } from "~/types";
 import dynamic from "next/dynamic";
 
 const Bars = dynamic(() => import("./DataTabs/CategoryBars"), {
