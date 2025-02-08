@@ -1,4 +1,6 @@
 import { z } from "zod";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 
 export const types = [
   "Insättning",
@@ -14,36 +16,22 @@ export const types = [
 ] as const;
 
 const formatSek = (v: string) => {
-  const cleaned = v
-    .replace(/\s/g, "")
-    .replace(",", ".")
-    .replace(/[^\d.-]/g, "");
-  const num = Number(cleaned);
-  return isNaN(num) ? NaN : num;
+  const cleaned = v.replace(/\s/g, "").replace(",", ".").replace("kr", "");
+  return Number(cleaned);
 };
+
+dayjs.extend(utc);
 
 const dateSchema = z
   .string({ required_error: "Datum saknas." })
-  .refine((v) => /^\d{4}-\d{2}-\d{2}$/.test(v), {
-    message: "Felakting datumformat. Använd formatet YYYY-MM-DD.",
-  })
-  .transform((v) => {
-    const parts = v.split("-").map(Number) as [number, number, number];
-    if (
-      parts.length !== 3 ||
-      isNaN(parts[0]) ||
-      isNaN(parts[1]) ||
-      isNaN(parts[2])
-    ) {
-      throw new Error("Felakting datumformat.");
-    }
-    const [year, month, day] = parts;
-    const date = new Date(Date.UTC(year, month - 1, day));
-    if (isNaN(date.getTime())) {
-      throw new Error("Felakting datum.");
-    }
-    return date;
-  });
+  .refine(
+    (v) => {
+      const parsed = dayjs(v, "YYYY-MM-DD", true);
+      return parsed.isValid() && parsed.format("YYYY-MM-DD") === v;
+    },
+    { message: "Felaktigt datum. Använd formatet YYYY-MM-DD." },
+  )
+  .transform((v) => dayjs(v, "YYYY-MM-DD").utc().toDate());
 
 export const csvSchema = z.object({
   id: z.string(),
@@ -66,16 +54,16 @@ export const csvSchema = z.object({
   budgetgrupp: z.string({ required_error: "Budgetgrupp saknas." }),
   belopp: z
     .string({ required_error: "Belopp saknas." })
-    .transform(formatSek)
-    .refine((v) => !isNaN(v), {
-      message: "Ogiltigt format på belopp. Använd - 200,00 kr eller 200.00 kr",
-    }),
+    .refine((v) => /^-?\d{1,3}(\s\d{3})*,\d{2}\skr$/.test(v), {
+      message: "Felaktigt SEK format. Ok: 1 000,00 kr",
+    })
+    .transform(formatSek),
   saldo: z
     .string({ required_error: "Saldo saknas." })
-    .transform(formatSek)
-    .refine((v) => !isNaN(v), {
-      message: "Ogiltigt format på belopp. Använd - 200,00 kr eller 200.00 kr",
-    }),
+    .refine((v) => /^-?\d{1,3}(\s\d{3})*,\d{2}\skr$/.test(v), {
+      message: "Felaktigt SEK format. Ok: 1 000,00 kr",
+    })
+    .transform(formatSek),
   bankAccountId: z.string(),
 });
 
