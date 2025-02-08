@@ -1,6 +1,12 @@
 "use client";
 
-import { type FormEvent, useState, useEffect, useRef } from "react";
+import {
+  type FormEvent,
+  type ReactNode,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import { ClipLoader } from "react-spinners";
 import { Button } from "~/components/ui/button";
 import type { FromTo, TxBankAccount } from "~/lib/zodSchemas";
@@ -32,14 +38,15 @@ const FileForm = ({ categories, people }: Props) => {
   const [files, setFiles] = useState<FileData[]>([]);
   const [txs, setTxs] = useState<TxBankAccount[]>([]);
   const [loading, setLoading] = useState({ loading: false, percent: 0 });
-  const [error, setError] = useState({
+  const [error, setError] = useState<{ error: boolean; message: ReactNode }>({
     error: false,
-    message: "",
+    message: null,
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const range = getFromTo(txs);
   const processTxs = async () => {
     if (!files) {
+      setLoading({ loading: false, percent: 0 });
       return setError({ error: true, message: "Inga filer valda" });
     }
     setLoading({ loading: true, percent: 0 });
@@ -61,6 +68,7 @@ const FileForm = ({ categories, people }: Props) => {
     }
     setTxs(res.data);
     setLoading({ loading: false, percent: 0 });
+    setFiles([]);
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -169,7 +177,7 @@ const FileForm = ({ categories, people }: Props) => {
             ))}
           </ul>
         )}
-        {error.error && <p className="text-lg text-red-500">{error.message}</p>}
+        {error.error && <>{error.message}</>}
         {!password && (
           <Link className="underline" href={"/password?from=upload"}>
             Välj lösenord

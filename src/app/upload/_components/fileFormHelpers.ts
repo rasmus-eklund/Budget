@@ -1,10 +1,13 @@
 import { encryptWithAES } from "~/lib/utils/encryption";
 import { markInternal } from "~/lib/utils/findInternal";
 import parseTxs from "~/lib/utils/parseTxs";
-import type { Tx, TxBankAccount } from "~/lib/zodSchemas";
-import type { PersonAccounts, FileData } from "~/types";
+import type { TxBankAccount } from "~/lib/zodSchemas";
+import type { PersonAccounts, FileData, Tx } from "~/types";
 import { upload } from "../actions/uploadActions";
 import type { InsertTx } from "~/server/db/schema";
+import { ZodError } from "zod";
+import ImportErrors from "./ImportErrors";
+import { ReactNode } from "react";
 
 export const getFileNames = (files: FileList | undefined) => {
   if (!files) {
@@ -33,17 +36,27 @@ export const hasCorrectFilenames = (
 export const readFiles = async (
   files: FileData[],
   updatePercent: (percent: number) => void,
-) => {
+): Promise<
+  { ok: true; data: TxBankAccount[] } | { ok: false; error: ReactNode }
+> => {
   const data: TxBankAccount[] = [];
   for (const { file, bankAccountId } of files) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const txs = await parseTxs(buffer, bankAccountId);
-    data.push(...txs);
+    try {
+      const txs = await parseTxs(buffer, bankAccountId);
+      data.push(...txs);
+    } catch (err) {
+      if (err instanceof ZodError) {
+        return {
+          ok: false,
+          error: ImportErrors({ error: err, file: file.name }),
+        };
+      }
+      return { ok: false, error: `fil: ${file.name}` };
+    }
   }
-  const internal = await markInternal(data, updatePercent);
-
-  return internal;
+  return { ok: true, data: await markInternal(data, updatePercent) };
 };
 
 export const uploadFiles = async ({
