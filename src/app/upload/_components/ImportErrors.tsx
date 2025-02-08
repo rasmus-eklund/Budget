@@ -1,7 +1,6 @@
 import type z from "zod";
-import type { csvSchema } from "~/lib/zodSchemas";
+import type { CsvSchema } from "~/lib/zodSchemas";
 
-type CsvSchema = z.infer<typeof csvSchema>;
 type ImportErrorsProps = {
   error: z.ZodError<CsvSchema>;
   file: string;

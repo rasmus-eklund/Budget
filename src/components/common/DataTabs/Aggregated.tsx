@@ -4,8 +4,8 @@ import calculateSums from "~/lib/utils/calculateSums";
 import capitalize from "~/lib/utils/capitalize";
 import { dateToString, toSek } from "~/lib/utils/formatData";
 import { getFromTo } from "~/lib/utils/dateCalculations";
-import type { FromTo, Tx } from "~/lib/zodSchemas";
-import type { TxFilter, Uniques } from "~/types";
+import type { FromTo } from "~/lib/zodSchemas";
+import type { TxFilter, Uniques, Tx } from "~/types";
 
 type Props = {
   data: Tx[];

@@ -66,6 +66,7 @@ export const csvSchema = z.object({
     .transform(formatSek),
   bankAccountId: z.string(),
 });
+export type CsvSchema = z.infer<typeof csvSchema>;
 
 export type TxBankAccount = z.infer<typeof csvSchema> & { index: number };
 

@@ -35,7 +35,7 @@ const findInternalOddThree = (txs: Internal[], totalSum: number) => {
     if (!accounts[bankAccountId]) {
       accounts[bankAccountId] = [];
     }
-    accounts[bankAccountId]!.push(tx);
+    accounts[bankAccountId].push(tx);
   }
   const groupAccount = Object.keys(accounts).find(
     (key) => accounts[key]!.length > 1,
@@ -68,8 +68,8 @@ export const countDuplicates = <T extends { belopp: number; id: string }>(
     if (!tracker[key]) {
       tracker[key] = { count: 1, belopp: Math.abs(belopp), ids: [id] };
     } else {
-      tracker[key]!.count++;
-      tracker[key]!.ids.push(id);
+      tracker[key].count++;
+      tracker[key].ids.push(id);
     }
   }
   return Object.values(tracker).filter(({ count }) => count > 1);

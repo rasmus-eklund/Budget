@@ -1,13 +1,13 @@
 import { encryptWithAES } from "~/lib/utils/encryption";
 import { markInternal } from "~/lib/utils/findInternal";
 import parseTxs from "~/lib/utils/parseTxs";
-import type { TxBankAccount } from "~/lib/zodSchemas";
+import type { CsvSchema, TxBankAccount } from "~/lib/zodSchemas";
 import type { PersonAccounts, FileData, Tx } from "~/types";
 import { upload } from "../actions/uploadActions";
 import type { InsertTx } from "~/server/db/schema";
 import { ZodError } from "zod";
 import ImportErrors from "./ImportErrors";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export const getFileNames = (files: FileList | undefined) => {
   if (!files) {
@@ -50,7 +50,10 @@ export const readFiles = async (
       if (err instanceof ZodError) {
         return {
           ok: false,
-          error: ImportErrors({ error: err, file: file.name }),
+          error: ImportErrors({
+            error: err as ZodError<CsvSchema>,
+            file: file.name,
+          }),
         };
       }
       return { ok: false, error: `fil: ${file.name}` };

@@ -13,14 +13,14 @@ const calculateSums = ({
   for (const category of categories) {
     sums[category] = { total: 0 };
     for (const person of people) {
-      sums[category]![person] = 0;
+      sums[category][person] = 0;
     }
   }
   for (const { budgetgrupp, person, belopp } of data) {
     if (budgetgrupp !== "inom") {
       if (sums[budgetgrupp] !== undefined) {
         if (sums[budgetgrupp][person] !== undefined) {
-          sums[budgetgrupp]![person] += belopp;
+          sums[budgetgrupp][person] += belopp;
         }
       }
     }

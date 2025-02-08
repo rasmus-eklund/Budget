@@ -1,6 +1,7 @@
 "use client";
 
-import type { FromTo, Tx } from "~/lib/zodSchemas";
+import type { FromTo } from "~/lib/zodSchemas";
+import type { Tx } from "~/types";
 import { useMemo, useState } from "react";
 import { applyCategory } from "~/lib/utils/categorize";
 import ShowData from "~/components/common/ShowData";
