@@ -1,4 +1,4 @@
-import { type Tx } from "../zodSchemas";
+import type { Tx } from "~/types";
 
 const calculateSums = ({
   data,
@@ -11,15 +11,18 @@ const calculateSums = ({
 }) => {
   const sums: Record<string, Record<string, number>> = {};
   for (const category of categories) {
-    sums[category] = {};
+    sums[category] = { total: 0 };
     for (const person of people) {
       sums[category]![person] = 0;
     }
-    sums[category]!.total = 0;
   }
   for (const { budgetgrupp, person, belopp } of data) {
     if (budgetgrupp !== "inom") {
-      sums[budgetgrupp]![person] += belopp;
+      if (sums[budgetgrupp] !== undefined) {
+        if (sums[budgetgrupp][person] !== undefined) {
+          sums[budgetgrupp]![person] += belopp;
+        }
+      }
     }
   }
   for (const category of categories) {

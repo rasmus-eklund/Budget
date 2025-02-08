@@ -3,14 +3,14 @@
 import { type FormEvent, useState, useEffect, useRef } from "react";
 import { ClipLoader } from "react-spinners";
 import { Button } from "~/components/ui/button";
-import type { FromTo, Tx, TxBankAccount } from "~/lib/zodSchemas";
+import type { FromTo, TxBankAccount } from "~/lib/zodSchemas";
 import {
   readFiles,
   uploadFiles,
   addPersonAccount,
   findMatchingAccount,
 } from "./fileFormHelpers";
-import type { Category, FileData, PersonAccounts } from "~/types";
+import type { Category, FileData, PersonAccounts, Tx } from "~/types";
 import { usePassword } from "~/components/password/PasswordContext";
 import { applyCategory } from "~/lib/utils/categorize";
 import ShowData from "~/components/common/ShowData";
@@ -43,17 +43,23 @@ const FileForm = ({ categories, people }: Props) => {
       return setError({ error: true, message: "Inga filer valda" });
     }
     setLoading({ loading: true, percent: 0 });
-    const data = await readFiles(files, (percent) => {
+    const res = await readFiles(files, (percent) => {
       if (percent) {
         setLoading({ loading: true, percent });
       }
     });
-    const y = new Set(data.map(({ datum }) => datum.getFullYear()));
-    if (y.size !== 1) {
+    if (!res.ok) {
+      setError({ error: true, message: res.error });
       setLoading({ loading: false, percent: 0 });
-      setError({ error: true, message: "Ett år per uppladdning" });
+      return;
     }
-    setTxs(data);
+    const y = new Set(res.data.map(({ datum }) => datum.getFullYear()));
+    if (y.size !== 1) {
+      setError({ error: true, message: "Ett år per uppladdning" });
+      setLoading({ loading: false, percent: 0 });
+      return;
+    }
+    setTxs(res.data);
     setLoading({ loading: false, percent: 0 });
   };
 
@@ -108,6 +114,7 @@ const FileForm = ({ categories, people }: Props) => {
               target.value = "";
               setTxs([]);
               setFiles([]);
+              setError({ error: false, message: "" });
             }}
             onChange={(e) => {
               const files = e.target.files;

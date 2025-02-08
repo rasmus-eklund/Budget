@@ -12,8 +12,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { colors } from "~/lib/constants/colors";
 import capitalize from "~/lib/utils/capitalize";
-import { type Tx } from "~/lib/zodSchemas";
-import type { Uniques } from "~/types";
+import type { Tx, Uniques } from "~/types";
 
 type Props = {
   data: Tx[];

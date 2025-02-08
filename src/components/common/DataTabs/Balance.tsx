@@ -11,9 +11,9 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import capitalize from "~/lib/utils/capitalize";
-import { type Tx } from "~/lib/zodSchemas";
 import { eachDayOfInterval, format } from "date-fns";
 import { colors } from "~/lib/constants/colors";
+import type { Tx } from "~/types";
 
 type Props = {
   data: Tx[];

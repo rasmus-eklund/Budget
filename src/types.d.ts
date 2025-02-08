@@ -43,3 +43,15 @@ export type FileData = {
   bankAccountId: string;
   file: File;
 };
+
+export type Tx = {
+  id: string;
+  datum: Date;
+  text: string;
+  typ: keyof typeof types;
+  budgetgrupp: string;
+  belopp: number;
+  saldo: number;
+  konto: string;
+  person: string;
+}

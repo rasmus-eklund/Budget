@@ -1,5 +1,4 @@
-import { type Category } from "~/types";
-import { type Tx } from "../zodSchemas";
+import type { Tx, Category } from "~/types";
 
 export const categorize = (text: string, categories: Category[]) => {
   for (const { name, match } of categories) {
