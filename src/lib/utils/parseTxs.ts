@@ -1,40 +1,22 @@
 import { parse } from "papaparse";
-import { type Typ, type TxBankAccount, txBankAccount } from "~/lib/zodSchemas";
+import { type TxBankAccount, csvSchema } from "~/lib/zodSchemas";
 import { v4 as uuid } from "uuid";
 
 const parseTxs = async (buffer: Buffer, bankAccountId: string) => {
   const decoder = new TextDecoder("utf-8");
   const csvString = decoder.decode(buffer);
+
   return new Promise<TxBankAccount[]>((resolve, reject) => {
     parse(csvString, {
       delimiter: ";",
       header: false,
       skipEmptyLines: true,
       complete: (result) => {
-        if (result.errors.length > 0) {
-          reject("Something went wrong");
-          return;
-        }
-
+        if (result.errors.length > 0) return reject("Något gick fel");
         const tmp: TxBankAccount[] = [];
-        result.data.slice(1).forEach((row) => {
-          const [date, text, typ, , bel, sal] = row as [
-            string,
-            string,
-            Typ,
-            undefined,
-            string,
-            string,
-          ];
-          const [year, month, day] = date.split("-").map(Number);
-          const datum = new Date(Date.UTC(year!, month! - 1, day));
-          const belopp = Number(
-            bel.replace("kr", "").replace(",", ".").replace(" ", ""),
-          );
-          const saldo = Number(
-            sal.replace("kr", "").replace(",", ".").replace(" ", ""),
-          );
-          const tx: TxBankAccount & { index: number } = {
+        for (const row of result.data.slice(1)) {
+          const [datum, text, typ, , belopp, saldo] = row as string[];
+          const parsed = csvSchema.safeParse({
             id: uuid(),
             datum,
             text,
@@ -43,15 +25,12 @@ const parseTxs = async (buffer: Buffer, bankAccountId: string) => {
             belopp,
             saldo,
             bankAccountId,
-            index: 0,
-          };
-          const parsed = txBankAccount.safeParse(tx);
+          });
           if (!parsed.success) {
-            reject(parsed.error.message);
-            return;
+            return reject(parsed.error);
           }
-          tmp.push(parsed.data);
-        });
+          tmp.push({ ...parsed.data, index: 0 });
+        }
 
         const tmpData = [...tmp.reverse().map((i, index) => ({ ...i, index }))];
         const reserved = tmpData.filter(
@@ -61,8 +40,8 @@ const parseTxs = async (buffer: Buffer, bankAccountId: string) => {
           reserved.forEach(({ belopp, index, datum }) => {
             const prev = tmpData[index - 1];
             if (!prev) {
-              reject(
-                `Cannot iterpolate reserved for date: ${datum.toLocaleTimeString(
+              return reject(
+                `Kan inte hantera reseverat belopp för datum: ${datum.toLocaleTimeString(
                   "sv-SE",
                   {
                     year: "numeric",
@@ -74,7 +53,6 @@ const parseTxs = async (buffer: Buffer, bankAccountId: string) => {
                   },
                 )}, index: ${index}`,
               );
-              return;
             }
             tmpData[index]!.saldo = prev.saldo + belopp;
           });
@@ -83,7 +61,7 @@ const parseTxs = async (buffer: Buffer, bankAccountId: string) => {
         resolve(tmpData);
       },
       error: () => {
-        reject("Something went wrong");
+        reject("Något gick fel.");
       },
     });
   });
