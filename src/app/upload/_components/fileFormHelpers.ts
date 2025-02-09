@@ -35,17 +35,16 @@ export const hasCorrectFilenames = (
 
 export const readFiles = async (
   files: FileData[],
-  updatePercent: (percent: number) => void,
 ): Promise<
   { ok: true; data: TxBankAccount[] } | { ok: false; error: ReactNode }
 > => {
-  const data: TxBankAccount[] = [];
+  const allTxs: TxBankAccount[] = [];
   for (const { file, bankAccountId } of files) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     try {
       const txs = await parseTxs(buffer, bankAccountId);
-      data.push(...txs);
+      allTxs.push(...txs);
     } catch (err) {
       if (err instanceof ZodError) {
         return {
@@ -59,7 +58,11 @@ export const readFiles = async (
       return { ok: false, error: `fil: ${file.name}` };
     }
   }
-  return { ok: true, data: await markInternal(data, updatePercent) };
+  const start = performance.now();
+  const data = await markInternal(allTxs);
+  const end = performance.now();
+  console.log(`Processed ${data.length} txs in ${end - start} ms`);
+  return { ok: true, data };
 };
 
 export const uploadFiles = async ({
