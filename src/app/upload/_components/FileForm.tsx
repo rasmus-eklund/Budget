@@ -7,7 +7,6 @@ import {
   useEffect,
   useRef,
 } from "react";
-import { ClipLoader } from "react-spinners";
 import { Button } from "~/components/ui/button";
 import type { FromTo, TxBankAccount } from "~/lib/zodSchemas";
 import {
@@ -37,7 +36,7 @@ const FileForm = ({ categories, people }: Props) => {
   const { password } = usePassword();
   const [files, setFiles] = useState<FileData[]>([]);
   const [txs, setTxs] = useState<TxBankAccount[]>([]);
-  const [loading, setLoading] = useState({ loading: false, percent: 0 });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<{ error: boolean; message: ReactNode }>({
     error: false,
     message: null,
@@ -46,38 +45,34 @@ const FileForm = ({ categories, people }: Props) => {
   const range = getFromTo(txs);
   const processTxs = async () => {
     if (!files) {
-      setLoading({ loading: false, percent: 0 });
+      setLoading(false);
       return setError({ error: true, message: "Inga filer valda" });
     }
-    setLoading({ loading: true, percent: 0 });
-    const res = await readFiles(files, (percent) => {
-      if (percent) {
-        setLoading({ loading: true, percent });
-      }
-    });
+    setLoading(true);
+    const res = await readFiles(files);
     if (!res.ok) {
       setError({ error: true, message: res.error });
-      setLoading({ loading: false, percent: 0 });
+      setLoading(false);
       return;
     }
     const y = new Set(res.data.map(({ datum }) => datum.getFullYear()));
     if (y.size !== 1) {
       setError({ error: true, message: "Ett år per uppladdning" });
-      setLoading({ loading: false, percent: 0 });
+      setLoading(false);
       return;
     }
     setTxs(res.data);
-    setLoading({ loading: false, percent: 0 });
+    setLoading(false);
     setFiles([]);
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading({ loading: true, percent: 0.5 });
+    setLoading(true);
     await uploadFiles({ password, txs });
     setFiles([]);
     setTxs([]);
-    setLoading({ loading: false, percent: 0 });
+    setLoading(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -185,24 +180,17 @@ const FileForm = ({ categories, people }: Props) => {
         )}
         <p>Att bearbeta filer kan ta flera minuter.</p>
         <div className="flex gap-2">
-          {loading.loading ? (
-            <Button type="button" disabled>
-              <ClipLoader size={20} className="mr-2" />
-              Vänta {(loading.percent * 100).toFixed(0)} %
-            </Button>
-          ) : (
-            <Button
-              onClick={processTxs}
-              type="button"
-              disabled={
-                files.length === 0 ||
-                error.error ||
-                files.some((i) => i.bankAccountId === "")
-              }
-            >
-              Bearbeta
-            </Button>
-          )}
+          <Button
+            onClick={processTxs}
+            type="button"
+            disabled={
+              files.length === 0 ||
+              error.error ||
+              files.some((i) => i.bankAccountId === "")
+            }
+          >
+            {loading ? "Laddar..." : "Bearbeta"}
+          </Button>
           <Button disabled={!txs || txs.length === 0 || !password}>
             Ladda upp
           </Button>
