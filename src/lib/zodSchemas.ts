@@ -1,19 +1,7 @@
 import { z } from "zod";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-
-export const types = [
-  "Insättning",
-  "Korttransaktion",
-  "Övrigt",
-  "Uttag",
-  "Autogiro",
-  "Pg-bg",
-  "E-faktura",
-  "Pg-Bg",
-  "Utlandsbetalning",
-  "Reserverat Belopp",
-] as const;
+import { types } from "~/lib/constants/types";
 
 const columns = [
   "Datum",

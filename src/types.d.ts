@@ -1,3 +1,6 @@
+import type { types } from "~/lib/constants/types";
+export type Typ = (typeof types)[number];
+
 export type TxFilter = {
   category: string;
   person: string;
@@ -46,7 +49,7 @@ export type Tx = {
   id: string;
   datum: Date;
   text: string;
-  typ: keyof typeof types;
+  typ: Typ;
   budgetgrupp: string;
   belopp: number;
   saldo: number;
