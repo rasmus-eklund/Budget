@@ -44,7 +44,6 @@ export const sumBelopp = <T extends { belopp: number }>(obj: T[]) =>
 
 const findInternalOddThree = (txs: Internal[], totalSum: number) => {
   const accounts = new Map<string, Internal[]>();
-
   for (const tx of txs) {
     const key = tx.bankAccountId;
     if (!accounts.has(key)) {
@@ -53,24 +52,18 @@ const findInternalOddThree = (txs: Internal[], totalSum: number) => {
       accounts.get(key)!.push(tx);
     }
   }
-
-  const groupAccount = Array.from(accounts.entries()).find(
-    ([, txArray]) => txArray.length > 1,
+  const txArray = Array.from(accounts.values()).find(
+    (txArray) => txArray.length > 1,
   );
-
-  if (!groupAccount) {
+  if (!txArray) {
     throw new Error("Could not find the one...\n" + JSON.stringify(txs));
   }
-
-  const [, txArray] = groupAccount;
   const matchingTransaction = txArray.find(
     (transaction) => transaction.belopp === totalSum,
   );
-
   if (matchingTransaction) {
     return txs.filter((i) => i.id !== matchingTransaction.id);
   }
-
   return [];
 };
 
