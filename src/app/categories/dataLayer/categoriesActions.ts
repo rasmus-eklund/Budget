@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { category, match, users } from "~/server/db/schema";
 import getUserId from "~/server/getUserId";
 import { and, eq } from "drizzle-orm";
-import { type Name } from "~/lib/zodSchemas";
+import type { JsonData, Name } from "~/lib/zodSchemas";
 import { randomUUID } from "crypto";
 import { notFound, redirect } from "next/navigation";
 
@@ -75,4 +75,47 @@ export const getMatches = async ({ categoryId }: { categoryId: string }) => {
   });
 
   return { ...cat, unique };
+};
+
+export const getAllMatches = async () => {
+  const userId = await getUserId();
+  return await db.query.category.findMany({
+    columns: { name: true },
+    with: { match: { columns: { name: true } } },
+    where: eq(category.userId, userId),
+  });
+};
+
+export const replaceAllMatches = async (data: JsonData) => {
+  const userId = await getUserId();
+  await db.transaction(async (tx) => {
+    try {
+      await tx.delete(category).where(eq(category.userId, userId));
+      const values = data.map((cat) => ({
+        name: cat.name.toLowerCase(),
+        id: randomUUID(),
+        userId,
+      }));
+      const categories = await tx
+        .insert(category)
+        .values(values)
+        .returning({ id: category.id, name: category.name });
+      const matchValues = categories.flatMap((cat) => {
+        const category = data.find((i) => i.name === cat.name);
+        if (!category) {
+          throw new Error("Något gick fel");
+        }
+        return category.match.map(({ name }) => ({
+          categoryId: cat.id,
+          name,
+          id: randomUUID(),
+        }));
+      });
+      await tx.insert(match).values(matchValues);
+    } catch (error) {
+      console.log(error);
+      tx.rollback();
+    }
+  });
+  revalidatePath("/categories");
 };

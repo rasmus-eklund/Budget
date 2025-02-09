@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import capitalize from "~/lib/utils/capitalize";
+import { ClipLoader } from "react-spinners";
 
 type Props = { categories: Category[]; people: PersonAccounts };
 const FileForm = ({ categories, people }: Props) => {
@@ -105,38 +106,60 @@ const FileForm = ({ categories, people }: Props) => {
   return (
     <div>
       <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
-        <p>
-          Transaktionerna du laddar upp kommer att ersätta alla transaktioner
-          från året du väljer.
-        </p>
+        <p>Transaktionerna du laddar upp kommer att ersätta året.</p>
         {password && (
-          <input
-            ref={fileInputRef}
-            onClick={(e) => {
-              const target = e.target as HTMLInputElement;
-              target.value = "";
-              setTxs([]);
-              setFiles([]);
-              setError({ error: false, message: "" });
-            }}
-            onChange={(e) => {
-              const files = e.target.files;
-              if (files) {
-                const data: FileData[] = [];
-                for (const file of files) {
-                  data.push({
-                    bankAccountId: findMatchingAccount(file.name, options),
-                    file,
-                  });
+          <div className="flex gap-2">
+            <Button asChild className="cursor-pointer">
+              <label htmlFor="file-upload">Välj filer</label>
+            </Button>
+            <input
+              className="hidden"
+              id="file-upload"
+              ref={fileInputRef}
+              onClick={(e) => {
+                const target = e.target as HTMLInputElement;
+                target.value = "";
+                setTxs([]);
+                setFiles([]);
+                setError({ error: false, message: "" });
+              }}
+              onChange={(e) => {
+                const files = e.target.files;
+                if (files) {
+                  const data: FileData[] = [];
+                  for (const file of files) {
+                    data.push({
+                      bankAccountId: findMatchingAccount(file.name, options),
+                      file,
+                    });
+                  }
+                  setFiles(data);
                 }
-                setFiles(data);
+              }}
+              type="file"
+              name="files"
+              multiple
+              accept=".csv"
+            />
+            <Button
+              onClick={processTxs}
+              type="button"
+              disabled={
+                files.length === 0 ||
+                error.error ||
+                files.some((i) => i.bankAccountId === "")
               }
-            }}
-            type="file"
-            name="files"
-            multiple
-            accept=".csv"
-          />
+            >
+              {loading ? "Laddar..." : "Bearbeta"}
+            </Button>
+            <Button
+              className="flex items-center gap-2"
+              disabled={!txs || txs.length === 0 || !password}
+            >
+              <p>Ladda upp</p>
+              {loading && <ClipLoader size={20} />}
+            </Button>
+          </div>
         )}
         {files && (
           <ul className="flex flex-col gap-2">
@@ -178,23 +201,6 @@ const FileForm = ({ categories, people }: Props) => {
             Välj lösenord
           </Link>
         )}
-        <p>Att bearbeta filer kan ta flera minuter.</p>
-        <div className="flex gap-2">
-          <Button
-            onClick={processTxs}
-            type="button"
-            disabled={
-              files.length === 0 ||
-              error.error ||
-              files.some((i) => i.bankAccountId === "")
-            }
-          >
-            {loading ? "Laddar..." : "Bearbeta"}
-          </Button>
-          <Button disabled={!txs || txs.length === 0 || !password}>
-            Ladda upp
-          </Button>
-        </div>
       </form>
       {txs.length !== 0 && range ? (
         <ShowTransactions

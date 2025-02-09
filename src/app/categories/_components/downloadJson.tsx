@@ -1,0 +1,32 @@
+"use client";
+import { Button } from "~/components/ui/button";
+import { getAllMatches } from "../dataLayer/categoriesActions";
+import { useState } from "react";
+
+const DownloadJsonButton = ({ className }: { className?: string }) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleDownload = async () => {
+    setLoading(true);
+    const data = await getAllMatches();
+    const jsonString = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "categories.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    setLoading(false);
+  };
+
+  return (
+    <Button className={className} disabled={loading} onClick={handleDownload}>
+      Ladda ner
+    </Button>
+  );
+};
+
+export default DownloadJsonButton;

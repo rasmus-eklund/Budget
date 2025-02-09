@@ -9,6 +9,7 @@ import {
 } from "./dataLayer/categoriesActions";
 import DeleteButton from "~/components/common/Forms/DeleteButton";
 import AddItemForm from "~/components/common/Forms/AddItemForm";
+import ManageJson from "./_components/manageJson";
 
 const Categories = async () => {
   const session = await getServerAuthSession();
@@ -43,6 +44,7 @@ const Categories = async () => {
         }}
         uniques={data.map((i) => i.name)}
       />
+      <ManageJson />
     </div>
   );
 };

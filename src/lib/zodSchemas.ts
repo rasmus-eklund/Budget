@@ -134,3 +134,20 @@ export const passwordsSchema = z
   });
 
 export type Passwords = z.infer<typeof passwordsSchema>;
+
+export const jsonSchema = z
+  .array(
+    z.object({
+      name: z.string().min(2, "Minst 2 tecken."),
+      match: z
+        .array(
+          z.object({
+            name: z.string().min(2, "Minst 2 tecken."),
+          }),
+        )
+        .min(1, "Minst 1 matchning."),
+    }),
+  )
+  .min(1, "Minst 1 kategori.");
+
+export type JsonData = z.infer<typeof jsonSchema>;
