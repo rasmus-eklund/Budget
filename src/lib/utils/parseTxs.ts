@@ -1,5 +1,9 @@
 import { parse } from "papaparse";
-import { type TxBankAccount, csvSchema } from "~/lib/zodSchemas";
+import {
+  type TxBankAccount,
+  csvSchema,
+  csvColumnsSchema,
+} from "~/lib/zodSchemas";
 import { v4 as uuid } from "uuid";
 
 const parseTxs = async (buffer: Buffer, bankAccountId: string) => {
@@ -12,9 +16,17 @@ const parseTxs = async (buffer: Buffer, bankAccountId: string) => {
       header: false,
       skipEmptyLines: true,
       complete: (result) => {
-        if (result.errors.length > 0) return reject("Något gick fel");
+        if (result.errors.length > 0)
+          return reject("Kunde inte läsa CSV filen.");
         const tmp: TxBankAccount[] = [];
-        for (const row of result.data.slice(1)) {
+        const [columns, ...rows] = result.data;
+
+        const parsedColumns = csvColumnsSchema.safeParse(columns);
+        if (!parsedColumns.success) {
+          return reject(parsedColumns.error);
+        }
+
+        for (const row of rows) {
           const [datum, text, typ, , belopp, saldo] = row as string[];
           const parsed = csvSchema.safeParse({
             id: uuid(),

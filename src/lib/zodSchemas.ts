@@ -15,6 +15,34 @@ export const types = [
   "Reserverat Belopp",
 ] as const;
 
+const columns = [
+  "Datum",
+  "Text",
+  "Typ",
+  "Budgetgrupp",
+  "Belopp",
+  "Saldo",
+] as const;
+
+export const csvColumnsSchema = z.array(
+  z.enum(columns, {
+    errorMap: (issue, _ctx) => {
+      switch (issue.code) {
+        case "invalid_type":
+          return {
+            message: `Csv filen måste ha dessa kolumner: '${columns.join(", ")}'`,
+          };
+        case "invalid_enum_value":
+          return {
+            message: `Csv filen måste ha dessa kolumner: '${columns.join(", ")}'`,
+          };
+        default:
+          return { message: "Fel typ" };
+      }
+    },
+  }),
+);
+
 const formatSek = (v: string) => {
   const cleaned = v.replace(/\s/g, "").replace(",", ".").replace("kr", "");
   return Number(cleaned);
