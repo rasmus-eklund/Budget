@@ -5,7 +5,6 @@ import type { Tx } from "~/types";
 import capitalize from "~/lib/utils/capitalize";
 
 type Props = { data: Tx[] };
-
 const Transactions = ({ data }: Props) => {
   return (
     <>
@@ -21,9 +20,7 @@ const Transactions = ({ data }: Props) => {
   );
 };
 
-type TransactionProps = { data: Tx };
-
-const ShowSum = ({ data }: Props) => {
+const ShowSum = ({ data }: { data: Tx[] }) => {
   const sum = data.reduce((a, b) => a + b.belopp, 0);
   return (
     <div className="flex justify-between gap-4 p-4 md:justify-end">
@@ -43,7 +40,9 @@ const ShowSum = ({ data }: Props) => {
 
 const Transaction = ({
   data: { belopp, datum, budgetgrupp, person, konto, text },
-}: TransactionProps) => {
+}: {
+  data: Tx;
+}) => {
   return (
     <li className="mb-2 mt-2 flex flex-col rounded-sm bg-red-50 p-1 shadow-lg">
       <div className="grid grid-cols-2">
