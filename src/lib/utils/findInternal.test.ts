@@ -1,12 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  countDuplicates,
-  distinctDates,
-  findInternal,
-  hasDuplicates,
-  isSameDate,
-  sumBelopp,
-} from "./findInternal";
+import { findInternal, hasDuplicates, sumBelopp } from "./findInternal";
 import { type Internal } from "~/types";
 
 describe("find internal", () => {
@@ -129,61 +122,6 @@ describe("subBelopp", () => {
     const data = [{ belopp: 2 }, { belopp: 2 }, { belopp: 2 }];
     const result = sumBelopp(data);
     expect(result).toEqual(6);
-  });
-});
-
-describe("isSameDate", () => {
-  it("should be true", () => {
-    const obj1 = { datum: new Date("2024-01-01") };
-    const target1 = new Date("2024-01-01");
-    const result1 = isSameDate(obj1, target1);
-    expect(result1).toBe(true);
-  });
-
-  it("should be false", () => {
-    const obj2 = { datum: new Date("2024-01-01") };
-    const target2 = new Date("2024-01-02");
-    const result2 = isSameDate(obj2, target2);
-    expect(result2).toBe(false);
-  });
-});
-
-describe("countDuplicates", () => {
-  it("should find two duplicates", () => {
-    const data = [
-      { belopp: -1, id: "1" },
-      { belopp: 1, id: "2" },
-      { belopp: 2, id: "3" },
-    ];
-    const result = countDuplicates(data);
-    expect(result).toEqual([{ count: 2, belopp: 1, ids: ["1", "2"] }]);
-  });
-  it("should find five duplicates", () => {
-    const data = [
-      { belopp: -1, id: "1" },
-      { belopp: 1, id: "2" },
-      { belopp: -2, id: "3" },
-      { belopp: 2, id: "4" },
-      { belopp: 2, id: "5" },
-    ];
-    const result = countDuplicates(data);
-    expect(result).toEqual([
-      { count: 2, belopp: 1, ids: ["1", "2"] },
-      { count: 3, belopp: 2, ids: ["3", "4", "5"] },
-    ]);
-  });
-});
-
-describe("distinctDates", () => {
-  it("should find distinct dates", () => {
-    const dates = [
-      { datum: new Date("2024-01-01") },
-      { datum: new Date("2024-01-02") },
-      { datum: new Date("2024-01-01") },
-    ];
-    const expected = [new Date("2024-01-01"), new Date("2024-01-02")];
-    const result = distinctDates(dates);
-    expect(result).toEqual(expected);
   });
 });
 

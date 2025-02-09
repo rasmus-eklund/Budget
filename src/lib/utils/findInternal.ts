@@ -1,102 +1,107 @@
 import { type Internal } from "~/types";
-import { dateToString } from "~/lib/utils/formatData";
 import type { TxBankAccount } from "~/lib/zodSchemas";
 
 export const findInternal = (day: Internal[]) => {
-  const internal: Internal[] = [];
-  const counts = countDuplicates(day);
+  const internalIds = new Set<string>();
+  const groups = new Map<number, Internal[]>();
 
-  for (const { ids } of counts) {
-    const txs = day.filter((tx) => ids.includes(tx.id));
-    const totalSum = sumBelopp(txs);
-    if (txs.length % 2 === 0 && totalSum === 0) {
-      const halfIncome = txs
-        .map((i) => (i.typ === "Insättning" ? -1 : 1))
-        .reduce((p, c) => p + c, 0);
-      const differentAccounts = new Set(txs.map((i) => i.bankAccountId));
+  for (const tx of day) {
+    const key = Math.abs(tx.belopp);
+    if (!groups.has(key)) {
+      groups.set(key, [tx]);
+    } else {
+      groups.get(key)!.push(tx);
+    }
+  }
+
+  for (const group of groups.values()) {
+    if (group.length < 2) continue;
+    const totalSum = sumBelopp(group);
+    if (group.length % 2 === 0 && totalSum === 0) {
+      let halfIncome = 0;
+      for (const tx of group) {
+        halfIncome += tx.typ === "Insättning" ? -1 : 1;
+      }
+      const differentAccounts = new Set(group.map((tx) => tx.bankAccountId));
       if (halfIncome === 0 && differentAccounts.size > 1) {
-        internal.push(...txs);
+        for (const tx of group) {
+          internalIds.add(tx.id);
+        }
       }
-    } else if (txs.length % 2 === 1 && txs.length === 3) {
-      const theOne = findInternalOddThree(txs, totalSum);
-      if (theOne) {
-        internal.push(...theOne);
+    } else if (group.length === 3) {
+      const theOne = findInternalOddThree(group, totalSum);
+      for (const tx of theOne) {
+        internalIds.add(tx.id);
       }
     }
   }
 
-  return internal.map((i) => i.id);
-};
-
-const findInternalOddThree = (txs: Internal[], totalSum: number) => {
-  const accounts: Record<string, Internal[]> = {};
-  for (const tx of txs) {
-    const { bankAccountId } = tx;
-    if (!accounts[bankAccountId]) {
-      accounts[bankAccountId] = [];
-    }
-    accounts[bankAccountId].push(tx);
-  }
-  const groupAccount = Object.keys(accounts).find(
-    (key) => accounts[key]!.length > 1,
-  );
-  if (!groupAccount) {
-    throw new Error("Cound not find the one...\n" + JSON.stringify(txs));
-  }
-  const matchingTransaction = accounts[groupAccount]!.find(
-    (transaction) => transaction.belopp === totalSum,
-  );
-  if (matchingTransaction) {
-    return txs.filter((i) => i.id !== matchingTransaction.id);
-  }
-  return [];
+  return Array.from(internalIds);
 };
 
 export const sumBelopp = <T extends { belopp: number }>(obj: T[]) =>
   obj.reduce((p, c) => p + c.belopp, 0);
 
-export const countDuplicates = <T extends { belopp: number; id: string }>(
-  items: T[],
-) => {
-  const tracker: Record<
-    string,
-    { count: number; belopp: number; ids: string[] }
-  > = {};
+const findInternalOddThree = (txs: Internal[], totalSum: number) => {
+  const accounts = new Map<string, Internal[]>();
 
-  for (const { belopp, id } of items) {
-    const key = Math.abs(belopp);
-    if (!tracker[key]) {
-      tracker[key] = { count: 1, belopp: Math.abs(belopp), ids: [id] };
+  for (const tx of txs) {
+    const key = tx.bankAccountId;
+    if (!accounts.has(key)) {
+      accounts.set(key, [tx]);
     } else {
-      tracker[key].count++;
-      tracker[key].ids.push(id);
+      accounts.get(key)!.push(tx);
     }
   }
-  return Object.values(tracker).filter(({ count }) => count > 1);
+
+  const groupAccount = Array.from(accounts.entries()).find(
+    ([, txArray]) => txArray.length > 1,
+  );
+
+  if (!groupAccount) {
+    throw new Error("Could not find the one...\n" + JSON.stringify(txs));
+  }
+
+  const [, txArray] = groupAccount;
+  const matchingTransaction = txArray.find(
+    (transaction) => transaction.belopp === totalSum,
+  );
+
+  if (matchingTransaction) {
+    return txs.filter((i) => i.id !== matchingTransaction.id);
+  }
+
+  return [];
 };
 
-const pause = () => {
-  return new Promise((r) => setTimeout(r, 0));
+const groupTransactionsByDate = (txs: TxBankAccount[]) => {
+  return txs.reduce(
+    (acc, tx) => {
+      const date = tx.datum.toDateString();
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(tx);
+      return acc;
+    },
+    {} as Record<string, TxBankAccount[]>,
+  );
 };
 
-export const markInternal = async (
-  txs: TxBankAccount[],
-  update: (percent: number) => void,
-) => {
+export const markInternal = async (txs: TxBankAccount[]) => {
   const internal: string[] = [];
-  const dates = distinctDates(txs);
-  let counter = 0;
+  const txsByDate = groupTransactionsByDate(txs);
+  const dates = Object.keys(txsByDate);
   for (const date of dates) {
-    await pause();
-    update(counter / dates.length);
-    const day = getDay(txs, date);
-    if (hasDuplicates(day)) {
-      const foundInternal = findInternal(day);
-      for (const tx of foundInternal) {
-        internal.push(tx);
+    const day = txsByDate[date];
+    if (day) {
+      if (hasDuplicates(day)) {
+        const foundInternal = findInternal(day);
+        for (const tx of foundInternal) {
+          internal.push(tx);
+        }
       }
     }
-    counter++;
   }
   return txs.map((tx) => ({
     ...tx,
@@ -106,24 +111,3 @@ export const markInternal = async (
 
 export const hasDuplicates = <T extends { belopp: number }>(day: T[]) =>
   new Set(day.map((i) => Math.abs(i.belopp))).size !== day.length;
-
-export const distinctDates = <T extends { datum: Date }>(dates: T[]) => {
-  const uniqueDates: Date[] = [];
-  const seenDates = new Set<string>();
-
-  for (const { datum } of dates) {
-    const dateString = dateToString(datum);
-    if (!seenDates.has(dateString)) {
-      uniqueDates.push(datum);
-      seenDates.add(dateString);
-    }
-  }
-
-  return uniqueDates;
-};
-
-export const getDay = <T extends { datum: Date }>(txs: T[], target: Date) =>
-  txs.filter((tx) => isSameDate(tx, target));
-
-export const isSameDate = <T extends { datum: Date }>(obj: T, target: Date) =>
-  dateToString(obj.datum) === dateToString(target);
