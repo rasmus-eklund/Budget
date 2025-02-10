@@ -1,5 +1,5 @@
 import type { TxFilter, TxSort } from "~/types";
-import { sortOptions } from "../utils";
+import { sortOptions } from "~/lib/constants/sortOptions";
 
 export type Part = {
   person: string;
