@@ -14,7 +14,7 @@ import {
 } from "~/components/ui/select";
 import { Button } from "~/components/ui/button";
 import { useState } from "react";
-import { sortOptions } from "~/lib/utils";
+import { sortOptions } from "~/lib/constants/sortOptions";
 
 type Filters = { txFilter: TxFilter; txSort: TxSort };
 type Props = {
