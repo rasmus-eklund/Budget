@@ -31,7 +31,7 @@ const Balance = (props: Props) => {
       <CardContent>
         <ResponsiveContainer height={300} minWidth={"100%"}>
           <LineChart data={data}>
-            <Tooltip />
+            <Tooltip itemSorter={(item) => (item.value as number) * -1} />
             <CartesianGrid />
             <YAxis />
             <XAxis dataKey={"date"} />
@@ -57,12 +57,14 @@ const formatter = (date: Date) => format(date, "yy-MM-dd");
 
 const getRange = (txs: Tx[]) => {
   const dates = txs.map((tx) => Number(tx.datum));
-  const startDate = new Date(Date.UTC(new Date(Math.min(...dates)).getUTCFullYear(), 
-                                      new Date(Math.min(...dates)).getUTCMonth(), 
-                                      new Date(Math.min(...dates)).getUTCDate()));
-  const endDate = new Date(Date.UTC(new Date(Math.max(...dates)).getUTCFullYear(), 
-                                    new Date(Math.max(...dates)).getUTCMonth(), 
-                                    new Date(Math.max(...dates)).getUTCDate()));
+  const minD = new Date(Math.min(...dates));
+  const maxD = new Date(Math.max(...dates));
+  const startDate = new Date(
+    Date.UTC(minD.getUTCFullYear(), minD.getUTCMonth(), minD.getUTCDate()),
+  );
+  const endDate = new Date(
+    Date.UTC(maxD.getUTCFullYear(), maxD.getUTCMonth(), maxD.getUTCDate()),
+  );
   return eachDayOfInterval({ start: startDate, end: endDate });
 };
 
@@ -87,37 +89,64 @@ const fillMissingDates = (
   allDates: Date[],
   persons: Record<string, string[]>,
 ) => {
-  const filledTransactions: Record<string, string | number>[] = [];
   const personAccountsSet = new Set<string>();
-  for (const d of allDates) {
-    const date = formatter(d);
-    const data: Record<string, number | string> = { date };
-    for (const person in persons) {
-      for (const account of persons[person]!) {
-        const key = `${person}_${account}`;
-        personAccountsSet.add(key);
-        const tx = txs
-          .filter(
-            (tx) =>
-              tx.person === person &&
-              tx.konto === account &&
-              formatter(tx.datum) === date,
-          )
-          .at(-1);
-        if (tx) {
-          data[key] = tx.saldo;
+  for (const person in persons) {
+    for (const account of persons[person]!) {
+      personAccountsSet.add(`${person}_${account}`);
+    }
+  }
+
+  const accountTxMap: Record<string, Record<string, number>> = {};
+  const accountFirstTx: Record<
+    string,
+    { date: Date; saldo: number } | undefined
+  > = {};
+
+  for (const acc of personAccountsSet) {
+    accountTxMap[acc] = {};
+    accountFirstTx[acc] = undefined;
+  }
+
+  txs.sort((a, b) => a.datum.getTime() - b.datum.getTime());
+
+  for (const tx of txs) {
+    const key = `${tx.person}_${tx.konto}`;
+    if (!accountTxMap[key]) continue;
+    const dateKey = formatter(tx.datum);
+    accountTxMap[key][dateKey] = tx.saldo;
+    if (!accountFirstTx[key]) {
+      accountFirstTx[key] = { date: tx.datum, saldo: tx.saldo };
+    }
+  }
+
+  const filledTransactions: Record<string, string | number>[] = [];
+  const currentBalances: Record<string, number> = {};
+
+  const sortedDates = [...allDates].sort((a, b) => a.getTime() - b.getTime());
+
+  for (const d of sortedDates) {
+    const dateKey = formatter(d);
+    const dayData: Record<string, string | number> = { date: dateKey };
+
+    for (const account of personAccountsSet) {
+      if (accountTxMap[account]![dateKey] !== undefined) {
+        currentBalances[account] = accountTxMap[account]![dateKey];
+      }
+      if (currentBalances[account] === undefined) {
+        if (
+          accountFirstTx[account] &&
+          d.getTime() < accountFirstTx[account].date.getTime()
+        ) {
+          currentBalances[account] = accountFirstTx[account].saldo;
         } else {
-          const lastTx = filledTransactions.at(-1);
-          if (lastTx) {
-            data[key] = lastTx[key] as number;
-          } else {
-            data[key] = 0;
-          }
+          currentBalances[account] = 0;
         }
       }
+      dayData[account] = currentBalances[account];
     }
-    filledTransactions.push(data);
+    filledTransactions.push(dayData);
   }
+
   return {
     data: filledTransactions,
     personAccounts: Array.from(personAccountsSet),
