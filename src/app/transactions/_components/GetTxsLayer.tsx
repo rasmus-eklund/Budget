@@ -37,13 +37,9 @@ const GetTxsLayer = ({ range }: Props) => {
 
   if (password === "") {
     router.push("/password?from=transactions");
-    return null;
-  }
-
-  if (status === "Wrong password") {
+  } else if (status === "Wrong password") {
     router.push("/password?from=transactions&error=true");
-  }
-  if (status === "Error") {
+  } else if (status === "Error") {
     return <p>Något gick fel</p>;
   }
   return (
