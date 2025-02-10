@@ -111,15 +111,9 @@ export const encryptedDataSchema = z.object({
 });
 export type EncryptedDataSchema = z.infer<typeof encryptedDataSchema>;
 
-export const passwordsSchema = z
-  .object({
-    password: z.string().min(4, "Minst 4 tecken"),
-    confirm: z.string().min(4, "Minst 4 tecken"),
-  })
-  .refine((data) => data.confirm === data.password, {
-    path: ["confirm"],
-    message: "Lösenorden matchar inte",
-  });
+export const passwordsSchema = z.object({
+  password: z.string().min(4, "Minst 4 tecken"),
+});
 
 export type Passwords = z.infer<typeof passwordsSchema>;
 

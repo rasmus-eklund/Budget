@@ -6,11 +6,12 @@ import { usePassword } from "~/components/password/PasswordContext";
 import { getCurrentYearMonth } from "~/lib/utils/dateCalculations";
 import getTxByDates from "../dataLayer/getData";
 import { type TxReturn } from "~/types";
-import Link from "next/link";
 import DateFilter from "../../../components/common/DateFilters/DateFilter";
+import { useRouter } from "next/navigation";
 
 type Props = { range: FromTo };
 const GetTxsLayer = ({ range }: Props) => {
+  const router = useRouter();
   const { password } = usePassword();
   const [loading, setLoading] = useState(true);
   const [{ data, status }, setData] = useState<TxReturn>({
@@ -34,18 +35,13 @@ const GetTxsLayer = ({ range }: Props) => {
       .catch(() => setData({ data: [], status: "Error" }));
   }, [password]);
 
+  if (password === "") {
+    router.push("/password?from=transactions");
+    return null;
+  }
+
   if (status === "Wrong password") {
-    return (
-      <p className="p-4">
-        Fel eller inget lösenord.{" "}
-        <span>
-          <Link href={"/password?from=transactions"} className="underline">
-            Ändra till rätt lösenord
-          </Link>
-        </span>
-        .
-      </p>
-    );
+    router.push("/password?from=transactions&error=true");
   }
   if (status === "Error") {
     return <p>Något gick fel</p>;
