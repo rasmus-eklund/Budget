@@ -16,7 +16,7 @@ import { Input } from "~/components/ui/input";
 import { env } from "~/env";
 
 import { type Passwords, passwordsSchema } from "~/lib/zodSchemas";
-import { usePassword } from "../../../components/password/PasswordContext";
+import { usePassword } from "~/components/password/PasswordContext";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const defaultValues = {
