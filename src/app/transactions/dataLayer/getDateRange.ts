@@ -11,12 +11,12 @@ export const getDateRange = async () => {
     .innerJoin(bankAccounts, eq(bankAccounts.personId, persons.id))
     .innerJoin(txs, eq(txs.bankAccountId, bankAccounts.id))
     .where(eq(persons.userId, userId));
-  if (range[0]) {
-    const { from, to } = range[0];
-    if (!from || !to) {
-      return false;
-    }
-    return { from, to };
+  if (!range[0]) {
+    return false;
   }
-  return false;
+  const { from, to } = range[0];
+  if (!from || !to) {
+    return false;
+  }
+  return { from, to };
 };
