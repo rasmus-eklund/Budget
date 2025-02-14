@@ -2,33 +2,17 @@ import { z } from "zod";
 import dayjs from "dayjs";
 import { types } from "~/lib/constants/types";
 
-const columns = [
-  "Datum",
-  "Text",
-  "Typ",
-  "Budgetgrupp",
-  "Belopp",
-  "Saldo",
-] as const;
-
-export const csvColumnsSchema = z.array(
-  z.enum(columns, {
-    errorMap: (issue, _ctx) => {
-      switch (issue.code) {
-        case "invalid_type":
-          return {
-            message: `Csv filen måste ha dessa kolumner: '${columns.join(", ")}'`,
-          };
-        case "invalid_enum_value":
-          return {
-            message: `Csv filen måste ha dessa kolumner: '${columns.join(", ")}'`,
-          };
-        default:
-          return { message: "Fel typ" };
-      }
+const makeErrorMap = (messages: {
+  [Code in z.ZodIssueCode]?: (value: unknown) => string;
+}): { errorMap: z.ZodErrorMap } => {
+  return {
+    errorMap: (issue, ctx) => {
+      return {
+        message: messages[issue.code]?.(ctx.data) ?? ctx.defaultError,
+      };
     },
-  }),
-);
+  };
+};
 
 const formatSek = (v: string) => {
   const cleaned = v.replace(/\s/g, "").replace(",", ".").replace("kr", "");
@@ -42,7 +26,9 @@ const dateSchema = z
       const parsed = dayjs(v, "YYYY-MM-DD", true);
       return parsed.isValid() && parsed.format("YYYY-MM-DD") === v;
     },
-    { message: "Felaktigt datum. Använd formatet YYYY-MM-DD." },
+    (v) => ({
+      message: `Felaktigt datum format: ${v}. Använd formatet YYYY-MM-DD.`,
+    }),
   )
   .transform((v) => dayjs(v, "YYYY-MM-DD").toDate());
 
@@ -65,30 +51,33 @@ export const csvSchema = z
         text: z
           .string({ required_error: "Text saknas." })
           .min(1, "Text måste vara på minst 1 tecken"),
-        typ: z.enum(types, {
-          errorMap: (issue, _ctx) => {
-            switch (issue.code) {
-              case "invalid_type":
-                return { message: `Typ måste vara en av ${types.join(", ")}` };
-              case "invalid_enum_value":
-                return { message: `Typ måste vara en av ${types.join(", ")}` };
-              default:
-                return { message: "Fel typ" };
-            }
-          },
-        }),
+        typ: z.enum(
+          types,
+          makeErrorMap({
+            invalid_type: (v) =>
+              `Typ '${String(v)}' måste vara en av ${types.join(", ")}`,
+            invalid_enum_value: (v) =>
+              `Typ '${String(v)}' måste vara en av ${types.join(", ")}`,
+          }),
+        ),
         budgetgrupp: z.string({ required_error: "Budgetgrupp saknas." }),
         belopp: z
           .string({ required_error: "Belopp saknas." })
-          .refine((v) => /^-?\d{1,3}(\s\d{3})*,\d{2}\skr$/.test(v), {
-            message: "Felaktigt SEK format. Ok: 1 000,00 kr",
-          })
+          .refine(
+            (v) => /^-?\d{1,3}(\s\d{3})*,\d{2}\skr$/.test(v),
+            (v) => ({
+              message: `Felaktigt valutaformat: ${v}. Använd: 1 000,00 kr`,
+            }),
+          )
           .transform(formatSek),
         saldo: z
-          .string({ required_error: "Saldo saknas." })
-          .refine((v) => /^-?\d{1,3}(\s\d{3})*,\d{2}\skr$/.test(v), {
-            message: "Felaktigt SEK format. Ok: 1 000,00 kr",
-          })
+          .string(makeErrorMap({ invalid_type: () => "Saldo saknas." }))
+          .refine(
+            (v) => /^-?\d{1,3}(\s\d{3})*,\d{2}\skr$/.test(v),
+            (v) => ({
+              message: `Felaktigt valutaformat: ${v}. Använd: 1 000,00 kr`,
+            }),
+          )
           .transform(formatSek),
       }),
     ),
