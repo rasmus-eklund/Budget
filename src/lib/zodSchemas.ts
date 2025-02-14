@@ -1,6 +1,5 @@
 import { z } from "zod";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import { types } from "~/lib/constants/types";
 
 const columns = [
@@ -36,8 +35,6 @@ const formatSek = (v: string) => {
   return Number(cleaned);
 };
 
-dayjs.extend(utc);
-
 const dateSchema = z
   .string({ required_error: "Datum saknas." })
   .refine(
@@ -47,44 +44,63 @@ const dateSchema = z
     },
     { message: "Felaktigt datum. Använd formatet YYYY-MM-DD." },
   )
-  .transform((v) => dayjs(v, "YYYY-MM-DD").utc().toDate());
+  .transform((v) => dayjs(v, "YYYY-MM-DD").toDate());
 
-export const csvSchema = z.object({
-  id: z.string(),
-  datum: dateSchema,
-  text: z
-    .string({ required_error: "Text saknas." })
-    .min(1, "Text måste vara på minst 1 tecken"),
-  typ: z.enum(types, {
-    errorMap: (issue, _ctx) => {
-      switch (issue.code) {
-        case "invalid_type":
-          return { message: `Typ måste vara en av ${types.join(", ")}` };
-        case "invalid_enum_value":
-          return { message: `Typ måste vara en av ${types.join(", ")}` };
-        default:
-          return { message: "Fel typ" };
-      }
-    },
-  }),
-  budgetgrupp: z.string({ required_error: "Budgetgrupp saknas." }),
-  belopp: z
-    .string({ required_error: "Belopp saknas." })
-    .refine((v) => /^-?\d{1,3}(\s\d{3})*,\d{2}\skr$/.test(v), {
-      message: "Felaktigt SEK format. Ok: 1 000,00 kr",
-    })
-    .transform(formatSek),
-  saldo: z
-    .string({ required_error: "Saldo saknas." })
-    .refine((v) => /^-?\d{1,3}(\s\d{3})*,\d{2}\skr$/.test(v), {
-      message: "Felaktigt SEK format. Ok: 1 000,00 kr",
-    })
-    .transform(formatSek),
-  bankAccountId: z.string(),
-});
+export const csvSchema = z
+  .array(
+    z.preprocess(
+      (obj) => {
+        if (typeof obj === "object" && obj !== null) {
+          return Object.fromEntries(
+            Object.entries(obj).map(([key, value]) => [
+              key.toLowerCase(),
+              value,
+            ]),
+          );
+        }
+        return obj;
+      },
+      z.object({
+        datum: dateSchema,
+        text: z
+          .string({ required_error: "Text saknas." })
+          .min(1, "Text måste vara på minst 1 tecken"),
+        typ: z.enum(types, {
+          errorMap: (issue, _ctx) => {
+            switch (issue.code) {
+              case "invalid_type":
+                return { message: `Typ måste vara en av ${types.join(", ")}` };
+              case "invalid_enum_value":
+                return { message: `Typ måste vara en av ${types.join(", ")}` };
+              default:
+                return { message: "Fel typ" };
+            }
+          },
+        }),
+        budgetgrupp: z.string({ required_error: "Budgetgrupp saknas." }),
+        belopp: z
+          .string({ required_error: "Belopp saknas." })
+          .refine((v) => /^-?\d{1,3}(\s\d{3})*,\d{2}\skr$/.test(v), {
+            message: "Felaktigt SEK format. Ok: 1 000,00 kr",
+          })
+          .transform(formatSek),
+        saldo: z
+          .string({ required_error: "Saldo saknas." })
+          .refine((v) => /^-?\d{1,3}(\s\d{3})*,\d{2}\skr$/.test(v), {
+            message: "Felaktigt SEK format. Ok: 1 000,00 kr",
+          })
+          .transform(formatSek),
+      }),
+    ),
+  )
+  .min(1, "Minst 1 transaktion.");
 export type CsvSchema = z.infer<typeof csvSchema>;
 
-export type TxBankAccount = z.infer<typeof csvSchema> & { index: number };
+export type TxBankAccount = z.infer<typeof csvSchema>[number] & {
+  index: number;
+  bankAccountId: string;
+  id: string;
+};
 
 export const fromToSchema = z.object({
   from: z.coerce.date(),
