@@ -8,7 +8,6 @@ import {
   category,
   persons,
   txs,
-  users,
   bankAccounts,
 } from "~/server/db/schema";
 import getUserId from "~/server/getUserId";
@@ -23,7 +22,7 @@ export const upload = async ({
   const userId = await getUserId();
   const accounts = await db.query.persons.findMany({
     columns: {},
-    with: { bankAccounts: {columns: {id: true}} },
+    with: { bankAccounts: { columns: { id: true } } },
     where: eq(persons.userId, userId),
   });
   const accountIds = accounts.flatMap((a) => a.bankAccounts.map((b) => b.id));
@@ -45,9 +44,8 @@ export const getTxsPerYear = async () => {
       year: txs.year,
       count: sql<number>`cast(count(${txs.id}) as int)`,
     })
-    .from(users)
-    .where(eq(users.id, userId))
-    .innerJoin(persons, eq(persons.userId, userId))
+    .from(persons)
+    .where(eq(persons.userId, userId))
     .innerJoin(bankAccounts, eq(bankAccounts.personId, persons.id))
     .innerJoin(txs, eq(txs.bankAccountId, bankAccounts.id))
     .groupBy(txs.year)
