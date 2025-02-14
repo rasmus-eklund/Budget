@@ -11,9 +11,10 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import capitalize from "~/lib/utils/capitalize";
-import { eachDayOfInterval, format } from "date-fns";
+import dayjs from "dayjs";
 import { colors } from "~/lib/constants/colors";
 import type { Tx } from "~/types";
+import { eachDayOfInterval } from "~/lib/utils/dateCalculations";
 
 type Props = {
   data: Tx[];
@@ -53,7 +54,7 @@ const Balance = (props: Props) => {
   );
 };
 
-const formatter = (date: Date) => format(date, "yy-MM-dd");
+const formatter = (date: Date) => dayjs(date).format("YY-MM-DD");
 
 const getRange = (txs: Tx[]) => {
   const dates = txs.map((tx) => Number(tx.datum));
