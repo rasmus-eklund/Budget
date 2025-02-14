@@ -4,8 +4,8 @@ import {
   type FormEvent,
   type ReactNode,
   useState,
-  useEffect,
   useRef,
+  useEffect,
 } from "react";
 import { Button } from "~/components/ui/button";
 import type { FromTo, TxBankAccount } from "~/lib/zodSchemas";
@@ -31,9 +31,11 @@ import {
 } from "~/components/ui/select";
 import capitalize from "~/lib/utils/capitalize";
 import { ClipLoader } from "react-spinners";
+import { useRouter } from "next/navigation";
 
 type Props = { categories: Category[]; people: PersonAccounts };
 const FileForm = ({ categories, people }: Props) => {
+  const router = useRouter();
   const { password } = usePassword();
   const [files, setFiles] = useState<FileData[]>([]);
   const [txs, setTxs] = useState<TxBankAccount[]>([]);
@@ -43,24 +45,25 @@ const FileForm = ({ categories, people }: Props) => {
     message: null,
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (password === "") {
+      router.push("/password?from=upload");
+    }
+  }, [password, router]);
+
   const range = getFromTo(txs);
   const processTxs = async () => {
-    if (!files) {
-      setLoading(false);
-      return setError({ error: true, message: "Inga filer valda" });
-    }
     setLoading(true);
     const res = await readFiles(files);
     if (!res.ok) {
       setError({ error: true, message: res.error });
-      setLoading(false);
-      return;
+      return setLoading(false);
     }
     const y = new Set(res.data.map(({ datum }) => datum.getFullYear()));
     if (y.size !== 1) {
       setError({ error: true, message: "Ett år per uppladdning" });
-      setLoading(false);
-      return;
+      return setLoading(false);
     }
     setTxs(res.data);
     setLoading(false);
@@ -78,11 +81,6 @@ const FileForm = ({ categories, people }: Props) => {
       fileInputRef.current.value = "";
     }
   };
-  useEffect(() => {
-    if (!password && !error.error) {
-      setError({ error: true, message: "Inget lösenord valt" });
-    }
-  }, [password, error.error]);
   const options = people.flatMap((p) =>
     p.bankAccounts.map((a) => ({
       person: p.name,
@@ -198,11 +196,6 @@ const FileForm = ({ categories, people }: Props) => {
           </ul>
         )}
         {error.error && <>{error.message}</>}
-        {!password && (
-          <Link className="underline" href={"/password?from=upload"}>
-            Välj lösenord
-          </Link>
-        )}
       </form>
       {txs.length !== 0 && range ? (
         <ShowTransactions

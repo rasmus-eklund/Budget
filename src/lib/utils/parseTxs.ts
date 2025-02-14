@@ -5,12 +5,17 @@ import {
   csvSchema,
 } from "~/lib/zodSchemas";
 import { v4 as uuid } from "uuid";
+import type { ZodError } from "zod";
+
+type ParseResult =
+  | { ok: true; data: TxBankAccount[] }
+  | { ok: false; error: ZodError<CsvSchema> };
 
 const parseTxs = async (buffer: Buffer, bankAccountId: string) => {
   const decoder = new TextDecoder("utf-8");
   const csvString = decoder.decode(buffer);
 
-  return new Promise<TxBankAccount[]>((resolve, reject) => {
+  return new Promise<ParseResult>((resolve, reject) => {
     parse<CsvSchema>(csvString, {
       delimiter: ";",
       header: true,
@@ -18,13 +23,10 @@ const parseTxs = async (buffer: Buffer, bankAccountId: string) => {
       complete: (result) => {
         if (result.errors.length > 0)
           return reject(Error("Kunde inte läsa CSV filen."));
-        console.log(result.data);
         const parsed = csvSchema.safeParse(result.data);
         if (!parsed.success) {
-          console.log(parsed.error.format());
-          return reject(parsed.error);
+          return resolve({ ok: false, error: parsed.error });
         }
-        console.log(parsed.data);
         const tmpData = parsed.data.reverse().map((d, index) => ({
           ...d,
           budgetgrupp: "övrigt",
@@ -60,7 +62,7 @@ const parseTxs = async (buffer: Buffer, bankAccountId: string) => {
           });
         }
 
-        resolve(tmpData);
+        resolve({ ok: true, data: tmpData });
       },
       error: () => {
         reject(Error("Något gick fel."));

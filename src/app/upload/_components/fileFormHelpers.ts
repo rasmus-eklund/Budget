@@ -1,13 +1,13 @@
 import { encryptWithAES } from "~/lib/utils/encryption";
 import { markInternal } from "~/lib/utils/findInternal";
 import parseTxs from "~/lib/utils/parseTxs";
-import type { CsvSchema, TxBankAccount } from "~/lib/zodSchemas";
+import type { TxBankAccount } from "~/lib/zodSchemas";
 import type { PersonAccounts, FileData, Tx } from "~/types";
 import { upload } from "../actions/uploadActions";
 import type { InsertTx } from "~/server/db/schema";
-import { ZodError } from "zod";
 import ImportErrors from "./ImportErrors";
 import type { ReactNode } from "react";
+import getErrorMessage from "~/lib/utils/handleError";
 
 export const getFileNames = (files: FileList | undefined) => {
   if (!files) {
@@ -43,19 +43,18 @@ export const readFiles = async (
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     try {
-      const txs = await parseTxs(buffer, bankAccountId);
-      allTxs.push(...txs);
-    } catch (err) {
-      if (err instanceof ZodError) {
-        return {
-          ok: false,
-          error: ImportErrors({
-            error: err as ZodError<CsvSchema>,
-            file: file.name,
-          }),
-        };
+      const res = await parseTxs(buffer, bankAccountId);
+      if (!res.ok) {
+        const jsx = ImportErrors({
+          error: res.error,
+          file: file.name,
+        });
+        return { ok: false, error: jsx };
       }
-      return { ok: false, error: `fil: ${file.name}` };
+      allTxs.push(...res.data);
+    } catch (err) {
+      const message = getErrorMessage(err);
+      return { ok: false, error: `fil: ${file.name}, fel: ${message}` };
     }
   }
   const start = performance.now();
