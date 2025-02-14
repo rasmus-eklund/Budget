@@ -9,14 +9,8 @@ import applyTransactionFilters, {
   getDefaultFilter,
 } from "~/lib/utils/transactionFilter";
 import type { TxFilter, TxSort, Tx } from "~/types";
-import dynamic from "next/dynamic";
-
-const Bars = dynamic(() => import("./DataTabs/CategoryBars"), {
-  ssr: false,
-});
-const Lines = dynamic(() => import("./DataTabs/Balance"), {
-  ssr: false,
-});
+import CategoryBars from "./DataTabs/CategoryBars";
+import Balance from "./DataTabs/Balance";
 
 type Tab = "aggregated" | "transactions" | "categoryBars" | "balanceOverTime";
 
@@ -82,11 +76,11 @@ const ShowData = ({
           {loading ? (
             <p>Laddar...</p>
           ) : (
-            <Bars data={txs} options={options.aggregated} />
+            <CategoryBars data={txs} options={options.aggregated} />
           )}
         </TabsContent>
         <TabsContent value="balanceOverTime">
-          {loading ? <p>Laddar...</p> : <Lines data={txs} />}
+          {loading ? <p>Laddar...</p> : <Balance data={txs} />}
         </TabsContent>
       </Tabs>
     </section>
