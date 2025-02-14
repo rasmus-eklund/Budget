@@ -21,11 +21,9 @@ const GetTxsLayer = ({ range }: Props) => {
     const res = await getTxByDates({ dates, password });
     if (!res.ok) {
       setData([]);
-      console.error(res.error);
       if (res.error === "password") {
         return router.push("/password?from=transactions&error=true");
       }
-      console.error(res.error);
       return;
     }
     if (res.ok) {

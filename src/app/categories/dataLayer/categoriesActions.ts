@@ -113,7 +113,6 @@ export const replaceAllMatches = async (data: JsonData) => {
       });
       await tx.insert(match).values(matchValues);
     } catch (error) {
-      console.log(error);
       tx.rollback();
     }
   });
