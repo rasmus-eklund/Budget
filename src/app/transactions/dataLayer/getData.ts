@@ -34,54 +34,57 @@ const getTxByDates = async ({
   password: string;
 }): Promise<TxReturn> => {
   const userId = await getUserId();
-  const categories = await db.query.category.findMany({
-    columns: { name: true },
-    where: eq(category.userId, userId),
-    with: { match: { columns: { name: true } } },
-  });
-  const response = await db.query.persons.findMany({
-    where: eq(persons.userId, userId),
-    with: {
-      bankAccounts: {
-        with: {
-          txs: { where: and(gte(txs.date, from), lte(txs.date, to)) },
+  if (userId) {
+    const categories = await db.query.category.findMany({
+      columns: { name: true },
+      where: eq(category.userId, userId),
+      with: { match: { columns: { name: true } } },
+    });
+    const response = await db.query.persons.findMany({
+      where: eq(persons.userId, userId),
+      with: {
+        bankAccounts: {
+          with: {
+            txs: { where: and(gte(txs.date, from), lte(txs.date, to)) },
+          },
         },
       },
-    },
-  });
+    });
 
-  const out: TxReturn = { data: [], status: "Success" };
-  for (const person of response) {
-    for (const account of person.bankAccounts) {
-      for (const { data, date, id } of account.txs) {
-        try {
-          const decrypted = await decryptTxs(data, password);
-          out.data.push(
-            applyCategory({
-              tx: {
-                ...decrypted,
-                datum: date,
-                person: person.name,
-                konto: account.name,
-                id,
-              },
-              categories,
-            }),
-          );
-        } catch (error) {
-          const message = getErrorMessage(error);
-          if (
-            message === "The operation failed for an operation-specific reason"
-          ) {
-            return { data: [], status: "Wrong password" };
+    const out: TxReturn = { ok: true, data: [] };
+    for (const person of response) {
+      for (const account of person.bankAccounts) {
+        for (const { data, date, id } of account.txs) {
+          try {
+            const decrypted = await decryptTxs(data, password);
+            out.data.push(
+              applyCategory({
+                tx: {
+                  ...decrypted,
+                  datum: date,
+                  person: person.name,
+                  konto: account.name,
+                  id,
+                },
+                categories,
+              }),
+            );
+          } catch (error) {
+            const message = getErrorMessage(error);
+            if (
+              message ===
+              "The operation failed for an operation-specific reason"
+            ) {
+              return { ok: false, error: "password" };
+            }
+            return { ok: false, error: "error" };
           }
-          return { data: [], status: "Error" };
         }
       }
     }
+    return out;
   }
-
-  return out;
+  return { ok: false, error: "error" };
 };
 
 export default getTxByDates;

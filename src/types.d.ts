@@ -25,10 +25,12 @@ export type Uniques = {
   accounts: string[];
 };
 
-export type TxReturn = {
-  data: Tx[];
-  status: "Success" | "Error" | "Wrong password";
-};
+export type TxReturn =
+  | {
+      ok: true;
+      data: Tx[];
+    }
+  | { ok: false; error: "password" | "error" };
 
 export type Category = { name: string; match: { name: string }[] };
 export type PersonAccounts = {
