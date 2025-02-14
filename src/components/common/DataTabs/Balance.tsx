@@ -34,7 +34,7 @@ const Balance = (props: Props) => {
           <LineChart data={data}>
             <Tooltip itemSorter={(item) => (item.value as number) * -1} />
             <CartesianGrid />
-            <YAxis />
+            <YAxis type="number" domain={["dataMin - 10", "dataMax + 100"]} />
             <XAxis dataKey={"date"} />
             {personAccounts.map((pa, index) => (
               <Line
