@@ -7,23 +7,18 @@ import {
   removeBankAccount,
   renameBankAccount,
 } from "../dataLayer/peopleActions";
-import DeleteButton from "../../../components/common/Forms/DeleteButton";
+import DeleteButton from "~/components/common/Forms/DeleteButton";
 import capitalize from "~/lib/utils/capitalize";
-import BreadcrumbWithDropdown from "../../../components/common/Breadcrumb";
-import AddItemForm from "../../../components/common/Forms/AddItemForm";
+import BreadcrumbWithDropdown from "~/components/common/Breadcrumb";
+import AddItemForm from "~/components/common/Forms/AddItemForm";
 import type { Name } from "~/lib/zodSchemas";
 import EditItemForm from "~/components/common/Forms/EditItemForm";
 import DeleteDialog from "~/components/common/Forms/DeleteDialog";
 
-type Props = { params: Promise<{ name: string }> };
+type Params = Promise<{ name: string }>;
 
-const page = async (props: Props) => {
-  const params = await props.params;
-
-  const {
-    name: personName
-  } = params;
-
+const page = async ({ params }: { params: Params }) => {
+  const { name: personName } = await params;
   const session = await getServerAuthSession();
   if (!session) {
     redirect("/");
@@ -33,10 +28,7 @@ const page = async (props: Props) => {
     name,
     bankAccounts,
     id: personId,
-  } = await getBankAccounts({
-    name: personName,
-  });
-  bankAccounts.sort((a, b) => a.name.localeCompare(b.name));
+  } = await getBankAccounts({ name: personName });
   const addAccount = async ({ name }: Name) => {
     "use server";
     await addBankAccount({ name, personId });
@@ -52,37 +44,46 @@ const page = async (props: Props) => {
       />
       <h2 className="text-lg font-semibold">{capitalize(name)}</h2>
       <ul>
-        {bankAccounts.map(({ name, id }) => (
-          <li
-            className="border-b-red flex h-8 items-center justify-between border-b"
-            key={id}
-          >
-            <p>{capitalize(name)}</p>
-            <div className="flex items-center gap-2">
-              <EditItemForm
-                data={{ name, id }}
-                uniques={bankAccounts.map(({ name }) => name)}
-                onSubmit={renameBankAccount}
-                formInfo={{
-                  description: "Detta kommer att ändra ditt kontonamn",
-                  label: "Kontonamn",
-                }}
-              />
-              <DeleteDialog info={{ title: "ditt bankkonto" }}>
-                <form action={removeBankAccount} className="flex items-center">
-                  <input hidden name="id" type="text" defaultValue={id} />
-                  <input
-                    hidden
-                    name="name"
-                    type="text"
-                    defaultValue={personName}
+        {!bankAccounts || bankAccounts.length === 0 ? (
+          <li>Du har inga bankkonton än.</li>
+        ) : (
+          bankAccounts
+            .toSorted((a, b) => a.name.localeCompare(b.name))
+            .map(({ name, id }) => (
+              <li
+                className="border-b-red flex h-8 items-center justify-between border-b"
+                key={id}
+              >
+                <p>{capitalize(name)}</p>
+                <div className="flex items-center gap-2">
+                  <EditItemForm
+                    data={{ name, id }}
+                    uniques={bankAccounts.map(({ name }) => name)}
+                    onSubmit={renameBankAccount}
+                    formInfo={{
+                      description: "Detta kommer att ändra ditt kontonamn",
+                      label: "Kontonamn",
+                    }}
                   />
-                  <DeleteButton icon={false} />
-                </form>
-              </DeleteDialog>
-            </div>
-          </li>
-        ))}
+                  <DeleteDialog info={{ title: "ditt bankkonto" }}>
+                    <form
+                      action={removeBankAccount}
+                      className="flex items-center"
+                    >
+                      <input hidden name="id" type="text" defaultValue={id} />
+                      <input
+                        hidden
+                        name="name"
+                        type="text"
+                        defaultValue={personName}
+                      />
+                      <DeleteButton icon={false} />
+                    </form>
+                  </DeleteDialog>
+                </div>
+              </li>
+            ))
+        )}
       </ul>
       <AddItemForm
         onSubmit={addAccount}
