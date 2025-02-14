@@ -1,4 +1,4 @@
-import { it, describe, expect } from "vitest";
+import { it, describe, expect } from "bun:test";
 import { type Part, transactionFilter } from "./transactionFilter";
 import { type TxFilter } from "~/types";
 

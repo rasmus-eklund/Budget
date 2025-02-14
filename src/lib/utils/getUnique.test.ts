@@ -1,4 +1,4 @@
-import { it, describe, expect } from "vitest";
+import { it, describe, expect } from "bun:test";
 import getUnique from "./getUnique";
 
 const data = [

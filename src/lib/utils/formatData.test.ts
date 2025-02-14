@@ -1,4 +1,4 @@
-import { it, describe, expect } from "vitest";
+import { it, describe, expect } from "bun:test";
 import { dateToString, toSek } from "./formatData";
 
 describe("toSek", () => {

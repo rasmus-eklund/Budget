@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "bun:test";
 import { findInternal, hasDuplicates, sumBelopp } from "./findInternal";
 import { type Internal } from "~/types";
 
