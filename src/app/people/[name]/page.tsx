@@ -15,9 +15,15 @@ import type { Name } from "~/lib/zodSchemas";
 import EditItemForm from "~/components/common/Forms/EditItemForm";
 import DeleteDialog from "~/components/common/Forms/DeleteDialog";
 
-type Props = { params: { name: string } };
+type Props = { params: Promise<{ name: string }> };
 
-const page = async ({ params: { name: personName } }: Props) => {
+const page = async (props: Props) => {
+  const params = await props.params;
+
+  const {
+    name: personName
+  } = params;
+
   const session = await getServerAuthSession();
   if (!session) {
     redirect("/");

@@ -3,7 +3,7 @@ import svgPaths from "./svgPaths";
 
 type tIcon = keyof typeof svgPaths;
 type Props = SVGProps<SVGElement> & {
-  ref?: RefObject<SVGSVGElement>;
+  ref?: RefObject<SVGSVGElement | null>;
   icon: tIcon;
 };
 

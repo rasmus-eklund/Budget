@@ -12,9 +12,15 @@ import BreadcrumbWithDropdown from "../../../components/common/Breadcrumb";
 import AddItemForm from "../../../components/common/Forms/AddItemForm";
 import type { Name } from "~/lib/zodSchemas";
 
-type Props = { params: { id: string } };
+type Props = { params: Promise<{ id: string }> };
 
-const page = async ({ params: { id: categoryId } }: Props) => {
+const page = async (props: Props) => {
+  const params = await props.params;
+
+  const {
+    id: categoryId
+  } = params;
+
   const session = await getServerAuthSession();
   if (!session) {
     redirect("/");
