@@ -5,12 +5,9 @@ import {
   getTxsPerYear,
 } from "./actions/uploadActions";
 import Hide from "./_components/Hide";
-import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import YearCountChart from "./_components/YearCountChart";
 
-const Chart = dynamic(() => import("./_components/YearCountChart"), {
-  ssr: false,
-});
 const page = async () => {
   const [data, categories, personAccounts] = await Promise.all([
     getTxsPerYear(),
@@ -29,7 +26,7 @@ const page = async () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Chart data={data} />
+              <YearCountChart data={data} />
             </CardContent>
           </Card>
         </Hide>
