@@ -10,7 +10,7 @@ const Transactions = ({ data }: Props) => {
     <>
       <ul className="flex flex-col gap-2">
         <Virtuoso
-          className="!h-[500px]"
+          className="h-[500px]!"
           data={data}
           itemContent={(_, tx) => <Transaction key={tx.id} data={tx} />}
         />
