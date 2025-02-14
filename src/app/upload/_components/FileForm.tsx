@@ -110,7 +110,9 @@ const FileForm = ({ categories, people }: Props) => {
         {password && (
           <div className="flex gap-2">
             <Button asChild className="cursor-pointer">
-              <label htmlFor="file-upload">Välj filer</label>
+              <label className="select-none" htmlFor="file-upload">
+                Välj filer
+              </label>
             </Button>
             <input
               className="hidden"
