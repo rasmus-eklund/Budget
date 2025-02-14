@@ -17,9 +17,7 @@ type Props = { params: Promise<{ id: string }> };
 const page = async (props: Props) => {
   const params = await props.params;
 
-  const {
-    id: categoryId
-  } = params;
+  const { id: categoryId } = params;
 
   const session = await getServerAuthSession();
   if (!session) {
