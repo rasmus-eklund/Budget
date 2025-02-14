@@ -1,5 +1,6 @@
 import { type FromTo } from "~/lib/zodSchemas";
 import { dateToString } from "./formatData";
+import dayjs from "dayjs";
 
 export const incrementDay = (date: Date) => {
   const nextDate = new Date(
@@ -82,4 +83,30 @@ export const getFromTo = <T extends { datum: Date }>(txs: T[]) => {
 
 export const FromToString = ({ from, to }: FromTo) => {
   return `${dateToString(from)} - ${dateToString(to)}`;
+};
+
+export const eachDayOfInterval = ({
+  start,
+  end,
+}: {
+  start: Date;
+  end: Date;
+}) => {
+  const startDate = dayjs(start).startOf("day");
+  const endDate = dayjs(end).startOf("day");
+
+  if (endDate.isBefore(startDate)) {
+    throw new RangeError(
+      "Invalid interval: end date must be after or equal to the start date",
+    );
+  }
+
+  const dates = [];
+  let currentDate = startDate;
+
+  while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
+    dates.push(currentDate.toDate());
+    currentDate = currentDate.add(1, "day");
+  }
+  return dates;
 };
