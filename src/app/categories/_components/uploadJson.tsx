@@ -35,7 +35,8 @@ const UploadJsonButton = ({ className, onData }: Props) => {
             return;
           }
           onData(parsed.data);
-        } catch (err) {
+        } catch (error) {
+          console.error(error);
           setError("Fel i JSON-filen.");
         }
       };
