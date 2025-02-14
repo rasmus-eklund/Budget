@@ -76,11 +76,31 @@ const ShowData = ({
           {loading ? (
             <p>Laddar...</p>
           ) : (
-            <CategoryBars data={txs} options={options.aggregated} />
+            <>
+              <TransactionFilter
+                options={options.transactions}
+                defaults={defaults}
+                filters={{ txFilter, txSort }}
+                setFilters={{ setTxFilter, setTxSort }}
+              />
+              <CategoryBars data={txs} options={options.aggregated} />
+            </>
           )}
         </TabsContent>
         <TabsContent value="balanceOverTime">
-          {loading ? <p>Laddar...</p> : <Balance data={txs} />}
+          {loading ? (
+            <p>Laddar...</p>
+          ) : (
+            <>
+              <TransactionFilter
+                options={options.transactions}
+                defaults={defaults}
+                filters={{ txFilter, txSort }}
+                setFilters={{ setTxFilter, setTxSort }}
+              />
+              <Balance data={txs} />
+            </>
+          )}
         </TabsContent>
       </Tabs>
     </section>
