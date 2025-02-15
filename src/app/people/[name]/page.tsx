@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-import { getServerAuthSession } from "~/server/auth";
 import {
   addBankAccount,
   getBankAccounts,
@@ -19,10 +17,6 @@ type Params = Promise<{ name: string }>;
 
 const page = async ({ params }: { params: Params }) => {
   const { name: personName } = await params;
-  const session = await getServerAuthSession();
-  if (!session) {
-    redirect("/");
-  }
   const options = await getAllPeople();
   const {
     name,

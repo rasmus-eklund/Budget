@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-import { getServerAuthSession } from "~/server/auth";
 import Link from "next/link";
 import capitalize from "~/lib/utils/capitalize";
 import {
@@ -12,10 +10,6 @@ import AddItemForm from "~/components/common/Forms/AddItemForm";
 import ManageJson from "./_components/manageJson";
 
 const Categories = async () => {
-  const session = await getServerAuthSession();
-  if (!session) {
-    redirect("/");
-  }
   const data = await getAllCategories();
   return (
     <div className="flex flex-col gap-6 p-2">

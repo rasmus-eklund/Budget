@@ -1,14 +1,8 @@
-import { getServerAuthSession } from "~/server/auth";
-import { redirect } from "next/navigation";
 import GetTxsLayer from "./_components/GetTxsLayer";
 import { getDateRange } from "./dataLayer/getDateRange";
 import Link from "next/link";
 
 const TransactionPage = async () => {
-  const session = await getServerAuthSession();
-  if (!session) {
-    redirect("/");
-  }
   const range = await getDateRange();
   if (!range) {
     return (

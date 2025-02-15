@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-import { getServerAuthSession } from "~/server/auth";
 import Link from "next/link";
 import capitalize from "~/lib/utils/capitalize";
 import {
@@ -14,12 +12,7 @@ import DeleteDialog from "~/components/common/Forms/DeleteDialog";
 import EditItemForm from "~/components/common/Forms/EditItemForm";
 
 const Categories = async () => {
-  const session = await getServerAuthSession();
-  if (!session) {
-    redirect("/");
-  }
   const data = await getAllPeople();
-
   return (
     <div className="flex flex-col gap-6 p-2">
       <h2 className="text-lg font-semibold">Dina personer:</h2>
