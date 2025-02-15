@@ -1,7 +1,7 @@
 "use server";
 import { db } from "~/server/db";
 import { revalidatePath } from "next/cache";
-import { category, match, users } from "~/server/db/schema";
+import { category, match } from "~/server/db/schema";
 import getUserId from "~/server/getUserId";
 import { and, eq } from "drizzle-orm";
 import type { JsonData, Name } from "~/lib/zodSchemas";
@@ -69,9 +69,8 @@ export const getMatches = async ({ categoryId }: { categoryId: string }) => {
     notFound();
   }
   const unique = await db.query.match.findMany({
-    columns: { id: true, name: true },
-    with: { category: { with: { user: true } } },
-    where: eq(users.id, userId),
+    columns: { name: true },
+    where: eq(category.userId, userId),
   });
 
   return { ...cat, unique };
