@@ -8,5 +8,5 @@ export default defineConfig({
   dbCredentials: {
     url: env.DATABASE_URL,
   },
-  tablesFilter: ["budget_*"],
+  tablesFilter: ["pengar_*"],
 });

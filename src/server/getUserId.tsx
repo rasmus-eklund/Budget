@@ -1,12 +1,19 @@
 import { redirect } from "next/navigation";
-import { getServerAuthSession } from "./auth";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 const getUserId = async () => {
-  const session = await getServerAuthSession();
-  if (!session) {
+  const { isAuthenticated, getUser } = getKindeServerSession();
+  const isUserAuthenticated = await isAuthenticated();
+  if (!isUserAuthenticated) {
     redirect("/");
   }
-  return session.user.id;
+  const user = await getUser();
+  return user.id;
+};
+
+export const isAuthenticated = async () => {
+  const { isAuthenticated } = getKindeServerSession();
+  return isAuthenticated();
 };
 
 export default getUserId;

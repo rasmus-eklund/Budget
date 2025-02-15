@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import Header from "../components/header/Header";
 import { env } from "~/env";
 import PasswordProvider from "../components/password/PasswordContext";
+import { AuthProvider } from "../components/common/AuthProvider";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -20,17 +21,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body
-        className={`font-sans ${inter.variable} flex flex-col items-center`}
-      >
-        <Header />
-        <PasswordProvider>
-          <main className="flex h-[calc(100vh-56px)] w-full max-w-5xl flex-col gap-4">
-            {children}
-          </main>
-        </PasswordProvider>
-      </body>
-    </html>
+    <AuthProvider>
+      <html lang="en">
+        <body
+          className={`font-sans ${inter.variable} flex flex-col items-center`}
+        >
+          <Header />
+          <PasswordProvider>
+            <main className="flex h-[calc(100vh-56px)] w-full max-w-5xl flex-col gap-4">
+              {children}
+            </main>
+          </PasswordProvider>
+        </body>
+      </html>
+    </AuthProvider>
   );
 }
