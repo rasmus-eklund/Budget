@@ -1,23 +1,19 @@
 "use client";
-import { signIn, signOut } from "next-auth/react";
+import { LoginLink, LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { Button } from "~/components/ui/button";
-import { type Session } from "next-auth";
 
-type Props = { session: Session | null };
-const LoginComponent = ({ session }: Props) => {
-  if (!session) {
+type Props = { authenticated: boolean };
+const LoginComponent = ({ authenticated }: Props) => {
+  if (!authenticated) {
     return (
-      <Button data-cy="sign-in" onClick={() => void signIn("google")}>
-        Logga in
+      <Button asChild data-cy="sign-in">
+        <LoginLink postLoginRedirectURL="/transactions">Logga in</LoginLink>
       </Button>
     );
   }
   return (
-    <Button
-      variant="secondary"
-      onClick={() => void signOut({ callbackUrl: "/" })}
-    >
-      Logga ut
+    <Button asChild variant="secondary">
+      <LogoutLink>Logga ut</LogoutLink>
     </Button>
   );
 };
