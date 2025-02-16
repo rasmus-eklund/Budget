@@ -10,7 +10,6 @@ const defaultTxFilter: TxFilter = {
 };
 
 const isChanged = (a: TxFilter, b: TxFilter) => {
-  console.log(a, b);
   return (
     a.category !== b.category ||
     a.person !== b.person ||
