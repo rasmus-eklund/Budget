@@ -12,6 +12,8 @@ export type TxFilter = {
 type SortOption = "date-asc" | "date-desc" | "amount-asc" | "amount-desc";
 type TxSort = { sort: SortOption };
 
+type Tab = "aggregated" | "transactions" | "categoryBars" | "balanceOverTime";
+
 export type Internal = {
   id: string;
   belopp: number;
