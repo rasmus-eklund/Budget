@@ -1,29 +1,26 @@
 import { useMemo } from "react";
-import { twMerge } from "tailwind-merge";
 import calculateSums from "~/lib/utils/calculateSums";
 import capitalize from "~/lib/utils/capitalize";
 import { dateToString, toSek } from "~/lib/utils/formatData";
 import { getFromTo } from "~/lib/utils/dateCalculations";
 import type { FromTo } from "~/lib/zodSchemas";
-import type { TxFilter, Uniques, Tx } from "~/types";
+import type { Uniques, Tx } from "~/types";
+import { cn } from "~/lib/utils";
+import { useTxFilterStore } from "~/stores/tx-filter-store";
 
 type Props = {
   data: Tx[];
   options: Uniques;
-  setFilter: (txFilter: TxFilter) => void;
 };
 
-const Aggregated = ({
-  data,
-  options: { people, categories },
-  setFilter,
-}: Props) => {
+const Aggregated = ({ data, options: { people, categories } }: Props) => {
   const sumsMemo = useMemo(
     () => calculateSums({ data, categories, people }),
     [data, people, categories],
   );
   const peopleTotal = [...people, "total"];
-  const categoriesTotal = [...categories, "spending", "total"].filter(
+  const nonClickableCategories = ["spending", "total"];
+  const categoriesTotal = [...categories, ...nonClickableCategories].filter(
     (i) => i != "inom",
   );
   const dates = getFromTo(data);
@@ -55,36 +52,38 @@ const Aggregated = ({
           {categoriesTotal.map((category, categoryIndex) => (
             <tr key={category}>
               <td className="whitespace-nowrap px-4 font-semibold tracking-wider">
-                {capitalize(category === "spending" ? "Utgifter" : category)}
+                {nonClickableCategories.includes(category) ? (
+                  capitalize(category === "spending" ? "Utgifter" : category)
+                ) : (
+                  <CatButton category={category}>
+                    {capitalize(
+                      category === "spending" ? "Utgifter" : category,
+                    )}
+                  </CatButton>
+                )}
               </td>
               {peopleTotal.map((person, index) => {
                 const sek = sumsMemo[category]![person]!;
                 return (
                   <td
-                    className={twMerge(
-                      `px-4 py-1 text-right ${sek < 0 ? "text-red-600" : ""} ${index === peopleTotal.length - 1 ? "font-semibold" : ""} ${categoryIndex >= categoriesTotal.length - 2 ? "font-bold" : ""}`,
+                    className={cn(
+                      "px-4 py-1 text-right",
+                      sek < 0 && "text-red-600",
+                      index === peopleTotal.length - 1 && "font-semibold",
+                      categoryIndex >= categoriesTotal.length - 2 &&
+                        "font-bold",
                     )}
                     key={`${category}${person}`}
                   >
-                    {category === "total" ||
-                    category === "spending" ||
-                    person === "total" ? (
+                    {nonClickableCategories.includes(category) ? (
                       <p>{toSek(sek)}</p>
                     ) : (
-                      <button
-                        className="hover:scale-110"
-                        onClick={() =>
-                          setFilter({
-                            account: "none",
-                            category,
-                            inom: false,
-                            person,
-                            search: "",
-                          })
-                        }
+                      <CatButton
+                        category={category}
+                        person={person !== "total" ? person : undefined}
                       >
                         {toSek(sek)}
-                      </button>
+                      </CatButton>
                     )}
                   </td>
                 );
@@ -97,4 +96,29 @@ const Aggregated = ({
   );
 };
 
+type CatButtonProps = {
+  children: React.ReactNode;
+  category: string;
+  person?: string;
+};
+const CatButton = ({ children, category, person }: CatButtonProps) => {
+  const { setTxFilter, setTab } = useTxFilterStore();
+  return (
+    <button
+      className="cursor-pointer hover:scale-110"
+      onClick={() => {
+        setTxFilter({
+          account: "none",
+          category,
+          inom: false,
+          person: person ?? "none",
+          search: "",
+        });
+        setTab("transactions");
+      }}
+    >
+      {children}
+    </button>
+  );
+};
 export default Aggregated;

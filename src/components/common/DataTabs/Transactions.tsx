@@ -3,6 +3,7 @@ import { dateToString, toSek } from "~/lib/utils/formatData";
 import { Virtuoso } from "react-virtuoso";
 import type { Tx } from "~/types";
 import capitalize from "~/lib/utils/capitalize";
+import { cn } from "~/lib/utils";
 
 type Props = { data: Tx[] };
 const Transactions = ({ data }: Props) => {
@@ -23,17 +24,12 @@ const Transactions = ({ data }: Props) => {
 const ShowSum = ({ data }: { data: Tx[] }) => {
   const sum = data.reduce((a, b) => a + b.belopp, 0);
   return (
-    <div className="flex justify-between gap-4 p-4 md:justify-end">
-      <p>
-        Antal:
-        <span className="pl-2 font-mono">{data.length}</span>
-      </p>
-      <p>
-        Totalt:
-        <span className={`pl-2 font-mono ${sum < 0 && "text-red-600"}`}>
-          {toSek(sum)}
-        </span>
-      </p>
+    <div className="flex justify-between gap-4 p-4 font-mono md:justify-end">
+      <p className="pl-2">Antal: {data.length}</p>
+      <div className="flex items-center gap-2">
+        <p>Totalt:</p>
+        <Sek sek={sum} />
+      </div>
     </div>
   );
 };
@@ -47,9 +43,7 @@ const Transaction = ({
     <li className="mb-2 mt-2 flex flex-col rounded-sm bg-red-50 p-1 shadow-lg">
       <div className="grid grid-cols-2">
         <p className="font-semibold">{dateToString(datum)}</p>
-        <p className={`text-right font-mono ${belopp < 0 && "text-red-600"}`}>
-          {toSek(belopp)}
-        </p>
+        <Sek sek={belopp} />
       </div>
       <div className="flex justify-between gap-2">
         <p className="overflow-hidden text-ellipsis whitespace-nowrap pr-2 italic">
@@ -62,5 +56,11 @@ const Transaction = ({
     </li>
   );
 };
+
+const Sek = ({ sek }: { sek: number }) => (
+  <p className={cn("text-right font-mono", sek < 0 && "text-red-600")}>
+    {toSek(sek)}
+  </p>
+);
 
 export default Transactions;

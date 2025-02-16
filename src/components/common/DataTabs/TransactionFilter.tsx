@@ -1,4 +1,4 @@
-import type { TxSort, TxFilter, SortOption } from "~/types";
+import type { SortOption } from "~/types";
 import capitalize from "~/lib/utils/capitalize";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -13,26 +13,17 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Button } from "~/components/ui/button";
-import { useState } from "react";
 import { sortOptions } from "~/lib/constants/sortOptions";
+import { useTxFilterStore } from "~/stores/tx-filter-store";
+import { useState } from "react";
 
-type Filters = { txFilter: TxFilter; txSort: TxSort };
 type Props = {
   options: { categories: string[]; people: string[]; accounts: string[] };
-  filters: Filters;
-  defaults: Filters;
-  setFilters: {
-    setTxFilter: (txFilter: TxFilter) => void;
-    setTxSort: (txSort: TxSort) => void;
-  };
 };
-const TransactionFilter = ({
-  options,
-  defaults,
-  filters: { txFilter, txSort },
-  setFilters: { setTxFilter, setTxSort },
-}: Props) => {
+const TransactionFilter = ({ options }: Props) => {
   const [search, setSearch] = useState("");
+  const { setTxFilter, setTxSort, txFilter, txSort, hasChanged, reset } =
+    useTxFilterStore();
   return (
     <form
       className="flex flex-col gap-2 p-1 md:flex-row md:justify-between"
@@ -115,12 +106,12 @@ const TransactionFilter = ({
             id="inomCheck"
             type="checkbox"
           />
-          {JSON.stringify(txFilter) !== JSON.stringify(defaults.txFilter) && (
+          {hasChanged && (
             <Button
               type="button"
               onClick={() => {
                 setSearch("");
-                setTxFilter(defaults.txFilter);
+                reset();
               }}
             >
               Rensa filter
