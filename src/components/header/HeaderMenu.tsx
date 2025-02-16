@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import Icon from "~/lib/icons/Icon";
+import { cn } from "~/lib/utils";
 
 type Props = { hidden: boolean };
 const Menu = ({ hidden }: Props) => {
@@ -22,7 +23,7 @@ const Menu = ({ hidden }: Props) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon" className={`bg-white ${hidden ? "invisible" : ""}`}>
+        <Button size="icon" className={cn("bg-white", hidden && "invisible")}>
           <Icon icon="hamburgerMenu" className="size-8" />
         </Button>
       </DropdownMenuTrigger>
