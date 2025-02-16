@@ -16,7 +16,6 @@ import {
   findMatchingAccount,
 } from "./fileFormHelpers";
 import type { Category, FileData, PersonAccounts, Tx } from "~/types";
-import { usePassword } from "~/components/password/PasswordContext";
 import { applyCategory } from "~/lib/utils/categorize";
 import ShowData from "~/components/common/ShowData";
 import { getFromTo } from "~/lib/utils/dateCalculations";
@@ -33,11 +32,12 @@ import capitalize from "~/lib/utils/capitalize";
 import { ClipLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 import { useTxFilterStore } from "~/stores/tx-filter-store";
+import { usePasswordStore } from "~/stores/password-store";
 
 type Props = { categories: Category[]; people: PersonAccounts };
 const FileForm = ({ categories, people }: Props) => {
   const router = useRouter();
-  const { password } = usePassword();
+  const { password } = usePasswordStore();
   const [files, setFiles] = useState<FileData[]>([]);
   const [txs, setTxs] = useState<TxBankAccount[]>([]);
   const [loading, setLoading] = useState(false);

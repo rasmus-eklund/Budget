@@ -2,17 +2,17 @@
 import React, { useEffect, useState } from "react";
 import ShowData from "~/components/common/ShowData";
 import { type FromTo } from "~/lib/zodSchemas";
-import { usePassword } from "~/components/password/PasswordContext";
 import { getCurrentYearMonth } from "~/lib/utils/dateCalculations";
 import getTxByDates from "../dataLayer/getData";
 import type { Tx } from "~/types";
 import DateFilter from "~/components/common/DateFilters/DateFilter";
 import { useRouter } from "next/navigation";
+import { usePasswordStore } from "~/stores/password-store";
 
 type Props = { range: FromTo };
 const GetTxsLayer = ({ range }: Props) => {
   const router = useRouter();
-  const { password } = usePassword();
+  const { password } = usePasswordStore();
   const [loading, setLoading] = useState(true);
   const [txs, setData] = useState<Tx[]>([]);
 

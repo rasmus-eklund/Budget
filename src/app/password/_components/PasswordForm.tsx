@@ -16,18 +16,18 @@ import { Input } from "~/components/ui/input";
 import { env } from "~/env";
 
 import { type Passwords, passwordsSchema } from "~/lib/zodSchemas";
-import { usePassword } from "~/components/password/PasswordContext";
 import { useRouter, useSearchParams } from "next/navigation";
+import { usePasswordStore } from "~/stores/password-store";
 
 const defaultValues = {
   password: env.NEXT_PUBLIC_PASS ?? "",
 };
 const PasswordForm = () => {
+  const { password, updatePassword } = usePasswordStore();
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get("from");
   const error = searchParams.get("error");
-  const { password, updatePassword } = usePassword();
   const form = useForm<Passwords>({
     mode: "all",
     resolver: zodResolver(passwordsSchema),

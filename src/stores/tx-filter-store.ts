@@ -10,6 +10,7 @@ const defaultTxFilter: TxFilter = {
 };
 
 const isChanged = (a: TxFilter, b: TxFilter) => {
+  console.log(a, b);
   return (
     a.category !== b.category ||
     a.person !== b.person ||
@@ -34,9 +35,7 @@ export const useTxFilterStore = create<{
   tab: "aggregated",
   hasChanged: false,
   setTxFilter: (txFilter: TxFilter) => {
-    if (isChanged(txFilter, defaultTxFilter)) {
-      set({ hasChanged: true });
-    }
+    set({ hasChanged: isChanged(txFilter, defaultTxFilter) });
     set({ txFilter });
   },
   setTxSort: (txSort: TxSort) => {
