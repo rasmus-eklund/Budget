@@ -2,7 +2,7 @@ import { withAuth } from "@kinde-oss/kinde-auth-nextjs/middleware";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export default withAuth(async function middleware() {}, {
-  publicPaths: ["/"],
+  publicPaths: ["/", "/demo"],
 });
 
 export const config = {
