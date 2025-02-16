@@ -47,7 +47,7 @@ const Menu = ({ hidden }: Props) => {
             Ladda upp
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="categories">
-            <Icon icon="cog" className="mr-2 size-6" />
+            <Icon icon="categories" className="mr-2 size-6" />
             Kategorier
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="people">
