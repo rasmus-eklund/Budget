@@ -5,6 +5,7 @@ import Header from "../components/header/Header";
 import { env } from "~/env";
 import PasswordProvider from "../components/password/PasswordContext";
 import { AuthProvider } from "../components/common/AuthProvider";
+import { cn } from "~/lib/utils";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -24,7 +25,7 @@ export default function RootLayout({
     <AuthProvider>
       <html lang="en">
         <body
-          className={`font-sans ${inter.variable} flex flex-col items-center`}
+          className={cn("flex flex-col items-center font-sans", inter.variable)}
         >
           <Header />
           <PasswordProvider>
