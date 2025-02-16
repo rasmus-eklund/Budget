@@ -35,12 +35,12 @@ const getTxByDates = async ({
 }): Promise<TxReturn> => {
   const userId = await getUserId();
   if (userId) {
-    const categories = await db.query.category.findMany({
+    const categoriesReq = db.query.category.findMany({
       columns: { name: true },
       where: eq(category.userId, userId),
       with: { match: { columns: { name: true } } },
     });
-    const response = await db.query.persons.findMany({
+    const personsReq = db.query.persons.findMany({
       where: eq(persons.userId, userId),
       with: {
         bankAccounts: {
@@ -51,8 +51,13 @@ const getTxByDates = async ({
       },
     });
 
+    const [categories, personsRes] = await Promise.all([
+      categoriesReq,
+      personsReq,
+    ]);
+
     const out: TxReturn = { ok: true, data: [] };
-    for (const person of response) {
+    for (const person of personsRes) {
       for (const account of person.bankAccounts) {
         for (const { data, date, id } of account.txs) {
           try {
