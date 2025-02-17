@@ -27,7 +27,7 @@ type Props = {
 
 const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
   const mostRecentYear = to.getFullYear();
-  const mostRecentMonth = to.getMonth();
+  const mostRecentMonth = to.getMonth() + 1;
   const [{ year, month }, setYearMonth] = useState({
     year: mostRecentYear,
     month: mostRecentMonth,
