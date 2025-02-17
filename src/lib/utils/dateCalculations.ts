@@ -1,46 +1,50 @@
 import { type FromTo } from "~/lib/zodSchemas";
 import { dateToString } from "./formatData";
-import dayjs from "dayjs";
 
-export const incrementDay = (date: Date) => {
-  const nextDate = new Date(
-    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1),
-  );
-  return nextDate;
+type YM = { year: number; month: number };
+
+export const decrementDay = (date: Date): FromTo => {
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() - 1);
+
+  const from = new Date(newDate);
+  from.setHours(0, 0, 0, 0);
+
+  const to = new Date(newDate);
+  to.setHours(23, 59, 59, 999);
+
+  return { from, to };
 };
 
-export const decrementDay = (date: Date) => {
-  const prevDate = new Date(
-    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() - 1),
-  );
-  return prevDate;
+export const incrementDay = (date: Date): FromTo => {
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() + 1);
+
+  const from = new Date(newDate);
+  from.setHours(0, 0, 0, 0);
+
+  const to = new Date(newDate);
+  to.setHours(23, 59, 59, 999);
+
+  return { from, to };
 };
 
-export const incrementMonth = ({
-  year,
-  month,
-}: {
-  year: number;
-  month: number;
-}) => {
-  if (month < 11) {
+export const incrementMonth = ({ year, month }: YM) => {
+  if (month < 12) {
     return { year, month: month + 1 };
   } else {
-    return { year: year + 1, month: 0 };
+    return { year: year + 1, month: 1 };
   }
 };
-export const decrementMonth = ({
-  year,
-  month,
-}: {
-  year: number;
-  month: number;
-}) => {
-  if (month > 0) {
-    return { year, month: month - 1 };
-  } else {
-    return { year: year - 1, month: 11 };
+
+export const decrementMonth = ({ year, month }: YM) => {
+  if (month < 1 || month > 12) {
+    throw new Error("Month must be between 1 and 12");
   }
+  if (month === 1) {
+    return { year: year - 1, month: 12 };
+  }
+  return { year, month: month - 1 };
 };
 
 export const getCurrentYearMonth = () => {
@@ -85,28 +89,70 @@ export const FromToString = ({ from, to }: FromTo) => {
   return `${dateToString(from)} - ${dateToString(to)}`;
 };
 
-export const eachDayOfInterval = ({
-  start,
-  end,
-}: {
-  start: Date;
-  end: Date;
-}) => {
-  const startDate = dayjs(start).startOf("day");
-  const endDate = dayjs(end).startOf("day");
+export const eachDayOfInterval = ({ from, to }: FromTo) => {
+  const startDate = new Date(from);
+  startDate.setHours(0, 0, 0, 0);
 
-  if (endDate.isBefore(startDate)) {
+  const endDate = new Date(to);
+  endDate.setHours(0, 0, 0, 0);
+
+  if (endDate < startDate) {
     throw new RangeError(
       "Invalid interval: end date must be after or equal to the start date",
     );
   }
 
   const dates = [];
-  let currentDate = startDate;
+  const currentDate = new Date(startDate);
 
-  while (currentDate.isBefore(endDate) || currentDate.isSame(endDate)) {
-    dates.push(currentDate.toDate());
-    currentDate = currentDate.add(1, "day");
+  while (currentDate <= endDate) {
+    dates.push(new Date(currentDate));
+    currentDate.setDate(currentDate.getDate() + 1);
   }
+
   return dates;
 };
+
+export const getMonthRange = ({ year, month }: YM): FromTo => {
+  if (month < 1 || month > 12) {
+    throw new Error("Month must be between 1 and 12");
+  }
+  const from = new Date(year, month - 1, 1, 0, 0, 0, 0);
+  const to = new Date(year, month, 0, 23, 59, 59, 999);
+  return { from, to };
+};
+
+export const getDayRange = (dateString: string): FromTo => {
+  const date = new Date(dateString);
+
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid date format. Expected 'YYYY-MM-DD'.");
+  }
+
+  const from = new Date(date);
+  from.setHours(0, 0, 0, 0);
+
+  const to = new Date(date);
+  to.setHours(23, 59, 59, 999);
+
+  return { from, to };
+};
+
+export const getToDay = (toString: string): Date => {
+  const to = new Date(toString);
+  if (isNaN(to.getTime())) {
+    throw new Error("Invalid date format. Expected 'YYYY-MM-DD'.");
+  }
+  to.setHours(23, 59, 59, 999);
+  return to;
+};
+
+export const getFromDay = (fromString: string): Date => {
+  const from = new Date(fromString);
+  if (isNaN(from.getTime())) {
+    throw new Error("Invalid date format. Expected 'YYYY-MM-DD'.");
+  }
+  from.setHours(0, 0, 0, 0);
+  return from;
+};
+

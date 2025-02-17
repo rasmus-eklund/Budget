@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import Icon from "~/lib/icons/Icon";
-import { decrementDay, incrementDay } from "~/lib/utils/dateCalculations";
+import {
+  decrementDay,
+  getDayRange,
+  incrementDay,
+} from "~/lib/utils/dateCalculations";
 import { dateToString } from "~/lib/utils/formatData";
 import { type FromTo } from "~/lib/zodSchemas";
 
@@ -11,9 +15,9 @@ type Props = { changeDate: (dates: FromTo) => Promise<void>; fromTo: FromTo };
 
 const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
   const [day, setDay] = useState(to);
-  const onChange = async (date: Date) => {
-    setDay(date);
-    await changeDate({ from: date, to: date });
+  const onChange = async (dates: FromTo) => {
+    setDay(dates.from);
+    await changeDate(dates);
   };
 
   return (
@@ -38,8 +42,7 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
           className="px-1"
           value={dateToString(day)}
           onChange={async ({ target: { value } }) => {
-            const [year, month, day] = value.split("-").map(Number);
-            await onChange(new Date(Date.UTC(year!, month! - 1, day)));
+            await onChange(getDayRange(value));
           }}
         />
         <Button
@@ -55,7 +58,7 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
       <Button
         type="button"
         variant="secondary"
-        onClick={async () => await onChange(to)}
+        onClick={async () => await onChange(getDayRange(dateToString(to)))}
       >
         Senaste dagen
       </Button>

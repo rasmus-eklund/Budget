@@ -12,11 +12,13 @@ import {
 import { months } from "~/lib/constants/months";
 import Icon from "~/lib/icons/Icon";
 import capitalize from "~/lib/utils/capitalize";
-import { decrementMonth, incrementMonth } from "~/lib/utils/dateCalculations";
+import {
+  decrementMonth,
+  getMonthRange,
+  incrementMonth,
+} from "~/lib/utils/dateCalculations";
 import { getYearRange } from "~/lib/utils/dateCalculations";
 import { type FromTo } from "~/lib/zodSchemas";
-
-type YearMonth = { year: number; month: number };
 
 type Props = {
   changeDate: (dates: FromTo) => Promise<void>;
@@ -31,23 +33,23 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
     month: mostRecentMonth,
   });
   const years = getYearRange({ from, to });
-  const submitDates = async ({ year, month }: YearMonth) => {
-    await changeDate({
-      from: new Date(Date.UTC(year, month, 1)),
-      to: new Date(Date.UTC(year, month + 1, 0)),
-    });
+  const submitDates = async (dates: FromTo) => {
+    await changeDate(dates);
   };
+  const test = getMonthRange({ year: 2025, month: 2 });
   return (
     <form
       className="flex flex-col gap-2 p-3 md:flex-row"
       onSubmit={(e) => e.preventDefault()}
     >
       <div className="flex items-center justify-between gap-2 md:justify-normal">
+        <button onClick={async () => await changeDate(test)}>Test</button>
         <Select
           value={year.toString()}
           onValueChange={async (value) => {
-            setYearMonth({ year: Number(value), month });
-            await submitDates({ year: Number(value), month });
+            const data = { year: Number(value), month };
+            setYearMonth(data);
+            await submitDates(getMonthRange(data));
           }}
         >
           <SelectTrigger className="w-[160px]">
@@ -68,7 +70,7 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
           onClick={async () => {
             const dates = decrementMonth({ year, month });
             setYearMonth(dates);
-            await submitDates(dates);
+            await submitDates(getMonthRange(dates));
           }}
         >
           <Icon icon="caretLeft" className="size-4" />
@@ -76,8 +78,9 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
         <Select
           value={month.toString()}
           onValueChange={async (value) => {
-            setYearMonth({ year, month: Number(value) });
-            await submitDates({ year, month: Number(value) });
+            const data = { year, month: Number(value) };
+            setYearMonth(data);
+            await submitDates(getMonthRange(data));
           }}
         >
           <SelectTrigger className="w-[160px]">
@@ -85,7 +88,7 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
           </SelectTrigger>
           <SelectContent>
             {months.map((m, n) => (
-              <SelectItem key={`month-${m}`} value={n.toString()}>
+              <SelectItem key={`month-${m}`} value={(n + 1).toString()}>
                 {capitalize(m)}
               </SelectItem>
             ))}
@@ -96,9 +99,9 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
           variant="outline"
           size="icon"
           onClick={async () => {
-            const dates = incrementMonth({ month, year });
+            const dates = incrementMonth({ year, month });
             setYearMonth(dates);
-            await submitDates(dates);
+            await submitDates(getMonthRange(dates));
           }}
         >
           <Icon icon="caretRight" className="size-4" />
@@ -108,8 +111,9 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
         <Button
           variant={"secondary"}
           onClick={async () => {
-            setYearMonth({ year: mostRecentYear, month: mostRecentMonth });
-            await submitDates({ year: mostRecentYear, month: mostRecentMonth });
+            const data = { year: mostRecentYear, month: mostRecentMonth };
+            setYearMonth(data);
+            await submitDates(getMonthRange(data));
           }}
         >
           Senaste månaden

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
+import { getFromDay, getToDay } from "~/lib/utils/dateCalculations";
 
 import { dateToString } from "~/lib/utils/formatData";
 import { type FromTo } from "~/lib/zodSchemas";
@@ -29,10 +30,9 @@ const FreeDates = ({ changeDate, fromTo: { from, to } }: Props) => {
             className="px-1"
             value={dateToString(filter.from)}
             onChange={({ target: { value } }) => {
-              const [year, month, day] = value.split("-").map(Number);
               setFilter((p) => ({
                 ...p,
-                from: new Date(Date.UTC(year!, month! - 1, day)),
+                from: getFromDay(value),
               }));
             }}
           />
@@ -46,10 +46,9 @@ const FreeDates = ({ changeDate, fromTo: { from, to } }: Props) => {
             type="date"
             value={dateToString(filter.to)}
             onChange={({ target: { value } }) => {
-              const [year, month, day] = value.split("-").map(Number);
               setFilter((p) => ({
                 ...p,
-                to: new Date(Date.UTC(year!, month! - 1, day)),
+                to: getToDay(value),
               }));
             }}
           />
