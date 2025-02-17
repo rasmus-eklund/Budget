@@ -66,7 +66,7 @@ const getRange = (txs: Tx[]) => {
   const endDate = new Date(
     Date.UTC(maxD.getUTCFullYear(), maxD.getUTCMonth(), maxD.getUTCDate()),
   );
-  return eachDayOfInterval({ start: startDate, end: endDate });
+  return eachDayOfInterval({ from: startDate, to: endDate });
 };
 
 const getPersonAccounts = (txs: Tx[]) => {
