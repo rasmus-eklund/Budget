@@ -14,7 +14,6 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import capitalize from "~/lib/utils/capitalize";
-import { type Name, nameSchema } from "~/lib/zodSchemas";
 import {
   Dialog,
   DialogClose,
@@ -28,12 +27,14 @@ import {
 
 import { Button } from "~/components/ui/button";
 import Icon from "~/lib/icons/Icon";
+import { z } from "zod";
 type Props = {
   data: { name: string; id: string };
   onSubmit: (data: { name: string; id: string }) => Promise<void>;
   formInfo: { label: string; description: string };
   uniques: string[];
 };
+type Name = { name: string };
 
 const EditItemForm = ({
   data,
@@ -41,18 +42,23 @@ const EditItemForm = ({
   formInfo: { description, label },
   uniques,
 }: Props) => {
+  const nameSchema = z
+    .object({ name: z.string().min(2, "Minst 2 tecken.") })
+    .refine(
+      (v) =>
+        !uniques.map((i) => i.toLowerCase()).includes(v.name.toLowerCase()),
+      (v) => ({
+        message: `${capitalize(v.name)} finns redan som ${label.toLowerCase()}`,
+        path: ["name"],
+      }),
+    );
   const [open, setOpen] = useState(false);
   const form = useForm<Name>({
     resolver: zodResolver(nameSchema),
     defaultValues: { name: data.name },
+    mode: "onChange",
   });
-  const isUnique = async ({ name }: Name) => {
-    if (uniques.includes(name)) {
-      form.setError("name", {
-        message: `${capitalize(name)} finns redan som ${label.toLowerCase()}`,
-      });
-      return;
-    }
+  const handleSubmit = async ({ name }: Name) => {
     await onSubmit({ name, id: data.id });
     form.reset();
     setOpen(false);
@@ -70,7 +76,10 @@ const EditItemForm = ({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(isUnique)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-8"
+          >
             <FormField
               control={form.control}
               name="name"

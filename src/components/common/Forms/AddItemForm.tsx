@@ -17,8 +17,9 @@ import {
 import { Input } from "~/components/ui/input";
 import capitalize from "~/lib/utils/capitalize";
 
+type Name = { name: string };
 type Props = {
-  onSubmit: (name: { name: string }) => Promise<void>;
+  onSubmit: (name: Name) => Promise<void>;
   formInfo: { label: string; description: string };
   uniques: string[];
 };
@@ -38,11 +39,12 @@ const AddItemForm = ({
         path: ["name"],
       }),
     );
-  const form = useForm<{ name: string }>({
+  const form = useForm<Name>({
     resolver: zodResolver(nameSchema),
     defaultValues: { name: "" },
+    mode: "onChange",
   });
-  const handleSubmit = async (name: { name: string }) => {
+  const handleSubmit = async (name: Name) => {
     await onSubmit(name);
     form.reset();
   };
