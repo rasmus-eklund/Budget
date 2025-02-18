@@ -59,7 +59,9 @@ const page = async ({ params }: { params: Params }) => {
                       label: "Kontonamn",
                     }}
                   />
-                  <DeleteDialog info={{ title: "ditt bankkonto" }}>
+                  <DeleteDialog
+                    info={{ title: "ditt bankkonto", entity: "bankloggar" }}
+                  >
                     <form
                       action={removeBankAccount}
                       className="flex items-center"

@@ -67,7 +67,10 @@ const EditItemForm = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button onClick={() => setOpen(true)}>
-          <Icon icon="edit" className="size-5 hover:scale-110" />
+          <Icon
+            icon="edit"
+            className="size-5 hover:scale-110 hover:cursor-pointer"
+          />
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -98,7 +101,11 @@ const EditItemForm = ({
             />
             <DialogFooter className="flex flex-row justify-between md:justify-end">
               <DialogClose asChild>
-                <Button type="button" variant="secondary">
+                <Button
+                  className="hover:cursor-pointer"
+                  type="button"
+                  variant="secondary"
+                >
                   Stäng
                 </Button>
               </DialogClose>

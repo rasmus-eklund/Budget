@@ -38,7 +38,9 @@ const Categories = async () => {
                     }}
                     uniques={data.map((i) => i.name)}
                   />
-                  <DeleteDialog info={{ title: "personen" }}>
+                  <DeleteDialog
+                    info={{ title: "personen", entity: "bankloggar" }}
+                  >
                     <form action={removePerson} className="flex items-center">
                       <input hidden name="id" type="text" defaultValue={id} />
                       <DeleteButton icon={false} />

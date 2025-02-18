@@ -13,13 +13,16 @@ import {
 } from "~/components/ui/dialog";
 import Icon from "~/lib/icons/Icon";
 
-type Props = { children: ReactNode; info: { title: string } };
-const DeleteDialog = ({ children, info: { title } }: Props) => {
+type Props = { children: ReactNode; info: { title: string; entity: string } };
+const DeleteDialog = ({ children, info: { title, entity } }: Props) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
         <button>
-          <Icon icon="delete" className="size-4" />
+          <Icon
+            icon="delete"
+            className="size-4 cursor-pointer hover:scale-110 hover:fill-red-600"
+          />
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -27,12 +30,16 @@ const DeleteDialog = ({ children, info: { title } }: Props) => {
           <DialogTitle>Ta bort {title.toLowerCase()}</DialogTitle>
           <DialogDescription>
             Detta kommer att ta bort {title.toLowerCase()} tillsammans med alla
-            kopplade bankloggar.
+            kopplade {entity}.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex flex-row justify-between md:justify-end">
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button
+              className="hover:cursor-pointer"
+              type="button"
+              variant="secondary"
+            >
               Avbryt
             </Button>
           </DialogClose>
