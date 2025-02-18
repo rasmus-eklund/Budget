@@ -30,33 +30,17 @@ export const removeMatch = async (formData: FormData) => {
   revalidatePath(`/categories/${categoryId}`);
 };
 
-export const addCategory = async ({ name }: Name) => {
-  const userId = await getUserId();
-  const [{ id }] = (await db
-    .insert(category)
-    .values({ name: name.toLowerCase(), id: randomUUID(), userId })
-    .returning({ id: category.id })) as [{ id: string }];
-  if (!id) {
-    throw new Error("Kunde inte lägga till kategori");
+export const renameMatch = async ({ name, id }: Name & { id: string }) => {
+  await getUserId();
+  const [{ id: newId }] = (await db
+    .update(match)
+    .set({ name: name.toLowerCase() })
+    .where(eq(match.id, id))
+    .returning({ id: match.id })) as [{ id: string }];
+  if (!newId) {
+    throw new Error("Kunde inte ändra matchningens namn");
   }
-  redirect(`/categories/${id}`);
-};
-
-export const removeCategory = async (formData: FormData) => {
-  const userId = await getUserId();
-  const id = formData.get("id") as string;
-  await db
-    .delete(category)
-    .where(and(eq(category.id, id), eq(category.userId, userId)));
-  revalidatePath("/categories");
-};
-
-export const getAllCategories = async () => {
-  const userId = await getUserId();
-  return await db
-    .select({ id: category.id, name: category.name })
-    .from(category)
-    .where(eq(category.userId, userId));
+  revalidatePath(`/categories/${id}`);
 };
 
 export const getMatches = async ({ categoryId }: { categoryId: string }) => {
@@ -117,4 +101,46 @@ export const replaceAllMatches = async (data: JsonData) => {
     }
   });
   revalidatePath("/categories");
+};
+
+export const addCategory = async ({ name }: Name) => {
+  const userId = await getUserId();
+  const [{ id }] = (await db
+    .insert(category)
+    .values({ name: name.toLowerCase(), id: randomUUID(), userId })
+    .returning({ id: category.id })) as [{ id: string }];
+  if (!id) {
+    throw new Error("Kunde inte lägga till kategori");
+  }
+  redirect(`/categories/${id}`);
+};
+
+export const removeCategory = async (formData: FormData) => {
+  const userId = await getUserId();
+  const id = formData.get("id") as string;
+  await db
+    .delete(category)
+    .where(and(eq(category.id, id), eq(category.userId, userId)));
+  revalidatePath("/categories");
+};
+
+export const getAllCategories = async () => {
+  const userId = await getUserId();
+  return await db
+    .select({ id: category.id, name: category.name })
+    .from(category)
+    .where(eq(category.userId, userId));
+};
+
+export const renameCategory = async ({ name, id }: Name & { id: string }) => {
+  await getUserId();
+  const [{ id: newId }] = (await db
+    .update(category)
+    .set({ name: name.toLowerCase() })
+    .where(eq(category.id, id))
+    .returning({ id: category.id })) as [{ id: string }];
+  if (!newId) {
+    throw new Error("Kunde inte ändra kategorins namn");
+  }
+  revalidatePath(`/categories`);
 };

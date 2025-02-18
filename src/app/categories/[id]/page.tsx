@@ -3,12 +3,14 @@ import {
   getAllCategories,
   getMatches,
   removeMatch,
+  renameMatch,
 } from "../dataLayer/categoriesActions";
 import DeleteButton from "~/components/common/Forms/DeleteButton";
 import capitalize from "~/lib/utils/capitalize";
 import BreadcrumbWithDropdown from "~/components/common/Breadcrumb";
 import AddItemForm from "~/components/common/Forms/AddItemForm";
 import type { Name } from "~/types";
+import EditItemForm from "~/components/common/Forms/EditItemForm";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -39,16 +41,27 @@ const page = async (props: Props) => {
               key={id}
             >
               <p>{capitalize(name)}</p>
-              <form action={removeMatch}>
-                <input hidden name="id" type="text" defaultValue={id} />
-                <input
-                  hidden
-                  name="budgetgruppId"
-                  type="text"
-                  defaultValue={id}
+              <div className="flex items-center gap-2">
+                <EditItemForm
+                  data={{ name, id }}
+                  onSubmit={renameMatch}
+                  formInfo={{
+                    description: "Detta kommer att ändra nyckelordets namn",
+                    label: "Namn",
+                  }}
+                  uniques={unique}
                 />
-                <DeleteButton />
-              </form>
+                <form className="flex items-center" action={removeMatch}>
+                  <input hidden name="id" type="text" defaultValue={id} />
+                  <input
+                    hidden
+                    name="budgetgruppId"
+                    type="text"
+                    defaultValue={id}
+                  />
+                  <DeleteButton />
+                </form>
+              </div>
             </li>
           ))}
       </ul>
