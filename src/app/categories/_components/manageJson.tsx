@@ -33,7 +33,7 @@ const ManageJson = () => {
         kopia.
       </p>
       <div className="flex items-center gap-2">
-        <DownloadJsonButton className="w-fit" />
+        <DownloadJsonButton className="w-fit cursor-pointer" />
         <UploadJsonButton onData={setJsonData} />
       </div>
       {jsonData.length !== 0 && (
