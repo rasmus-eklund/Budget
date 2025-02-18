@@ -25,7 +25,7 @@ const Categories = async () => {
                 className="border-b-red flex h-8 items-center justify-between border-b"
                 key={id}
               >
-                <Link href={`/categories/${id}`}>{capitalize(name)}</Link>
+                <Link className="hover:cursor-pointer" href={`/categories/${id}`}>{capitalize(name)}</Link>
                 <form action={removeCategory}>
                   <input hidden name="id" type="text" defaultValue={id} />
                   <DeleteButton />
