@@ -60,3 +60,5 @@ export type Tx = {
   konto: string;
   person: string;
 };
+
+export type Name = { name: string };

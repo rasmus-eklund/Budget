@@ -4,9 +4,10 @@ import { revalidatePath } from "next/cache";
 import { category, match } from "~/server/db/schema";
 import getUserId from "~/server/getUserId";
 import { and, eq } from "drizzle-orm";
-import type { JsonData, Name } from "~/lib/zodSchemas";
+import type { JsonData } from "~/lib/zodSchemas";
 import { randomUUID } from "crypto";
 import { notFound, redirect } from "next/navigation";
+import type { Name } from "~/types";
 
 export const addMatch = async ({
   name,

@@ -9,7 +9,7 @@ import DeleteButton from "~/components/common/Forms/DeleteButton";
 import capitalize from "~/lib/utils/capitalize";
 import BreadcrumbWithDropdown from "~/components/common/Breadcrumb";
 import AddItemForm from "~/components/common/Forms/AddItemForm";
-import type { Name } from "~/lib/zodSchemas";
+import type { Name } from "~/types";
 import EditItemForm from "~/components/common/Forms/EditItemForm";
 import DeleteDialog from "~/components/common/Forms/DeleteDialog";
 

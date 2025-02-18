@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { bankAccounts, persons } from "~/server/db/schema";
 import getUserId from "~/server/getUserId";
 import { and, eq } from "drizzle-orm";
-import { type Name } from "~/lib/zodSchemas";
+import type { Name } from "~/types";
 import { randomUUID } from "crypto";
 import { notFound, redirect } from "next/navigation";
 

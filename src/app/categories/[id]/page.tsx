@@ -4,11 +4,11 @@ import {
   getMatches,
   removeMatch,
 } from "../dataLayer/categoriesActions";
-import DeleteButton from "../../../components/common/Forms/DeleteButton";
+import DeleteButton from "~/components/common/Forms/DeleteButton";
 import capitalize from "~/lib/utils/capitalize";
-import BreadcrumbWithDropdown from "../../../components/common/Breadcrumb";
-import AddItemForm from "../../../components/common/Forms/AddItemForm";
-import type { Name } from "~/lib/zodSchemas";
+import BreadcrumbWithDropdown from "~/components/common/Breadcrumb";
+import AddItemForm from "~/components/common/Forms/AddItemForm";
+import type { Name } from "~/types";
 
 type Props = { params: Promise<{ id: string }> };
 
