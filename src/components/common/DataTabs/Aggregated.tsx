@@ -29,21 +29,28 @@ const Aggregated = ({ data, options: { people, categories } }: Props) => {
     const t = dateToString(to);
     return f !== t ? `${f} - ${t}` : f;
   };
+
+  const catClass =
+    "px-6 py-3 text-xs font-medium uppercase tracking-wider text-gray-500";
   return (
     <div className="overflow-x-auto py-2">
       {dates ? <h2 className="p-2 text-lg">{getDateString(dates)}</h2> : null}
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-100">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Kategori
-            </th>
+            <th className={cn(catClass, "text-left")}>Kategori</th>
             {peopleTotal.map((person) => (
-              <th
-                className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500"
-                key={person}
-              >
-                {person}
+              <th key={person}>
+                {person === "total" ? (
+                  <p className={cn(catClass, "text-right")}>{person}</p>
+                ) : (
+                  <CatButton
+                    className={cn(catClass, "w-full text-right")}
+                    person={person}
+                  >
+                    {person}
+                  </CatButton>
+                )}
               </th>
             ))}
           </tr>
@@ -98,18 +105,24 @@ const Aggregated = ({ data, options: { people, categories } }: Props) => {
 
 type CatButtonProps = {
   children: React.ReactNode;
-  category: string;
+  className?: string;
+  category?: string;
   person?: string;
 };
-const CatButton = ({ children, category, person }: CatButtonProps) => {
+const CatButton = ({
+  children,
+  className,
+  category,
+  person,
+}: CatButtonProps) => {
   const { setTxFilter, setTab } = useTxFilterStore();
   return (
     <button
-      className="cursor-pointer hover:scale-110"
+      className={cn("cursor-pointer hover:scale-110", className)}
       onClick={() => {
         setTxFilter({
           account: "none",
-          category,
+          category: category ?? "none",
           inom: false,
           person: person ?? "none",
           search: "",
