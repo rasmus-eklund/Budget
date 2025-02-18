@@ -68,11 +68,11 @@ export const getMatches = async ({ categoryId }: { categoryId: string }) => {
   if (!cat) {
     notFound();
   }
-  const unique = await db.query.match.findMany({
-    columns: { name: true },
+  const cats = await db.query.category.findMany({
+    with: { match: { columns: { name: true } } },
     where: eq(category.userId, userId),
   });
-
+  const unique = cats.flatMap((c) => c.match.map((m) => m.name));
   return { ...cat, unique };
 };
 

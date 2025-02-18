@@ -58,7 +58,7 @@ const page = async (props: Props) => {
           label: "Nyckelord",
           description: `Lägg till nyckelord för att kategorisera transaktion som ${name.toLowerCase()}`,
         }}
-        uniques={unique.map((i) => i.name)}
+        uniques={unique}
       />
     </div>
   );

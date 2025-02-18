@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ClipLoader } from "react-spinners";
+import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -15,10 +16,9 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import capitalize from "~/lib/utils/capitalize";
-import { type Name, nameSchema } from "~/lib/zodSchemas";
 
 type Props = {
-  onSubmit: (name: Name) => Promise<void>;
+  onSubmit: (name: { name: string }) => Promise<void>;
   formInfo: { label: string; description: string };
   uniques: string[];
 };
@@ -28,23 +28,27 @@ const AddItemForm = ({
   formInfo: { description, label },
   uniques,
 }: Props) => {
-  const form = useForm<Name>({
+  const nameSchema = z
+    .object({ name: z.string().min(2, "Minst 2 tecken.") })
+    .refine(
+      (v) =>
+        !uniques.map((i) => i.toLowerCase()).includes(v.name.toLowerCase()),
+      (v) => ({
+        message: `${capitalize(v.name)} finns redan som ${label.toLowerCase()}`,
+        path: ["name"],
+      }),
+    );
+  const form = useForm<{ name: string }>({
     resolver: zodResolver(nameSchema),
     defaultValues: { name: "" },
   });
-  const isUnique = async ({ name }: Name) => {
-    if (uniques.includes(name)) {
-      form.setError("name", {
-        message: `${capitalize(name)} finns redan som ${label.toLowerCase()}`,
-      });
-      return;
-    }
-    await onSubmit({ name });
+  const handleSubmit = async (name: { name: string }) => {
+    await onSubmit(name);
     form.reset();
   };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(isUnique)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
         <FormField
           control={form.control}
           name="name"
