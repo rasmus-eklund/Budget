@@ -22,9 +22,9 @@ export default function RootLayout({
 }) {
   return (
     <AuthProvider>
-      <html lang="en">
+      <html lang="en" className="h-dvh">
         <body
-          className={cn("flex flex-col items-center font-sans", inter.variable)}
+          className={cn("flex flex-col items-center font-sans h-dvh", inter.variable)}
         >
           <Header />
           <main className="flex h-[calc(100vh-56px)] w-full max-w-5xl flex-col gap-4">
