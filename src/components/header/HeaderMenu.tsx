@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 
@@ -7,15 +8,15 @@ import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import Icon from "~/lib/icons/Icon";
-import { cn } from "~/lib/utils";
 
-type Props = { hidden: boolean };
-const Menu = ({ hidden }: Props) => {
+const Menu = () => {
   const pathname = usePathname();
   const currentPath = pathname.split("/")[1];
   const [page, setPage] = React.useState(currentPath ?? "transactions");
@@ -23,7 +24,7 @@ const Menu = ({ hidden }: Props) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon" className={cn("bg-white", hidden && "invisible")}>
+        <Button size="icon" className="bg-white">
           <Icon icon="hamburgerMenu" className="size-8" />
         </Button>
       </DropdownMenuTrigger>
@@ -60,6 +61,13 @@ const Menu = ({ hidden }: Props) => {
             Lösenord
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <LogoutLink className="flex items-center gap-2 pl-8">
+            <Icon icon="logout" className="size-8" />
+            Logga ut
+          </LogoutLink>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
