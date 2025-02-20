@@ -36,14 +36,12 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
   const submitDates = async (dates: FromTo) => {
     await changeDate(dates);
   };
-  const test = getMonthRange({ year: 2025, month: 2 });
   return (
     <form
       className="flex flex-col gap-2 p-3 md:flex-row"
       onSubmit={(e) => e.preventDefault()}
     >
       <div className="flex items-center justify-between gap-2 md:justify-normal">
-        <button onClick={async () => await changeDate(test)}>Test</button>
         <Select
           value={year.toString()}
           onValueChange={async (value) => {
