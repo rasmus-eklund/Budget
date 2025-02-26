@@ -32,6 +32,7 @@ import capitalize from "~/lib/utils/capitalize";
 import { ClipLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 import { usePasswordStore } from "~/stores/password-store";
+import { useTxFilterStore } from "~/stores/tx-filter-store";
 
 type Props = { categories: Category[]; people: PersonAccounts };
 const FileForm = ({ categories, people }: Props) => {
@@ -217,6 +218,7 @@ const ShowTransactions = ({
   categories: Category[];
   range: FromTo;
 }) => {
+  const { setTab } = useTxFilterStore();
   const [{ from, to }, setDates] = useState<FromTo>(range);
   const data: Tx[] = [];
   for (const tx of txs) {
@@ -224,6 +226,10 @@ const ShowTransactions = ({
       data.push(applyCategory({ tx, categories }));
     }
   }
+
+  useEffect(() => {
+    setTab("transactions");
+  }, [setTab]);
 
   return (
     <ShowData data={data}>
