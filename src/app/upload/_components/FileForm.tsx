@@ -31,7 +31,6 @@ import {
 import capitalize from "~/lib/utils/capitalize";
 import { ClipLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
-import { useTxFilterStore } from "~/stores/tx-filter-store";
 import { usePasswordStore } from "~/stores/password-store";
 
 type Props = { categories: Category[]; people: PersonAccounts };
@@ -219,8 +218,6 @@ const ShowTransactions = ({
   range: FromTo;
 }) => {
   const [{ from, to }, setDates] = useState<FromTo>(range);
-  const { setTab } = useTxFilterStore();
-  setTab("transactions");
   const data: Tx[] = [];
   for (const tx of txs) {
     if (tx.datum >= from && tx.datum <= to) {
