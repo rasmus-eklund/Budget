@@ -5,7 +5,7 @@ const getUserId = async () => {
   const { isAuthenticated, getUser } = getKindeServerSession();
   const isUserAuthenticated = await isAuthenticated();
   if (!isUserAuthenticated) {
-    redirect("/");
+    redirect("/api/auth/login");
   }
   const user = await getUser();
   return user.id;
