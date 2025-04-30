@@ -49,11 +49,8 @@ export const decrementMonth = ({ year, month }: YM) => {
 
 export const getCurrentYearMonth = () => {
   const year = new Date().getFullYear();
-  const month = new Date().getMonth();
-  return {
-    from: new Date(Date.UTC(year, month, 1)),
-    to: new Date(Date.UTC(year, month + 1, 0)),
-  };
+  const month = new Date().getMonth() + 1;
+  return getMonthRange({ year, month });
 };
 
 export const getYearRange = ({ from, to }: FromTo) => {
@@ -155,4 +152,3 @@ export const getFromDay = (fromString: string): Date => {
   from.setHours(0, 0, 0, 0);
   return from;
 };
-
