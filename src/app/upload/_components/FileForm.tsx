@@ -34,8 +34,8 @@ import { useRouter } from "next/navigation";
 import { usePasswordStore } from "~/stores/password-store";
 import { useTxFilterStore } from "~/stores/tx-filter-store";
 
-type Props = { categories: Category[]; people: PersonAccounts };
-const FileForm = ({ categories, people }: Props) => {
+type Props = { categories: Category[]; people: PersonAccounts; userId: string };
+const FileForm = ({ categories, people, userId }: Props) => {
   const router = useRouter();
   const { password } = usePasswordStore();
   const [files, setFiles] = useState<FileData[]>([]);
@@ -74,7 +74,7 @@ const FileForm = ({ categories, people }: Props) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    await uploadFiles({ password, txs });
+    await uploadFiles({ password, txs, userId });
     setFiles([]);
     setTxs([]);
     setLoading(false);

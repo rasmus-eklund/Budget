@@ -10,7 +10,6 @@ import {
 } from "~/lib/zodSchemas";
 import { db } from "~/server/db";
 import { category, persons, txs } from "~/server/db/schema";
-import getUserId from "~/server/getUserId";
 import type { TxReturn } from "~/types";
 
 const decryptTxs = async (
@@ -29,11 +28,12 @@ const decryptTxs = async (
 const getTxByDates = async ({
   dates: { from, to },
   password,
+  userId,
 }: {
   dates: FromTo;
   password: string;
+  userId: string;
 }): Promise<TxReturn> => {
-  const userId = await getUserId();
   if (userId) {
     const categoriesReq = db.query.category.findMany({
       columns: { name: true },

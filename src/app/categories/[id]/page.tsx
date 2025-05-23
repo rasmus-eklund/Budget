@@ -11,14 +11,16 @@ import BreadcrumbWithDropdown from "~/components/common/Breadcrumb";
 import AddItemForm from "~/components/common/Forms/AddItemForm";
 import type { Name } from "~/types";
 import EditItemForm from "~/components/common/Forms/EditItemForm";
+import { WithAuth, type WithAuthProps } from "~/components/common/withAuth";
 
 type Props = { params: Promise<{ id: string }> };
 
-const page = async (props: Props) => {
+const page = async (props: Props & WithAuthProps) => {
   const params = await props.params;
   const { id: categoryId } = params;
-  const options = await getAllCategories();
-  const { name, match, unique } = await getMatches({ categoryId });
+  const { userId } = props;
+  const options = await getAllCategories(userId);
+  const { name, match, unique } = await getMatches({ categoryId, userId });
   const onSubmit = async ({ name }: Name) => {
     "use server";
     await addMatch({ name, categoryId });
@@ -77,4 +79,4 @@ const page = async (props: Props) => {
   );
 };
 
-export default page;
+export default WithAuth(page);

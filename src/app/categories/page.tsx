@@ -11,9 +11,15 @@ import AddItemForm from "~/components/common/Forms/AddItemForm";
 import ManageJson from "./_components/manageJson";
 import DeleteDialog from "~/components/common/Forms/DeleteDialog";
 import EditItemForm from "~/components/common/Forms/EditItemForm";
+import { WithAuth, type WithAuthProps } from "~/components/common/withAuth";
+import { type Name } from "~/types";
 
-const Categories = async () => {
-  const data = await getAllCategories();
+const Categories = async ({ userId }: WithAuthProps) => {
+  const data = await getAllCategories(userId);
+  const handleAddCategory = async ({ name }: Name) => {
+    "use server";
+    await addCategory({ name, userId });
+  };
   return (
     <div className="flex flex-col gap-6 p-2">
       <h2 className="text-lg font-semibold">Dina kategorier:</h2>
@@ -49,6 +55,12 @@ const Categories = async () => {
                   >
                     <form action={removeCategory}>
                       <input hidden name="id" type="text" defaultValue={id} />
+                      <input
+                        hidden
+                        name="userId"
+                        type="text"
+                        defaultValue={userId}
+                      />
                       <DeleteButton icon={false} />
                     </form>
                   </DeleteDialog>
@@ -58,16 +70,16 @@ const Categories = async () => {
         )}
       </ul>
       <AddItemForm
-        onSubmit={addCategory}
+        onSubmit={handleAddCategory}
         formInfo={{
           label: "Kategori",
           description: "Lägg till en ny kategori.",
         }}
         uniques={data.map((i) => i.name)}
       />
-      <ManageJson />
+      <ManageJson userId={userId} />
     </div>
   );
 };
 
-export default Categories;
+export default WithAuth(Categories);

@@ -8,12 +8,13 @@ import { Button } from "~/components/ui/button";
 import { replaceAllMatches } from "../dataLayer/categoriesActions";
 import { ClipLoader } from "react-spinners";
 
-const ManageJson = () => {
+type Props = { userId: string };
+const ManageJson = ({ userId }: Props) => {
   const [jsonData, setJsonData] = useState<JsonData>([]);
   const [loading, setLoading] = useState(false);
   const handleUpload = async () => {
     setLoading(true);
-    await replaceAllMatches(jsonData);
+    await replaceAllMatches({ data: jsonData, userId });
     setJsonData([]);
     setLoading(false);
   };
@@ -33,7 +34,7 @@ const ManageJson = () => {
         kopia.
       </p>
       <div className="flex items-center gap-2">
-        <DownloadJsonButton className="w-fit cursor-pointer" />
+        <DownloadJsonButton className="w-fit cursor-pointer" userId={userId} />
         <UploadJsonButton onData={setJsonData} />
       </div>
       {jsonData.length !== 0 && (

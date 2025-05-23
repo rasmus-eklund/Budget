@@ -14,12 +14,14 @@ export const addMatch = async ({
   categoryId,
 }: Name & { categoryId: string }) => {
   await getUserId();
-  await db
+  const res = await db
     .insert(match)
     .values({ categoryId, name, id: randomUUID() })
     .returning({ categoryId: match.categoryId });
-
-  revalidatePath(`/categories/${categoryId}`);
+  if (!res?.[0]) {
+    throw new Error("Kunde inte lägga till matchning");
+  }
+  revalidatePath(`/categories/${res[0].categoryId}`);
 };
 
 export const removeMatch = async (formData: FormData) => {
@@ -43,8 +45,13 @@ export const renameMatch = async ({ name, id }: Name & { id: string }) => {
   revalidatePath(`/categories/${id}`);
 };
 
-export const getMatches = async ({ categoryId }: { categoryId: string }) => {
-  const userId = await getUserId();
+export const getMatches = async ({
+  categoryId,
+  userId,
+}: {
+  categoryId: string;
+  userId: string;
+}) => {
   const cat = await db.query.category.findFirst({
     columns: { name: true },
     where: and(eq(category.id, categoryId), eq(category.userId, userId)),
@@ -61,8 +68,7 @@ export const getMatches = async ({ categoryId }: { categoryId: string }) => {
   return { ...cat, unique };
 };
 
-export const getAllMatches = async () => {
-  const userId = await getUserId();
+export const getAllMatches = async (userId: string) => {
   return await db.query.category.findMany({
     columns: { name: true },
     with: { match: { columns: { name: true } } },
@@ -70,8 +76,13 @@ export const getAllMatches = async () => {
   });
 };
 
-export const replaceAllMatches = async (data: JsonData) => {
-  const userId = await getUserId();
+export const replaceAllMatches = async ({
+  data,
+  userId,
+}: {
+  data: JsonData;
+  userId: string;
+}) => {
   await db.transaction(async (tx) => {
     try {
       await tx.delete(category).where(eq(category.userId, userId));
@@ -103,8 +114,10 @@ export const replaceAllMatches = async (data: JsonData) => {
   revalidatePath("/categories");
 };
 
-export const addCategory = async ({ name }: Name) => {
-  const userId = await getUserId();
+export const addCategory = async ({
+  name,
+  userId,
+}: Name & { userId: string }) => {
   const [{ id }] = (await db
     .insert(category)
     .values({ name: name.toLowerCase(), id: randomUUID(), userId })
@@ -116,16 +129,15 @@ export const addCategory = async ({ name }: Name) => {
 };
 
 export const removeCategory = async (formData: FormData) => {
-  const userId = await getUserId();
   const id = formData.get("id") as string;
+  const userId = formData.get("userId") as string;
   await db
     .delete(category)
     .where(and(eq(category.id, id), eq(category.userId, userId)));
   revalidatePath("/categories");
 };
 
-export const getAllCategories = async () => {
-  const userId = await getUserId();
+export const getAllCategories = async (userId: string) => {
   return await db
     .select({ id: category.id, name: category.name })
     .from(category)

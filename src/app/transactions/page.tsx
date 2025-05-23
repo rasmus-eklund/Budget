@@ -1,9 +1,10 @@
+import { WithAuth, type WithAuthProps } from "~/components/common/withAuth";
 import GetTxsLayer from "./_components/GetTxsLayer";
 import { getDateRange } from "./dataLayer/getDateRange";
 import Link from "next/link";
 
-const TransactionPage = async () => {
-  const range = await getDateRange();
+const TransactionPage = async ({ userId }: WithAuthProps) => {
+  const range = await getDateRange(userId);
   if (!range) {
     return (
       <p className="p-2">
@@ -18,7 +19,7 @@ const TransactionPage = async () => {
     );
   }
 
-  return <GetTxsLayer range={range} />;
+  return <GetTxsLayer range={range} userId={userId} />;
 };
 
-export default TransactionPage;
+export default WithAuth(TransactionPage);

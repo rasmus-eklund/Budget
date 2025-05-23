@@ -12,17 +12,19 @@ import AddItemForm from "~/components/common/Forms/AddItemForm";
 import type { Name } from "~/types";
 import EditItemForm from "~/components/common/Forms/EditItemForm";
 import DeleteDialog from "~/components/common/Forms/DeleteDialog";
+import { WithAuth, type WithAuthProps } from "~/components/common/withAuth";
 
-type Params = Promise<{ name: string }>;
+type Props = { params: Promise<{ name: string }> };
 
-const page = async ({ params }: { params: Params }) => {
-  const { name: personName } = await params;
-  const options = await getAllPeople();
+const page = async (props: Props & WithAuthProps) => {
+  const { name: personName } = await props.params;
+  const { userId } = props;
+  const options = await getAllPeople(userId);
   const {
     name,
     bankAccounts,
     id: personId,
-  } = await getBankAccounts({ name: personName });
+  } = await getBankAccounts({ name: personName, userId });
   const addAccount = async ({ name }: Name) => {
     "use server";
     await addBankAccount({ name, personId });
@@ -93,4 +95,4 @@ const page = async ({ params }: { params: Params }) => {
   );
 };
 
-export default page;
+export default WithAuth(page);

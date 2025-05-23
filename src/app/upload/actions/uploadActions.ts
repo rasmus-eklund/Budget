@@ -10,16 +10,16 @@ import {
   txs,
   bankAccounts,
 } from "~/server/db/schema";
-import getUserId from "~/server/getUserId";
 
 export const upload = async ({
   transactions,
   year,
+  userId,
 }: {
   transactions: InsertTx[];
   year: number;
+  userId: string;
 }) => {
-  const userId = await getUserId();
   const accounts = await db.query.persons.findMany({
     columns: {},
     with: { bankAccounts: { columns: { id: true } } },
@@ -37,8 +37,7 @@ export const upload = async ({
   revalidatePath("/upload");
 };
 
-export const getTxsPerYear = async () => {
-  const userId = await getUserId();
+export const getTxsPerYear = async (userId: string) => {
   const data = await db
     .select({
       year: txs.year,
@@ -53,8 +52,7 @@ export const getTxsPerYear = async () => {
   return data;
 };
 
-export const GetCategories = async () => {
-  const userId = await getUserId();
+export const GetCategories = async (userId: string) => {
   const categories = await db.query.category.findMany({
     columns: { name: true },
     where: eq(category.userId, userId),
@@ -63,8 +61,7 @@ export const GetCategories = async () => {
   return categories;
 };
 
-export const getPersonAccounts = async () => {
-  const userId = await getUserId();
+export const getPersonAccounts = async (userId: string) => {
   return await db.query.persons.findMany({
     columns: { id: true, name: true },
     where: eq(persons.userId, userId),
