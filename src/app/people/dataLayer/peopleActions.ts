@@ -47,8 +47,10 @@ export const removeBankAccount = async (formData: FormData) => {
   revalidatePath(`/people/${name}`);
 };
 
-export const addPerson = async ({ name: personName }: Name) => {
-  const userId = await getUserId();
+export const addPerson = async ({
+  name: personName,
+  userId,
+}: Name & { userId: string }) => {
   const [{ name }] = (await db
     .insert(persons)
     .values({ name: personName.toLowerCase(), id: randomUUID(), userId })
@@ -60,8 +62,8 @@ export const addPerson = async ({ name: personName }: Name) => {
 };
 
 export const removePerson = async (formData: FormData) => {
-  const userId = await getUserId();
   const id = formData.get("id") as string;
+  const userId = formData.get("userId") as string;
   await db
     .delete(persons)
     .where(and(eq(persons.id, id), eq(persons.userId, userId)));
@@ -81,16 +83,20 @@ export const renamePerson = async ({ name, id }: Name & { id: string }) => {
   revalidatePath(`/people/${name}`);
 };
 
-export const getAllPeople = async () => {
-  const userId = await getUserId();
+export const getAllPeople = async (userId: string) => {
   return await db
     .select({ id: persons.id, name: persons.name })
     .from(persons)
     .where(eq(persons.userId, userId));
 };
 
-export const getBankAccounts = async ({ name }: { name: string }) => {
-  const userId = await getUserId();
+export const getBankAccounts = async ({
+  name,
+  userId,
+}: {
+  name: string;
+  userId: string;
+}) => {
   const person = await db.query.persons.findFirst({
     columns: { name: true, id: true },
     where: and(eq(persons.name, name), eq(persons.userId, userId)),

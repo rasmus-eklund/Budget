@@ -19,7 +19,7 @@ import Icon from "~/lib/icons/Icon";
 const Menu = () => {
   const pathname = usePathname();
   const currentPath = pathname.split("/")[1];
-  const [page, setPage] = React.useState(currentPath ?? "transactions");
+  const [page, setPage] = React.useState(currentPath);
   const router = useRouter();
   return (
     <DropdownMenu>

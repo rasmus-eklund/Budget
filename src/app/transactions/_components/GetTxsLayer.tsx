@@ -9,8 +9,8 @@ import DateFilter from "~/components/common/DateFilters/DateFilter";
 import { useRouter } from "next/navigation";
 import { usePasswordStore } from "~/stores/password-store";
 
-type Props = { range: FromTo };
-const GetTxsLayer = ({ range }: Props) => {
+type Props = { range: FromTo; userId: string };
+const GetTxsLayer = ({ range, userId }: Props) => {
   const router = useRouter();
   const { password } = usePasswordStore();
   const [loading, setLoading] = useState(true);
@@ -18,7 +18,7 @@ const GetTxsLayer = ({ range }: Props) => {
 
   const getData = async (dates: FromTo) => {
     setLoading(true);
-    const res = await getTxByDates({ dates, password });
+    const res = await getTxByDates({ dates, password, userId });
     if (!res.ok) {
       setData([]);
       if (res.error === "password") {
@@ -38,7 +38,7 @@ const GetTxsLayer = ({ range }: Props) => {
       return router.push("/password?from=transactions");
     }
     const dates = getCurrentYearMonth();
-    getTxByDates({ dates, password })
+    getTxByDates({ dates, password, userId })
       .then((res) => {
         if (!res.ok) {
           return setData([]);
@@ -47,7 +47,7 @@ const GetTxsLayer = ({ range }: Props) => {
       })
       .catch(() => setData([]))
       .finally(() => setLoading(false));
-  }, [password, router]);
+  }, [password, router, userId]);
 
   return (
     <ShowData loading={loading} data={txs}>

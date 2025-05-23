@@ -10,9 +10,15 @@ import DeleteButton from "~/components/common/Forms/DeleteButton";
 import AddItemForm from "~/components/common/Forms/AddItemForm";
 import DeleteDialog from "~/components/common/Forms/DeleteDialog";
 import EditItemForm from "~/components/common/Forms/EditItemForm";
+import { WithAuth, type WithAuthProps } from "~/components/common/withAuth";
+import { type Name } from "~/types";
 
-const Categories = async () => {
-  const data = await getAllPeople();
+const Categories = async ({ userId }: WithAuthProps) => {
+  const data = await getAllPeople(userId);
+  const handleAddPerson = async ({ name }: Name) => {
+    "use server";
+    await addPerson({ name, userId });
+  };
   return (
     <div className="flex flex-col gap-6 p-2">
       <h2 className="text-lg font-semibold">Dina personer:</h2>
@@ -52,7 +58,7 @@ const Categories = async () => {
         )}
       </ul>
       <AddItemForm
-        onSubmit={addPerson}
+        onSubmit={handleAddPerson}
         formInfo={{
           label: "Person",
           description: "Lägg till en ny person.",
@@ -63,4 +69,4 @@ const Categories = async () => {
   );
 };
 
-export default Categories;
+export default WithAuth(Categories);

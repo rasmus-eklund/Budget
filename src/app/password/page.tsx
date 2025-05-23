@@ -1,9 +1,8 @@
-import getUserId from "~/server/getUserId";
 import PasswordForm from "./_components/PasswordForm";
+import { WithAuth } from "~/components/common/withAuth";
 
 const Password = async () => {
-  await getUserId();
   return <PasswordForm />;
 };
 
-export default Password;
+export default WithAuth(Password);

@@ -8,7 +8,7 @@ const Header = async () => {
   const authenticated = await isAuthenticated();
   return (
     <header className="relative flex h-14 min-h-14 w-full max-w-5xl items-center border-b bg-white px-3">
-      <div className="absolute right-2 top-2">
+      <div className="absolute left-2 top-2">
         {authenticated ? (
           <Menu />
         ) : (

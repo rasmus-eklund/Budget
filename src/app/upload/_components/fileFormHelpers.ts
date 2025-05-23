@@ -67,9 +67,11 @@ export const readFiles = async (
 export const uploadFiles = async ({
   password,
   txs,
+  userId,
 }: {
   password: string;
   txs: TxBankAccount[];
+  userId: string;
 }) => {
   const years = new Set<number>();
   const transactions: InsertTx[] = [];
@@ -90,7 +92,7 @@ export const uploadFiles = async ({
     throw new Error("Ett år per uppladdning");
   }
   const [year] = Array.from(years) as [number];
-  await upload({ transactions, year });
+  await upload({ transactions, year, userId });
 };
 
 export const addPersonAccount = (
