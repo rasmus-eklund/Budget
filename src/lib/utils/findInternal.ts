@@ -20,7 +20,7 @@ export const findInternal = (day: Internal[]) => {
     if (group.length % 2 === 0 && totalSum === 0) {
       let halfIncome = 0;
       for (const tx of group) {
-        halfIncome += tx.typ === "Insättning" ? -1 : 1;
+        halfIncome += tx.belopp > 0 ? -1 : 1;
       }
       const differentAccounts = new Set(group.map((tx) => tx.bankAccountId));
       if (halfIncome === 0 && differentAccounts.size > 1) {
