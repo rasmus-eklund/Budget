@@ -1,6 +1,3 @@
-import type { types } from "~/lib/constants/types";
-export type Typ = (typeof types)[number];
-
 export type TxFilter = {
   category: string;
   person: string;
@@ -17,7 +14,7 @@ type Tab = "aggregated" | "transactions" | "categoryBars" | "balanceOverTime";
 export type Internal = {
   id: string;
   belopp: number;
-  typ: Typ;
+  typ: string;
   bankAccountId: string;
 };
 
@@ -53,7 +50,7 @@ export type Tx = {
   id: string;
   datum: Date;
   text: string;
-  typ: Typ;
+  typ: string;
   budgetgrupp: string;
   belopp: number;
   saldo: number;
