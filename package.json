@@ -10,7 +10,7 @@
     "dev": "next dev --turbopack",
     "lint": "next lint",
     "start": "next start",
-    "test": "vitest"
+    "test": "bun test --watch"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^0.7.0",
