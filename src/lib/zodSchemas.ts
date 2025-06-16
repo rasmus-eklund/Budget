@@ -1,6 +1,5 @@
 import { z } from "zod";
 import dayjs from "dayjs";
-import { types } from "~/lib/constants/types";
 
 const makeErrorMap = (messages: {
   [Code in z.ZodIssueCode]?: (value: unknown) => string;
@@ -51,16 +50,7 @@ export const csvSchema = z
         text: z
           .string({ required_error: "Text saknas." })
           .min(1, "Text måste vara på minst 1 tecken"),
-        typ: z.enum(
-          types,
-          makeErrorMap({
-            invalid_type: (v) =>
-              `Typ '${String(v)}' måste vara en av ${types.join(", ")}`,
-            invalid_enum_value: (v) =>
-              `Typ '${String(v)}' måste vara en av ${types.join(", ")}`,
-          }),
-        ),
-        budgetgrupp: z.string({ required_error: "Budgetgrupp saknas." }),
+        typ: z.string(),
         belopp: z
           .string({ required_error: "Belopp saknas." })
           .refine(
@@ -88,6 +78,7 @@ export type CsvSchema = z.infer<typeof csvSchema>;
 export type TxBankAccount = z.infer<typeof csvSchema>[number] & {
   index: number;
   bankAccountId: string;
+  budgetgrupp: string;
   id: string;
 };
 
@@ -104,7 +95,7 @@ export const matchSchema = z.object({
 
 export const encryptedDataSchema = z.object({
   text: z.string(),
-  typ: z.enum(types),
+  typ: z.string(),
   budgetgrupp: z.string(),
   belopp: z.coerce.number(),
   saldo: z.coerce.number(),
