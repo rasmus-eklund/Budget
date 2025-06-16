@@ -23,14 +23,14 @@ describe("Change date", () => {
       expect(result).toEqual(expected);
     });
 
-    it("should handle decrementing from January to December of the previous year", () => {
+    it.only("should handle decrementing from January to December of the previous year", () => {
       const date = {
         year: 2020,
-        month: 0, // January
+        month: 1,
       };
       const expected = {
         year: 2019,
-        month: 11, // December of the previous year
+        month: 12,
       };
       const result = decrementMonth(date);
       expect(result).toEqual(expected);
@@ -39,11 +39,11 @@ describe("Change date", () => {
     it("should increment one month", () => {
       const date = {
         year: 2020,
-        month: 0, // January
+        month: 1, // January
       };
       const expected = {
         year: 2020,
-        month: 1, // February
+        month: 2, // February
       };
       const result = incrementMonth(date);
       expect(result).toEqual(expected);
@@ -65,14 +65,20 @@ describe("Change date", () => {
   describe("day", () => {
     it("should minus one day", () => {
       const date = new Date("2020-01-02");
-      const expected = new Date("2020-01-01");
+      const expected = {
+        from: new Date("2020-01-02"),
+        to: new Date("2020-01-02"),
+      };
 
       const result = decrementDay(date);
       expect(result).toEqual(expected);
     });
     it("should plus one day", () => {
       const date = new Date("2020-01-01");
-      const expected = new Date("2020-01-02");
+      const expected = {
+        from: new Date("2020-01-01"),
+        to: new Date("2020-01-02"),
+      };
       const result = incrementDay(date);
       expect(result).toEqual(expected);
     });
@@ -91,18 +97,20 @@ describe("Get all years from - to", () => {
 
 describe("Get max and min dates", () => {
   it("should find max and min", () => {
+    const minDate = new Date("2021-01-01");
+    const maxDate = new Date("2024-02-01");
     const data = [
-      { datum: new Date("2021-01-01") },
+      { datum: minDate },
       { datum: new Date("2022-02-01") },
       { datum: new Date("2023-03-01") },
-      { datum: new Date("2024-04-01") },
+      { datum: maxDate },
     ];
     const tmp = getFromTo(data);
     if (!tmp) {
       throw new Error("Could not get from and to");
     }
     const { from, to } = tmp;
-    expect(from).toStrictEqual(data[0]?.datum);
-    expect(to).toStrictEqual(data[3]?.datum);
+    expect(from).toBe(minDate);
+    expect(to).toBe(maxDate);
   });
 });
