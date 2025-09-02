@@ -63,7 +63,7 @@ const UploadJsonButton = ({ className, onData }: Props) => {
         onChange={handleFileUpload}
       />
 
-      {error && <p className="text-red-500">{error}</p>}
+      {error && <p className="text-primary">{error}</p>}
     </div>
   );
 };

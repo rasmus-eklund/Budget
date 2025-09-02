@@ -21,7 +21,7 @@ const DeleteDialog = ({ children, info: { title, entity } }: Props) => {
         <button>
           <Icon
             icon="Trash"
-            className="size-4 cursor-pointer hover:scale-110 hover:fill-red-600"
+            className="cursor-pointer hover:scale-110 hover:text-primary"
           />
         </button>
       </DialogTrigger>

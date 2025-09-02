@@ -11,13 +11,9 @@ const DeleteButton = ({ icon = true }: Props) => {
   } else {
     if (icon) {
       return (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="hover:scale-110 hover:cursor-pointer hover:bg-white"
-        >
-          <Icon icon="Trash" className="hover:text-red-600" />
-        </Button>
+        <button className="hover:scale-110 hover:cursor-pointer">
+          <Icon icon="Trash" className="hover:text-primary" />
+        </button>
       );
     }
     return (

@@ -22,7 +22,7 @@ const ImportErrors = ({ error, file }: ImportErrorsProps) => {
   }
   const errors = Array.from(items.values());
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-red-500 p-4">
+    <div className="flex flex-col gap-2 rounded-lg border border-primary p-4">
       <p>Fel i fil: {file}</p>
       <ul className="flex flex-col gap-1">
         {Array.from(errors)

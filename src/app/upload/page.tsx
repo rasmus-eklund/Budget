@@ -20,7 +20,7 @@ const UploadPage = async ({ userId }: WithAuthProps) => {
       {data.length !== 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-red-600">Transaktioner per år</CardTitle>
+            <CardTitle className="text-primary">Transaktioner per år</CardTitle>
           </CardHeader>
           <CardContent>
             <YearCountChart data={data} />
