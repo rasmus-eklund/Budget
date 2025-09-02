@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import Icon from "~/lib/icons/Icon";
+import Icon from "~/components/common/Icon";
 import {
   decrementDay,
   getDayRange,
@@ -33,7 +33,7 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
           size="icon"
           onClick={async () => await onChange(decrementDay(day))}
         >
-          <Icon icon="caretLeft" className="size-4" />
+          <Icon icon="ChevronLeft" className="size-4" />
         </Button>
         <input
           min={dateToString(from)}
@@ -52,7 +52,7 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
           size="icon"
           onClick={async () => await onChange(incrementDay(day))}
         >
-          <Icon icon="caretRight" className="size-4" />
+          <Icon icon="ChevronRight" className="size-4" />
         </Button>
       </div>
       <Button

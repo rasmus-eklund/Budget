@@ -6,7 +6,7 @@ import DownloadJsonButton from "./downloadJson";
 import UploadJsonButton from "./uploadJson";
 import { Button } from "~/components/ui/button";
 import { replaceAllMatches } from "../dataLayer/categoriesActions";
-import { ClipLoader } from "react-spinners";
+import Icon from "~/components/common/Icon";
 
 type Props = { userId: string };
 const ManageJson = ({ userId }: Props) => {
@@ -22,7 +22,7 @@ const ManageJson = ({ userId }: Props) => {
     return (
       <div className="flex h-full w-full items-center justify-center gap-2">
         <p>Laddar upp...</p>
-        <ClipLoader size={50} />
+        <Icon icon="Loader2Icon" className="animate-spin" />
       </div>
     );
   }
@@ -63,7 +63,7 @@ const ManageJson = ({ userId }: Props) => {
           </div>
           <div className="flex gap-2">
             <Button onClick={() => setJsonData([])}>Stäng</Button>
-            <Button disabled={loading} onClick={handleUpload}>
+            <Button variant="outline" disabled={loading} onClick={handleUpload}>
               Spara
             </Button>
           </div>

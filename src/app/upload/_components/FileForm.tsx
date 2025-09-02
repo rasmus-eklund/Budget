@@ -29,10 +29,10 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import capitalize from "~/lib/utils/capitalize";
-import { ClipLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 import { usePasswordStore } from "~/stores/password-store";
 import { useTxFilterStore } from "~/stores/tx-filter-store";
+import Icon from "~/components/common/Icon";
 
 type Props = { categories: Category[]; people: PersonAccounts; userId: string };
 const FileForm = ({ categories, people, userId }: Props) => {
@@ -108,7 +108,7 @@ const FileForm = ({ categories, people, userId }: Props) => {
         <p>Transaktionerna du laddar upp kommer att ersätta året.</p>
         {password && (
           <div className="flex gap-2">
-            <Button asChild className="cursor-pointer">
+            <Button asChild variant="secondary" className="cursor-pointer">
               <label className="select-none" htmlFor="file-upload">
                 Välj filer
               </label>
@@ -145,6 +145,7 @@ const FileForm = ({ categories, people, userId }: Props) => {
             <Button
               onClick={processTxs}
               type="button"
+              variant="outline"
               disabled={
                 files.length === 0 ||
                 error.error ||
@@ -154,11 +155,12 @@ const FileForm = ({ categories, people, userId }: Props) => {
               {loading ? "Laddar..." : "Bearbeta"}
             </Button>
             <Button
+              variant="outline"
               className="flex items-center gap-2"
               disabled={!txs || txs.length === 0 || !password}
             >
-              <p>Ladda upp</p>
-              {loading && <ClipLoader size={20} />}
+              Ladda upp
+              {loading && <Icon icon="Loader2Icon" className="animate-spin" />}
             </Button>
           </div>
         )}
@@ -177,7 +179,7 @@ const FileForm = ({ categories, people, userId }: Props) => {
                     });
                   }}
                 >
-                  <SelectTrigger className="w-[200px]">
+                  <SelectTrigger className="w-fit max-w-96">
                     <SelectValue placeholder="Välj konto" />
                   </SelectTrigger>
                   <SelectContent>

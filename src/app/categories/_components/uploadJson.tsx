@@ -47,7 +47,7 @@ const UploadJsonButton = ({ className, onData }: Props) => {
 
   return (
     <div className={className}>
-      <Button asChild className="cursor-pointer">
+      <Button variant="outline" asChild className="cursor-pointer">
         <label htmlFor="json-upload">Ladda upp</label>
       </Button>
       <input

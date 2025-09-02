@@ -1,23 +1,23 @@
 "use client";
 import { useFormStatus } from "react-dom";
-import { ClipLoader } from "react-spinners";
 import { Button } from "~/components/ui/button";
-import Icon from "~/lib/icons/Icon";
+import Icon from "~/components/common/Icon";
 
 type Props = { icon?: boolean };
 const DeleteButton = ({ icon = true }: Props) => {
   const { pending } = useFormStatus();
   if (pending) {
-    return <ClipLoader size={18} />;
+    return <Icon icon="Loader2Icon" className="animate-spin" />;
   } else {
     if (icon) {
       return (
-        <button className="hover:scale-110 hover:cursor-pointer">
-          <Icon
-            icon="delete"
-            className="size-4 fill-black hover:fill-red-600"
-          />
-        </button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="hover:scale-110 hover:cursor-pointer hover:bg-white"
+        >
+          <Icon icon="Trash" className="hover:text-red-600" />
+        </Button>
       );
     }
     return (

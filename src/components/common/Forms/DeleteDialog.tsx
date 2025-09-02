@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import Icon from "~/lib/icons/Icon";
+import Icon from "~/components/common/Icon";
 
 type Props = { children: ReactNode; info: { title: string; entity: string } };
 const DeleteDialog = ({ children, info: { title, entity } }: Props) => {
@@ -20,7 +20,7 @@ const DeleteDialog = ({ children, info: { title, entity } }: Props) => {
       <DialogTrigger asChild>
         <button>
           <Icon
-            icon="delete"
+            icon="Trash"
             className="size-4 cursor-pointer hover:scale-110 hover:fill-red-600"
           />
         </button>

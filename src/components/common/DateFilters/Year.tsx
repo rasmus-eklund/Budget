@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import Icon from "~/lib/icons/Icon";
+import Icon from "~/components/common/Icon";
 import { getYearRange } from "~/lib/utils/dateCalculations";
 import { type FromTo } from "~/lib/zodSchemas";
 
@@ -45,7 +45,7 @@ const Year = ({ changeDate, fromTo: { from, to } }: Props) => {
             await submitYear(newYear);
           }}
         >
-          <Icon icon="caretLeft" className="size-4" />
+          <Icon icon="ChevronLeft" className="size-4" />
         </Button>
         <Select
           value={year.toString()}
@@ -77,7 +77,7 @@ const Year = ({ changeDate, fromTo: { from, to } }: Props) => {
             await submitYear(newYear);
           }}
         >
-          <Icon icon="caretRight" className="size-4" />
+          <Icon icon="ChevronRight" className="size-4" />
         </Button>
       </div>
       <Button

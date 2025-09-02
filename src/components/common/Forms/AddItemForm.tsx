@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ClipLoader } from "react-spinners";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import {
@@ -16,6 +15,7 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import capitalize from "~/lib/utils/capitalize";
+import Icon from "~/components/common/Icon";
 
 type Name = { name: string };
 type Props = {
@@ -65,16 +65,20 @@ const AddItemForm = ({
             </FormItem>
           )}
         />
-        {form.formState.isSubmitting ? (
-          <Button disabled>
-            <ClipLoader size={20} className="mr-2" />
-            Vänta
-          </Button>
-        ) : (
-          <Button type="submit" disabled={!form.formState.isValid}>
-            Lägg till
-          </Button>
-        )}
+        <Button
+          variant="outline"
+          type="submit"
+          disabled={!form.formState.isValid || form.formState.isSubmitting}
+        >
+          {form.formState.isSubmitting ? (
+            <>
+              Vänta
+              <Icon icon="Loader2Icon" className="animate-spin" />
+            </>
+          ) : (
+            "Lägg till"
+          )}
+        </Button>
       </form>
     </Form>
   );

@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import Icon from "~/lib/icons/Icon";
+import Icon from "~/components/common/Icon";
 
 const Menu = () => {
   const pathname = usePathname();
@@ -24,8 +24,8 @@ const Menu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon" className="bg-white">
-          <Icon icon="hamburgerMenu" className="size-8" />
+        <Button size="icon" variant="outline">
+          <Icon icon="Menu" className="size-8" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-44">
@@ -41,30 +41,30 @@ const Menu = () => {
           }}
         >
           <DropdownMenuRadioItem value="transactions">
-            <Icon icon="cash" className="mr-2 size-6" />
+            <Icon icon="Banknote" className="mr-2 size-6" />
             Transaktioner
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="upload">
-            <Icon icon="upload" className="mr-2 size-6" />
+            <Icon icon="Upload" className="mr-2 size-6" />
             Ladda upp
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="categories">
-            <Icon icon="categories" className="mr-2 size-6" />
+            <Icon icon="LayoutGrid" className="mr-2 size-6" />
             Kategorier
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="people">
-            <Icon icon="user" className="mr-2 size-6" />
+            <Icon icon="User" className="mr-2 size-6" />
             Personer
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="password">
-            <Icon icon="password" className="mr-2 size-6" />
+            <Icon icon="Lock" className="mr-2 size-6" />
             Lösenord
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <LogoutLink className="flex items-center gap-2 pl-8">
-            <Icon icon="logout" className="size-8" />
+            <Icon icon="LogOut" className="size-8" />
             Logga ut
           </LogoutLink>
         </DropdownMenuItem>
