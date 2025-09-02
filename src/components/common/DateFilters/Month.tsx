@@ -41,7 +41,7 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
       className="flex flex-col gap-2 md:flex-row"
       onSubmit={(e) => e.preventDefault()}
     >
-      <div className="flex items-center gap-1 ">
+      <div className="flex items-center gap-1">
         <Select
           value={year.toString()}
           onValueChange={async (value) => {
@@ -50,7 +50,7 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
             await submitDates(getMonthRange(data));
           }}
         >
-          <SelectTrigger className="w-[80px]">
+          <SelectTrigger className="w-[90px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

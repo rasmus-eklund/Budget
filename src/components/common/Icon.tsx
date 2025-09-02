@@ -5,12 +5,12 @@ import { cn } from "src/lib/utils";
 type IconComponent = ComponentType<{
   className?: string;
 }>;
-type LucideKeys = {
+export type IconName = {
   [K in keyof typeof Lucide]: (typeof Lucide)[K] extends IconComponent
     ? K
     : never;
 }[keyof typeof Lucide];
-type IconName = LucideKeys;
+
 type IconProps = ComponentProps<(typeof Lucide)[IconName]>;
 type Props = IconProps & {
   icon: IconName;

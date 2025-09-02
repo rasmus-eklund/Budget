@@ -9,9 +9,9 @@ type Props = { data: Tx[] };
 const Transactions = ({ data }: Props) => {
   return (
     <>
-      <ul className="flex flex-col gap-2">
+      <ul className="flex flex-col gap-2 flex-1">
         <Virtuoso
-          className="h-[500px]!"
+          className="h-[600px]!"
           data={data}
           itemContent={(_, tx) => <Transaction key={tx.id} data={tx} />}
         />

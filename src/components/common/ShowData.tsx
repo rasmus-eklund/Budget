@@ -22,7 +22,7 @@ const ShowData = ({ data, loading = false, children }: Props) => {
   const options = getUnique({ data, txFilter });
 
   return (
-    <section className="flex h-full flex-col gap-2 p-2 md:gap-5">
+    <section className="flex flex-1 flex-col gap-2 p-2 md:gap-5">
       {children}
       <Tabs value={tab} onValueChange={(value) => setTab(value as Tab)}>
         <TabsList>
@@ -31,7 +31,7 @@ const ShowData = ({ data, loading = false, children }: Props) => {
           <TabsTrigger value="categoryBars">Utgifter</TabsTrigger>
           <TabsTrigger value="balanceOverTime">Saldo</TabsTrigger>
         </TabsList>
-        <TabsContent value="aggregated">
+        <TabsContent value="aggregated" className="flex-1 min-h-0">
           {loading ? (
             <p>Laddar...</p>
           ) : (

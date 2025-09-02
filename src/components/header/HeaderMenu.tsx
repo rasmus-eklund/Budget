@@ -14,13 +14,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import Icon from "~/components/common/Icon";
+import Icon, { type IconName } from "~/components/common/Icon";
 
 const Menu = () => {
   const pathname = usePathname();
   const currentPath = pathname.split("/")[1];
   const [page, setPage] = React.useState(currentPath);
   const router = useRouter();
+  const items: { name: string; path: string; icon: IconName }[] = [
+    { name: "Transaktioner", path: "transactions", icon: "Banknote" },
+    { name: "Ladda upp", path: "upload", icon: "Upload" },
+    { name: "Kategorier", path: "categories", icon: "LayoutGrid" },
+    { name: "Personer", path: "people", icon: "User" },
+    { name: "Lösenord", path: "password", icon: "Lock" },
+  ];
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -40,31 +47,17 @@ const Menu = () => {
             }
           }}
         >
-          <DropdownMenuRadioItem value="transactions">
-            <Icon icon="Banknote" className="mr-2 size-6" />
-            Transaktioner
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="upload">
-            <Icon icon="Upload" className="mr-2 size-6" />
-            Ladda upp
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="categories">
-            <Icon icon="LayoutGrid" className="mr-2 size-6" />
-            Kategorier
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="people">
-            <Icon icon="User" className="mr-2 size-6" />
-            Personer
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="password">
-            <Icon icon="Lock" className="mr-2 size-6" />
-            Lösenord
-          </DropdownMenuRadioItem>
+          {items.map(({ name, path, icon }) => (
+            <DropdownMenuRadioItem key={path} value={path}>
+              <Icon icon={icon} className="mr-2 size-5" />
+              {name}
+            </DropdownMenuRadioItem>
+          ))}
         </DropdownMenuRadioGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <LogoutLink className="flex items-center gap-2 pl-8">
-            <Icon icon="LogOut" className="size-8" />
+            <Icon icon="LogOut" className="mr-2 size-5" />
             Logga ut
           </LogoutLink>
         </DropdownMenuItem>

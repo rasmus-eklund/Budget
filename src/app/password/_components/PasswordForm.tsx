@@ -67,11 +67,7 @@ const PasswordForm = () => {
               </FormItem>
             )}
           />
-          <Button
-            variant="outline"
-            type="submit"
-            disabled={!form.formState.isValid}
-          >
+          <Button type="submit" disabled={!form.formState.isValid}>
             Använd lösenordet
           </Button>
         </form>
