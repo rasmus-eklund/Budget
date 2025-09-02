@@ -24,8 +24,8 @@ const Menu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon" variant="outline">
-          <Icon icon="Menu" className="size-8" />
+        <Button size="icon" variant="ghost">
+          <Icon icon="Menu" className="size-6" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-44">

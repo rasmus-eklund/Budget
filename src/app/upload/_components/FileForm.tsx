@@ -155,7 +155,6 @@ const FileForm = ({ categories, people, userId }: Props) => {
               {loading ? "Laddar..." : "Bearbeta"}
             </Button>
             <Button
-              variant="outline"
               className="flex items-center gap-2"
               disabled={!txs || txs.length === 0 || !password}
             >

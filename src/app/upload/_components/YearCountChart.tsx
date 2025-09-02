@@ -16,7 +16,7 @@ const YearCountChart = ({ data }: Props) => {
     <ResponsiveContainer height={200} minWidth={"100%"}>
       <BarChart data={data}>
         <CartesianGrid />
-        <Tooltip cursor={{ fill: "hsl(var(--muted))" }} />
+        <Tooltip cursor={false} />
         <XAxis dataKey={"year"} />
         <YAxis dataKey={"count"} />
         <Bar dataKey={"count"} name={"Antal"} fill="#dc2626" />
