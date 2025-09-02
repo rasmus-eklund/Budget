@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { ClipLoader } from "react-spinners";
 import {
   Form,
   FormControl,
@@ -26,7 +25,7 @@ import {
 } from "~/components/ui/dialog";
 
 import { Button } from "~/components/ui/button";
-import Icon from "~/lib/icons/Icon";
+import Icon from "~/components/common/Icon";
 import { z } from "zod";
 type Props = {
   data: { name: string; id: string };
@@ -68,7 +67,7 @@ const EditItemForm = ({
       <DialogTrigger asChild>
         <button onClick={() => setOpen(true)}>
           <Icon
-            icon="edit"
+            icon="Pencil"
             className="size-5 hover:scale-110 hover:cursor-pointer"
           />
         </button>
@@ -104,21 +103,26 @@ const EditItemForm = ({
                 <Button
                   className="hover:cursor-pointer"
                   type="button"
-                  variant="secondary"
+                  variant="outline"
                 >
                   Stäng
                 </Button>
               </DialogClose>
-              {form.formState.isSubmitting ? (
-                <Button disabled>
-                  <ClipLoader size={20} className="mr-2" />
-                  Vänta
-                </Button>
-              ) : (
-                <Button type="submit" disabled={!form.formState.isValid}>
-                  Ändra
-                </Button>
-              )}
+              <Button
+                type="submit"
+                disabled={
+                  !form.formState.isValid || form.formState.isSubmitting
+                }
+              >
+                {form.formState.isSubmitting ? (
+                  <>
+                    Vänta
+                    <Icon icon="Loader2Icon" className="animate-spin" />
+                  </>
+                ) : (
+                  "Ändra"
+                )}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

@@ -31,12 +31,12 @@ const Aggregated = ({ data, options: { people, categories } }: Props) => {
   };
 
   const catClass =
-    "px-6 py-3 text-xs font-medium uppercase tracking-wider text-gray-500";
+    "px-6 py-3 text-xs font-medium uppercase tracking-wider text-muted-foreground";
   return (
     <div className="overflow-x-auto py-2">
       {dates ? <h2 className="p-2 text-lg">{getDateString(dates)}</h2> : null}
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-100">
+      <table className="min-w-full divide-y divide-secondary">
+        <thead className="bg-secondary">
           <tr>
             <th className={cn(catClass, "text-left")}>Kategori</th>
             {peopleTotal.map((person) => (
@@ -55,7 +55,7 @@ const Aggregated = ({ data, options: { people, categories } }: Props) => {
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200 bg-white">
+        <tbody className="divide-y divide-secondary bg-background">
           {categoriesTotal.map((category, categoryIndex) => (
             <tr key={category}>
               <td className="whitespace-nowrap px-4 font-semibold tracking-wider">
@@ -75,7 +75,7 @@ const Aggregated = ({ data, options: { people, categories } }: Props) => {
                   <td
                     className={cn(
                       "px-4 py-1 text-right",
-                      sek < 0 && "text-red-600",
+                      sek < 0 && "text-primary",
                       index === peopleTotal.length - 1 && "font-semibold",
                       categoryIndex >= categoriesTotal.length - 2 &&
                         "font-bold",

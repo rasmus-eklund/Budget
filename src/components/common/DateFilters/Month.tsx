@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { months } from "~/lib/constants/months";
-import Icon from "~/lib/icons/Icon";
+import Icon from "~/components/common/Icon";
 import capitalize from "~/lib/utils/capitalize";
 import {
   decrementMonth,
@@ -38,10 +38,10 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
   };
   return (
     <form
-      className="flex flex-col gap-2 p-3 md:flex-row"
+      className="flex flex-col gap-2 md:flex-row"
       onSubmit={(e) => e.preventDefault()}
     >
-      <div className="flex items-center justify-between gap-2 md:justify-normal">
+      <div className="flex items-center gap-1">
         <Select
           value={year.toString()}
           onValueChange={async (value) => {
@@ -50,8 +50,8 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
             await submitDates(getMonthRange(data));
           }}
         >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="" />
+          <SelectTrigger className="w-[90px]">
+            <SelectValue />
           </SelectTrigger>
           <SelectContent>
             {years.reverse().map((year) => (
@@ -71,7 +71,7 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
             await submitDates(getMonthRange(dates));
           }}
         >
-          <Icon icon="caretLeft" className="size-4" />
+          <Icon icon="ChevronLeft" className="size-4" />
         </Button>
         <Select
           value={month.toString()}
@@ -81,7 +81,7 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
             await submitDates(getMonthRange(data));
           }}
         >
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger className="w-[130px]">
             <SelectValue placeholder="" />
           </SelectTrigger>
           <SelectContent>
@@ -102,12 +102,12 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
             await submitDates(getMonthRange(dates));
           }}
         >
-          <Icon icon="caretRight" className="size-4" />
+          <Icon icon="ChevronRight" className="size-4" />
         </Button>
       </div>
       <div className="flex items-center">
         <Button
-          variant={"secondary"}
+          variant="secondary"
           onClick={async () => {
             const data = { year: mostRecentYear, month: mostRecentMonth };
             setYearMonth(data);

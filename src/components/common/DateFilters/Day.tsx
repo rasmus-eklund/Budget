@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import Icon from "~/lib/icons/Icon";
+import Icon from "~/components/common/Icon";
 import {
   decrementDay,
   getDayRange,
@@ -10,6 +10,7 @@ import {
 } from "~/lib/utils/dateCalculations";
 import { dateToString } from "~/lib/utils/formatData";
 import { type FromTo } from "~/lib/zodSchemas";
+import DatePicker from "../DatePicker";
 
 type Props = { changeDate: (dates: FromTo) => Promise<void>; fromTo: FromTo };
 
@@ -21,11 +22,8 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
   };
 
   return (
-    <form
-      onSubmit={(e) => e.preventDefault()}
-      className="flex flex-col gap-2 p-3 md:flex-row"
-    >
-      <div className="flex items-center justify-between gap-2 md:justify-normal">
+    <form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
+      <div className="flex items-center gap-1">
         <Button
           type="button"
           disabled={day <= from}
@@ -33,16 +31,14 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
           size="icon"
           onClick={async () => await onChange(decrementDay(day))}
         >
-          <Icon icon="caretLeft" className="size-4" />
+          <Icon icon="ChevronLeft" className="size-4" />
         </Button>
-        <input
-          min={dateToString(from)}
-          max={dateToString(to)}
-          type="date"
-          className="px-1"
-          value={dateToString(day)}
-          onChange={async ({ target: { value } }) => {
-            await onChange(getDayRange(value));
+        <DatePicker
+          range={{ from, to }}
+          date={day}
+          setDate={async (date) => {
+            setDay(date);
+            await onChange(getDayRange(dateToString(date)));
           }}
         />
         <Button
@@ -52,7 +48,7 @@ const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
           size="icon"
           onClick={async () => await onChange(incrementDay(day))}
         >
-          <Icon icon="caretRight" className="size-4" />
+          <Icon icon="ChevronRight" className="size-4" />
         </Button>
       </div>
       <Button

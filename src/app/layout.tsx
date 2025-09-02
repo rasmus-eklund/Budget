@@ -24,10 +24,13 @@ export default function RootLayout({
     <AuthProvider>
       <html lang="en" className="h-dvh">
         <body
-          className={cn("flex flex-col items-center font-sans h-dvh", inter.variable)}
+          className={cn(
+            "flex flex-col items-center font-sans h-dvh",
+            inter.variable,
+          )}
         >
           <Header />
-          <main className="flex grow w-full max-w-5xl flex-col gap-4">
+          <main className="flex flex-1 w-full max-w-5xl flex-col gap-4">
             {children}
           </main>
         </body>

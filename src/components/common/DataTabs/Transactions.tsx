@@ -9,9 +9,9 @@ type Props = { data: Tx[] };
 const Transactions = ({ data }: Props) => {
   return (
     <>
-      <ul className="flex flex-col gap-2">
+      <ul className="flex flex-col gap-2 flex-1">
         <Virtuoso
-          className="h-[500px]!"
+          className="h-[600px]!"
           data={data}
           itemContent={(_, tx) => <Transaction key={tx.id} data={tx} />}
         />
@@ -40,7 +40,7 @@ const Transaction = ({
   data: Tx;
 }) => {
   return (
-    <li className="mb-2 mt-2 flex flex-col rounded-sm bg-red-50 p-1 shadow-lg">
+    <li className="mb-2 mt-2 flex flex-col rounded-sm bg-accent p-1 shadow-lg">
       <div className="grid grid-cols-2">
         <p className="font-semibold">{dateToString(datum)}</p>
         <Sek sek={belopp} />
@@ -58,7 +58,7 @@ const Transaction = ({
 };
 
 const Sek = ({ sek }: { sek: number }) => (
-  <p className={cn("text-right font-mono", sek < 0 && "text-red-600")}>
+  <p className={cn("text-right font-mono", sek < 0 && "text-primary")}>
     {toSek(sek)}
   </p>
 );

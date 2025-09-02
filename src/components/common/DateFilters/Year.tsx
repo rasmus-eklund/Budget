@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import Icon from "~/lib/icons/Icon";
+import Icon from "~/components/common/Icon";
 import { getYearRange } from "~/lib/utils/dateCalculations";
 import { type FromTo } from "~/lib/zodSchemas";
 
@@ -29,11 +29,8 @@ const Year = ({ changeDate, fromTo: { from, to } }: Props) => {
   };
   const years = getYearRange({ from, to });
   return (
-    <form
-      className="flex flex-col gap-2 p-3 md:flex-row"
-      onSubmit={(e) => e.preventDefault()}
-    >
-      <div className="flex items-center justify-between gap-2 md:justify-normal">
+    <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
+      <div className="flex items-center gap-1">
         <Button
           disabled={from.getFullYear() === year}
           variant="outline"
@@ -45,7 +42,7 @@ const Year = ({ changeDate, fromTo: { from, to } }: Props) => {
             await submitYear(newYear);
           }}
         >
-          <Icon icon="caretLeft" className="size-4" />
+          <Icon icon="ChevronLeft" />
         </Button>
         <Select
           value={year.toString()}
@@ -55,7 +52,7 @@ const Year = ({ changeDate, fromTo: { from, to } }: Props) => {
             await submitYear(y);
           }}
         >
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger className="w-[90px]">
             <SelectValue placeholder="" />
           </SelectTrigger>
           <SelectContent>
@@ -77,7 +74,7 @@ const Year = ({ changeDate, fromTo: { from, to } }: Props) => {
             await submitYear(newYear);
           }}
         >
-          <Icon icon="caretRight" className="size-4" />
+          <Icon icon="ChevronRight" className="size-4" />
         </Button>
       </div>
       <Button

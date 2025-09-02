@@ -46,7 +46,7 @@ const CategoryBars = ({ data, options }: Props) => {
       <CardContent>
         <ResponsiveContainer height={300} minWidth={"100%"}>
           <BarChart data={sums} barCategoryGap={"20%"}>
-            <Tooltip cursor={{ fill: "hsl(var(--muted))" }} />
+            <Tooltip cursor={false} />
             <CartesianGrid />
             <YAxis />
             <XAxis
