@@ -22,7 +22,7 @@ const ShowData = ({ data, loading = false, children }: Props) => {
   const options = getUnique({ data, txFilter });
 
   return (
-    <section className="flex flex-1 flex-col gap-2">
+    <section className="flex flex-1 flex-col gap-2 pt-2 md:pt-0">
       {children}
       <Tabs
         className="flex-1 min-h-0 md:gap-2 gap-0"
