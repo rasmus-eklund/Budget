@@ -21,7 +21,7 @@ const Drawer = ({
 }) => {
   return (
     <DrawerShad>
-      <DrawerTrigger>
+      <DrawerTrigger asChild>
         <Button variant="outline" size="icon">
           <Icon icon={icon} />
         </Button>
