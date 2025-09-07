@@ -22,10 +22,14 @@ const ShowData = ({ data, loading = false, children }: Props) => {
   const options = getUnique({ data, txFilter });
 
   return (
-    <section className="flex flex-1 flex-col gap-2 p-2 md:gap-5">
+    <section className="flex flex-1 flex-col gap-2">
       {children}
-      <Tabs value={tab} onValueChange={(value) => setTab(value as Tab)}>
-        <TabsList>
+      <Tabs
+        className="flex-1 min-h-0 md:gap-2 gap-0"
+        value={tab}
+        onValueChange={(value) => setTab(value as Tab)}
+      >
+        <TabsList className="w-full md:w-fit">
           <TabsTrigger value="aggregated">Budget</TabsTrigger>
           <TabsTrigger value="transactions">Transaktioner</TabsTrigger>
           <TabsTrigger value="categoryBars">Utgifter</TabsTrigger>
@@ -38,7 +42,10 @@ const ShowData = ({ data, loading = false, children }: Props) => {
             <Aggregated data={data} options={options.aggregated} />
           )}
         </TabsContent>
-        <TabsContent value="transactions">
+        <TabsContent
+          value="transactions"
+          className="flex-1 min-h-0 flex flex-col"
+        >
           {loading ? (
             <p>Laddar...</p>
           ) : (
