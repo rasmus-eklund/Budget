@@ -9,13 +9,11 @@ type Props = { data: Tx[] };
 const Transactions = ({ data }: Props) => {
   return (
     <>
-      <ul className="flex flex-col gap-2 flex-1">
-        <Virtuoso
-          className="h-[600px]!"
-          data={data}
-          itemContent={(_, tx) => <Transaction key={tx.id} data={tx} />}
-        />
-      </ul>
+      <Virtuoso
+        className="flex-1 min-h-0"
+        data={data}
+        itemContent={(_, tx) => <Transaction key={tx.id} data={tx} />}
+      />
       <ShowSum data={data} />
     </>
   );
@@ -24,7 +22,7 @@ const Transactions = ({ data }: Props) => {
 const ShowSum = ({ data }: { data: Tx[] }) => {
   const sum = data.reduce((a, b) => a + b.belopp, 0);
   return (
-    <div className="flex justify-between gap-4 p-4 font-mono md:justify-end">
+    <div className="flex items-center justify-between gap-4 p-4 font-mono md:justify-end h-12 bg-secondary border-t">
       <p className="pl-2">Antal: {data.length}</p>
       <div className="flex items-center gap-2">
         <p>Totalt:</p>
