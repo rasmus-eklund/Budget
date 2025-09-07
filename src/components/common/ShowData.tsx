@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import TransactionFilter from "./DataTabs/TransactionFilter";
 import applyTransactionFilters from "~/lib/utils/transactionFilter";
 import type { Tx, Tab } from "~/types";
-import CategoryBars from "./DataTabs/CategoryBars";
+import CategoryPlots from "./DataTabs/CategoryPlots";
 import Balance from "./DataTabs/Balance";
 import { useTxFilterStore } from "~/stores/tx-filter-store";
 
@@ -61,7 +61,7 @@ const ShowData = ({ data, loading = false, children }: Props) => {
           ) : (
             <>
               <TransactionFilter options={options.transactions} />
-              <CategoryBars data={txs} options={options.aggregated} />
+              <CategoryPlots data={txs} options={options.aggregated} />
             </>
           )}
         </TabsContent>

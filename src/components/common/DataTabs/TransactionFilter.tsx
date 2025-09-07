@@ -23,7 +23,9 @@ type Props = {
   options: { categories: string[]; people: string[]; accounts: string[] };
 };
 const TransactionFilter = ({ options }: Props) => {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery("(min-width: 768px)", {
+    initializeWithValue: false,
+  });
   if (isDesktop) return <Filter options={options} />;
   return (
     <div className="flex items-center px-2 pt-2 absolute right-11 top-1">

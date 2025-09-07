@@ -11,7 +11,9 @@ import Drawer from "../Drawer";
 
 type Props = { changeDates: (dates: FromTo) => Promise<void>; range: FromTo };
 const DateFilter = ({ changeDates, range }: Props) => {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery("(min-width: 768px)", {
+    initializeWithValue: false,
+  });
   if (isDesktop) return <TabsDesktop changeDates={changeDates} range={range} />;
   return (
     <div className="flex items-center px-2 pt-2 absolute right-1 top-1">
