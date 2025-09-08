@@ -15,10 +15,9 @@ const data: Part[] = [
 describe("Transaction filter", () => {
   it("should show all", () => {
     const filter: TxFilter = {
-      category: "none",
-      inom: true,
-      person: "none",
-      account: "none",
+      category: ["mat", "transport", "inom"],
+      person: ["A", "B"],
+      account: ["A", "B", "C"],
       search: "",
     };
     const result = data.filter((d) => transactionFilter({ ...d, filter }));
@@ -26,10 +25,9 @@ describe("Transaction filter", () => {
   });
   it("should show only person A", () => {
     const filter: TxFilter = {
-      category: "none",
-      inom: true,
-      person: "A",
-      account: "none",
+      category: ["mat", "transport", "inom"],
+      person: ["A"],
+      account: ["A", "B", "C"],
       search: "",
     };
     const expected: Part[] = [
@@ -43,10 +41,9 @@ describe("Transaction filter", () => {
   });
   it("should show only person A and mat category", () => {
     const filter: TxFilter = {
-      category: "mat",
-      inom: true,
-      person: "A",
-      account: "none",
+      category: ["mat"],
+      person: ["A"],
+      account: ["A", "B", "C"],
       search: "",
     };
     const expected: Part[] = [
@@ -57,10 +54,9 @@ describe("Transaction filter", () => {
   });
   it("should hide inom", () => {
     const filter: TxFilter = {
-      category: "none",
-      inom: false,
-      person: "none",
-      account: "none",
+      category: ["mat", "transport"],
+      person: ["A", "B"],
+      account: ["A", "B", "C"],
       search: "",
     };
     const expected: Part[] = [
@@ -74,10 +70,9 @@ describe("Transaction filter", () => {
   });
   it("should show only person A and hide inom", () => {
     const filter: TxFilter = {
-      category: "none",
-      inom: false,
-      person: "A",
-      account: "none",
+      category: ["mat", "transport"],
+      person: ["A"],
+      account: ["A", "B", "C"],
       search: "",
     };
     const expected: Part[] = [
@@ -89,10 +84,9 @@ describe("Transaction filter", () => {
   });
   it("should show only person A and account A and hide inom", () => {
     const filter: TxFilter = {
-      category: "none",
-      inom: false,
-      person: "A",
-      account: "A",
+      category: ["mat", "transport"],
+      person: ["A"],
+      account: ["A"],
       search: "",
     };
     const expected: Part[] = [
@@ -103,10 +97,9 @@ describe("Transaction filter", () => {
   });
   it("should show sl", () => {
     const filter: TxFilter = {
-      category: "none",
-      inom: false,
-      person: "none",
-      account: "none",
+      category: ["mat", "transport"],
+      person: ["A", "B"],
+      account: ["A", "B", "C"],
       search: "sl",
     };
     const expected: Part[] = [

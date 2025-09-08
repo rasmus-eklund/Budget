@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ShowData from "~/components/common/ShowData";
 import { type FromTo } from "~/lib/zodSchemas";
 import { getCurrentYearMonth } from "~/lib/utils/dateCalculations";
@@ -8,6 +8,7 @@ import type { Tx } from "~/types";
 import DateFilter from "~/components/common/DateFilters/DateFilter";
 import { useRouter } from "next/navigation";
 import { usePasswordStore } from "~/stores/password-store";
+import { useTxFilterStore } from "~/stores/tx-filter-store";
 
 type Props = { range: FromTo; userId: string };
 const GetTxsLayer = ({ range, userId }: Props) => {
@@ -15,6 +16,20 @@ const GetTxsLayer = ({ range, userId }: Props) => {
   const { password } = usePasswordStore();
   const [loading, setLoading] = useState(true);
   const [txs, setData] = useState<Tx[]>([]);
+  const { setTxFilter, setDefaultTxFilter } = useTxFilterStore();
+
+  const applyDefaultFilters = useCallback(
+    (txs: Tx[]) => {
+      const category = [...new Set(txs.map((i) => i.budgetgrupp))].filter(
+        (i) => i !== "inom",
+      );
+      const person = [...new Set(txs.map((i) => i.person))];
+      const account = [...new Set(txs.map((i) => i.konto))];
+      setTxFilter({ account, category, person, search: "" });
+      setDefaultTxFilter({ account, category, person, search: "" });
+    },
+    [setTxFilter, setDefaultTxFilter],
+  );
 
   const getData = async (dates: FromTo) => {
     setLoading(true);
@@ -28,6 +43,7 @@ const GetTxsLayer = ({ range, userId }: Props) => {
     }
     if (res.ok) {
       setData(res.data);
+      applyDefaultFilters(res.data);
     }
     setLoading(false);
   };
@@ -44,10 +60,11 @@ const GetTxsLayer = ({ range, userId }: Props) => {
           return setData([]);
         }
         setData(res.data);
+        applyDefaultFilters(res.data);
       })
       .catch(() => setData([]))
       .finally(() => setLoading(false));
-  }, [password, router, userId]);
+  }, [password, router, userId, applyDefaultFilters]);
 
   return (
     <ShowData loading={loading} data={txs}>

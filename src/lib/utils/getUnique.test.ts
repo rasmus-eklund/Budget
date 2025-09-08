@@ -8,11 +8,18 @@ const data = [
   { person: "Alice", budgetgrupp: "Mat", konto: "Account3" },
   { person: "Alice", budgetgrupp: "Transport", konto: "Account1" },
 ];
+const search = "";
+
 describe("getUnique", () => {
   it("returns unique people, categories, and accounts from data", () => {
     const { transactions: result } = getUnique({
       data,
-      txFilter: { person: "none", account: "none", category: "none" },
+      txFilter: {
+        person: ["Alice", "Bob"],
+        account: ["Account1", "Account2", "Account3"],
+        category: ["Inkomst", "Lån", "Mat", "Transport", "Övrigt"],
+        search,
+      },
     });
 
     expect(result.people).toEqual(["Alice", "Bob"]);
@@ -28,7 +35,12 @@ describe("getUnique", () => {
   it("returns unique people, categories, and accounts from data with person filter", () => {
     const { transactions: result } = getUnique({
       data,
-      txFilter: { person: "Alice", account: "none", category: "none" },
+      txFilter: {
+        person: ["Alice"],
+        account: ["Account1", "Account2", "Account3"],
+        category: ["Inkomst", "Lån", "Mat", "Transport", "Övrigt"],
+        search,
+      },
     });
 
     expect(result.people).toEqual(["Alice", "Bob"]);
@@ -39,7 +51,12 @@ describe("getUnique", () => {
   it("returns unique people, categories, and accounts from data with person and account filter", () => {
     const { transactions: result } = getUnique({
       data,
-      txFilter: { person: "Alice", account: "Account1", category: "none" },
+      txFilter: {
+        person: ["Alice"],
+        account: ["Account1"],
+        category: ["Inkomst", "Lån", "Mat", "Transport", "Övrigt"],
+        search,
+      },
     });
 
     expect(result.people).toEqual(["Alice", "Bob"]);
@@ -50,7 +67,12 @@ describe("getUnique", () => {
   it("returns unique people, categories, and accounts from data with all filters", () => {
     const { transactions: result } = getUnique({
       data,
-      txFilter: { person: "Alice", account: "Account1", category: "Inkomst" },
+      txFilter: {
+        person: ["Alice"],
+        account: ["Account1"],
+        category: ["Inkomst"],
+        search,
+      },
     });
 
     expect(result.people).toEqual(["Alice", "Bob"]);
@@ -61,7 +83,12 @@ describe("getUnique", () => {
   it("returns unique people, categories, and accounts from data with all filters 2", () => {
     const { transactions: result } = getUnique({
       data,
-      txFilter: { person: "Bob", account: "Account2", category: "Övrigt" },
+      txFilter: {
+        person: ["Bob"],
+        account: ["Account2"],
+        category: ["Övrigt"],
+        search,
+      },
     });
 
     expect(result.people).toEqual(["Alice", "Bob"]);
@@ -73,7 +100,12 @@ describe("getUnique", () => {
     const one = data.slice(0, 1);
     const { transactions: result } = getUnique({
       data: one,
-      txFilter: { person: "none", account: "none", category: "none" },
+      txFilter: {
+        person: ["Alice"],
+        account: ["Account1"],
+        category: ["Inkomst"],
+        search,
+      },
     });
 
     expect(result.people).toEqual(["Alice"]);

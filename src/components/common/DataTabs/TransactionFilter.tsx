@@ -1,14 +1,11 @@
 import type { SortOption } from "~/types";
-import capitalize from "~/lib/utils/capitalize";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
   SelectLabel,
-  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
@@ -18,6 +15,7 @@ import { useTxFilterStore } from "~/stores/tx-filter-store";
 import { useState } from "react";
 import { useMediaQuery } from "~/hooks/use-media-query";
 import Drawer from "../Drawer";
+import { MultiSelect } from "../MultiSelect";
 
 type Props = {
   options: { categories: string[]; people: string[]; accounts: string[] };
@@ -48,73 +46,30 @@ const Filter = ({ options }: Props) => {
         setTxFilter({ ...txFilter, search });
       }}
     >
-      <Select
-        value={txFilter.category}
-        onValueChange={(value) => setTxFilter({ ...txFilter, category: value })}
-      >
-        <SelectTrigger className="w-[160px]">
-          <SelectValue placeholder="Kategori" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="none">Kategori</SelectItem>
-          <SelectSeparator />
-          {options.categories.map((i) => (
-            <SelectItem key={i} value={i}>
-              {capitalize(i)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select
-        value={txFilter.person}
-        onValueChange={(value) => setTxFilter({ ...txFilter, person: value })}
-      >
-        <SelectTrigger className="w-[160px]">
-          <SelectValue placeholder="Person" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="none">Person</SelectItem>
-          <SelectSeparator />
-          {options.people.map((i) => (
-            <SelectItem key={i} value={i}>
-              {capitalize(i)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select
-        value={txFilter.account}
-        onValueChange={(value) => setTxFilter({ ...txFilter, account: value })}
-      >
-        <SelectTrigger className="w-[160px]">
-          <SelectValue placeholder="Konto" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="none">Konto</SelectItem>
-          <SelectSeparator />
-          {options.accounts.map((i) => (
-            <SelectItem key={i} value={i}>
-              {capitalize(i)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <MultiSelect
+        options={options.people}
+        items={txFilter.person}
+        setItems={(items) => setTxFilter({ ...txFilter, person: items })}
+        label="Person"
+      />
+      <MultiSelect
+        options={options.categories}
+        items={txFilter.category}
+        setItems={(items) => setTxFilter({ ...txFilter, category: items })}
+        label="Kategori"
+      />
+      <MultiSelect
+        options={options.accounts}
+        items={txFilter.account}
+        setItems={(items) => setTxFilter({ ...txFilter, account: items })}
+        label="Konto"
+      />
       <Input
         placeholder="Sök"
         value={search}
         onChange={({ target: { value } }) => setSearch(value)}
       />
       <div className="flex items-center gap-2">
-        <Label className="text-nowrap" htmlFor="inomCheck">
-          Visa inom
-        </Label>
-        <Input
-          className="size-5"
-          checked={txFilter.inom}
-          onChange={() => setTxFilter({ ...txFilter, inom: !txFilter.inom })}
-          id="inomCheck"
-          type="checkbox"
-        />
         {hasChanged && (
           <Button
             type="button"

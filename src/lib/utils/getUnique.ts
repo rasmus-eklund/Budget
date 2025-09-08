@@ -1,3 +1,5 @@
+import { type TxFilter } from "~/types";
+
 const getUnique = <
   T extends { person: string; budgetgrupp: string; konto: string },
 >({
@@ -5,7 +7,7 @@ const getUnique = <
   txFilter: filter,
 }: {
   data: T[];
-  txFilter: { person: string; account: string; category: string };
+  txFilter: TxFilter;
 }) => {
   const people = new Set<string>();
   const categoriesSet = new Set<string>();
@@ -14,14 +16,14 @@ const getUnique = <
   const allAccounts = new Set<string>();
 
   for (const { person, budgetgrupp, konto } of data) {
-    people.add(person);
-    allAccounts.add(konto);
-    allCategoriesSet.add(budgetgrupp);
-    if (filter.person === "none" || person === filter.person) {
-      if (filter.account === "none" || konto === filter.account) {
+    if (!people.has(person)) people.add(person);
+    if (!allAccounts.has(konto)) allAccounts.add(konto);
+    if (!allCategoriesSet.has(budgetgrupp)) allCategoriesSet.add(budgetgrupp);
+    if (filter.person.includes(person)) {
+      if (filter.account.includes(konto)) {
         categoriesSet.add(budgetgrupp);
       }
-      if (filter.category === "none" || budgetgrupp === filter.category) {
+      if (filter.category.includes(budgetgrupp)) {
         accounts.add(konto);
       }
     }

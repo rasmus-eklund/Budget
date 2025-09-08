@@ -17,15 +17,13 @@ export const transactionFilter = <T extends Part & { filter: TxFilter }>({
   text,
   filter,
 }: T) => {
-  const personMatch = filter.person === "none" || person === filter.person;
-  const categoryMatch =
-    filter.category === "none" || budgetgrupp === filter.category;
-  const accountMatch = filter.account === "none" || konto === filter.account;
-  const inomMatch = filter.inom || budgetgrupp !== "inom";
+  const personMatch = filter.person.includes(person);
+  const categoryMatch = filter.category.includes(budgetgrupp);
+  const accountMatch = filter.account.includes(konto);
   const search =
     filter.search === "" ||
     text.toLowerCase().includes(filter.search.toLowerCase());
-  return search && personMatch && categoryMatch && accountMatch && inomMatch;
+  return search && personMatch && categoryMatch && accountMatch;
 };
 
 export const transactionSort = <T extends TransactionSort>(

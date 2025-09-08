@@ -115,16 +115,16 @@ const CatButton = ({
   category,
   person,
 }: CatButtonProps) => {
-  const { setTxFilter, setTab } = useTxFilterStore();
+  const { setTxFilter, defaultTxFilter, setTab } = useTxFilterStore();
   return (
     <button
       className={cn("cursor-pointer hover:scale-110", className)}
       onClick={() => {
+        console.log({ defaultTxFilter, clicked: { category, person } });
         setTxFilter({
-          account: "none",
-          category: category ?? "none",
-          inom: false,
-          person: person ?? "none",
+          category: category ? [category] : defaultTxFilter.category,
+          account: defaultTxFilter.account,
+          person: person ? [person] : defaultTxFilter.person,
           search: "",
         });
         setTab("transactions");
