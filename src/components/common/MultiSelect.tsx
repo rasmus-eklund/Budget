@@ -33,7 +33,7 @@ export function MultiSelect({
   setItems: (items: string[]) => void;
 }) {
   return (
-    <Popover>
+    <Popover modal={true}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -44,7 +44,7 @@ export function MultiSelect({
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-fit p-0">
+      <PopoverContent className="w-fit p-0" popoverTarget="drawer-content">
         <Command>
           <CommandInput placeholder="Sök" className="h-9" />
           <CommandList>
