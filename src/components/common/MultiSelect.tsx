@@ -64,6 +64,22 @@ export function MultiSelect({
             </CommandGroup>
           </CommandList>
         </Command>
+        <div className="flex items-center gap-1 p-1">
+          <Button
+            onClick={() => setItems(options)}
+            className="flex-1"
+            variant="outline"
+          >
+            Alla
+          </Button>
+          <Button
+            onClick={() => setItems([])}
+            className="flex-1"
+            variant="outline"
+          >
+            Inga
+          </Button>
+        </div>
       </PopoverContent>
     </Popover>
   );
