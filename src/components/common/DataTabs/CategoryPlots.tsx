@@ -13,6 +13,7 @@ import {
   Cell,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { useMediaQuery } from "~/hooks/use-media-query";
 import { colors } from "~/lib/constants/colors";
 import capitalize from "~/lib/utils/capitalize";
 import { toSek } from "~/lib/utils/formatData";
@@ -66,14 +67,21 @@ const CategoryPlots = ({ data, options }: Props) => {
 };
 
 const CategoryBars = ({ sums, options }: { sums: Sum[]; options: Uniques }) => {
+  const isDesktop = useMediaQuery("(min-width: 768px)", {
+    initializeWithValue: false,
+  });
   return (
     <Card>
       <CardHeader>
         <CardTitle className="">Utgift per kategori</CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer height={250}>
-          <BarChart data={sums} barCategoryGap={"20%"}>
+        <ResponsiveContainer height={300}>
+          <BarChart
+            data={sums}
+            barCategoryGap={isDesktop ? "5%" : "1%"}
+            barGap={"1%"}
+          >
             <Tooltip cursor={false} />
             <CartesianGrid />
             <YAxis />
@@ -84,7 +92,13 @@ const CategoryBars = ({ sums, options }: { sums: Sum[]; options: Uniques }) => {
             {options.people.map((person, i) => (
               <Bar key={person} dataKey={person} fill={colors[i]} />
             ))}
-            <Legend formatter={(item) => capitalize(item as string)} />
+            <Legend
+              formatter={(item) => (
+                <p className="text-sm md:text-base">
+                  {capitalize(item as string)}
+                </p>
+              )}
+            />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>
@@ -93,6 +107,9 @@ const CategoryBars = ({ sums, options }: { sums: Sum[]; options: Uniques }) => {
 };
 
 const CategoryPies = ({ data, name }: { name: string; data: Data[] }) => {
+  const isDesktop = useMediaQuery("(min-width: 768px)", {
+    initializeWithValue: false,
+  });
   if (data.length === 0) return null;
   return (
     <Card>
@@ -100,20 +117,24 @@ const CategoryPies = ({ data, name }: { name: string; data: Data[] }) => {
         <CardTitle className="">{name}</CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer height={300} width={"100%"}>
+        <ResponsiveContainer height={isDesktop ? 300 : 150} width={"100%"}>
           <PieChart>
             <Pie
               data={data}
               dataKey="value"
               cx="50%"
               cy="50%"
-              innerRadius={60}
-              outerRadius={80}
+              innerRadius={isDesktop ? 60 : 30}
+              outerRadius={isDesktop ? 80 : 40}
               paddingAngle={5}
               label={PieLabel}
             >
               {data.map(({ name }, i) => (
-                <Cell key={`cell-${name}`} fill={colors[i]} />
+                <Cell
+                  key={`cell-${name}`}
+                  fill={colors[i]}
+                  fontSize={isDesktop ? 20 : 10}
+                />
               ))}
             </Pie>
           </PieChart>
