@@ -8,14 +8,14 @@ const emptyTxFilter: TxFilter = {
   search: "",
 };
 
-const isChanged = (a: TxFilter, b: TxFilter) => {
-  return (
-    a.category !== b.category ||
-    a.person !== b.person ||
-    a.account !== b.account ||
-    a.search !== b.search
-  );
+const sameItems = (a: string[], b: string[]) => {
+  return a.length === b.length && a.every((item) => b.includes(item));
 };
+const isChanged = (a: TxFilter, b: TxFilter) =>
+  !sameItems(a.account, b.account) ||
+  !sameItems(a.category, b.category) ||
+  !sameItems(a.person, b.person) ||
+  a.search !== b.search;
 
 export const useTxFilterStore = create<{
   txFilter: TxFilter;
