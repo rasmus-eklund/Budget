@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import calculateSums from "~/lib/utils/calculateSums";
 import capitalize from "~/lib/utils/capitalize";
 import { dateToString, toSek } from "~/lib/utils/formatData";
@@ -7,6 +7,8 @@ import type { FromTo } from "~/lib/zodSchemas";
 import type { Uniques, Tx } from "~/types";
 import { cn } from "~/lib/utils";
 import { useTxFilterStore } from "~/stores/tx-filter-store";
+import { Button } from "~/components/ui/button";
+import Icon from "../Icon";
 
 type Props = {
   data: Tx[];
@@ -14,6 +16,7 @@ type Props = {
 };
 
 const Aggregated = ({ data, options: { people, categories } }: Props) => {
+  const [sticky, setSticky] = useState(true);
   const sumsMemo = useMemo(
     () => calculateSums({ data, categories, people }),
     [data, people, categories],
@@ -30,15 +33,35 @@ const Aggregated = ({ data, options: { people, categories } }: Props) => {
     return f !== t ? `${f} - ${t}` : f;
   };
 
+  const stickyClass = "sticky left-0 z-10";
   const catClass =
     "px-6 py-3 text-xs font-medium uppercase tracking-wider text-muted-foreground";
   return (
     <div className="overflow-x-auto py-2">
-      {dates ? <h2 className="p-2 text-lg">{getDateString(dates)}</h2> : null}
+      {dates ? (
+        <h2 className={cn("p-2 text-lg", stickyClass)}>
+          {getDateString(dates)}
+        </h2>
+      ) : null}
       <table className="min-w-full divide-y divide-secondary">
         <thead className="bg-secondary">
           <tr>
-            <th className={cn(catClass, "text-left")}>Kategori</th>
+            <th
+              className={cn(
+                catClass,
+                "text-left bg-secondary flex items-center gap-1",
+                sticky && stickyClass,
+              )}
+            >
+              <p>Kategori</p>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSticky(!sticky)}
+              >
+                <Icon icon={sticky ? "PinOff" : "Pin"} />
+              </Button>
+            </th>
             {peopleTotal.map((person) => (
               <th key={person}>
                 {person === "total" ? (
@@ -58,7 +81,12 @@ const Aggregated = ({ data, options: { people, categories } }: Props) => {
         <tbody className="divide-y divide-secondary bg-background">
           {categoriesTotal.map((category, categoryIndex) => (
             <tr key={category}>
-              <td className="whitespace-nowrap px-4 font-semibold tracking-wider">
+              <td
+                className={cn(
+                  "whitespace-nowrap px-4 font-semibold tracking-wider bg-white",
+                  sticky && stickyClass,
+                )}
+              >
                 {nonClickableCategories.includes(category) ? (
                   capitalize(category === "spending" ? "Utgifter" : category)
                 ) : (
@@ -120,7 +148,6 @@ const CatButton = ({
     <button
       className={cn("cursor-pointer hover:scale-110", className)}
       onClick={() => {
-        console.log({ defaultTxFilter, clicked: { category, person } });
         setTxFilter({
           category: category ? [category] : defaultTxFilter.category,
           account: defaultTxFilter.account,
