@@ -13,7 +13,6 @@ type Tab = "aggregated" | "transactions" | "categoryBars" | "balanceOverTime";
 export type Internal = {
   id: string;
   belopp: number;
-  typ: string;
   bankAccountId: string;
 };
 
@@ -49,7 +48,6 @@ export type Tx = {
   id: string;
   datum: Date;
   text: string;
-  typ: string;
   budgetgrupp: string;
   belopp: number;
   saldo: number;

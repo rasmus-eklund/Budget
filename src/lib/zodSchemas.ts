@@ -50,7 +50,6 @@ export const csvSchema = z
         text: z
           .string({ required_error: "Text saknas." })
           .min(1, "Text måste vara på minst 1 tecken"),
-        typ: z.string(),
         belopp: z
           .string({ required_error: "Belopp saknas." })
           .refine(
@@ -95,7 +94,6 @@ export const matchSchema = z.object({
 
 export const encryptedDataSchema = z.object({
   text: z.string(),
-  typ: z.string(),
   budgetgrupp: z.string(),
   belopp: z.coerce.number(),
   saldo: z.coerce.number(),

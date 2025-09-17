@@ -34,34 +34,6 @@ const parseTxs = async (buffer: Buffer, bankAccountId: string) => {
           bankAccountId,
           id: uuid(),
         }));
-
-        const reserved = tmpData.filter(
-          ({ typ }) => typ === "Reserverat Belopp",
-        );
-        if (!!reserved) {
-          reserved.forEach(({ belopp, index, datum }) => {
-            const prev = tmpData[index - 1];
-            if (!prev) {
-              return reject(
-                Error(
-                  `Kan inte hantera reseverat belopp för datum: ${datum.toLocaleTimeString(
-                    "sv-SE",
-                    {
-                      year: "numeric",
-                      month: "2-digit",
-                      day: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                    },
-                  )}, index: ${index}`,
-                ),
-              );
-            }
-            tmpData[index]!.saldo = prev.saldo + belopp;
-          });
-        }
-
         resolve({ ok: true, data: tmpData });
       },
       error: () => {
