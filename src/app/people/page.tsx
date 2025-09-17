@@ -49,6 +49,12 @@ const Categories = async ({ userId }: WithAuthProps) => {
                   >
                     <form action={removePerson} className="flex items-center">
                       <input hidden name="id" type="text" defaultValue={id} />
+                      <input
+                        hidden
+                        name="userId"
+                        type="text"
+                        defaultValue={userId}
+                      />
                       <DeleteButton icon={false} />
                     </form>
                   </DeleteDialog>
