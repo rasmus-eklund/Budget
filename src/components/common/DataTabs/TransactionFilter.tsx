@@ -11,11 +11,11 @@ import {
 } from "~/components/ui/select";
 import { Button } from "~/components/ui/button";
 import { sortOptions } from "~/lib/constants/sortOptions";
-import { useTxFilterStore } from "~/stores/tx-filter-store";
 import { useState } from "react";
 import { useMediaQuery } from "~/hooks/use-media-query";
 import Drawer from "../Drawer";
 import { MultiSelect } from "../MultiSelect";
+import { useStore } from "~/stores/tx-store";
 
 type Props = {
   options: { categories: string[]; people: string[]; accounts: string[] };
@@ -36,8 +36,10 @@ const TransactionFilter = ({ options }: Props) => {
 
 const Filter = ({ options }: Props) => {
   const [search, setSearch] = useState("");
-  const { setTxFilter, setTxSort, txFilter, txSort, hasChanged, reset } =
-    useTxFilterStore();
+  const { setTxFilter, setTxSort, reset } = useStore();
+  const txFilter = useStore((state) => state.txFilter);
+  const txSort = useStore((state) => state.txSort);
+  const hasChanged = useStore((state) => state.hasChanged);
   return (
     <form
       className="flex flex-col gap-2 p-1 md:flex-row"

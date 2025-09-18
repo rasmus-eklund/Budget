@@ -6,18 +6,19 @@ import getUnique from "~/lib/utils/getUnique";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import TransactionFilter from "./DataTabs/TransactionFilter";
 import applyTransactionFilters from "~/lib/utils/transactionFilter";
-import type { Tx, Tab } from "~/types";
+import type { FilterTab } from "~/types";
 import CategoryPlots from "./DataTabs/CategoryPlots";
 import Balance from "./DataTabs/Balance";
-import { useTxFilterStore } from "~/stores/tx-filter-store";
+import { useStore } from "~/stores/tx-store";
 
-type Props = {
-  data: Tx[];
-  loading?: boolean;
-  children: ReactNode;
-};
-const ShowData = ({ data, loading = false, children }: Props) => {
-  const { txFilter, txSort, tab, setTab } = useTxFilterStore();
+type Props = { children: ReactNode };
+const ShowData = ({ children }: Props) => {
+  const txFilter = useStore((state) => state.txFilter);
+  const txSort = useStore((state) => state.txSort);
+  const filterTab = useStore((state) => state.filterTab);
+  const loading = useStore((state) => state.loading);
+  const data = useStore((state) => state.txs);
+  const { setFilterTab } = useStore();
   const txs = applyTransactionFilters({ data, filters: { txFilter, txSort } });
   const options = getUnique({ data, txFilter });
 
@@ -26,8 +27,8 @@ const ShowData = ({ data, loading = false, children }: Props) => {
       {children}
       <Tabs
         className="flex-1 min-h-0 md:gap-2 gap-0"
-        value={tab}
-        onValueChange={(value) => setTab(value as Tab)}
+        value={filterTab}
+        onValueChange={(value) => setFilterTab(value as FilterTab)}
       >
         <TabsList className="w-full md:w-fit">
           <TabsTrigger value="aggregated">Budget</TabsTrigger>
@@ -39,7 +40,7 @@ const ShowData = ({ data, loading = false, children }: Props) => {
           {loading ? (
             <p>Laddar...</p>
           ) : (
-            <Aggregated data={data} options={options.aggregated} />
+            <Aggregated data={txs} options={options.aggregated} />
           )}
         </TabsContent>
         <TabsContent

@@ -6,9 +6,9 @@ import { getFromTo } from "~/lib/utils/dateCalculations";
 import type { FromTo } from "~/lib/zodSchemas";
 import type { Uniques, Tx } from "~/types";
 import { cn } from "~/lib/utils";
-import { useTxFilterStore } from "~/stores/tx-filter-store";
 import { Button } from "~/components/ui/button";
 import Icon from "../Icon";
+import { useStore } from "~/stores/tx-store";
 
 type Props = {
   data: Tx[];
@@ -143,7 +143,8 @@ const CatButton = ({
   category,
   person,
 }: CatButtonProps) => {
-  const { setTxFilter, defaultTxFilter, setTab } = useTxFilterStore();
+  const { setTxFilter, setFilterTab } = useStore();
+  const defaultTxFilter = useStore((state) => state.defaultTxFilter);
   return (
     <button
       className={cn("cursor-pointer hover:scale-110", className)}
@@ -154,7 +155,7 @@ const CatButton = ({
           person: person ? [person] : defaultTxFilter.person,
           search: "",
         });
-        setTab("transactions");
+        setFilterTab("transactions");
       }}
     >
       {children}
