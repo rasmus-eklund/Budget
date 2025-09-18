@@ -35,7 +35,6 @@ const getTxByDates = async ({
   password: string;
   userId: string;
 }): Promise<TxReturn> => {
-  console.log({ from, to }, password, userId);
   if (!userId) return { ok: false };
   if (password === "") redirect("/password?from=transactions");
   const categoriesReq = db.query.category.findMany({
