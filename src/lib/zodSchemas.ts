@@ -75,7 +75,6 @@ export const csvSchema = z
 export type CsvSchema = z.infer<typeof csvSchema>;
 
 export type TxBankAccount = z.infer<typeof csvSchema>[number] & {
-  index: number;
   bankAccountId: string;
   budgetgrupp: string;
   id: string;

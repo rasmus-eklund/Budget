@@ -27,10 +27,10 @@ const parseTxs = async (buffer: Buffer, bankAccountId: string) => {
         if (!parsed.success) {
           return resolve({ ok: false, error: parsed.error });
         }
-        const tmpData = parsed.data.reverse().map((d, index) => ({
+        const tmpData = parsed.data.reverse().map((d) => ({
           ...d,
           budgetgrupp: "övrigt",
-          index,
+ 
           bankAccountId,
           id: uuid(),
         }));
