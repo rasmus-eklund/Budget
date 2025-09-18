@@ -8,7 +8,6 @@ import {
   useEffect,
 } from "react";
 import { Button } from "~/components/ui/button";
-import type { FromTo, TxBankAccount } from "~/lib/zodSchemas";
 import {
   readFiles,
   uploadFiles,
@@ -30,14 +29,14 @@ import {
 } from "~/components/ui/select";
 import capitalize from "~/lib/utils/capitalize";
 import { useRouter } from "next/navigation";
-import { usePasswordStore } from "~/stores/password-store";
-import { useTxFilterStore } from "~/stores/tx-filter-store";
+import { useStore } from "~/stores/tx-store";
 import Icon from "~/components/common/Icon";
+import type { FromTo, TxBankAccount } from "~/lib/zodSchemas";
 
 type Props = { categories: Category[]; people: PersonAccounts; userId: string };
 const FileForm = ({ categories, people, userId }: Props) => {
   const router = useRouter();
-  const { password } = usePasswordStore();
+  const password = useStore((state) => state.password);
   const [files, setFiles] = useState<FileData[]>([]);
   const [txs, setTxs] = useState<TxBankAccount[]>([]);
   const [loading, setLoading] = useState(false);
@@ -53,7 +52,6 @@ const FileForm = ({ categories, people, userId }: Props) => {
     }
   }, [password, router]);
 
-  const range = getFromTo(txs);
   const processTxs = async () => {
     setLoading(true);
     const res = await readFiles(files);
@@ -103,7 +101,7 @@ const FileForm = ({ categories, people, userId }: Props) => {
     );
   }
   return (
-    <div>
+    <>
       <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
         <p>Transaktionerna du laddar upp kommer att ersätta året.</p>
         {password && (
@@ -126,16 +124,15 @@ const FileForm = ({ categories, people, userId }: Props) => {
               }}
               onChange={(e) => {
                 const files = e.target.files;
-                if (files) {
-                  const data: FileData[] = [];
-                  for (const file of files) {
-                    data.push({
-                      bankAccountId: findMatchingAccount(file.name, options),
-                      file,
-                    });
-                  }
-                  setFiles(data);
+                if (!files) return;
+                const data: FileData[] = [];
+                for (const file of files) {
+                  data.push({
+                    bankAccountId: findMatchingAccount(file.name, options),
+                    file,
+                  });
                 }
+                setFiles(data);
               }}
               type="file"
               name="files"
@@ -156,7 +153,7 @@ const FileForm = ({ categories, people, userId }: Props) => {
             </Button>
             <Button
               className="flex items-center gap-2"
-              disabled={!txs || txs.length === 0 || !password}
+              disabled={txs.length === 0 || !password || loading}
             >
               Ladda upp
               {loading && <Icon icon="Loader2Icon" className="animate-spin" />}
@@ -199,45 +196,35 @@ const FileForm = ({ categories, people, userId }: Props) => {
         )}
         {error.error && <>{error.message}</>}
       </form>
-      {txs.length !== 0 && range ? (
+      {txs.length > 0 && (
         <ShowTransactions
-          txs={addPersonAccount(people, txs)}
-          categories={categories}
-          range={range}
+          txs={addPersonAccount(people, txs).map((tx) =>
+            applyCategory({ tx, categories }),
+          )}
         />
-      ) : null}
-    </div>
+      )}
+    </>
   );
 };
 
-const ShowTransactions = ({
-  txs,
-  categories,
-  range,
-}: {
-  txs: Tx[];
-  categories: Category[];
-  range: FromTo;
-}) => {
-  const { setTab } = useTxFilterStore();
-  const [{ from, to }, setDates] = useState<FromTo>(range);
-  const data: Tx[] = [];
-  for (const tx of txs) {
-    if (tx.datum >= from && tx.datum <= to) {
-      data.push(applyCategory({ tx, categories }));
-    }
-  }
+const ShowTransactions = ({ txs }: { txs: Tx[] }) => {
+  const { setFilterTab, setTxs, setRange } = useStore();
 
   useEffect(() => {
-    setTab("transactions");
-  }, [setTab]);
+    const range = getFromTo(txs);
+    if (!range) return;
+    setRange(range);
+    setFilterTab("transactions");
+    setTxs(txs);
+  }, [setFilterTab, setRange, setTxs, txs]);
+
+  const changeDates = async ({ from, to }: FromTo) => {
+    setTxs(txs.filter((i) => i.datum >= from && i.datum <= to));
+  };
 
   return (
-    <ShowData data={data}>
-      <DateFilter
-        range={range}
-        changeDates={async (dates) => setDates(dates)}
-      />
+    <ShowData>
+      <DateFilter changeDates={changeDates} />
     </ShowData>
   );
 };
