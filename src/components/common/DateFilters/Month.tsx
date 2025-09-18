@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import {
   Select,
@@ -20,19 +19,21 @@ import {
 import { getYearRange } from "~/lib/utils/dateCalculations";
 import { type FromTo } from "~/lib/zodSchemas";
 import Tooltip from "../Tooltip";
+import { useStore } from "~/stores/tx-store";
 
 type Props = {
   changeDate: (dates: FromTo) => Promise<void>;
   fromTo: FromTo;
 };
 
-const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
+const Month = ({ changeDate }: Props) => {
+  const { setMonth } = useStore();
+  const dates = useStore((state) => state.month);
+  const range = useStore((state) => state.range);
+  const { year, month } = dates;
+  const { from, to } = range;
   const mostRecentYear = to.getFullYear();
   const mostRecentMonth = to.getMonth() + 1;
-  const [{ year, month }, setYearMonth] = useState({
-    year: mostRecentYear,
-    month: mostRecentMonth,
-  });
   const years = getYearRange({ from, to });
   const submitDates = async (dates: FromTo) => {
     await changeDate(dates);
@@ -46,7 +47,7 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
         value={year.toString()}
         onValueChange={async (value) => {
           const data = { year: Number(value), month };
-          setYearMonth(data);
+          setMonth(data);
           await submitDates(getMonthRange(data));
         }}
       >
@@ -67,7 +68,7 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
         size="icon"
         onClick={async () => {
           const dates = decrementMonth({ year, month });
-          setYearMonth(dates);
+          setMonth(dates);
           await submitDates(getMonthRange(dates));
         }}
       >
@@ -77,7 +78,7 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
         value={month.toString()}
         onValueChange={async (value) => {
           const data = { year, month: Number(value) };
-          setYearMonth(data);
+          setMonth(data);
           await submitDates(getMonthRange(data));
         }}
       >
@@ -98,7 +99,7 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
         size="icon"
         onClick={async () => {
           const dates = incrementMonth({ year, month });
-          setYearMonth(dates);
+          setMonth(dates);
           await submitDates(getMonthRange(dates));
         }}
       >
@@ -110,7 +111,7 @@ const Month = ({ changeDate, fromTo: { from, to } }: Props) => {
           size="icon"
           onClick={async () => {
             const data = { year: mostRecentYear, month: mostRecentMonth };
-            setYearMonth(data);
+            setMonth(data);
             await submitDates(getMonthRange(data));
           }}
         >
