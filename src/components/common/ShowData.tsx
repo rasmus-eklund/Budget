@@ -36,6 +36,9 @@ const ShowData = ({ changeDates }: Props) => {
           <TabsTrigger value="categoryBars">Utgifter</TabsTrigger>
           <TabsTrigger value="balanceOverTime">Saldo</TabsTrigger>
         </TabsList>
+        {filterTab !== "aggregated" && (
+          <TransactionFilter options={options.transactions} />
+        )}
         <TabsContent value="aggregated" className="flex-1 min-h-0">
           <Aggregated data={txs} options={options.aggregated} />
         </TabsContent>
@@ -43,22 +46,13 @@ const ShowData = ({ changeDates }: Props) => {
           value="transactions"
           className="flex-1 min-h-0 flex flex-col"
         >
-          <>
-            <TransactionFilter options={options.transactions} />
-            <Transactions data={txs} />
-          </>
+          <Transactions data={txs} />
         </TabsContent>
         <TabsContent value="categoryBars">
-          <>
-            <TransactionFilter options={options.transactions} />
-            <CategoryPlots data={txs} options={options.aggregated} />
-          </>
+          <CategoryPlots data={txs} options={options.aggregated} />
         </TabsContent>
         <TabsContent value="balanceOverTime">
-          <>
-            <TransactionFilter options={options.transactions} />
-            <Balance data={txs} />
-          </>
+          <Balance data={txs} />
         </TabsContent>
       </Tabs>
     </section>
