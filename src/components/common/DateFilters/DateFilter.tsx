@@ -29,7 +29,6 @@ const DateFilter = ({ changeDates }: Props) => {
 const TabsDesktop = ({ changeDates }: Props) => {
   const { setDateTab } = useStore();
   const dateTab = useStore((state) => state.dateTab);
-  const range = useStore((state) => state.range);
   return (
     <Tabs
       value={dateTab}
@@ -43,16 +42,16 @@ const TabsDesktop = ({ changeDates }: Props) => {
         <TabsTrigger value="free">Fritt spann</TabsTrigger>
       </TabsList>
       <TabsContent value="month">
-        <Month changeDate={changeDates} fromTo={range} />
+        <Month changeDate={changeDates} />
       </TabsContent>
       <TabsContent value="day">
-        <FreeDay changeDate={changeDates} fromTo={range} />
+        <FreeDay changeDate={changeDates} />
       </TabsContent>
       <TabsContent value="year">
-        <Year changeDate={changeDates} fromTo={range} />
+        <Year changeDate={changeDates} />
       </TabsContent>
       <TabsContent value="free">
-        <FreeDates changeDate={changeDates} fromTo={range} />
+        <FreeDates changeDate={changeDates} />
       </TabsContent>
     </Tabs>
   );

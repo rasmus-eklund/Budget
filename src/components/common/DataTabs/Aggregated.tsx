@@ -37,7 +37,7 @@ const Aggregated = ({ data, options: { people, categories } }: Props) => {
   const catClass =
     "px-6 py-3 text-xs font-medium uppercase tracking-wider text-muted-foreground";
   return (
-    <div className="overflow-x-auto py-2">
+    <div className="overflow-auto py-2">
       {dates ? (
         <h2 className={cn("p-2 text-lg", stickyClass)}>
           {getDateString(dates)}

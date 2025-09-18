@@ -6,6 +6,7 @@ import {
 } from "~/components/ui/drawer";
 import Icon, { type IconName } from "./Icon";
 import { cn } from "~/lib/utils";
+import { useStore } from "~/stores/tx-store";
 
 const Drawer = ({
   children,
@@ -18,10 +19,12 @@ const Drawer = ({
   title: string;
   className?: string;
 }) => {
+  const { setDrawerOpen } = useStore();
+  const drawerOpen = useStore((state) => state.drawerOpen);
   return (
-    <DrawerShad>
+    <DrawerShad open={drawerOpen} onOpenChange={setDrawerOpen}>
       <DrawerTrigger>
-        <Icon icon={icon} className="size-5"/>
+        <Icon icon={icon} className="size-5" />
       </DrawerTrigger>
       <DrawerContent className={cn("p-2", className)}>
         <DrawerTitle>{title}</DrawerTitle>

@@ -23,7 +23,6 @@ import { useStore } from "~/stores/tx-store";
 
 type Props = {
   changeDate: (dates: FromTo) => Promise<void>;
-  fromTo: FromTo;
 };
 
 const Month = ({ changeDate }: Props) => {

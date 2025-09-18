@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import {
   Select,
@@ -13,15 +12,17 @@ import Icon from "~/components/common/Icon";
 import { getYearRange } from "~/lib/utils/dateCalculations";
 import { type FromTo } from "~/lib/zodSchemas";
 import Tooltip from "../Tooltip";
+import { useStore } from "~/stores/tx-store";
 
 type Props = {
   changeDate: (dates: FromTo) => Promise<void>;
-  fromTo: FromTo;
 };
 
-const Year = ({ changeDate, fromTo: { from, to } }: Props) => {
+const Year = ({ changeDate }: Props) => {
+  const { from, to } = useStore((state) => state.range);
+  const { setYear } = useStore();
+  const year = useStore((state) => state.year);
   const mostRecentYear = to.getFullYear();
-  const [year, setYear] = useState(mostRecentYear);
   const submitYear = async (year: number) => {
     await changeDate({
       from: new Date(Date.UTC(year, 0, 1)),
