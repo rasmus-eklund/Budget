@@ -4,7 +4,6 @@ import type { FromTo } from "~/lib/zodSchemas";
 import { useEffect, useMemo } from "react";
 import { applyCategory } from "~/lib/utils/categorize";
 import ShowData from "~/components/common/ShowData";
-import DateFilter from "~/components/common/DateFilters/DateFilter";
 import { categories } from "./_generateData/categories";
 import { generateData } from "./_generateData/generateData";
 import { useStore } from "~/stores/tx-store";
@@ -25,11 +24,7 @@ const DemoPage = () => {
     setRange(fromTo);
   }, [setRange]);
 
-  return (
-    <ShowData>
-      <DateFilter changeDates={changeDates} />
-    </ShowData>
-  );
+  return <ShowData changeDates={changeDates} />;
 };
 
 export default DemoPage;

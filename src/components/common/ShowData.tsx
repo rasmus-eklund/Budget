@@ -1,5 +1,4 @@
 "use client";
-import { type ReactNode } from "react";
 import Aggregated from "./DataTabs/Aggregated";
 import Transactions from "./DataTabs/Transactions";
 import getUnique from "~/lib/utils/getUnique";
@@ -10,9 +9,11 @@ import type { FilterTab } from "~/types";
 import CategoryPlots from "./DataTabs/CategoryPlots";
 import Balance from "./DataTabs/Balance";
 import { useStore } from "~/stores/tx-store";
+import DateFilter from "./DateFilters/DateFilter";
+import type { FromTo } from "~/lib/zodSchemas";
 
-type Props = { children: ReactNode };
-const ShowData = ({ children }: Props) => {
+type Props = { changeDates: (dates: FromTo) => Promise<void> };
+const ShowData = ({ changeDates }: Props) => {
   const txFilter = useStore((state) => state.txFilter);
   const txSort = useStore((state) => state.txSort);
   const filterTab = useStore((state) => state.filterTab);
@@ -24,7 +25,7 @@ const ShowData = ({ children }: Props) => {
 
   return (
     <section className="flex flex-1 flex-col gap-2 pt-2 md:pt-0">
-      {children}
+      <DateFilter changeDates={changeDates} />
       <Tabs
         className="flex-1 min-h-0 md:gap-2 gap-0"
         value={filterTab}

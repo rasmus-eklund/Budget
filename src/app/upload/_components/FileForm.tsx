@@ -19,7 +19,6 @@ import { applyCategory } from "~/lib/utils/categorize";
 import ShowData from "~/components/common/ShowData";
 import { getFromTo } from "~/lib/utils/dateCalculations";
 import Link from "next/link";
-import DateFilter from "~/components/common/DateFilters/DateFilter";
 import {
   Select,
   SelectContent,
@@ -222,11 +221,7 @@ const ShowTransactions = ({ txs }: { txs: Tx[] }) => {
     setTxs(txs.filter((i) => i.datum >= from && i.datum <= to));
   };
 
-  return (
-    <ShowData>
-      <DateFilter changeDates={changeDates} />
-    </ShowData>
-  );
+  return <ShowData changeDates={changeDates} />;
 };
 
 export default FileForm;

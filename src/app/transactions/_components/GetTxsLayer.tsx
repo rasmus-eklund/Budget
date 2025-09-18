@@ -4,7 +4,6 @@ import ShowData from "~/components/common/ShowData";
 import { type FromTo } from "~/lib/zodSchemas";
 import { getCurrentYearMonth } from "~/lib/utils/dateCalculations";
 import getTxByDates from "../dataLayer/getData";
-import DateFilter from "~/components/common/DateFilters/DateFilter";
 import { useRouter } from "next/navigation";
 import { useStore } from "~/stores/tx-store";
 
@@ -41,21 +40,9 @@ const GetTxsLayer = ({ range, userId }: Props) => {
       })
       .catch(() => setTxs([]))
       .finally(() => setLoading(false));
-  }, [
-    password,
-    router,
-    userId,
-    setLoading,
-    setTxs,
-    setRange,
-    range,
-  ]);
+  }, [password, router, userId, setLoading, setTxs, setRange, range]);
 
-  return (
-    <ShowData>
-      <DateFilter changeDates={getData} />
-    </ShowData>
-  );
+  return <ShowData changeDates={getData} />;
 };
 
 export default GetTxsLayer;
