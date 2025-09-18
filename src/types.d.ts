@@ -8,7 +8,13 @@ export type TxFilter = {
 type SortOption = "date-asc" | "date-desc" | "amount-asc" | "amount-desc";
 type TxSort = { sort: SortOption };
 
-type Tab = "aggregated" | "transactions" | "categoryBars" | "balanceOverTime";
+export type FilterTab =
+  | "aggregated"
+  | "transactions"
+  | "categoryBars"
+  | "balanceOverTime";
+
+export type DateTab = "month" | "day" | "year" | "free";
 
 export type Internal = {
   id: string;
@@ -27,7 +33,7 @@ export type TxReturn =
       ok: true;
       data: Tx[];
     }
-  | { ok: false; error: "password" | "error" };
+  | { ok: false };
 
 export type Category = { name: string; match: { name: string }[] };
 export type PersonAccounts = {
