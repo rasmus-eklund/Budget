@@ -17,7 +17,6 @@ const ShowData = ({ changeDates }: Props) => {
   const txFilter = useStore((state) => state.txFilter);
   const txSort = useStore((state) => state.txSort);
   const filterTab = useStore((state) => state.filterTab);
-  const loading = useStore((state) => state.loading);
   const data = useStore((state) => state.txs);
   const { setFilterTab } = useStore();
   const txs = applyTransactionFilters({ data, filters: { txFilter, txSort } });
@@ -38,44 +37,28 @@ const ShowData = ({ changeDates }: Props) => {
           <TabsTrigger value="balanceOverTime">Saldo</TabsTrigger>
         </TabsList>
         <TabsContent value="aggregated" className="flex-1 min-h-0">
-          {loading ? (
-            <p>Laddar...</p>
-          ) : (
-            <Aggregated data={txs} options={options.aggregated} />
-          )}
+          <Aggregated data={txs} options={options.aggregated} />
         </TabsContent>
         <TabsContent
           value="transactions"
           className="flex-1 min-h-0 flex flex-col"
         >
-          {loading ? (
-            <p>Laddar...</p>
-          ) : (
-            <>
-              <TransactionFilter options={options.transactions} />
-              <Transactions data={txs} />
-            </>
-          )}
+          <>
+            <TransactionFilter options={options.transactions} />
+            <Transactions data={txs} />
+          </>
         </TabsContent>
         <TabsContent value="categoryBars">
-          {loading ? (
-            <p>Laddar...</p>
-          ) : (
-            <>
-              <TransactionFilter options={options.transactions} />
-              <CategoryPlots data={txs} options={options.aggregated} />
-            </>
-          )}
+          <>
+            <TransactionFilter options={options.transactions} />
+            <CategoryPlots data={txs} options={options.aggregated} />
+          </>
         </TabsContent>
         <TabsContent value="balanceOverTime">
-          {loading ? (
-            <p>Laddar...</p>
-          ) : (
-            <>
-              <TransactionFilter options={options.transactions} />
-              <Balance data={txs} />
-            </>
-          )}
+          <>
+            <TransactionFilter options={options.transactions} />
+            <Balance data={txs} />
+          </>
         </TabsContent>
       </Tabs>
     </section>

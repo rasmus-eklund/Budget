@@ -4,9 +4,13 @@ import { Virtuoso } from "react-virtuoso";
 import type { Tx } from "~/types";
 import capitalize from "~/lib/utils/capitalize";
 import { cn } from "~/lib/utils";
+import Spinner from "./Spinner";
+import { useStore } from "~/stores/tx-store";
 
 type Props = { data: Tx[] };
 const Transactions = ({ data }: Props) => {
+  const loading = useStore((state) => state.loading);
+  if (loading) return <Spinner />;
   return (
     <>
       <Virtuoso

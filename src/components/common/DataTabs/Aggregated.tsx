@@ -9,6 +9,7 @@ import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import Icon from "../Icon";
 import { useStore } from "~/stores/tx-store";
+import Spinner from "./Spinner";
 
 type Props = {
   data: Tx[];
@@ -21,6 +22,8 @@ const Aggregated = ({ data, options: { people, categories } }: Props) => {
     () => calculateSums({ data, categories, people }),
     [data, people, categories],
   );
+  const loading = useStore((state) => state.loading);
+  if (loading) return <Spinner />;
   const peopleTotal = [...people, "total"];
   const nonClickableCategories = ["spending", "total"];
   const categoriesTotal = [...categories, ...nonClickableCategories].filter(
