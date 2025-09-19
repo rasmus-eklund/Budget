@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import calculateSums from "~/lib/utils/calculateSums";
 import capitalize from "~/lib/utils/capitalize";
 import { dateToString, toSek } from "~/lib/utils/formatData";
@@ -17,12 +17,13 @@ type Props = {
 };
 
 const Aggregated = ({ data, options: { people, categories } }: Props) => {
-  const [sticky, setSticky] = useState(true);
   const sumsMemo = useMemo(
     () => calculateSums({ data, categories, people }),
     [data, people, categories],
   );
   const loading = useStore((state) => state.loading);
+  const sticky = useStore((state) => state.sticky);
+  const { setSticky } = useStore();
   if (loading) return <Spinner />;
   const peopleTotal = [...people, "total"];
   const nonClickableCategories = ["spending", "total"];

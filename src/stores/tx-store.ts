@@ -57,6 +57,8 @@ export const useStore = create<{
   setRange: (range: FromTo) => void;
   drawerOpen: boolean;
   setDrawerOpen: (drawerOpen: boolean) => void;
+  sticky: boolean;
+  setSticky: (sticky: boolean) => void;
 }>((set) => ({
   txs: [],
   setTxs: (txs) => {
@@ -111,4 +113,6 @@ export const useStore = create<{
     }),
   drawerOpen: false,
   setDrawerOpen: (drawerOpen) => set({ drawerOpen }),
+  sticky: true,
+  setSticky: (sticky) => set({ sticky }),
 }));
