@@ -25,8 +25,8 @@ const GetTxsLayer = ({ range, userId }: Props) => {
     const dates = getCurrentYearMonth();
     getTxByDates({ dates, password, userId })
       .then((res) => {
-        setTxs(res.ok ? res.data : []);
         setRange(range);
+        setTxs(res.ok ? res.data : []);
       })
       .catch(() => setTxs([]))
       .finally(() => setLoading(false));
