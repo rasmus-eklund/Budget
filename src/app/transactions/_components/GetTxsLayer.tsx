@@ -28,7 +28,10 @@ const GetTxsLayer = ({ range, userId }: Props) => {
         setRange(range);
         setTxs(res.ok ? res.data : []);
       })
-      .catch(() => setTxs([]))
+      .catch((e) => {
+        console.error(e);
+        setTxs([]);
+      })
       .finally(() => setLoading(false));
   }, [password, router, userId, setLoading, setTxs, setRange, range]);
 
