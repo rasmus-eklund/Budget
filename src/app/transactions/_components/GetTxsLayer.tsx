@@ -16,12 +16,7 @@ const GetTxsLayer = ({ range, userId }: Props) => {
   const getData = async (dates: FromTo) => {
     setLoading(true);
     const res = await getTxByDates({ dates, password, userId });
-    if (!res.ok) {
-      setTxs([]);
-      setLoading(false);
-      return;
-    }
-    setTxs(res.data);
+    setTxs(res.ok ? res.data : []);
     setLoading(false);
   };
 
@@ -30,12 +25,7 @@ const GetTxsLayer = ({ range, userId }: Props) => {
     const dates = getCurrentYearMonth();
     getTxByDates({ dates, password, userId })
       .then((res) => {
-        if (!res.ok) {
-          setTxs([]);
-          setLoading(false);
-          return;
-        }
-        setTxs(res.data);
+        setTxs(res.ok ? res.data : []);
         setRange(range);
       })
       .catch(() => setTxs([]))
