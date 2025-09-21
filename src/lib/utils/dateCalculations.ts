@@ -47,11 +47,11 @@ export const decrementMonth = ({ year, month }: YM) => {
   return { year, month: month - 1 };
 };
 
-export const getCurrentYearMonth = () => {
-  const year = new Date().getFullYear();
-  const month = new Date().getMonth() + 1;
-  return getMonthRange({ year, month });
-};
+export const getLastMonthYear = (range: FromTo) =>
+  getMonthRange({
+    month: range.to.getMonth() + 1,
+    year: range.to.getFullYear(),
+  });
 
 export const getYearRange = ({ from, to }: FromTo) => {
   const start = from.getFullYear();
