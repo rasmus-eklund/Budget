@@ -215,10 +215,6 @@ const ShowTransactions = ({ txs }: { txs: Tx[] }) => {
     setRange(range);
     setFilterTab("transactions");
     setTxs(txs);
-    return () => {
-      setFilterTab("aggregated");
-      setTxs([]);
-    };
   }, [setFilterTab, setRange, setTxs, txs]);
 
   const changeDates = async ({ from, to }: FromTo) => {
