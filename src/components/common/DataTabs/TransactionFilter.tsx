@@ -26,7 +26,7 @@ const TransactionFilter = ({ options }: Props) => {
   });
   if (isDesktop) return <Filter options={options} />;
   return (
-    <div className="flex items-center px-2 pt-2 absolute right-11 top-1">
+    <div className="flex items-center px-2 pt-2 absolute right-11 top-2.5">
       <Drawer icon="Filter" title="Transaktionsfilter">
         <Filter options={options} />
       </Drawer>

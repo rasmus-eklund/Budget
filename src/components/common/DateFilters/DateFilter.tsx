@@ -18,7 +18,7 @@ const DateFilter = ({ changeDates }: Props) => {
   });
   if (isDesktop) return <TabsDesktop changeDates={changeDates} />;
   return (
-    <div className="flex items-center px-2 pt-2 absolute right-1 top-1">
+    <div className="flex items-center px-2 pt-2 absolute right-1 top-2.5">
       <Drawer icon="CalendarCog" title="Datumfilter">
         <TabsDesktop changeDates={changeDates} />
       </Drawer>
