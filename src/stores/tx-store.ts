@@ -55,8 +55,6 @@ export const useStore = create<{
   setDates: (dates: FromTo) => void;
   range: FromTo;
   setRange: (range: FromTo) => void;
-  drawerOpen: boolean;
-  setDrawerOpen: (drawerOpen: boolean) => void;
   sticky: boolean;
   setSticky: (sticky: boolean) => void;
 }>((set) => ({
@@ -111,8 +109,6 @@ export const useStore = create<{
       year: range.to.getFullYear(),
       dates: range,
     }),
-  drawerOpen: false,
-  setDrawerOpen: (drawerOpen) => set({ drawerOpen }),
   sticky: true,
   setSticky: (sticky) => set({ sticky }),
 }));

@@ -8,11 +8,10 @@ import { Button } from "~/components/ui/button";
 type Props = { changeDate: (dates: FromTo) => Promise<void> };
 
 const FreeDates = ({ changeDate }: Props) => {
-  const { setDates, setDrawerOpen } = useStore();
+  const { setDates } = useStore();
   const dates = useStore((state) => state.dates);
   const { from, to } = useStore((state) => state.range);
   const changeDates = async (dates: FromTo) => {
-    setDrawerOpen(false);
     await changeDate(dates);
   };
   return (
