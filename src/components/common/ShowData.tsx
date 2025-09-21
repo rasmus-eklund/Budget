@@ -46,7 +46,7 @@ const ShowData = ({ changeDates }: Props) => {
           value="transactions"
           className="flex-1 min-h-0 flex flex-col"
         >
-          <Transactions data={txs} />
+          <Transactions data={txs} changeDates={changeDates} />
         </TabsContent>
         <TabsContent value="categoryBars">
           <CategoryPlots data={txs} options={options.aggregated} />
