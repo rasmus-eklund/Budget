@@ -9,19 +9,22 @@ import { generateData } from "./_generateData/generateData";
 import { useStore } from "~/stores/tx-store";
 
 const DemoPage = () => {
-  const data = useMemo(() => generateData(), []);
+  const data = useMemo(() => {
+    const { txs, range } = generateData();
+    return { txs: txs.map((i) => applyCategory({ tx: i, categories })), range };
+  }, []);
+
   const { setTxs, setRange } = useStore();
 
-  const changeDates = async ({ from, to }: FromTo) => {
-    const txs = data.txs
-      .filter((i) => i.datum >= from && i.datum <= to)
-      .map((i) => applyCategory({ tx: i, categories }));
-    setTxs(txs);
-  };
+  const changeDates = async ({ from, to }: FromTo) =>
+    setTxs(data.txs.filter((i) => i.datum >= from && i.datum <= to));
 
   useEffect(() => {
+    console.log("Render demo data");
+    const { from, to } = data.range;
     setRange(data.range);
-  }, [setRange, data.range]);
+    setTxs(data.txs.filter((i) => i.datum >= from && i.datum <= to));
+  }, [setRange, data.range, setTxs, data.txs]);
 
   return <ShowData changeDates={changeDates} />;
 };
