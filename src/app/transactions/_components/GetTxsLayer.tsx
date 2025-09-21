@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import ShowData from "~/components/common/ShowData";
 import { type FromTo } from "~/lib/zodSchemas";
-import { getCurrentYearMonth } from "~/lib/utils/dateCalculations";
+import { getLastMonthYear } from "~/lib/utils/dateCalculations";
 import getTxByDates from "../dataLayer/getData";
 import { useRouter } from "next/navigation";
 import { useStore } from "~/stores/tx-store";
@@ -22,7 +22,7 @@ const GetTxsLayer = ({ range, userId }: Props) => {
 
   useEffect(() => {
     setLoading(true);
-    const dates = getCurrentYearMonth();
+    const dates = getLastMonthYear(range);
     getTxByDates({ dates, password, userId })
       .then((res) => {
         setRange(range);

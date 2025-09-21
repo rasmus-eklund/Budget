@@ -17,7 +17,7 @@ import {
 import type { Category, FileData, PersonAccounts, Tx } from "~/types";
 import { applyCategory } from "~/lib/utils/categorize";
 import ShowData from "~/components/common/ShowData";
-import { getFromTo } from "~/lib/utils/dateCalculations";
+import { getFromTo, getLastMonthYear } from "~/lib/utils/dateCalculations";
 import Link from "next/link";
 import {
   Select,
@@ -212,9 +212,10 @@ const ShowTransactions = ({ txs }: { txs: Tx[] }) => {
   useEffect(() => {
     const range = getFromTo(txs);
     if (!range) return;
+    const { from, to } = getLastMonthYear(range);
     setRange(range);
     setFilterTab("transactions");
-    setTxs(txs);
+    setTxs(txs.filter((i) => i.datum >= from && i.datum <= to));
   }, [setFilterTab, setRange, setTxs, txs]);
 
   const changeDates = async ({ from, to }: FromTo) => {
