@@ -20,9 +20,8 @@ const DemoPage = () => {
   };
 
   useEffect(() => {
-    const fromTo = { from: new Date("2023-12-01"), to: new Date("2023-12-31") };
-    setRange(fromTo);
-  }, [setRange]);
+    setRange(data.range);
+  }, [setRange, data.range]);
 
   return <ShowData changeDates={changeDates} />;
 };
