@@ -62,7 +62,7 @@ const Month = ({ changeDate }: Props) => {
         </SelectContent>
       </Select>
       <Button
-        disabled={year <= from.getFullYear() && month <= from.getMonth()}
+        disabled={year <= from.getFullYear() && month <= from.getMonth() + 1}
         variant="outline"
         size="icon"
         onClick={async () => {
