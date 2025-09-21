@@ -21,7 +21,6 @@ const DemoPage = () => {
     setTxs(data.txs.filter((i) => i.datum >= from && i.datum <= to));
 
   useEffect(() => {
-    const { from, to } = data.range;
     setRange(data.range);
     const { from, to } = getLastMonthYear(data.range);
     setTxs(data.txs.filter((i) => i.datum >= from && i.datum <= to));
