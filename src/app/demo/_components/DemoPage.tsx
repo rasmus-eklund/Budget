@@ -20,7 +20,6 @@ const DemoPage = () => {
     setTxs(data.txs.filter((i) => i.datum >= from && i.datum <= to));
 
   useEffect(() => {
-    console.log("Render demo data");
     const { from, to } = data.range;
     setRange(data.range);
     setTxs(data.txs.filter((i) => i.datum >= from && i.datum <= to));
