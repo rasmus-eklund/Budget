@@ -3,6 +3,7 @@
 import { type FromTo } from "~/lib/zodSchemas";
 import DatePickerRange from "../DatePickerRange";
 import { useStore } from "~/stores/tx-store";
+import { Button } from "~/components/ui/button";
 
 type Props = { changeDate: (dates: FromTo) => Promise<void> };
 
@@ -15,12 +16,23 @@ const FreeDates = ({ changeDate }: Props) => {
     await changeDate(dates);
   };
   return (
-    <DatePickerRange
-      dates={dates}
-      setDate={setDates}
-      range={{ from, to }}
-      onChange={changeDates}
-    />
+    <div className="flex items-center gap-2">
+      <DatePickerRange
+        dates={dates}
+        setDate={setDates}
+        range={{ from, to }}
+        onChange={changeDates}
+      />
+      <Button
+        variant="outline"
+        onClick={async () => {
+          setDates({ from, to });
+          await changeDate({ from, to });
+        }}
+      >
+        All data
+      </Button>
+    </div>
   );
 };
 
