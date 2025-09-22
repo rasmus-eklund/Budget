@@ -40,7 +40,7 @@ const ShowData = ({ changeDates }: Props) => {
           <TransactionFilter options={options.transactions} />
         )}
         <TabsContent value="aggregated" className="flex-1 min-h-0">
-          <Aggregated data={txs} options={options.aggregated} />
+          <Aggregated data={data} options={options.aggregated} />
         </TabsContent>
         <TabsContent
           value="transactions"
