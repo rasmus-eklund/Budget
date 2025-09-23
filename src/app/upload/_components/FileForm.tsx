@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation";
 import { useStore } from "~/stores/tx-store";
 import Icon from "~/components/common/Icon";
 import type { FromTo, TxBankAccount } from "~/lib/zodSchemas";
+import configs from "./bankConfigs";
 
 type Props = { categories: Category[]; people: PersonAccounts; userId: string };
 const FileForm = ({ categories, people, userId }: Props) => {
@@ -129,6 +130,7 @@ const FileForm = ({ categories, people, userId }: Props) => {
                   data.push({
                     bankAccountId: findMatchingAccount(file.name, options),
                     file,
+                    config: configs[0]!,
                   });
                 }
                 setFiles(data);
@@ -161,7 +163,7 @@ const FileForm = ({ categories, people, userId }: Props) => {
         )}
         {files && (
           <ul className="flex flex-col gap-2">
-            {files.map(({ file, bankAccountId }, i) => (
+            {files.map(({ file, bankAccountId, config }, i) => (
               <li className="flex items-center gap-2" key={`${file.name}_${i}`}>
                 <h2>{file.name}</h2>
                 <Select
@@ -185,6 +187,32 @@ const FileForm = ({ categories, people, userId }: Props) => {
                       >
                         {capitalize(option.person)} -{" "}
                         {capitalize(option.account)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={config.name}
+                  onValueChange={(value) => {
+                    setFiles((p) => {
+                      const newFiles = [...p];
+                      newFiles[i] = {
+                        ...newFiles[i]!,
+                        config: configs.find(
+                          (i) => i.name === (value as keyof typeof configs),
+                        )!,
+                      };
+                      return newFiles;
+                    });
+                  }}
+                >
+                  <SelectTrigger className="w-fit max-w-96">
+                    <SelectValue placeholder="Välj konto" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {configs.map((option) => (
+                      <SelectItem key={option.name} value={option.name}>
+                        {capitalize(option.name)}
                       </SelectItem>
                     ))}
                   </SelectContent>

@@ -48,6 +48,7 @@ export type PersonAccounts = {
 export type FileData = {
   bankAccountId: string;
   file: File;
+  config: { name: string; skipLines: number; columns: Record<string, string> };
 };
 
 export type Tx = {

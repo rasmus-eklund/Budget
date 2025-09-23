@@ -39,11 +39,11 @@ export const readFiles = async (
   { ok: true; data: TxBankAccount[] } | { ok: false; error: ReactNode }
 > => {
   const allTxs: TxBankAccount[] = [];
-  for (const { file, bankAccountId } of files) {
+  for (const { file, bankAccountId, config } of files) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     try {
-      const res = await parseTxs(buffer, bankAccountId);
+      const res = await parseTxs({ buffer, bankAccountId, config });
       if (!res.ok) {
         const jsx = ImportErrors({
           error: res.error,
