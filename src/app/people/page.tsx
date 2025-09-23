@@ -33,7 +33,7 @@ const Categories = async ({ userId }: WithAuthProps) => {
                 className="border-b-red flex h-8 items-center justify-between border-b"
                 key={id}
               >
-                <Link href={`/people/${name}`}>{capitalize(name)}</Link>
+                <Link href={`/people/${id}`}>{capitalize(name)}</Link>
                 <div className="flex items-center gap-2">
                   <EditItemForm
                     data={{ name, id }}
