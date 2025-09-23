@@ -28,7 +28,7 @@ const DatePickerRange = ({
 
   return (
     <div className="flex flex-col gap-3">
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover modal={true} open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
@@ -54,16 +54,6 @@ const DatePickerRange = ({
             }}
             footer={
               <div className="flex justify-end gap-2">
-                <Button
-                  variant="outline"
-                  onClick={async () => {
-                    setOpen(false);
-                    setDate({ from: range.from, to: range.to });
-                    await onChange({ from: range.from, to: range.to });
-                  }}
-                >
-                  All data
-                </Button>
                 <Button
                   disabled={!dates}
                   onClick={async () => {

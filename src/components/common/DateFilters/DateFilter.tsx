@@ -8,25 +8,33 @@ import FreeDay from "./Day";
 import Year from "./Year";
 import { useMediaQuery } from "~/hooks/use-media-query";
 import Drawer from "../Drawer";
+import { useStore } from "~/stores/tx-store";
+import type { DateTab } from "~/types";
 
-type Props = { changeDates: (dates: FromTo) => Promise<void>; range: FromTo };
-const DateFilter = ({ changeDates, range }: Props) => {
+type Props = { changeDates: (dates: FromTo) => Promise<void> };
+const DateFilter = ({ changeDates }: Props) => {
   const isDesktop = useMediaQuery("(min-width: 768px)", {
     initializeWithValue: false,
   });
-  if (isDesktop) return <TabsDesktop changeDates={changeDates} range={range} />;
+  if (isDesktop) return <TabsDesktop changeDates={changeDates} />;
   return (
-    <div className="flex items-center px-2 pt-2 absolute right-1 top-1">
+    <div className="flex items-center px-2 pt-2 absolute right-1 top-2.5">
       <Drawer icon="CalendarCog" title="Datumfilter">
-        <TabsDesktop changeDates={changeDates} range={range} />
+        <TabsDesktop changeDates={changeDates} />
       </Drawer>
     </div>
   );
 };
 
-const TabsDesktop = ({ changeDates, range }: Props) => {
+const TabsDesktop = ({ changeDates }: Props) => {
+  const { setDateTab } = useStore();
+  const dateTab = useStore((state) => state.dateTab);
   return (
-    <Tabs defaultValue="month" className="pt-2">
+    <Tabs
+      value={dateTab}
+      onValueChange={(value) => setDateTab(value as DateTab)}
+      className="pt-2"
+    >
       <TabsList>
         <TabsTrigger value="month">Månad</TabsTrigger>
         <TabsTrigger value="day">Dag</TabsTrigger>
@@ -34,16 +42,16 @@ const TabsDesktop = ({ changeDates, range }: Props) => {
         <TabsTrigger value="free">Fritt spann</TabsTrigger>
       </TabsList>
       <TabsContent value="month">
-        <Month changeDate={changeDates} fromTo={range} />
+        <Month changeDate={changeDates} />
       </TabsContent>
       <TabsContent value="day">
-        <FreeDay changeDate={changeDates} fromTo={range} />
+        <FreeDay changeDate={changeDates} />
       </TabsContent>
       <TabsContent value="year">
-        <Year changeDate={changeDates} fromTo={range} />
+        <Year changeDate={changeDates} />
       </TabsContent>
       <TabsContent value="free">
-        <FreeDates changeDate={changeDates} fromTo={range} />
+        <FreeDates changeDate={changeDates} />
       </TabsContent>
     </Tabs>
   );

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import Icon from "~/components/common/Icon";
 import {
@@ -12,11 +11,14 @@ import { dateToString } from "~/lib/utils/formatData";
 import { type FromTo } from "~/lib/zodSchemas";
 import DatePicker from "../DatePicker";
 import Tooltip from "../Tooltip";
+import { useStore } from "~/stores/tx-store";
 
-type Props = { changeDate: (dates: FromTo) => Promise<void>; fromTo: FromTo };
+type Props = { changeDate: (dates: FromTo) => Promise<void> };
 
-const FreeDay = ({ changeDate, fromTo: { from, to } }: Props) => {
-  const [day, setDay] = useState(to);
+const FreeDay = ({ changeDate }: Props) => {
+  const { setDay } = useStore();
+  const { from, to } = useStore((state) => state.range);
+  const day = useStore((state) => state.day);
   const onChange = async (dates: FromTo) => {
     setDay(dates.from);
     await changeDate(dates);

@@ -6,7 +6,10 @@ import { getFromTo } from "~/lib/utils/dateCalculations";
 import type { FromTo } from "~/lib/zodSchemas";
 import type { Uniques, Tx } from "~/types";
 import { cn } from "~/lib/utils";
-import { useTxFilterStore } from "~/stores/tx-filter-store";
+import { Button } from "~/components/ui/button";
+import Icon from "../Icon";
+import { useStore } from "~/stores/tx-store";
+import Spinner from "./Spinner";
 
 type Props = {
   data: Tx[];
@@ -18,6 +21,10 @@ const Aggregated = ({ data, options: { people, categories } }: Props) => {
     () => calculateSums({ data, categories, people }),
     [data, people, categories],
   );
+  const loading = useStore((state) => state.loading);
+  const sticky = useStore((state) => state.sticky);
+  const { setSticky } = useStore();
+  if (loading) return <Spinner />;
   const peopleTotal = [...people, "total"];
   const nonClickableCategories = ["spending", "total"];
   const categoriesTotal = [...categories, ...nonClickableCategories].filter(
@@ -30,15 +37,35 @@ const Aggregated = ({ data, options: { people, categories } }: Props) => {
     return f !== t ? `${f} - ${t}` : f;
   };
 
+  const stickyClass = "sticky left-0 z-10";
   const catClass =
     "px-6 py-3 text-xs font-medium uppercase tracking-wider text-muted-foreground";
   return (
-    <div className="overflow-x-auto py-2">
-      {dates ? <h2 className="p-2 text-lg">{getDateString(dates)}</h2> : null}
+    <div className="overflow-auto py-2">
+      {dates ? (
+        <h2 className={cn("p-2 text-lg", stickyClass)}>
+          {getDateString(dates)}
+        </h2>
+      ) : null}
       <table className="min-w-full divide-y divide-secondary">
         <thead className="bg-secondary">
           <tr>
-            <th className={cn(catClass, "text-left")}>Kategori</th>
+            <th
+              className={cn(
+                catClass,
+                "text-left bg-secondary flex items-center gap-1",
+                sticky && stickyClass,
+              )}
+            >
+              <p>Kategori</p>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSticky(!sticky)}
+              >
+                <Icon icon={sticky ? "PinOff" : "Pin"} />
+              </Button>
+            </th>
             {peopleTotal.map((person) => (
               <th key={person}>
                 {person === "total" ? (
@@ -58,7 +85,12 @@ const Aggregated = ({ data, options: { people, categories } }: Props) => {
         <tbody className="divide-y divide-secondary bg-background">
           {categoriesTotal.map((category, categoryIndex) => (
             <tr key={category}>
-              <td className="whitespace-nowrap px-4 font-semibold tracking-wider">
+              <td
+                className={cn(
+                  "whitespace-nowrap px-4 font-semibold tracking-wider bg-white",
+                  sticky && stickyClass,
+                )}
+              >
                 {nonClickableCategories.includes(category) ? (
                   capitalize(category === "spending" ? "Utgifter" : category)
                 ) : (
@@ -115,19 +147,19 @@ const CatButton = ({
   category,
   person,
 }: CatButtonProps) => {
-  const { setTxFilter, defaultTxFilter, setTab } = useTxFilterStore();
+  const { setTxFilter, setFilterTab } = useStore();
+  const defaultTxFilter = useStore((state) => state.defaultTxFilter);
   return (
     <button
       className={cn("cursor-pointer hover:scale-110", className)}
       onClick={() => {
-        console.log({ defaultTxFilter, clicked: { category, person } });
         setTxFilter({
           category: category ? [category] : defaultTxFilter.category,
           account: defaultTxFilter.account,
           person: person ? [person] : defaultTxFilter.person,
           search: "",
         });
-        setTab("transactions");
+        setFilterTab("transactions");
       }}
     >
       {children}

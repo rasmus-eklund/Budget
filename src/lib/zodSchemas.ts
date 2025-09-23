@@ -1,22 +1,22 @@
 import { z } from "zod";
 import dayjs from "dayjs";
 
-const makeErrorMap = (messages: {
-  [Code in z.ZodIssueCode]?: (value: unknown) => string;
-}): { errorMap: z.ZodErrorMap } => {
-  return {
-    errorMap: (issue, ctx) => {
-      return {
-        message: messages[issue.code]?.(ctx.data) ?? ctx.defaultError,
-      };
-    },
-  };
+const parseSek = (v: string) => {
+  const cleaned = v.replace(/[^\d,.\-]/g, "").replace(/\s+/g, "");
+  let normalized = cleaned;
+  if (/,/.test(cleaned) && /\./.test(cleaned)) {
+    normalized = cleaned.replace(/,/g, "");
+  } else {
+    normalized = cleaned.replace(",", ".");
+  }
+  const num = Number(normalized);
+  if (Number.isNaN(num)) {
+    throw new Error(`Felaktigt nummerformat: ${v}`);
+  }
+  return num;
 };
 
-const formatSek = (v: string) => {
-  const cleaned = v.replace(/\s/g, "").replace(",", ".").replace("kr", "");
-  return Number(cleaned);
-};
+const numberSchema = z.string().min(1, "Minst 1 siffra").transform(parseSek);
 
 const dateSchema = z
   .string({ required_error: "Datum saknas." })
@@ -50,25 +50,8 @@ export const csvSchema = z
         text: z
           .string({ required_error: "Text saknas." })
           .min(1, "Text måste vara på minst 1 tecken"),
-        typ: z.string(),
-        belopp: z
-          .string({ required_error: "Belopp saknas." })
-          .refine(
-            (v) => /^-?\d{1,3}(\s\d{3})*,\d{2}\skr$/.test(v),
-            (v) => ({
-              message: `Felaktigt valutaformat: ${v}. Använd: 1 000,00 kr`,
-            }),
-          )
-          .transform(formatSek),
-        saldo: z
-          .string(makeErrorMap({ invalid_type: () => "Saldo saknas." }))
-          .refine(
-            (v) => /^-?\d{1,3}(\s\d{3})*,\d{2}\skr$/.test(v),
-            (v) => ({
-              message: `Felaktigt valutaformat: ${v}. Använd: 1 000,00 kr`,
-            }),
-          )
-          .transform(formatSek),
+        belopp: numberSchema,
+        saldo: numberSchema,
       }),
     ),
   )
@@ -76,7 +59,6 @@ export const csvSchema = z
 export type CsvSchema = z.infer<typeof csvSchema>;
 
 export type TxBankAccount = z.infer<typeof csvSchema>[number] & {
-  index: number;
   bankAccountId: string;
   budgetgrupp: string;
   id: string;
@@ -95,7 +77,6 @@ export const matchSchema = z.object({
 
 export const encryptedDataSchema = z.object({
   text: z.string(),
-  typ: z.string(),
   budgetgrupp: z.string(),
   belopp: z.coerce.number(),
   saldo: z.coerce.number(),

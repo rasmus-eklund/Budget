@@ -17,13 +17,14 @@ import { env } from "~/env";
 
 import { type Passwords, passwordsSchema } from "~/lib/zodSchemas";
 import { useRouter, useSearchParams } from "next/navigation";
-import { usePasswordStore } from "~/stores/password-store";
+import { useStore } from "~/stores/tx-store";
 
 const defaultValues = {
   password: env.NEXT_PUBLIC_PASS ?? "",
 };
 const PasswordForm = () => {
-  const { password, updatePassword } = usePasswordStore();
+  const { updatePassword } = useStore();
+  const password = useStore((state) => state.password);
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get("from");

@@ -14,17 +14,17 @@ import EditItemForm from "~/components/common/Forms/EditItemForm";
 import DeleteDialog from "~/components/common/Forms/DeleteDialog";
 import { WithAuth, type WithAuthProps } from "~/components/common/withAuth";
 
-type Props = { params: Promise<{ name: string }> };
+type Props = { params: Promise<{ id: string }> };
 
 const page = async (props: Props & WithAuthProps) => {
-  const { name: personName } = await props.params;
+  const { id } = await props.params;
   const { userId } = props;
   const options = await getAllPeople(userId);
   const {
     name,
     bankAccounts,
     id: personId,
-  } = await getBankAccounts({ name: personName, userId });
+  } = await getBankAccounts({ id, userId });
   const addAccount = async ({ name }: Name) => {
     "use server";
     await addBankAccount({ name, personId });
@@ -45,15 +45,15 @@ const page = async (props: Props & WithAuthProps) => {
         ) : (
           bankAccounts
             .toSorted((a, b) => a.name.localeCompare(b.name))
-            .map(({ name, id }) => (
+            .map(({ name, id: bankAccountId }) => (
               <li
                 className="border-b-red flex h-8 items-center justify-between border-b"
-                key={id}
+                key={bankAccountId}
               >
                 <p>{capitalize(name)}</p>
                 <div className="flex items-center gap-2">
                   <EditItemForm
-                    data={{ name, id }}
+                    data={{ name, id: bankAccountId }}
                     uniques={bankAccounts.map(({ name }) => name)}
                     onSubmit={renameBankAccount}
                     formInfo={{
@@ -68,13 +68,13 @@ const page = async (props: Props & WithAuthProps) => {
                       action={removeBankAccount}
                       className="flex items-center"
                     >
-                      <input hidden name="id" type="text" defaultValue={id} />
                       <input
                         hidden
-                        name="name"
+                        name="bankAccountId"
                         type="text"
-                        defaultValue={personName}
+                        defaultValue={bankAccountId}
                       />
+                      <input hidden name="id" type="text" defaultValue={id} />
                       <DeleteButton icon={false} />
                     </form>
                   </DeleteDialog>
@@ -87,7 +87,7 @@ const page = async (props: Props & WithAuthProps) => {
         onSubmit={addAccount}
         formInfo={{
           label: "Konto",
-          description: `Lägg till konto för ${personName.toLowerCase()}`,
+          description: `Lägg till konto för ${name.toLowerCase()}`,
         }}
         uniques={bankAccounts.map((i) => i.name)}
       />

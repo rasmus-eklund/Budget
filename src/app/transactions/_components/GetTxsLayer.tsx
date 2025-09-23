@@ -1,76 +1,41 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ShowData from "~/components/common/ShowData";
 import { type FromTo } from "~/lib/zodSchemas";
-import { getCurrentYearMonth } from "~/lib/utils/dateCalculations";
+import { getLastMonthYear } from "~/lib/utils/dateCalculations";
 import getTxByDates from "../dataLayer/getData";
-import type { Tx } from "~/types";
-import DateFilter from "~/components/common/DateFilters/DateFilter";
 import { useRouter } from "next/navigation";
-import { usePasswordStore } from "~/stores/password-store";
-import { useTxFilterStore } from "~/stores/tx-filter-store";
+import { useStore } from "~/stores/tx-store";
 
 type Props = { range: FromTo; userId: string };
 const GetTxsLayer = ({ range, userId }: Props) => {
   const router = useRouter();
-  const { password } = usePasswordStore();
-  const [loading, setLoading] = useState(true);
-  const [txs, setData] = useState<Tx[]>([]);
-  const { setTxFilter, setDefaultTxFilter } = useTxFilterStore();
-
-  const applyDefaultFilters = useCallback(
-    (txs: Tx[]) => {
-      const category = [...new Set(txs.map((i) => i.budgetgrupp))].filter(
-        (i) => i !== "inom",
-      );
-      const person = [...new Set(txs.map((i) => i.person))];
-      const account = [...new Set(txs.map((i) => i.konto))];
-      setTxFilter({ account, category, person, search: "" });
-      setDefaultTxFilter({ account, category, person, search: "" });
-    },
-    [setTxFilter, setDefaultTxFilter],
-  );
+  const { setTxs, setLoading, setRange } = useStore();
+  const password = useStore((state) => state.password);
 
   const getData = async (dates: FromTo) => {
     setLoading(true);
     const res = await getTxByDates({ dates, password, userId });
-    if (!res.ok) {
-      setData([]);
-      if (res.error === "password") {
-        return router.push("/password?from=transactions&error=true");
-      }
-      return;
-    }
-    if (res.ok) {
-      setData(res.data);
-      applyDefaultFilters(res.data);
-    }
+    setTxs(res.ok ? res.data : []);
     setLoading(false);
   };
 
   useEffect(() => {
     setLoading(true);
-    if (password === "") {
-      return router.push("/password?from=transactions");
-    }
-    const dates = getCurrentYearMonth();
+    const dates = getLastMonthYear(range);
     getTxByDates({ dates, password, userId })
       .then((res) => {
-        if (!res.ok) {
-          return setData([]);
-        }
-        setData(res.data);
-        applyDefaultFilters(res.data);
+        setRange(range);
+        setTxs(res.ok ? res.data : []);
       })
-      .catch(() => setData([]))
+      .catch((e) => {
+        console.error(e);
+        setTxs([]);
+      })
       .finally(() => setLoading(false));
-  }, [password, router, userId, applyDefaultFilters]);
+  }, [password, router, userId, setLoading, setTxs, setRange, range]);
 
-  return (
-    <ShowData loading={loading} data={txs}>
-      <DateFilter range={range} changeDates={getData} />
-    </ShowData>
-  );
+  return <ShowData changeDates={getData} />;
 };
 
 export default GetTxsLayer;

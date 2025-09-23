@@ -19,9 +19,9 @@ const Drawer = ({
   className?: string;
 }) => {
   return (
-    <DrawerShad>
+    <DrawerShad direction="right">
       <DrawerTrigger>
-        <Icon icon={icon} className="size-5"/>
+        <Icon icon={icon} className="size-5" />
       </DrawerTrigger>
       <DrawerContent className={cn("p-2", className)}>
         <DrawerTitle>{title}</DrawerTitle>

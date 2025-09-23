@@ -17,7 +17,9 @@ import { useMediaQuery } from "~/hooks/use-media-query";
 import { colors } from "~/lib/constants/colors";
 import capitalize from "~/lib/utils/capitalize";
 import { toSek } from "~/lib/utils/formatData";
+import { useStore } from "~/stores/tx-store";
 import type { Tx, Uniques } from "~/types";
+import Spinner from "./Spinner";
 
 type Props = {
   data: Tx[];
@@ -29,6 +31,8 @@ type Data = { name: string; value: number };
 type Persons = Record<string, Data[]>;
 
 const CategoryPlots = ({ data, options }: Props) => {
+  const loading = useStore((state) => state.loading);
+  if (loading) return <Spinner />;
   const sums: Sum[] = [];
   const persons: Persons = {};
   const cats = options.categories.filter(

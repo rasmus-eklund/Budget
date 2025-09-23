@@ -1,20 +1,37 @@
 "use client";
 
-import { useState } from "react";
 import { type FromTo } from "~/lib/zodSchemas";
 import DatePickerRange from "../DatePickerRange";
+import { useStore } from "~/stores/tx-store";
+import { Button } from "~/components/ui/button";
 
-type Props = { changeDate: (dates: FromTo) => Promise<void>; fromTo: FromTo };
+type Props = { changeDate: (dates: FromTo) => Promise<void> };
 
-const FreeDates = ({ changeDate, fromTo: { from, to } }: Props) => {
-  const [dates, setDates] = useState<FromTo>({ from, to });
+const FreeDates = ({ changeDate }: Props) => {
+  const { setDates } = useStore();
+  const dates = useStore((state) => state.dates);
+  const { from, to } = useStore((state) => state.range);
+  const changeDates = async (dates: FromTo) => {
+    await changeDate(dates);
+  };
   return (
-    <DatePickerRange
-      dates={dates}
-      setDate={setDates}
-      range={{ from, to }}
-      onChange={changeDate}
-    />
+    <div className="flex items-center gap-2">
+      <DatePickerRange
+        dates={dates}
+        setDate={setDates}
+        range={{ from, to }}
+        onChange={changeDates}
+      />
+      <Button
+        variant="outline"
+        onClick={async () => {
+          setDates({ from, to });
+          await changeDate({ from, to });
+        }}
+      >
+        All data
+      </Button>
+    </div>
   );
 };
 

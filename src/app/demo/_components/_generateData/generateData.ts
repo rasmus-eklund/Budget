@@ -44,7 +44,6 @@ export const generateData = () => {
             person,
             saldo: balance[person].Kort,
             text,
-            typ: "Korttransaktion",
           };
           txs.push(tx);
         }
@@ -58,7 +57,6 @@ export const generateData = () => {
           person,
           saldo: balance[person].Spar,
           text: "Lön",
-          typ: "Insättning",
         };
         txs.push(income);
         const belopp = -4000 * raise;
@@ -72,7 +70,6 @@ export const generateData = () => {
           person,
           saldo: balance[person].Spar,
           text: "Hyra",
-          typ: "Pg-Bg",
         };
         txs.push(rent);
       }
@@ -159,7 +156,6 @@ const internal = (i: Internal): [Tx, Tx] => {
     person,
     saldo: i.sparBalance + belopp,
     text: "Överföring",
-    typ: "Övrigt",
   };
   const to: Tx = {
     belopp: -belopp,
@@ -170,7 +166,6 @@ const internal = (i: Internal): [Tx, Tx] => {
     person,
     saldo: i.kortBalance + -belopp,
     text: "Överföring Till Ica Banks Konto",
-    typ: "Korttransaktion",
   };
   return [from, to];
 };

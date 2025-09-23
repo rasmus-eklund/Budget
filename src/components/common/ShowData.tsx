@@ -1,33 +1,34 @@
 "use client";
-import { type ReactNode } from "react";
 import Aggregated from "./DataTabs/Aggregated";
 import Transactions from "./DataTabs/Transactions";
 import getUnique from "~/lib/utils/getUnique";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import TransactionFilter from "./DataTabs/TransactionFilter";
 import applyTransactionFilters from "~/lib/utils/transactionFilter";
-import type { Tx, Tab } from "~/types";
+import type { FilterTab } from "~/types";
 import CategoryPlots from "./DataTabs/CategoryPlots";
 import Balance from "./DataTabs/Balance";
-import { useTxFilterStore } from "~/stores/tx-filter-store";
+import { useStore } from "~/stores/tx-store";
+import DateFilter from "./DateFilters/DateFilter";
+import type { FromTo } from "~/lib/zodSchemas";
 
-type Props = {
-  data: Tx[];
-  loading?: boolean;
-  children: ReactNode;
-};
-const ShowData = ({ data, loading = false, children }: Props) => {
-  const { txFilter, txSort, tab, setTab } = useTxFilterStore();
+type Props = { changeDates: (dates: FromTo) => Promise<void> };
+const ShowData = ({ changeDates }: Props) => {
+  const txFilter = useStore((state) => state.txFilter);
+  const txSort = useStore((state) => state.txSort);
+  const filterTab = useStore((state) => state.filterTab);
+  const data = useStore((state) => state.txs);
+  const { setFilterTab } = useStore();
   const txs = applyTransactionFilters({ data, filters: { txFilter, txSort } });
   const options = getUnique({ data, txFilter });
 
   return (
     <section className="flex flex-1 flex-col gap-2 pt-2 md:pt-0">
-      {children}
+      <DateFilter changeDates={changeDates} />
       <Tabs
         className="flex-1 min-h-0 md:gap-2 gap-0"
-        value={tab}
-        onValueChange={(value) => setTab(value as Tab)}
+        value={filterTab}
+        onValueChange={(value) => setFilterTab(value as FilterTab)}
       >
         <TabsList className="w-full md:w-fit">
           <TabsTrigger value="aggregated">Budget</TabsTrigger>
@@ -35,45 +36,23 @@ const ShowData = ({ data, loading = false, children }: Props) => {
           <TabsTrigger value="categoryBars">Utgifter</TabsTrigger>
           <TabsTrigger value="balanceOverTime">Saldo</TabsTrigger>
         </TabsList>
+        {filterTab !== "aggregated" && (
+          <TransactionFilter options={options.transactions} />
+        )}
         <TabsContent value="aggregated" className="flex-1 min-h-0">
-          {loading ? (
-            <p>Laddar...</p>
-          ) : (
-            <Aggregated data={data} options={options.aggregated} />
-          )}
+          <Aggregated data={data} options={options.aggregated} />
         </TabsContent>
         <TabsContent
           value="transactions"
           className="flex-1 min-h-0 flex flex-col"
         >
-          {loading ? (
-            <p>Laddar...</p>
-          ) : (
-            <>
-              <TransactionFilter options={options.transactions} />
-              <Transactions data={txs} />
-            </>
-          )}
+          <Transactions data={txs} changeDates={changeDates} />
         </TabsContent>
         <TabsContent value="categoryBars">
-          {loading ? (
-            <p>Laddar...</p>
-          ) : (
-            <>
-              <TransactionFilter options={options.transactions} />
-              <CategoryPlots data={txs} options={options.aggregated} />
-            </>
-          )}
+          <CategoryPlots data={txs} options={options.aggregated} />
         </TabsContent>
         <TabsContent value="balanceOverTime">
-          {loading ? (
-            <p>Laddar...</p>
-          ) : (
-            <>
-              <TransactionFilter options={options.transactions} />
-              <Balance data={txs} />
-            </>
-          )}
+          <Balance data={txs} />
         </TabsContent>
       </Tabs>
     </section>

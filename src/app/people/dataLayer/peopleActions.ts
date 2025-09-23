@@ -20,7 +20,7 @@ export const addBankAccount = async ({
   if (!id) {
     throw new Error("Kunde inte lägga till bankkonto");
   }
-  revalidatePath(`/people/${name}`);
+  revalidatePath(`/people/${id}`);
 };
 
 export const renameBankAccount = async ({
@@ -36,29 +36,29 @@ export const renameBankAccount = async ({
   if (!newId) {
     throw new Error("Kunde inte byta bankkontots namn.");
   }
-  revalidatePath(`/people/${name}`);
+  revalidatePath(`/people/${newId}`);
 };
 
 export const removeBankAccount = async (formData: FormData) => {
   await getUserId();
   const id = formData.get("id") as string;
-  const name = formData.get("name") as string;
-  await db.delete(bankAccounts).where(eq(bankAccounts.id, id));
-  revalidatePath(`/people/${name}`);
+  const bankAccountId = formData.get("bankAccountId") as string;
+  await db.delete(bankAccounts).where(eq(bankAccounts.id, bankAccountId));
+  revalidatePath(`/people/${id}`);
 };
 
 export const addPerson = async ({
   name: personName,
   userId,
 }: Name & { userId: string }) => {
-  const [{ name }] = (await db
+  const [{ id }] = (await db
     .insert(persons)
     .values({ name: personName.toLowerCase(), id: randomUUID(), userId })
-    .returning({ name: persons.name })) as [{ name: string }];
-  if (!name) {
+    .returning({ id: persons.id })) as [{ id: string }];
+  if (!id) {
     throw new Error("Kunde inte lägga till person");
   }
-  redirect(`/people/${name}`);
+  redirect(`/people/${id}`);
 };
 
 export const removePerson = async (formData: FormData) => {
@@ -80,7 +80,7 @@ export const renamePerson = async ({ name, id }: Name & { id: string }) => {
   if (!newId) {
     throw new Error("Kunde inte ändra personens namn");
   }
-  revalidatePath(`/people/${name}`);
+  revalidatePath(`/people/${newId}`);
 };
 
 export const getAllPeople = async (userId: string) => {
@@ -91,15 +91,15 @@ export const getAllPeople = async (userId: string) => {
 };
 
 export const getBankAccounts = async ({
-  name,
+  id,
   userId,
 }: {
-  name: string;
+  id: string;
   userId: string;
 }) => {
   const person = await db.query.persons.findFirst({
     columns: { name: true, id: true },
-    where: and(eq(persons.name, name), eq(persons.userId, userId)),
+    where: and(eq(persons.id, id), eq(persons.userId, userId)),
     with: { bankAccounts: { columns: { id: true, name: true } } },
   });
   if (!person) {

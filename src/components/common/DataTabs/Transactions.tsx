@@ -4,15 +4,23 @@ import { Virtuoso } from "react-virtuoso";
 import type { Tx } from "~/types";
 import capitalize from "~/lib/utils/capitalize";
 import { cn } from "~/lib/utils";
+import Spinner from "./Spinner";
+import { useStore } from "~/stores/tx-store";
+import type { FromTo } from "~/lib/zodSchemas";
+import { getDayRange } from "~/lib/utils/dateCalculations";
 
-type Props = { data: Tx[] };
-const Transactions = ({ data }: Props) => {
+type Props = { data: Tx[]; changeDates: (dates: FromTo) => Promise<void> };
+const Transactions = ({ data, changeDates }: Props) => {
+  const loading = useStore((state) => state.loading);
+  if (loading) return <Spinner />;
   return (
     <>
       <Virtuoso
         className="flex-1 min-h-0"
         data={data}
-        itemContent={(_, tx) => <Transaction key={tx.id} data={tx} />}
+        itemContent={(_, tx) => (
+          <Transaction key={tx.id} data={tx} changeDates={changeDates} />
+        )}
       />
       <ShowSum data={data} />
     </>
@@ -34,13 +42,20 @@ const ShowSum = ({ data }: { data: Tx[] }) => {
 
 const Transaction = ({
   data: { belopp, datum, budgetgrupp, person, konto, text },
+  changeDates,
 }: {
   data: Tx;
+  changeDates: (dates: FromTo) => Promise<void>;
 }) => {
   return (
     <li className="mb-2 mt-2 flex flex-col rounded-sm bg-accent p-1 shadow-lg">
       <div className="grid grid-cols-2">
-        <p className="font-semibold">{dateToString(datum)}</p>
+        <button
+          className="cursor-pointer hover:scale-105 w-fit"
+          onClick={async () => changeDates(getDayRange(dateToString(datum)))}
+        >
+          <p className="font-semibold">{dateToString(datum)}</p>
+        </button>
         <Sek sek={belopp} />
       </div>
       <div className="flex justify-between gap-2">
