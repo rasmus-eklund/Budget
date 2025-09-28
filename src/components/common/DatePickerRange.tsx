@@ -12,27 +12,30 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { type FromTo } from "~/lib/zodSchemas";
+import { cn } from "~/lib/utils";
 
 const DatePickerRange = ({
   dates,
   setDate,
   range,
   onChange,
+  className,
 }: {
   onChange: (dates: FromTo) => Promise<void>;
   dates: FromTo | undefined;
   setDate: (dates: FromTo) => void;
   range: FromTo;
+  className?: string;
 }) => {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 flex-1 md:flex-none">
       <Popover modal={true} open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="max-w-[230px] justify-between font-normal"
+            className={cn("justify-between font-normal", className)}
           >
             <Title dates={dates} />
             <ChevronDownIcon />

@@ -39,7 +39,7 @@ const Month = ({ changeDate }: Props) => {
   };
   return (
     <form
-      className="flex md:flex-row flex-col md:items-center gap-1 items-start"
+      className="flex md:flex-row flex-col md:items-center gap-1"
       onSubmit={(e) => e.preventDefault()}
     >
       <Select

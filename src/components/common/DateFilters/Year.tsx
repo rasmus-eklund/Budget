@@ -32,64 +32,66 @@ const Year = ({ changeDate }: Props) => {
   const years = getYearRange({ from, to });
   return (
     <form
-      className="flex items-center gap-1"
+      className="flex md:items-center gap-1 flex-col md:flex-row"
       onSubmit={(e) => e.preventDefault()}
     >
-      <Button
-        disabled={from.getFullYear() === year}
-        variant="outline"
-        type="button"
-        size="icon"
-        onClick={async () => {
-          const newYear = year - 1;
-          setYear(newYear);
-          await submitYear(newYear);
-        }}
-      >
-        <Icon icon="ChevronLeft" />
-      </Button>
-      <Select
-        value={year.toString()}
-        onValueChange={async (year) => {
-          const y = Number(year);
-          setYear(y);
-          await submitYear(y);
-        }}
-      >
-        <SelectTrigger className="w-[90px]">
-          <SelectValue placeholder="" />
-        </SelectTrigger>
-        <SelectContent>
-          {years.reverse().map((year) => (
-            <SelectItem key={`year-${year}`} value={year.toString()}>
-              {year}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Button
-        disabled={mostRecentYear === year}
-        variant="outline"
-        size="icon"
-        type="button"
-        onClick={async () => {
-          const newYear = year + 1;
-          setYear(newYear);
-          await submitYear(newYear);
-        }}
-      >
-        <Icon icon="ChevronRight" className="size-4" />
-      </Button>
+      <div className="flex items-center gap-1">
+        <Button
+          disabled={from.getFullYear() === year}
+          variant="outline"
+          type="button"
+          size="icon"
+          onClick={async () => {
+            const newYear = year - 1;
+            setYear(newYear);
+            await submitYear(newYear);
+          }}
+        >
+          <Icon icon="ChevronLeft" />
+        </Button>
+        <Select
+          value={year.toString()}
+          onValueChange={async (year) => {
+            const y = Number(year);
+            setYear(y);
+            await submitYear(y);
+          }}
+        >
+          <SelectTrigger className="w-full md:w-[90px]">
+            <SelectValue placeholder="" />
+          </SelectTrigger>
+          <SelectContent>
+            {years.reverse().map((year) => (
+              <SelectItem key={`year-${year}`} value={year.toString()}>
+                {year}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button
+          disabled={mostRecentYear === year}
+          variant="outline"
+          size="icon"
+          type="button"
+          onClick={async () => {
+            const newYear = year + 1;
+            setYear(newYear);
+            await submitYear(newYear);
+          }}
+        >
+          <Icon icon="ChevronRight" className="size-4" />
+        </Button>
+      </div>
       <Tooltip title="Senaste året">
         <Button
           variant="outline"
-          size="icon"
           type="button"
           onClick={async () => {
             setYear(mostRecentYear);
             await submitYear(mostRecentYear);
           }}
         >
+          <p className="md:hidden">Senaste året</p>
           <Icon icon="CalendarCheck" />
         </Button>
       </Tooltip>

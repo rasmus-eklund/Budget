@@ -15,8 +15,9 @@ const FreeDates = ({ changeDate }: Props) => {
     await changeDate(dates);
   };
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex md:items-center gap-1 flex-col md:flex-row">
       <DatePickerRange
+        className="w-full md:w-fit"
         dates={dates}
         setDate={setDates}
         range={{ from, to }}
