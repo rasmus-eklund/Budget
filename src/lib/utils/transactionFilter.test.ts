@@ -1,6 +1,6 @@
 import { it, describe, expect } from "bun:test";
 import { type Part, transactionFilter } from "./transactionFilter";
-import { type TxFilter } from "~/types";
+import { type Filter } from "~/types";
 
 const data: Part[] = [
   { text: "", person: "A", budgetgrupp: "mat", konto: "A" },
@@ -14,20 +14,20 @@ const data: Part[] = [
 
 describe("Transaction filter", () => {
   it("should show all", () => {
-    const filter: TxFilter = {
-      category: ["mat", "transport", "inom"],
-      person: ["A", "B"],
-      account: ["A", "B", "C"],
+    const filter: Filter = {
+      person: { A: true, B: true },
+      category: { mat: true, transport: true, inom: true },
+      account: { A: true, B: true, C: true },
       search: "",
     };
     const result = data.filter((d) => transactionFilter({ ...d, filter }));
     expect(result).toEqual(data);
   });
   it("should show only person A", () => {
-    const filter: TxFilter = {
-      category: ["mat", "transport", "inom"],
-      person: ["A"],
-      account: ["A", "B", "C"],
+    const filter: Filter = {
+      person: { A: true, B: false },
+      category: { mat: true, transport: true, inom: true },
+      account: { A: true, B: true, C: true },
       search: "",
     };
     const expected: Part[] = [
@@ -40,10 +40,10 @@ describe("Transaction filter", () => {
     expect(result).toEqual(expected);
   });
   it("should show only person A and mat category", () => {
-    const filter: TxFilter = {
-      category: ["mat"],
-      person: ["A"],
-      account: ["A", "B", "C"],
+    const filter: Filter = {
+      person: { A: true, B: false },
+      category: { mat: true, transport: false, inom: false },
+      account: { A: true, B: true, C: true },
       search: "",
     };
     const expected: Part[] = [
@@ -53,10 +53,10 @@ describe("Transaction filter", () => {
     expect(result).toEqual(expected);
   });
   it("should hide inom", () => {
-    const filter: TxFilter = {
-      category: ["mat", "transport"],
-      person: ["A", "B"],
-      account: ["A", "B", "C"],
+    const filter: Filter = {
+      person: { A: true, B: true },
+      category: { mat: true, transport: true, inom: false },
+      account: { A: true, B: true, C: true },
       search: "",
     };
     const expected: Part[] = [
@@ -69,10 +69,10 @@ describe("Transaction filter", () => {
     expect(result).toEqual(expected);
   });
   it("should show only person A and hide inom", () => {
-    const filter: TxFilter = {
-      category: ["mat", "transport"],
-      person: ["A"],
-      account: ["A", "B", "C"],
+    const filter: Filter = {
+      person: { A: true, B: false },
+      category: { mat: true, transport: true, inom: false },
+      account: { A: true, B: true, C: true },
       search: "",
     };
     const expected: Part[] = [
@@ -83,10 +83,10 @@ describe("Transaction filter", () => {
     expect(result).toEqual(expected);
   });
   it("should show only person A and account A and hide inom", () => {
-    const filter: TxFilter = {
-      category: ["mat", "transport"],
-      person: ["A"],
-      account: ["A"],
+    const filter: Filter = {
+      person: { A: true, B: false },
+      category: { mat: true, transport: true, inom: false },
+      account: { A: true, B: false, C: false },
       search: "",
     };
     const expected: Part[] = [
@@ -96,10 +96,10 @@ describe("Transaction filter", () => {
     expect(result).toEqual(expected);
   });
   it("should show sl", () => {
-    const filter: TxFilter = {
-      category: ["mat", "transport"],
-      person: ["A", "B"],
-      account: ["A", "B", "C"],
+    const filter: Filter = {
+      person: { A: true, B: true },
+      category: { mat: true, transport: true, inom: false },
+      account: { A: true, B: true, C: true },
       search: "sl",
     };
     const expected: Part[] = [

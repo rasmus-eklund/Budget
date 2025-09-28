@@ -4,30 +4,31 @@ import capitalize from "~/lib/utils/capitalize";
 import { dateToString, toSek } from "~/lib/utils/formatData";
 import { getFromTo } from "~/lib/utils/dateCalculations";
 import type { FromTo } from "~/lib/zodSchemas";
-import type { Uniques, Tx } from "~/types";
+import type { Uniques } from "~/types";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import Icon from "../Icon";
 import { useStore } from "~/stores/tx-store";
 import Spinner from "./Spinner";
+import { allFalseExcept } from "~/stores/helpers";
 
 type Props = {
-  data: Tx[];
   options: Uniques;
 };
 
-const Aggregated = ({ data, options: { people, categories } }: Props) => {
+const Aggregated = ({ options: { person, category } }: Props) => {
+  const data = useStore((state) => state.txs);
   const sumsMemo = useMemo(
-    () => calculateSums({ data, categories, people }),
-    [data, people, categories],
+    () => calculateSums({ data, category, person }),
+    [data, person, category],
   );
   const loading = useStore((state) => state.loading);
   const sticky = useStore((state) => state.sticky);
   const { setSticky } = useStore();
   if (loading) return <Spinner />;
-  const peopleTotal = [...people, "total"];
+  const peopleTotal = [...person, "total"];
   const nonClickableCategories = ["spending", "total"];
-  const categoriesTotal = [...categories, ...nonClickableCategories].filter(
+  const categoriesTotal = [...category, ...nonClickableCategories].filter(
     (i) => i != "inom",
   );
   const dates = getFromTo(data);
@@ -147,16 +148,20 @@ const CatButton = ({
   category,
   person,
 }: CatButtonProps) => {
-  const { setTxFilter, setFilterTab } = useStore();
-  const defaultTxFilter = useStore((state) => state.defaultTxFilter);
+  const { setFilter, setFilterTab } = useStore();
+  const defaultFilter = useStore((state) => state.filter);
   return (
     <button
       className={cn("cursor-pointer hover:scale-110", className)}
       onClick={() => {
-        setTxFilter({
-          category: category ? [category] : defaultTxFilter.category,
-          account: defaultTxFilter.account,
-          person: person ? [person] : defaultTxFilter.person,
+        setFilter({
+          category: category
+            ? allFalseExcept(defaultFilter.category, category)
+            : defaultFilter.category,
+          account: defaultFilter.account,
+          person: person
+            ? allFalseExcept(defaultFilter.person, person)
+            : defaultFilter.person,
           search: "",
         });
         setFilterTab("transactions");

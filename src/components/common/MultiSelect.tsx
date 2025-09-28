@@ -2,12 +2,10 @@
 
 import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
-
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -19,18 +17,22 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import capitalize from "~/lib/utils/capitalize";
+import type { FilterItem } from "~/types";
 
-type Item = string;
 export function MultiSelect({
   label,
-  items,
+  filterItems,
   options,
-  setItems,
+  toggleItem,
+  clearAll,
+  selectAll,
 }: {
   label: string;
-  options: string[];
-  items: string[];
-  setItems: (items: string[]) => void;
+  options: string[]; // available options from data
+  filterItems: FilterItem; // filtered options
+  toggleItem: (item: string) => void;
+  clearAll: () => void;
+  selectAll: () => void;
 }) {
   return (
     <Popover modal={true}>
@@ -48,35 +50,29 @@ export function MultiSelect({
         <Command>
           <CommandInput placeholder="Sök" className="h-9" />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
               {options.map((item) => {
-                const checked = items.includes(item);
+                const checked = !!filterItems[item];
                 return (
-                  <Item
-                    key={item}
-                    item={item}
-                    checked={checked}
-                    onSelect={(i) => setItems(onSelect(i, items, checked))}
-                  />
+                  <CommandItem key={item} value={item} onSelect={toggleItem}>
+                    {capitalize(item)}
+                    <Check
+                      className={cn(
+                        "ml-auto",
+                        checked ? "opacity-100" : "opacity-0",
+                      )}
+                    />
+                  </CommandItem>
                 );
               })}
             </CommandGroup>
           </CommandList>
         </Command>
         <div className="flex items-center gap-1 p-1">
-          <Button
-            onClick={() => setItems(options)}
-            className="flex-1"
-            variant="outline"
-          >
+          <Button onClick={selectAll} className="flex-1" variant="outline">
             Alla
           </Button>
-          <Button
-            onClick={() => setItems([])}
-            className="flex-1"
-            variant="outline"
-          >
+          <Button onClick={clearAll} className="flex-1" variant="outline">
             Inga
           </Button>
         </div>
@@ -84,21 +80,3 @@ export function MultiSelect({
     </Popover>
   );
 }
-
-type Props = { item: Item; onSelect: (i: Item) => void; checked: boolean };
-const Item = ({ item, onSelect, checked }: Props) => {
-  return (
-    <CommandItem
-      value={item}
-      onSelect={() => {
-        onSelect(item);
-      }}
-    >
-      {capitalize(item)}
-      <Check className={cn("ml-auto", checked ? "opacity-100" : "opacity-0")} />
-    </CommandItem>
-  );
-};
-
-const onSelect = (i: Item, items: Item[], checked: boolean) =>
-  checked ? items.filter((item) => item !== i) : [...items, i];

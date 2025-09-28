@@ -1,47 +1,29 @@
 import { create } from "zustand";
 import type { FromTo } from "~/lib/zodSchemas";
-import type { FilterTab, Tx, TxFilter, TxSort, DateTab } from "~/types";
-
-const emptyTxFilter: TxFilter = {
-  category: [],
-  person: [],
-  account: [],
-  search: "",
-};
-
-const sameItems = (a: string[], b: string[]) => {
-  return a.length === b.length && a.every((item) => b.includes(item));
-};
-const isChanged = (a: TxFilter, b: TxFilter) =>
-  !sameItems(a.account, b.account) ||
-  !sameItems(a.category, b.category) ||
-  !sameItems(a.person, b.person) ||
-  a.search !== b.search;
-
-const getDefaultTxFilter = (txs: Tx[]): TxFilter => ({
-  category: [...new Set(txs.map((i) => i.budgetgrupp))].filter(
-    (i) => i !== "inom",
-  ),
-  person: [...new Set(txs.map((i) => i.person))],
-  account: [...new Set(txs.map((i) => i.konto))],
-  search: "",
-});
+import type { FilterTab, Tx, TxSort, DateTab, Filter } from "~/types";
+import { filterChanged, resetFilter } from "./helpers";
+import { emptyOptions } from "~/lib/constants/options";
 
 export const useStore = create<{
   txs: Tx[];
-  setTxs: ({ txs, reset }: { txs: Tx[]; reset?: boolean }) => void;
+  setTxs: (d: {
+    txs: Tx[];
+    options: Filter;
+    reset?: boolean;
+    tab?: FilterTab;
+  }) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
   password: string;
   updatePassword: (password: string) => void;
   dateTab: DateTab;
   setDateTab: (dateTab: DateTab) => void;
-  txFilter: TxFilter;
-  defaultTxFilter: TxFilter;
+  options: Filter;
+  filter: Filter;
+  setFilter: (filter: Filter) => void;
   txSort: TxSort;
   filterTab: FilterTab;
   hasChanged: boolean;
-  setTxFilter: (txFilter: TxFilter) => void;
   setTxSort: (sortOption: TxSort) => void;
   setFilterTab: (tab: FilterTab) => void;
   reset: () => void;
@@ -59,27 +41,34 @@ export const useStore = create<{
   setSticky: (sticky: boolean) => void;
 }>((set, get) => ({
   txs: [],
-  setTxs: ({ txs, reset = false }) => {
-    const defaultTxFilter = getDefaultTxFilter(txs);
-    const txFilter = reset ? defaultTxFilter : get().txFilter;
-    set({ txs, defaultTxFilter, txFilter, hasChanged: false });
+  setTxs: ({ txs, options, reset = false, tab = "aggregated" }) => {
+    return set({
+      txs,
+      hasChanged: filterChanged({
+        defaultFilter: options,
+        filter: get().filter,
+      }),
+      options,
+      filter: reset ? resetFilter(options) : get().filter,
+      filterTab: reset ? tab : get().filterTab,
+    });
   },
-  loading: false,
+  loading: true,
   setLoading: (loading) => set({ loading }),
   password: "",
   updatePassword: (password: string) => set({ password }),
   dateTab: "month",
   setDateTab: (dateTab) => set({ dateTab }),
-  txFilter: emptyTxFilter,
-  defaultTxFilter: emptyTxFilter,
+  options: emptyOptions,
+  filter: emptyOptions,
+  setFilter: (filter) =>
+    set({
+      filter,
+      hasChanged: filterChanged({ defaultFilter: get().options, filter }),
+    }),
   txSort: { sort: "date-asc" },
   filterTab: "aggregated",
   hasChanged: false,
-  setTxFilter: (txFilter) =>
-    set(({ defaultTxFilter }) => ({
-      hasChanged: isChanged(txFilter, defaultTxFilter),
-      txFilter,
-    })),
   setTxSort: (txSort) => {
     if (txSort.sort !== "date-asc") {
       set({ hasChanged: true });
@@ -88,8 +77,8 @@ export const useStore = create<{
   },
   setFilterTab: (filterTab) => set({ filterTab }),
   reset: () =>
-    set(({ defaultTxFilter }) => ({
-      txFilter: defaultTxFilter,
+    set(({ options }) => ({
+      filter: options,
       txSort: { sort: "date-asc" },
       hasChanged: false,
     })),

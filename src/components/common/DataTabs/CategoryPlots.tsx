@@ -35,12 +35,12 @@ const CategoryPlots = ({ data, options }: Props) => {
   if (loading) return <Spinner />;
   const sums: Sum[] = [];
   const persons: Persons = {};
-  const cats = options.categories.filter(
+  const cats = options.category.filter(
     (c) => !(c === "inkomst" || c === "inom"),
   );
   for (const cat of cats) {
     const record: Record<string, string | number> = {};
-    for (const person of options.people) {
+    for (const person of options.person) {
       if (!persons[person]) persons[person] = [];
       record.cat = cat;
       const sum = data
@@ -93,7 +93,7 @@ const CategoryBars = ({ sums, options }: { sums: Sum[]; options: Uniques }) => {
               dataKey={"cat"}
               tickFormatter={(item) => capitalize(item as string)}
             />
-            {options.people.map((person, i) => (
+            {options.person.map((person, i) => (
               <Bar key={person} dataKey={person} fill={colors[i]} />
             ))}
             <Legend

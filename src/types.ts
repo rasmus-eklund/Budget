@@ -1,12 +1,9 @@
-export type TxFilter = {
-  category: string[];
-  person: string[];
-  account: string[];
-  search: string;
-};
-
-type SortOption = "date-asc" | "date-desc" | "amount-asc" | "amount-desc";
-type TxSort = { sort: SortOption };
+export type SortOption =
+  | "date-asc"
+  | "date-desc"
+  | "amount-asc"
+  | "amount-desc";
+export type TxSort = { sort: SortOption };
 
 export type FilterTab =
   | "aggregated"
@@ -23,15 +20,25 @@ export type Internal = {
 };
 
 export type Uniques = {
-  people: string[];
-  categories: string[];
-  accounts: string[];
+  person: string[];
+  category: string[];
+  account: string[];
+};
+
+export type FilterItem = Record<string, boolean>;
+
+export type Filter = {
+  person: FilterItem;
+  account: FilterItem;
+  category: FilterItem;
+  search: string;
 };
 
 export type TxReturn =
   | {
       ok: true;
       data: Tx[];
+      options: Filter;
     }
   | { ok: false };
 

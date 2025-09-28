@@ -14,7 +14,7 @@ import {
   addPersonAccount,
   findMatchingAccount,
 } from "./fileFormHelpers";
-import type { Category, FileData, PersonAccounts, Tx } from "~/types";
+import type { Category, FileData, Filter, PersonAccounts, Tx } from "~/types";
 import { applyCategory } from "~/lib/utils/categorize";
 import ShowData from "~/components/common/ShowData";
 import { getFromTo, getLastMonthYear } from "~/lib/utils/dateCalculations";
@@ -228,29 +228,46 @@ const FileForm = ({ categories, people, userId }: Props) => {
           txs={addPersonAccount(people, txs).map((tx) =>
             applyCategory({ tx, categories }),
           )}
+          options={{
+            account: Object.fromEntries(
+              people.flatMap((p) => p.bankAccounts.map((a) => [a.name, true])),
+            ),
+            person: Object.fromEntries(people.map((i) => [i.name, true])),
+            category: {
+              ...Object.fromEntries(categories.map((i) => [i.name, true])),
+              inom: false,
+              övrigt: true,
+              inkomst: true,
+            },
+            search: "",
+          }}
         />
       )}
     </>
   );
 };
 
-const ShowTransactions = ({ txs }: { txs: Tx[] }) => {
-  const { setFilterTab, setTxs, setRange } = useStore();
+const ShowTransactions = ({ txs, options }: { txs: Tx[]; options: Filter }) => {
+  const { setTxs, setRange } = useStore();
 
   useEffect(() => {
     const range = getFromTo(txs);
     if (!range) return;
     const { from, to } = getLastMonthYear(range);
     setRange(range);
-    setFilterTab("transactions");
     setTxs({
       txs: txs.filter((i) => i.datum >= from && i.datum <= to),
+      options,
       reset: true,
+      tab: "transactions",
     });
-  }, [setFilterTab, setRange, setTxs, txs]);
+  }, [setRange, setTxs, txs, options]);
 
   const changeDates = async ({ from, to }: FromTo) => {
-    setTxs({ txs: txs.filter((i) => i.datum >= from && i.datum <= to) });
+    setTxs({
+      txs: txs.filter((i) => i.datum >= from && i.datum <= to),
+      options,
+    });
   };
 
   return <ShowData changeDates={changeDates} />;

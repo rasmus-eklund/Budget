@@ -1,4 +1,4 @@
-import type { SortOption } from "~/types";
+import type { Filter, SortOption, Uniques } from "~/types";
 import { Input } from "~/components/ui/input";
 import {
   Select,
@@ -16,11 +16,9 @@ import { useMediaQuery } from "~/hooks/use-media-query";
 import Drawer from "../Drawer";
 import { MultiSelect } from "../MultiSelect";
 import { useStore } from "~/stores/tx-store";
+import { setAll } from "~/stores/helpers";
 
-type Props = {
-  options: { categories: string[]; people: string[]; accounts: string[] };
-};
-const TransactionFilter = ({ options }: Props) => {
+const TransactionFilter = ({ options }: { options: Uniques }) => {
   const isDesktop = useMediaQuery("(min-width: 768px)", {
     initializeWithValue: false,
   });
@@ -34,36 +32,95 @@ const TransactionFilter = ({ options }: Props) => {
   );
 };
 
-const Filter = ({ options }: Props) => {
+const Filter = ({
+  options: { category, person, account },
+}: {
+  options: {
+    category: string[];
+    person: string[];
+    account: string[];
+  };
+}) => {
   const [search, setSearch] = useState("");
-  const { setTxFilter, setTxSort, reset } = useStore();
-  const txFilter = useStore((state) => state.txFilter);
+  const { setTxSort, reset, setFilter } = useStore();
   const txSort = useStore((state) => state.txSort);
   const hasChanged = useStore((state) => state.hasChanged);
+  const filter = useStore((state) => state.filter);
   return (
     <form
       className="flex flex-col gap-2 p-1 md:flex-row"
       onSubmit={(e) => {
         e.preventDefault();
-        setTxFilter({ ...txFilter, search });
+        setFilter({ ...filter, search });
       }}
     >
       <MultiSelect
-        options={options.people}
-        items={txFilter.person}
-        setItems={(items) => setTxFilter({ ...txFilter, person: items })}
+        options={person}
+        filterItems={filter.person}
+        toggleItem={(item) => {
+          setFilter({
+            ...filter,
+            person: { ...filter.person, [item]: !filter.person[item] },
+          });
+        }}
+        clearAll={() =>
+          setFilter({
+            ...filter,
+            person: setAll(filter.person, false),
+          })
+        }
+        selectAll={() =>
+          setFilter({
+            ...filter,
+            person: setAll(filter.person, true),
+          })
+        }
         label="Person"
       />
       <MultiSelect
-        options={options.categories}
-        items={txFilter.category}
-        setItems={(items) => setTxFilter({ ...txFilter, category: items })}
+        options={category}
+        filterItems={filter.category}
+        toggleItem={(item) => {
+          setFilter({
+            ...filter,
+            category: { ...filter.category, [item]: !filter.category[item] },
+          });
+        }}
+        clearAll={() =>
+          setFilter({
+            ...filter,
+            category: setAll(filter.category, false),
+          })
+        }
+        selectAll={() =>
+          setFilter({
+            ...filter,
+            category: setAll(filter.category, true),
+          })
+        }
         label="Kategori"
       />
       <MultiSelect
-        options={options.accounts}
-        items={txFilter.account}
-        setItems={(items) => setTxFilter({ ...txFilter, account: items })}
+        options={account}
+        filterItems={filter.account}
+        toggleItem={(item) => {
+          setFilter({
+            ...filter,
+            account: { ...filter.account, [item]: !filter.account[item] },
+          });
+        }}
+        clearAll={() =>
+          setFilter({
+            ...filter,
+            account: setAll(filter.account, false),
+          })
+        }
+        selectAll={() =>
+          setFilter({
+            ...filter,
+            account: setAll(filter.account, true),
+          })
+        }
         label="Konto"
       />
       <Input

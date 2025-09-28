@@ -80,7 +80,21 @@ export const generateData = () => {
   if (!range) {
     throw new Error("No data");
   }
-  return { range, txs };
+  return {
+    range,
+    txs,
+    options: {
+      category: {
+        ...Object.fromEntries(categories.map((i) => [i.name, true])),
+        inkomst: true,
+        övrigt: true,
+        inom: false,
+      },
+      person: Object.fromEntries(["Per", "Anna"].map((i) => [i, true])),
+      account: Object.fromEntries(["Kort", "Spar"].map((a) => [a, true])),
+      search: "",
+    },
+  };
 };
 
 const getRandomDates = (

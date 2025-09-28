@@ -2,18 +2,18 @@ import type { Tx } from "~/types";
 
 const calculateSums = ({
   data,
-  categories,
-  people,
+  category,
+  person,
 }: {
   data: Tx[];
-  categories: string[];
-  people: string[];
+  category: string[];
+  person: string[];
 }) => {
   const sums: Record<string, Record<string, number>> = {};
-  for (const category of categories) {
-    sums[category] = { total: 0 };
-    for (const person of people) {
-      sums[category][person] = 0;
+  for (const cat of category) {
+    sums[cat] = { total: 0 };
+    for (const p of person) {
+      sums[cat][p] = 0;
     }
   }
   for (const { budgetgrupp, person, belopp } of data) {
@@ -25,21 +25,21 @@ const calculateSums = ({
       }
     }
   }
-  for (const category of categories) {
-    sums[category]!.total = Object.keys(sums[category]!).reduce(
-      (acc, person) => (acc += sums[category]![person]!),
+  for (const cat of category) {
+    sums[cat]!.total = Object.keys(sums[cat]!).reduce(
+      (acc, person) => (acc += sums[cat]![person]!),
       0,
     );
   }
   const total: Record<string, number> = {};
   const spending: Record<string, number> = {};
-  for (const person of people) {
-    total[person] = categories.reduce(
-      (acc, category) => (acc += sums[category]![person]!),
+  for (const p of person) {
+    total[p] = category.reduce(
+      (acc, category) => (acc += sums[category]![p]!),
       0,
     );
-    spending[person] = categories.reduce((acc, category) => {
-      const value = sums[category]![person]!;
+    spending[p] = category.reduce((acc, category) => {
+      const value = sums[category]![p]!;
       acc += value < 0 ? value : 0;
       return acc;
     }, 0);
