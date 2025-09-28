@@ -27,41 +27,44 @@ const FreeDay = ({ changeDate }: Props) => {
   return (
     <form
       onSubmit={(e) => e.preventDefault()}
-      className="flex items-center gap-1"
+      className="flex gap-1 flex-col md:flex-row md:items-center"
     >
-      <Button
-        type="button"
-        disabled={day <= from}
-        variant="outline"
-        size="icon"
-        onClick={async () => await onChange(decrementDay(day))}
-      >
-        <Icon icon="ChevronLeft" className="size-4" />
-      </Button>
-      <DatePicker
-        range={{ from, to }}
-        date={day}
-        setDate={async (date) => {
-          setDay(date);
-          await onChange(getDayRange(dateToString(date)));
-        }}
-      />
-      <Button
-        type="button"
-        disabled={day >= to}
-        variant="outline"
-        size="icon"
-        onClick={async () => await onChange(incrementDay(day))}
-      >
-        <Icon icon="ChevronRight" className="size-4" />
-      </Button>
+      <div className="flex items-center gap-1">
+        <Button
+          type="button"
+          disabled={day <= from}
+          variant="outline"
+          size="icon"
+          onClick={async () => await onChange(decrementDay(day))}
+        >
+          <Icon icon="ChevronLeft" className="size-4" />
+        </Button>
+        <DatePicker
+          className="w-full md:w-fit"
+          range={{ from, to }}
+          date={day}
+          setDate={async (date) => {
+            setDay(date);
+            await onChange(getDayRange(dateToString(date)));
+          }}
+        />
+        <Button
+          type="button"
+          disabled={day >= to}
+          variant="outline"
+          size="icon"
+          onClick={async () => await onChange(incrementDay(day))}
+        >
+          <Icon icon="ChevronRight" className="size-4" />
+        </Button>
+      </div>
       <Tooltip title="Senaste dagen">
         <Button
           type="button"
-          size="icon"
           variant="outline"
           onClick={async () => await onChange(getDayRange(dateToString(to)))}
         >
+          <p className="md:hidden">Senaste dagen</p>
           <Icon icon="CalendarCheck" />
         </Button>
       </Tooltip>

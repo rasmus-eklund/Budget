@@ -12,25 +12,28 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { type FromTo } from "~/lib/zodSchemas";
+import { cn } from "~/lib/utils";
 
 const DatePicker = ({
   date,
   setDate,
   range,
+  className,
 }: {
   date: Date | undefined;
   setDate: (date: Date) => void;
   range: FromTo;
+  className?: string;
 }) => {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 flex-1">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="w-[130px] justify-between font-normal"
+            className={cn("w-[130px] justify-between font-normal", className)}
           >
             {date ? dateToString(date) : "Select date"}
             <ChevronDownIcon />
