@@ -36,7 +36,7 @@ const ShowData = ({ changeDates }: Props) => {
           <TabsTrigger value="categoryBars">Utgifter</TabsTrigger>
           <TabsTrigger value="balanceOverTime">Saldo</TabsTrigger>
         </TabsList>
-        {filterTab !== "aggregated" && <TransactionFilter />}
+        {filterTab !== "aggregated" && <TransactionFilter options={options} />}
         <TabsContent value="aggregated" className="flex-1 min-h-0">
           <Aggregated options={options} />
         </TabsContent>
