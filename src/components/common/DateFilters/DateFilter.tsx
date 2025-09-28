@@ -35,7 +35,7 @@ const TabsDesktop = ({ changeDates }: Props) => {
       onValueChange={(value) => setDateTab(value as DateTab)}
       className="pt-2"
     >
-      <TabsList>
+      <TabsList className="md:w-fit w-full">
         <TabsTrigger value="month">Månad</TabsTrigger>
         <TabsTrigger value="day">Dag</TabsTrigger>
         <TabsTrigger value="year">År</TabsTrigger>
