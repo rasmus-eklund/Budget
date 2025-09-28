@@ -18,7 +18,7 @@ const isChanged = (a: TxFilter, b: TxFilter) =>
   !sameItems(a.person, b.person) ||
   a.search !== b.search;
 
-const getDefaultTxFilter = (txs: Tx[]) => ({
+const getDefaultTxFilter = (txs: Tx[]): TxFilter => ({
   category: [...new Set(txs.map((i) => i.budgetgrupp))].filter(
     (i) => i !== "inom",
   ),
@@ -29,7 +29,7 @@ const getDefaultTxFilter = (txs: Tx[]) => ({
 
 export const useStore = create<{
   txs: Tx[];
-  setTxs: (txs: Tx[]) => void;
+  setTxs: ({ txs, reset }: { txs: Tx[]; reset?: boolean }) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
   password: string;
@@ -57,11 +57,12 @@ export const useStore = create<{
   setRange: (range: FromTo) => void;
   sticky: boolean;
   setSticky: (sticky: boolean) => void;
-}>((set) => ({
+}>((set, get) => ({
   txs: [],
-  setTxs: (txs) => {
+  setTxs: ({ txs, reset = false }) => {
     const defaultTxFilter = getDefaultTxFilter(txs);
-    set({ txs, defaultTxFilter, txFilter: defaultTxFilter, hasChanged: false });
+    const txFilter = reset ? defaultTxFilter : get().txFilter;
+    set({ txs, defaultTxFilter, txFilter, hasChanged: false });
   },
   loading: false,
   setLoading: (loading) => set({ loading }),

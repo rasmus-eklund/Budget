@@ -243,11 +243,14 @@ const ShowTransactions = ({ txs }: { txs: Tx[] }) => {
     const { from, to } = getLastMonthYear(range);
     setRange(range);
     setFilterTab("transactions");
-    setTxs(txs.filter((i) => i.datum >= from && i.datum <= to));
+    setTxs({
+      txs: txs.filter((i) => i.datum >= from && i.datum <= to),
+      reset: true,
+    });
   }, [setFilterTab, setRange, setTxs, txs]);
 
   const changeDates = async ({ from, to }: FromTo) => {
-    setTxs(txs.filter((i) => i.datum >= from && i.datum <= to));
+    setTxs({ txs: txs.filter((i) => i.datum >= from && i.datum <= to) });
   };
 
   return <ShowData changeDates={changeDates} />;

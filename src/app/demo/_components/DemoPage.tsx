@@ -18,12 +18,15 @@ const DemoPage = () => {
   const { setTxs, setRange } = useStore();
 
   const changeDates = async ({ from, to }: FromTo) =>
-    setTxs(data.txs.filter((i) => i.datum >= from && i.datum <= to));
+    setTxs({ txs: data.txs.filter((i) => i.datum >= from && i.datum <= to) });
 
   useEffect(() => {
     setRange(data.range);
     const { from, to } = getLastMonthYear(data.range);
-    setTxs(data.txs.filter((i) => i.datum >= from && i.datum <= to));
+    setTxs({
+      txs: data.txs.filter((i) => i.datum >= from && i.datum <= to),
+      reset: true,
+    });
   }, [setRange, data.range, setTxs, data.txs]);
 
   return <ShowData changeDates={changeDates} />;

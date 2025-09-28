@@ -16,7 +16,7 @@ const GetTxsLayer = ({ range, userId }: Props) => {
   const getData = async (dates: FromTo) => {
     setLoading(true);
     const res = await getTxByDates({ dates, password, userId });
-    setTxs(res.ok ? res.data : []);
+    setTxs({ txs: res.ok ? res.data : [] });
     setLoading(false);
   };
 
@@ -26,11 +26,11 @@ const GetTxsLayer = ({ range, userId }: Props) => {
     getTxByDates({ dates, password, userId })
       .then((res) => {
         setRange(range);
-        setTxs(res.ok ? res.data : []);
+        setTxs({ txs: res.ok ? res.data : [], reset: true });
       })
       .catch((e) => {
         console.error(e);
-        setTxs([]);
+        setTxs({ txs: [], reset: true });
       })
       .finally(() => setLoading(false));
   }, [password, router, userId, setLoading, setTxs, setRange, range]);
