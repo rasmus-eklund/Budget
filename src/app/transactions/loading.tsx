@@ -1,5 +1,7 @@
+import Spinner from "~/components/common/DataTabs/Spinner";
+
 const Loading = () => {
-  return <p>Laddar...</p>;
+  return <Spinner />;
 };
 
 export default Loading;
