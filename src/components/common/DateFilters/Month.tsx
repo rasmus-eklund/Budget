@@ -39,7 +39,7 @@ const Month = ({ changeDate }: Props) => {
   };
   return (
     <form
-      className="flex items-center gap-1"
+      className="flex md:flex-row flex-col md:items-center gap-1 items-start"
       onSubmit={(e) => e.preventDefault()}
     >
       <Select
@@ -50,7 +50,7 @@ const Month = ({ changeDate }: Props) => {
           await submitDates(getMonthRange(data));
         }}
       >
-        <SelectTrigger className="w-[90px]">
+        <SelectTrigger className="md:w-[90px] w-full">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -61,59 +61,62 @@ const Month = ({ changeDate }: Props) => {
           ))}
         </SelectContent>
       </Select>
-      <Button
-        disabled={year <= from.getFullYear() && month <= from.getMonth() + 1}
-        variant="outline"
-        size="icon"
-        onClick={async () => {
-          const dates = decrementMonth({ year, month });
-          setMonth(dates);
-          await submitDates(getMonthRange(dates));
-        }}
-      >
-        <Icon icon="ChevronLeft" className="size-4" />
-      </Button>
-      <Select
-        value={month.toString()}
-        onValueChange={async (value) => {
-          const data = { year, month: Number(value) };
-          setMonth(data);
-          await submitDates(getMonthRange(data));
-        }}
-      >
-        <SelectTrigger className="w-[130px]">
-          <SelectValue placeholder="" />
-        </SelectTrigger>
-        <SelectContent>
-          {months.map((m, n) => (
-            <SelectItem key={`month-${m}`} value={(n + 1).toString()}>
-              {capitalize(m)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Button
-        disabled={year === mostRecentYear && month === mostRecentMonth}
-        variant="outline"
-        size="icon"
-        onClick={async () => {
-          const dates = incrementMonth({ year, month });
-          setMonth(dates);
-          await submitDates(getMonthRange(dates));
-        }}
-      >
-        <Icon icon="ChevronRight" className="size-4" />
-      </Button>
-      <Tooltip title="Senaste månaden">
+      <div className="flex items-center gap-1 w-full md:w-fit">
         <Button
+          disabled={year <= from.getFullYear() && month <= from.getMonth() + 1}
           variant="outline"
           size="icon"
+          onClick={async () => {
+            const dates = decrementMonth({ year, month });
+            setMonth(dates);
+            await submitDates(getMonthRange(dates));
+          }}
+        >
+          <Icon icon="ChevronLeft" className="size-4" />
+        </Button>
+        <Select
+          value={month.toString()}
+          onValueChange={async (value) => {
+            const data = { year, month: Number(value) };
+            setMonth(data);
+            await submitDates(getMonthRange(data));
+          }}
+        >
+          <SelectTrigger className="md:w-[130px] md:flex-none flex-1">
+            <SelectValue placeholder="" />
+          </SelectTrigger>
+          <SelectContent>
+            {months.map((m, n) => (
+              <SelectItem key={`month-${m}`} value={(n + 1).toString()}>
+                {capitalize(m)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button
+          disabled={year === mostRecentYear && month === mostRecentMonth}
+          variant="outline"
+          size="icon"
+          onClick={async () => {
+            const dates = incrementMonth({ year, month });
+            setMonth(dates);
+            await submitDates(getMonthRange(dates));
+          }}
+        >
+          <Icon icon="ChevronRight" className="size-4" />
+        </Button>
+      </div>
+      <Tooltip title="Senaste månaden">
+        <Button
+          className="w-full md:w-fit"
+          variant="outline"
           onClick={async () => {
             const data = { year: mostRecentYear, month: mostRecentMonth };
             setMonth(data);
             await submitDates(getMonthRange(data));
           }}
         >
+          <p className="md:hidden">Senaste månaden</p>
           <Icon icon="CalendarCheck" />
         </Button>
       </Tooltip>
