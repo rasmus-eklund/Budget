@@ -2,7 +2,7 @@ import {
   Tooltip as TooltipShad,
   TooltipContent,
   TooltipTrigger,
-} from "~/components/ui/tooltip";
+} from "~/components/ui";
 
 const Tooltip = ({
   children,

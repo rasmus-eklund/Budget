@@ -1,18 +1,17 @@
 "use client";
 
 import * as React from "react";
-import { ChevronDownIcon } from "lucide-react";
 
-import { Button } from "~/components/ui/button";
-import { Calendar } from "~/components/ui/calendar";
-import { dateToString } from "~/lib/utils/formatData";
 import {
+  Button,
+  Calendar,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "~/components/ui/popover";
+} from "~/components/ui";
+import { Icon } from "~/components/common";
+import { dateToString, cn } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
-import { cn } from "~/lib/utils";
 
 const DatePickerRange = ({
   dates,
@@ -38,7 +37,7 @@ const DatePickerRange = ({
             className={cn("justify-between font-normal", className)}
           >
             <Title dates={dates} />
-            <ChevronDownIcon />
+            <Icon icon="ChevronDownIcon" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto overflow-hidden p-0" align="start">

@@ -1,5 +1,4 @@
-import { Label } from "../ui/label";
-import { Skeleton } from "../ui/skeleton";
+import { Label, Skeleton } from "~/components/ui";
 
 type Props = { page: string };
 const LoadingItems = ({ page }: Props) => {

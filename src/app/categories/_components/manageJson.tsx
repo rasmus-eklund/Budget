@@ -1,12 +1,12 @@
 "use client";
 import { useState } from "react";
-import capitalize from "~/lib/utils/capitalize";
+import { capitalize } from "~/lib";
 import type { JsonData } from "~/lib/zodSchemas";
 import DownloadJsonButton from "./downloadJson";
 import UploadJsonButton from "./uploadJson";
-import { Button } from "~/components/ui/button";
+import { Button } from "~/components/ui";
 import { replaceAllMatches } from "../dataLayer/categoriesActions";
-import Icon from "~/components/common/Icon";
+import { Icon } from "~/components/common";
 
 type Props = { userId: string };
 const ManageJson = ({ userId }: Props) => {

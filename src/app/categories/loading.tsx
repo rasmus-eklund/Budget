@@ -1,4 +1,4 @@
-import LoadingItems from "~/components/common/LoadingItems";
+import { LoadingItems } from "~/components/common";
 
 const LoadingPage = () => {
   return <LoadingItems page="Kategori" />;

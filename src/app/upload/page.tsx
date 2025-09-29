@@ -4,9 +4,9 @@ import {
   getPersonAccounts,
   getTxsPerYear,
 } from "./actions/uploadActions";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui";
 import YearCountChart from "./_components/YearCountChart";
-import { WithAuth, type WithAuthProps } from "~/components/common/withAuth";
+import WithAuth, { type WithAuthProps } from "~/components/server/WithAuth";
 
 const UploadPage = async ({ userId }: WithAuthProps) => {
   const [data, categories, personAccounts] = await Promise.all([

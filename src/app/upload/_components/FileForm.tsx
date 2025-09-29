@@ -7,31 +7,28 @@ import {
   useRef,
   useEffect,
 } from "react";
-import { Button } from "~/components/ui/button";
+import {
+  Button,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui";
 import {
   readFiles,
   uploadFiles,
   addPersonAccount,
   findMatchingAccount,
 } from "./fileFormHelpers";
-import type { Category, FileData, PersonAccounts, Tx } from "~/types";
-import { applyCategory } from "~/lib/utils/categorize";
-import ShowData from "~/components/common/ShowData";
-import { getFromTo, getLastMonthYear } from "~/lib/utils/dateCalculations";
+import type { Category, FileData, Filter, PersonAccounts, Tx } from "~/types";
+import { applyCategory, getFromTo, getLastMonthYear, capitalize } from "~/lib";
+import { ShowData, Icon } from "~/components/common";
 import Link from "next/link";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import capitalize from "~/lib/utils/capitalize";
 import { useRouter } from "next/navigation";
 import { useStore } from "~/stores/tx-store";
-import Icon from "~/components/common/Icon";
 import type { FromTo, TxBankAccount } from "~/lib/zodSchemas";
-import configs from "./bankConfigs";
+import { configs } from "~/constants";
 
 type Props = { categories: Category[]; people: PersonAccounts; userId: string };
 const FileForm = ({ categories, people, userId }: Props) => {
@@ -228,29 +225,46 @@ const FileForm = ({ categories, people, userId }: Props) => {
           txs={addPersonAccount(people, txs).map((tx) =>
             applyCategory({ tx, categories }),
           )}
+          options={{
+            account: Object.fromEntries(
+              people.flatMap((p) => p.bankAccounts.map((a) => [a.name, true])),
+            ),
+            person: Object.fromEntries(people.map((i) => [i.name, true])),
+            category: {
+              ...Object.fromEntries(categories.map((i) => [i.name, true])),
+              inom: false,
+              övrigt: true,
+              inkomst: true,
+            },
+            search: "",
+          }}
         />
       )}
     </>
   );
 };
 
-const ShowTransactions = ({ txs }: { txs: Tx[] }) => {
-  const { setFilterTab, setTxs, setRange } = useStore();
-
+const ShowTransactions = ({ txs, options }: { txs: Tx[]; options: Filter }) => {
+  const { setTxs, setRange, setLoading } = useStore();
   useEffect(() => {
     const range = getFromTo(txs);
     if (!range) return;
     const { from, to } = getLastMonthYear(range);
     setRange(range);
-    setFilterTab("transactions");
     setTxs({
       txs: txs.filter((i) => i.datum >= from && i.datum <= to),
+      options,
       reset: true,
+      tab: "transactions",
     });
-  }, [setFilterTab, setRange, setTxs, txs]);
+    setLoading(false);
+  }, [setRange, setTxs, txs, options]);
 
   const changeDates = async ({ from, to }: FromTo) => {
-    setTxs({ txs: txs.filter((i) => i.datum >= from && i.datum <= to) });
+    setTxs({
+      txs: txs.filter((i) => i.datum >= from && i.datum <= to),
+      options,
+    });
   };
 
   return <ShowData changeDates={changeDates} />;

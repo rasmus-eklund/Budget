@@ -1,5 +1,5 @@
 import PasswordForm from "./_components/PasswordForm";
-import { WithAuth } from "~/components/common/withAuth";
+import WithAuth from "~/components/server/WithAuth";
 
 const Password = async () => {
   return <PasswordForm />;

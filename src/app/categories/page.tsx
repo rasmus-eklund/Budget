@@ -1,17 +1,17 @@
 import Link from "next/link";
-import capitalize from "~/lib/utils/capitalize";
+import { capitalize } from "~/lib";
 import {
   addCategory,
   getAllCategories,
   removeCategory,
   renameCategory,
 } from "./dataLayer/categoriesActions";
-import DeleteButton from "~/components/common/Forms/DeleteButton";
-import AddItemForm from "~/components/common/Forms/AddItemForm";
+import { DeleteButton } from "~/components/common";
+import AddItemForm from "~/components/common/AddItemForm";
 import ManageJson from "./_components/manageJson";
-import DeleteDialog from "~/components/common/Forms/DeleteDialog";
-import EditItemForm from "~/components/common/Forms/EditItemForm";
-import { WithAuth, type WithAuthProps } from "~/components/common/withAuth";
+import DeleteDialog from "~/components/common/DeleteDialog";
+import EditItemForm from "~/components/common/EditItemForm";
+import WithAuth, { type WithAuthProps } from "~/components/server/WithAuth";
 import { type Name } from "~/types";
 
 const Categories = async ({ userId }: WithAuthProps) => {

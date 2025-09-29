@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ChangeEvent } from "react";
-import { Button } from "~/components/ui/button";
+import { Button } from "~/components/ui";
 import { type JsonData, jsonSchema } from "~/lib/zodSchemas";
 
 type Props = { className?: string; onData: (data: JsonData) => void };

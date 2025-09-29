@@ -1,9 +1,7 @@
 "use server";
 import { and, eq, gte, lte } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { applyCategory } from "~/lib/utils/categorize";
-import { decryptWithAES } from "~/lib/utils/encryption";
-import getErrorMessage from "~/lib/utils/handleError";
+import { applyCategory, decryptWithAES, getErrorMessage } from "~/lib";
 import {
   type EncryptedDataSchema,
   encryptedDataSchema,
@@ -11,7 +9,7 @@ import {
 } from "~/lib/zodSchemas";
 import { db } from "~/server/db";
 import { category, persons, txs } from "~/server/db/schema";
-import type { TxReturn } from "~/types";
+import type { Filter, TxReturn } from "~/types";
 
 const decryptTxs = async (
   data: string,
@@ -57,8 +55,25 @@ const getTxByDates = async ({
     categoriesReq,
     personsReq,
   ]);
+  const options: Filter = {
+    account: Object.fromEntries(
+      personsRes.flatMap((p) => p.bankAccounts.map((a) => [a.name, true])),
+    ),
+    person: Object.fromEntries(personsRes.map((i) => [i.name, true])),
+    category: {
+      ...Object.fromEntries(categories.map((i) => [i.name, true])),
+      inom: false,
+      övrigt: true,
+      inkomst: true,
+    },
+    search: "",
+  };
 
-  const out: TxReturn = { ok: true, data: [] };
+  const out: TxReturn = {
+    ok: true,
+    data: [],
+    options,
+  };
   for (const person of personsRes) {
     for (const account of person.bankAccounts) {
       for (const { data, date, id } of account.txs) {

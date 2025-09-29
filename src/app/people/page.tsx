@@ -1,16 +1,18 @@
 import Link from "next/link";
-import capitalize from "~/lib/utils/capitalize";
+import { capitalize } from "~/lib";
 import {
   addPerson,
   getAllPeople,
   removePerson,
   renamePerson,
 } from "./dataLayer/peopleActions";
-import DeleteButton from "~/components/common/Forms/DeleteButton";
-import AddItemForm from "~/components/common/Forms/AddItemForm";
-import DeleteDialog from "~/components/common/Forms/DeleteDialog";
-import EditItemForm from "~/components/common/Forms/EditItemForm";
-import { WithAuth, type WithAuthProps } from "~/components/common/withAuth";
+import {
+  DeleteButton,
+  AddItemForm,
+  DeleteDialog,
+  EditItemForm,
+} from "~/components/common";
+import WithAuth, { type WithAuthProps } from "~/components/server/WithAuth";
 import { type Name } from "~/types";
 
 const Categories = async ({ userId }: WithAuthProps) => {

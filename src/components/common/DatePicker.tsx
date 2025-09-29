@@ -1,18 +1,16 @@
 "use client";
 
-import * as React from "react";
-import { ChevronDownIcon } from "lucide-react";
-
-import { Button } from "~/components/ui/button";
-import { Calendar } from "~/components/ui/calendar";
-import { dateToString } from "~/lib/utils/formatData";
 import {
+  Button,
+  Calendar,
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "~/components/ui/popover";
+} from "~/components/ui";
+import { Icon } from "~/components/common";
+import { dateToString, cn } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
-import { cn } from "~/lib/utils";
+import { useState } from "react";
 
 const DatePicker = ({
   date,
@@ -25,7 +23,7 @@ const DatePicker = ({
   range: FromTo;
   className?: string;
 }) => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-3 flex-1">
@@ -36,7 +34,7 @@ const DatePicker = ({
             className={cn("w-[130px] justify-between font-normal", className)}
           >
             {date ? dateToString(date) : "Select date"}
-            <ChevronDownIcon />
+            <Icon icon="ChevronDownIcon" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto overflow-hidden p-0" align="start">
