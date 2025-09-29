@@ -64,6 +64,7 @@ const Month = ({ changeDate }: Props) => {
         <Button
           disabled={year <= from.getFullYear() && month <= from.getMonth() + 1}
           variant="outline"
+          type="button"
           size="icon"
           onClick={async () => {
             const dates = decrementMonth({ year, month });
@@ -96,6 +97,7 @@ const Month = ({ changeDate }: Props) => {
           disabled={year === mostRecentYear && month === mostRecentMonth}
           variant="outline"
           size="icon"
+          type="button"
           onClick={async () => {
             const dates = incrementMonth({ year, month });
             setMonth(dates);
@@ -109,6 +111,7 @@ const Month = ({ changeDate }: Props) => {
         <Button
           className="w-full md:w-fit"
           variant="outline"
+          type="button"
           onClick={async () => {
             const data = { year: mostRecentYear, month: mostRecentMonth };
             setMonth(data);
