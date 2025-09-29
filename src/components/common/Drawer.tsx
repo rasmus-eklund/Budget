@@ -3,6 +3,7 @@ import {
   DrawerContent,
   DrawerTitle,
   DrawerTrigger,
+  DrawerDescription,
 } from "~/components/ui";
 import { type IconName } from "./Icon";
 import { Icon } from "~/components/common";
@@ -12,11 +13,13 @@ const Drawer = ({
   children,
   icon,
   title,
+  description,
   className,
 }: {
   children: React.ReactNode;
   icon: IconName;
   title: string;
+  description: string;
   className?: string;
 }) => {
   return (
@@ -26,6 +29,7 @@ const Drawer = ({
       </DrawerTrigger>
       <DrawerContent className={cn("p-2", className)}>
         <DrawerTitle>{title}</DrawerTitle>
+        <DrawerDescription>{description}</DrawerDescription>
         {children}
       </DrawerContent>
     </DrawerShad>
