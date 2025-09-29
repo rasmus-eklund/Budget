@@ -1,25 +1,22 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "~/lib/utils";
-import { Button } from "~/components/ui/button";
+import { cn, capitalize } from "~/lib";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Command,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-} from "~/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui/popover";
-import capitalize from "~/lib/utils/capitalize";
+  Button,
+} from "~/components/ui";
+import { Icon } from "~/components/common";
 import type { FilterItem } from "~/types";
 
-export function MultiSelect({
+const MultiSelect = ({
   label,
   filterItems,
   options,
@@ -33,7 +30,7 @@ export function MultiSelect({
   toggleItem: (item: string) => void;
   clearAll: () => void;
   selectAll: () => void;
-}) {
+}) => {
   return (
     <Popover modal={true}>
       <PopoverTrigger asChild>
@@ -43,7 +40,7 @@ export function MultiSelect({
           className="w-fit justify-between"
         >
           {label}
-          <ChevronsUpDown className="opacity-50" />
+          <Icon icon="ChevronsUpDown" className="opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-fit p-0" popoverTarget="drawer-content">
@@ -56,7 +53,8 @@ export function MultiSelect({
                 return (
                   <CommandItem key={item} value={item} onSelect={toggleItem}>
                     {capitalize(item)}
-                    <Check
+                    <Icon
+                      icon="Check"
                       className={cn(
                         "ml-auto",
                         checked ? "opacity-100" : "opacity-0",
@@ -79,4 +77,6 @@ export function MultiSelect({
       </PopoverContent>
     </Popover>
   );
-}
+};
+
+export default MultiSelect;

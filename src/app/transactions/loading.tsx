@@ -1,4 +1,4 @@
-import Spinner from "~/components/common/DataTabs/Spinner";
+import { Spinner } from "~/components/common";
 
 const Loading = () => {
   return <Spinner />;

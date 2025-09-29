@@ -1,9 +1,9 @@
 "use client";
 
 import { type FromTo } from "~/lib/zodSchemas";
-import DatePickerRange from "../DatePickerRange";
+import { DatePickerRange } from "~/components/common";
 import { useStore } from "~/stores/tx-store";
-import { Button } from "~/components/ui/button";
+import { Button } from "~/components/ui";
 
 type Props = { changeDate: (dates: FromTo) => Promise<void> };
 

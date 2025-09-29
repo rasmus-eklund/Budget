@@ -3,8 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "~/components/ui/button";
 import {
+  Button,
   Form,
   FormControl,
   FormDescription,
@@ -12,10 +12,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import capitalize from "~/lib/utils/capitalize";
-import Icon from "~/components/common/Icon";
+  Input,
+} from "~/components/ui";
+import { capitalize } from "~/lib";
+import { Icon } from "~/components/common";
 
 type Name = { name: string };
 type Props = {

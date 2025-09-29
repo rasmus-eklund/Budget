@@ -1,19 +1,17 @@
 import {
-  Breadcrumb,
+  Breadcrumb as ShadBreadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "~/components/ui/breadcrumb";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-import Icon from "~/components/common/Icon";
-import capitalize from "~/lib/utils/capitalize";
+} from "~/components/ui";
+import { Icon } from "~/components/common";
+import { capitalize } from "~/lib";
 
 type Props = {
   href: string;
@@ -21,9 +19,9 @@ type Props = {
   options: { id: string; name: string }[];
   current: string;
 };
-const BreadcrumbWithDropdown = ({ href, name, options, current }: Props) => {
+const Breadcrumb = ({ href, name, options, current }: Props) => {
   return (
-    <Breadcrumb>
+    <ShadBreadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink href={href}>{name}</BreadcrumbLink>
@@ -55,8 +53,8 @@ const BreadcrumbWithDropdown = ({ href, name, options, current }: Props) => {
           <BreadcrumbPage>{capitalize(current)}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
-    </Breadcrumb>
+    </ShadBreadcrumb>
   );
 };
 
-export default BreadcrumbWithDropdown;
+export default Breadcrumb;

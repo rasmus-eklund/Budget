@@ -1,10 +1,10 @@
 import "~/styles/globals.css";
 
 import { Inter } from "next/font/google";
-import Header from "../components/header/Header";
+import { AuthProvider } from "~/components/common";
+import { Header } from "~/components/server";
 import { env } from "~/env";
-import { AuthProvider } from "../components/common/AuthProvider";
-import { cn } from "~/lib/utils";
+import { cn } from "~/lib";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",

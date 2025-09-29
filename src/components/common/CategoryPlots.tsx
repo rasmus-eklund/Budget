@@ -12,14 +12,13 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui";
+import { Spinner } from "~/components/common";
 import { useMediaQuery } from "~/hooks/use-media-query";
-import { colors } from "~/lib/constants/colors";
-import capitalize from "~/lib/utils/capitalize";
-import { toSek } from "~/lib/utils/formatData";
+import { colors } from "~/constants";
+import { capitalize, toSek } from "~/lib";
 import { useStore } from "~/stores/tx-store";
 import type { Tx, Uniques } from "~/types";
-import Spinner from "./Spinner";
 
 type Props = {
   data: Tx[];

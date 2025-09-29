@@ -1,7 +1,6 @@
 import { type ReactNode } from "react";
-
-import { Button } from "~/components/ui/button";
 import {
+  Button,
   Dialog,
   DialogClose,
   DialogContent,
@@ -10,8 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "~/components/ui/dialog";
-import Icon from "~/components/common/Icon";
+} from "~/components/ui";
+import { Icon } from "~/components/common";
 
 type Props = { children: ReactNode; info: { title: string; entity: string } };
 const DeleteDialog = ({ children, info: { title, entity } }: Props) => {

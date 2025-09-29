@@ -1,13 +1,9 @@
 "use client";
 
-import FreeDates from "./FreeDates";
-import Month from "./Month";
 import type { FromTo } from "~/lib/zodSchemas";
-import { TabsContent, TabsList, TabsTrigger, Tabs } from "~/components/ui/tabs";
-import FreeDay from "./Day";
-import Year from "./Year";
+import { TabsContent, TabsList, TabsTrigger, Tabs } from "~/components/ui";
+import { FreeDay, Month, FreeDates, Year, Drawer } from "~/components/common";
 import { useMediaQuery } from "~/hooks/use-media-query";
-import Drawer from "../Drawer";
 import { useStore } from "~/stores/tx-store";
 import type { DateTab } from "~/types";
 

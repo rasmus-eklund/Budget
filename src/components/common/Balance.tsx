@@ -9,12 +9,11 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import capitalize from "~/lib/utils/capitalize";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui";
+import { capitalize, eachDayOfInterval } from "~/lib";
 import dayjs from "dayjs";
-import { colors } from "~/lib/constants/colors";
+import { colors } from "~/constants";
 import type { Tx } from "~/types";
-import { eachDayOfInterval } from "~/lib/utils/dateCalculations";
 
 type Props = {
   data: Tx[];

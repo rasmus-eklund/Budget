@@ -5,14 +5,16 @@ import {
   removeBankAccount,
   renameBankAccount,
 } from "../dataLayer/peopleActions";
-import DeleteButton from "~/components/common/Forms/DeleteButton";
-import capitalize from "~/lib/utils/capitalize";
-import BreadcrumbWithDropdown from "~/components/common/Breadcrumb";
-import AddItemForm from "~/components/common/Forms/AddItemForm";
+import {
+  DeleteButton,
+  Breadcrumb,
+  AddItemForm,
+  EditItemForm,
+  DeleteDialog,
+} from "~/components/common";
+import { capitalize } from "~/lib";
 import type { Name } from "~/types";
-import EditItemForm from "~/components/common/Forms/EditItemForm";
-import DeleteDialog from "~/components/common/Forms/DeleteDialog";
-import { WithAuth, type WithAuthProps } from "~/components/common/withAuth";
+import WithAuth, { type WithAuthProps } from "~/components/server/WithAuth";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -32,7 +34,7 @@ const page = async (props: Props & WithAuthProps) => {
 
   return (
     <div className="flex flex-col gap-4 p-2">
-      <BreadcrumbWithDropdown
+      <Breadcrumb
         href="/people"
         name="Personer"
         options={options.map((i) => ({ id: i.name, name: i.name }))}

@@ -1,6 +1,6 @@
 import type { Tx } from "~/types";
 import { categories } from "./categories";
-import { getFromTo } from "~/lib/utils/dateCalculations";
+import { getFromTo } from "~/lib";
 
 export const generateData = () => {
   const txs: Tx[] = [];

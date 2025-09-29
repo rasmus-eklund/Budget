@@ -1,13 +1,12 @@
 "use client";
 import React, { useEffect } from "react";
-import ShowData from "~/components/common/ShowData";
 import { type FromTo } from "~/lib/zodSchemas";
-import { getLastMonthYear } from "~/lib/utils/dateCalculations";
+import { getLastMonthYear } from "~/lib";
 import getTxByDates from "../dataLayer/getData";
 import { useRouter } from "next/navigation";
 import { useStore } from "~/stores/tx-store";
-import { emptyOptions } from "~/lib/constants/options";
-import Spinner from "~/components/common/DataTabs/Spinner";
+import { emptyOptions } from "~/constants";
+import { Spinner, ShowData } from "~/components/common";
 
 type Props = { range: FromTo; userId: string };
 const GetTxsLayer = ({ range, userId }: Props) => {

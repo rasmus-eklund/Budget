@@ -1,4 +1,4 @@
-import { WithAuth, type WithAuthProps } from "~/components/common/withAuth";
+import WithAuth, { type WithAuthProps } from "~/components/server/WithAuth";
 import GetTxsLayer from "./_components/GetTxsLayer";
 import { getDateRange } from "./dataLayer/getDateRange";
 import Link from "next/link";

@@ -1,5 +1,5 @@
 import type z from "zod";
-import capitalize from "~/lib/utils/capitalize";
+import { capitalize } from "~/lib";
 import type { CsvSchema } from "~/lib/zodSchemas";
 
 type ImportErrorsProps = {

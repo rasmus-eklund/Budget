@@ -1,13 +1,11 @@
 "use client";
-import { dateToString, toSek } from "~/lib/utils/formatData";
+import { dateToString, toSek, capitalize, getDayRange } from "~/lib";
 import { Virtuoso } from "react-virtuoso";
 import type { Tx } from "~/types";
-import capitalize from "~/lib/utils/capitalize";
 import { cn } from "~/lib/utils";
-import Spinner from "./Spinner";
+import { Spinner } from "~/components/common";
 import { useStore } from "~/stores/tx-store";
 import type { FromTo } from "~/lib/zodSchemas";
-import { getDayRange } from "~/lib/utils/dateCalculations";
 
 type Props = { data: Tx[]; changeDates: (dates: FromTo) => Promise<void> };
 const Transactions = ({ data, changeDates }: Props) => {

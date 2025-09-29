@@ -3,9 +3,10 @@ import {
   DrawerContent,
   DrawerTitle,
   DrawerTrigger,
-} from "~/components/ui/drawer";
-import Icon, { type IconName } from "./Icon";
-import { cn } from "~/lib/utils";
+} from "~/components/ui";
+import { type IconName } from "./Icon";
+import { Icon } from "~/components/common";
+import { cn } from "~/lib";
 
 const Drawer = ({
   children,

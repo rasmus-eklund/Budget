@@ -7,7 +7,14 @@ import {
   useRef,
   useEffect,
 } from "react";
-import { Button } from "~/components/ui/button";
+import {
+  Button,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui";
 import {
   readFiles,
   uploadFiles,
@@ -15,23 +22,13 @@ import {
   findMatchingAccount,
 } from "./fileFormHelpers";
 import type { Category, FileData, Filter, PersonAccounts, Tx } from "~/types";
-import { applyCategory } from "~/lib/utils/categorize";
-import ShowData from "~/components/common/ShowData";
-import { getFromTo, getLastMonthYear } from "~/lib/utils/dateCalculations";
+import { applyCategory, getFromTo, getLastMonthYear, capitalize } from "~/lib";
+import { ShowData, Icon } from "~/components/common";
 import Link from "next/link";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import capitalize from "~/lib/utils/capitalize";
 import { useRouter } from "next/navigation";
 import { useStore } from "~/stores/tx-store";
-import Icon from "~/components/common/Icon";
 import type { FromTo, TxBankAccount } from "~/lib/zodSchemas";
-import configs from "./bankConfigs";
+import { configs } from "~/constants";
 
 type Props = { categories: Category[]; people: PersonAccounts; userId: string };
 const FileForm = ({ categories, people, userId }: Props) => {
@@ -248,8 +245,7 @@ const FileForm = ({ categories, people, userId }: Props) => {
 };
 
 const ShowTransactions = ({ txs, options }: { txs: Tx[]; options: Filter }) => {
-  const { setTxs, setRange } = useStore();
-
+  const { setTxs, setRange, setLoading } = useStore();
   useEffect(() => {
     const range = getFromTo(txs);
     if (!range) return;
@@ -261,6 +257,7 @@ const ShowTransactions = ({ txs, options }: { txs: Tx[]; options: Filter }) => {
       reset: true,
       tab: "transactions",
     });
+    setLoading(false);
   }, [setRange, setTxs, txs, options]);
 
   const changeDates = async ({ from, to }: FromTo) => {

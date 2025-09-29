@@ -2,19 +2,18 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Button } from "~/components/ui/button";
 import {
   Form,
+  Input,
   FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
+  Button,
+} from "~/components/ui";
 import { env } from "~/env";
-
 import { type Passwords, passwordsSchema } from "~/lib/zodSchemas";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useStore } from "~/stores/tx-store";

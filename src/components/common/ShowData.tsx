@@ -1,15 +1,16 @@
 "use client";
-import Aggregated from "./DataTabs/Aggregated";
-import Transactions from "./DataTabs/Transactions";
-import getUnique from "~/lib/utils/getUnique";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import TransactionFilter from "./DataTabs/TransactionFilter";
-import applyTransactionFilters from "~/lib/utils/transactionFilter";
+import {
+  Aggregated,
+  Transactions,
+  TransactionFilter,
+  CategoryPlots,
+  Balance,
+  DateFilter,
+} from "~/components/common";
+import { getUnique, applyTransactionFilters } from "~/lib";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui";
 import type { FilterTab } from "~/types";
-import CategoryPlots from "./DataTabs/CategoryPlots";
-import Balance from "./DataTabs/Balance";
 import { useStore } from "~/stores/tx-store";
-import DateFilter from "./DateFilters/DateFilter";
 import type { FromTo } from "~/lib/zodSchemas";
 
 type Props = { changeDates: (dates: FromTo) => Promise<void> };

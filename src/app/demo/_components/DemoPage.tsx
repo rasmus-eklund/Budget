@@ -2,12 +2,11 @@
 
 import type { FromTo } from "~/lib/zodSchemas";
 import { useEffect, useMemo } from "react";
-import { applyCategory } from "~/lib/utils/categorize";
-import ShowData from "~/components/common/ShowData";
+import { applyCategory, getLastMonthYear } from "~/lib";
+import { ShowData } from "~/components/common";
 import { categories } from "./_generateData/categories";
 import { generateData } from "./_generateData/generateData";
 import { useStore } from "~/stores/tx-store";
-import { getLastMonthYear } from "~/lib/utils/dateCalculations";
 
 const DemoPage = () => {
   const data = useMemo(() => {
@@ -19,7 +18,7 @@ const DemoPage = () => {
     };
   }, []);
 
-  const { setTxs, setRange } = useStore();
+  const { setTxs, setRange, setLoading } = useStore();
 
   const changeDates = async ({ from, to }: FromTo) =>
     setTxs({
@@ -35,6 +34,7 @@ const DemoPage = () => {
       options: data.options,
       reset: true,
     });
+    setLoading(false);
   }, [setRange, data.range, setTxs, data.txs, data.options]);
 
   return <ShowData changeDates={changeDates} />;

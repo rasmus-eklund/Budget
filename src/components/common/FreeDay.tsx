@@ -1,16 +1,9 @@
 "use client";
 
-import { Button } from "~/components/ui/button";
-import Icon from "~/components/common/Icon";
-import {
-  decrementDay,
-  getDayRange,
-  incrementDay,
-} from "~/lib/utils/dateCalculations";
-import { dateToString } from "~/lib/utils/formatData";
+import { Button } from "~/components/ui";
+import { Icon, DatePicker, Tooltip } from "~/components/common";
+import { decrementDay, getDayRange, incrementDay, dateToString } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
-import DatePicker from "../DatePicker";
-import Tooltip from "../Tooltip";
 import { useStore } from "~/stores/tx-store";
 
 type Props = { changeDate: (dates: FromTo) => Promise<void> };

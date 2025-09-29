@@ -10,10 +10,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import capitalize from "~/lib/utils/capitalize";
-import {
+  Input,
   Dialog,
   DialogClose,
   DialogContent,
@@ -22,11 +19,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "~/components/ui/dialog";
-
-import { Button } from "~/components/ui/button";
-import Icon from "~/components/common/Icon";
+  Button,
+} from "~/components/ui";
+import { capitalize } from "~/lib";
+import { Icon } from "~/components/common";
 import { z } from "zod";
+
 type Props = {
   data: { name: string; id: string };
   onSubmit: (data: { name: string; id: string }) => Promise<void>;

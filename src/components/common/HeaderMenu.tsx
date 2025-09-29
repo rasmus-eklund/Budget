@@ -2,20 +2,20 @@
 
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { usePathname } from "next/navigation";
-import * as React from "react";
-import { Button } from "~/components/ui/button";
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-import Icon, { type IconName } from "~/components/common/Icon";
+} from "~/components/ui";
+import { type IconName } from "~/components/common/Icon";
+import { Icon } from "~/components/common";
 import Link from "next/link";
-import { cn } from "~/lib/utils";
+import { cn } from "~/lib";
 
-const Menu = () => {
+const HeaderMenu = () => {
   const pathname = usePathname();
   const currentPath = pathname.split("/")[1];
   const items: { name: string; path: string; icon: IconName }[] = [
@@ -64,4 +64,4 @@ const Menu = () => {
   );
 };
 
-export default Menu;
+export default HeaderMenu;

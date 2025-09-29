@@ -1,7 +1,7 @@
 "use client";
 import { useFormStatus } from "react-dom";
-import { Button } from "~/components/ui/button";
-import Icon from "~/components/common/Icon";
+import { Button } from "~/components/ui";
+import { Icon } from "~/components/common";
 
 type Props = { icon?: boolean };
 const DeleteButton = ({ icon = true }: Props) => {
