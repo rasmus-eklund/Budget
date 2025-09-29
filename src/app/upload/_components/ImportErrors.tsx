@@ -5,19 +5,27 @@ import type { CsvSchema } from "~/lib/zodSchemas";
 type ImportErrorsProps = {
   error: z.ZodError<CsvSchema>;
   file: string;
+  skip: number;
 };
-const ImportErrors = ({ error, file }: ImportErrorsProps) => {
+const ImportErrors = ({ error, file, skip }: ImportErrorsProps) => {
   if (error.issues.length === 0) {
     return null;
   }
-  const items = new Map<string, { field: string; message: string }>();
+  const items = new Map<
+    string,
+    { index: number; field: string; message: string }
+  >();
   for (const {
-    path: [, field],
+    path: [index, field],
     message,
   } of error.issues) {
-    const key = `${field}-${message}`;
+    const key = `${index}-${field}-${message}`;
     if (!items.has(key)) {
-      items.set(key, { field, message } as { field: string; message: string });
+      items.set(key, { index, field, message } as {
+        index: number;
+        field: string;
+        message: string;
+      });
     }
   }
   const errors = Array.from(items.values());
@@ -27,9 +35,9 @@ const ImportErrors = ({ error, file }: ImportErrorsProps) => {
       <ul className="flex flex-col gap-1">
         {Array.from(errors)
           .filter((i) => i.message !== "")
-          .map(({ field, message }) => (
-            <li key={`${file}${field}${message}`}>
-              {capitalize(field)}: {message}
+          .map(({ index, field, message }) => (
+            <li key={`${file}-${index}-${field}-${message}`}>
+              Rad {index + 1 + skip} - {capitalize(field)}: {message}
             </li>
           ))}
       </ul>

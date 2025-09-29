@@ -1,25 +1,46 @@
 import { z } from "zod";
 import dayjs from "dayjs";
 
-const parseSek = (v: string) => {
-  const cleaned = v.replace(/[^\d,.\-]/g, "").replace(/\s+/g, "");
-  let normalized = cleaned;
-  if (/,/.test(cleaned) && /\./.test(cleaned)) {
-    normalized = cleaned.replace(/,/g, "");
-  } else {
-    normalized = cleaned.replace(",", ".");
-  }
-  const num = Number(normalized);
-  if (Number.isNaN(num)) {
-    throw new Error(`Felaktigt nummerformat: ${v}`);
-  }
-  return num;
-};
+const numberSchema = z
+  .string()
+  .min(1, "Minst 1 siffra")
+  .transform((val, ctx) => {
+    const cleaned = val.replace(/[^\d,.\-]/g, "").replace(/\s+/g, "");
+    let normalized = cleaned;
+    if (/,/.test(cleaned) && /\./.test(cleaned)) {
+      normalized = cleaned.replace(/,/g, "");
+    } else {
+      normalized = cleaned.replace(",", ".");
+    }
 
-const numberSchema = z.string().min(1, "Minst 1 siffra").transform(parseSek);
+    if (!/\d+/.test(normalized)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Felaktigt nummerformat: ${val}`,
+      });
+      return z.NEVER;
+    }
+
+    const num = Number(normalized);
+    if (Number.isNaN(num)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Felaktigt nummerformat: ${val}`,
+      });
+      return z.NEVER;
+    }
+
+    return num;
+  });
 
 const dateSchema = z
   .string({ required_error: "Datum saknas." })
+  .refine(
+    (v) => /^\d{4}-\d{2}-\d{2}$/.test(v),
+    (v) => ({
+      message: `Felaktigt datum format: ${v}. Använd formatet YYYY-MM-DD.`,
+    }),
+  )
   .refine(
     (v) => {
       const parsed = dayjs(v, "YYYY-MM-DD", true);

@@ -45,6 +45,7 @@ export const readFiles = async (
         const jsx = ImportErrors({
           error: res.error,
           file: file.name,
+          skip: config.skipLines,
         });
         return { ok: false, error: jsx };
       }
