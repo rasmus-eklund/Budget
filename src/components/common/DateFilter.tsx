@@ -1,35 +1,28 @@
 "use client";
 
 import type { FromTo } from "~/lib/zodSchemas";
-import { TabsContent, TabsList, TabsTrigger, Tabs } from "~/components/ui";
-import { FreeDay, Month, FreeDates, Year, Drawer } from "~/components/common";
-import { useMediaQuery } from "~/hooks/use-media-query";
+import {
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Tabs,
+  Button,
+} from "~/components/ui";
+import { FreeDay, Month, FreeDates, Year } from "~/components/common";
 import { useStore } from "~/stores/tx-store";
 import type { DateTab } from "~/types";
+import { cn } from "~/lib";
 
 type Props = { changeDates: (dates: FromTo) => Promise<void> };
 const DateFilter = ({ changeDates }: Props) => {
-  const isDesktop = useMediaQuery("(min-width: 768px)", {
-    initializeWithValue: false,
-  });
-  if (isDesktop) return <TabsDesktop changeDates={changeDates} />;
-  return (
-    <div className="flex items-center px-2 pt-2 absolute right-1 top-2.5">
-      <Drawer icon="CalendarCog" title="Datumfilter" description="Välj datum">
-        <TabsDesktop changeDates={changeDates} />
-      </Drawer>
-    </div>
-  );
-};
-
-const TabsDesktop = ({ changeDates }: Props) => {
   const { setDateTab } = useStore();
   const dateTab = useStore((state) => state.dateTab);
+  const showDateFilter = useStore((state) => state.showDateFilter);
   return (
     <Tabs
       value={dateTab}
       onValueChange={(value) => setDateTab(value as DateTab)}
-      className="pt-2"
+      className={cn("pt-2", showDateFilter ? "" : "hidden")}
     >
       <TabsList className="md:w-fit w-full">
         <TabsTrigger value="month">Månad</TabsTrigger>

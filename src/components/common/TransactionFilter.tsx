@@ -1,5 +1,5 @@
 "use client";
-import type { Filter, SortOption, Uniques } from "~/types";
+import type { SortOption, Uniques } from "~/types";
 import {
   Select,
   Button,
@@ -11,48 +11,26 @@ import {
   SelectValue,
   Input,
 } from "~/components/ui";
-import { Drawer, MultiSelect } from "~/components/common";
+import { MultiSelect } from "~/components/common";
 import { sortOptions } from "~/constants";
 import { useState } from "react";
-import { useMediaQuery } from "~/hooks/use-media-query";
 import { useStore } from "~/stores/tx-store";
-import { setAll } from "~/lib";
+import { cn, setAll } from "~/lib";
 
 const TransactionFilter = ({ options }: { options: Uniques }) => {
-  const isDesktop = useMediaQuery("(min-width: 768px)", {
-    initializeWithValue: false,
-  });
-  if (isDesktop) return <Filter options={options} />;
-  return (
-    <div className="flex items-center px-2 pt-2 absolute right-11 top-2.5">
-      <Drawer
-        icon="Filter"
-        title="Transaktionsfilter"
-        description="Välj filter"
-      >
-        <Filter options={options} />
-      </Drawer>
-    </div>
-  );
-};
-
-const Filter = ({
-  options: { category, person, account },
-}: {
-  options: {
-    category: string[];
-    person: string[];
-    account: string[];
-  };
-}) => {
+  const { account, category, person } = options;
   const [search, setSearch] = useState("");
   const { setTxSort, reset, setFilter } = useStore();
   const txSort = useStore((state) => state.txSort);
   const hasChanged = useStore((state) => state.hasChanged);
   const filter = useStore((state) => state.filter);
+  const showFilter = useStore((state) => state.showFilter);
   return (
     <form
-      className="flex flex-col gap-2 p-1 pt-2 md:flex-row"
+      className={cn(
+        "flex flex-wrap md:flex-nowrap gap-2 p-1 pt-2",
+        showFilter ? "" : "hidden",
+      )}
       onSubmit={(e) => {
         e.preventDefault();
         setFilter({ ...filter, search });
@@ -68,16 +46,10 @@ const Filter = ({
           });
         }}
         clearAll={() =>
-          setFilter({
-            ...filter,
-            person: setAll(filter.person, false),
-          })
+          setFilter({ ...filter, person: setAll(filter.person, false) })
         }
         selectAll={() =>
-          setFilter({
-            ...filter,
-            person: setAll(filter.person, true),
-          })
+          setFilter({ ...filter, person: setAll(filter.person, true) })
         }
         label="Person"
       />
@@ -91,16 +63,10 @@ const Filter = ({
           });
         }}
         clearAll={() =>
-          setFilter({
-            ...filter,
-            category: setAll(filter.category, false),
-          })
+          setFilter({ ...filter, category: setAll(filter.category, false) })
         }
         selectAll={() =>
-          setFilter({
-            ...filter,
-            category: setAll(filter.category, true),
-          })
+          setFilter({ ...filter, category: setAll(filter.category, true) })
         }
         label="Kategori"
       />
@@ -114,16 +80,10 @@ const Filter = ({
           });
         }}
         clearAll={() =>
-          setFilter({
-            ...filter,
-            account: setAll(filter.account, false),
-          })
+          setFilter({ ...filter, account: setAll(filter.account, false) })
         }
         selectAll={() =>
-          setFilter({
-            ...filter,
-            account: setAll(filter.account, true),
-          })
+          setFilter({ ...filter, account: setAll(filter.account, true) })
         }
         label="Konto"
       />
@@ -132,19 +92,17 @@ const Filter = ({
         value={search}
         onChange={({ target: { value } }) => setSearch(value)}
       />
-      <div className="flex items-center gap-2">
-        {hasChanged && (
-          <Button
-            type="button"
-            onClick={() => {
-              setSearch("");
-              reset();
-            }}
-          >
-            Rensa filter
-          </Button>
-        )}
-      </div>
+      {hasChanged && (
+        <Button
+          type="button"
+          onClick={() => {
+            setSearch("");
+            reset();
+          }}
+        >
+          Rensa filter
+        </Button>
+      )}
       <Select
         value={txSort.sort}
         onValueChange={(value) =>

@@ -39,6 +39,10 @@ export const useStore = create<{
   setRange: (range: FromTo) => void;
   sticky: boolean;
   setSticky: (sticky: boolean) => void;
+  showFilter: boolean;
+  setShowFilter: (showFilter: boolean) => void;
+  showDateFilter: boolean;
+  setShowDateFilter: (showDateFilter: boolean) => void;
 }>((set, get) => ({
   txs: [],
   setTxs: ({ txs, options, reset = false, tab = "aggregated" }) => {
@@ -101,4 +105,8 @@ export const useStore = create<{
     }),
   sticky: true,
   setSticky: (sticky) => set({ sticky }),
+  showFilter: true,
+  setShowFilter: (showFilter) => set({ showFilter }),
+  showDateFilter: true,
+  setShowDateFilter: (showDateFilter) => set({ showDateFilter }),
 }));
