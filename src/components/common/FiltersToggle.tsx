@@ -16,8 +16,8 @@ const FiltersToggle = () => {
   useEffect(() => {
     setShowFilter(isDesktop);
     setShowDateFilter(isDesktop);
-  }, [isDesktop]);
-  
+  }, [isDesktop, setShowFilter, setShowDateFilter]);
+
   return (
     <div className="absolute right-2 top-2 items-center gap-2 flex md:hidden">
       <Button

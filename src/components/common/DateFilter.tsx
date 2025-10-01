@@ -1,13 +1,7 @@
 "use client";
 
 import type { FromTo } from "~/lib/zodSchemas";
-import {
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Tabs,
-  Button,
-} from "~/components/ui";
+import { TabsContent, TabsList, TabsTrigger, Tabs } from "~/components/ui";
 import { FreeDay, Month, FreeDates, Year } from "~/components/common";
 import { useStore } from "~/stores/tx-store";
 import type { DateTab } from "~/types";

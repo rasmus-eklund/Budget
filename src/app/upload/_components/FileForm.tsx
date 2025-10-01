@@ -258,7 +258,7 @@ const ShowTransactions = ({ txs, options }: { txs: Tx[]; options: Filter }) => {
       tab: "transactions",
     });
     setLoading(false);
-  }, [setRange, setTxs, txs, options]);
+  }, [setRange, setTxs, txs, options, setLoading]);
 
   const changeDates = async ({ from, to }: FromTo) => {
     setTxs({
