@@ -43,7 +43,7 @@ const MultiSelect = ({
           <Icon icon="ChevronsUpDown" className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-fit p-0" popoverTarget="drawer-content">
+      <PopoverContent className="w-fit p-0">
         <Command>
           <CommandInput placeholder="Sök" className="h-9" />
           <CommandList>

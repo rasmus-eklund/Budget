@@ -21,15 +21,14 @@ import MultiSelect from "./MultiSelect";
 import ShowData from "./ShowData";
 import Tooltip from "./Tooltip";
 import HeaderMenu from "./HeaderMenu";
-import Drawer from "./Drawer";
 import Icon from "./Icon";
 import Transactions from "./Transactions";
+import FiltersToggle from "./FiltersToggle";
 
 export {
   Aggregated,
   Balance,
   CategoryPlots,
-  Drawer,
   Spinner,
   TransactionFilter,
   DateFilter,
@@ -52,4 +51,5 @@ export {
   Tooltip,
   HeaderMenu,
   Transactions,
+  FiltersToggle,
 };
