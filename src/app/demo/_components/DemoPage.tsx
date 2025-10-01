@@ -35,7 +35,7 @@ const DemoPage = () => {
       reset: true,
     });
     setLoading(false);
-  }, [setRange, data.range, setTxs, data.txs, data.options]);
+  }, [setRange, data.range, setTxs, data.txs, data.options, setLoading]);
 
   return <ShowData changeDates={changeDates} />;
 };
