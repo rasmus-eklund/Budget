@@ -9,6 +9,7 @@ import {
   getFromTo,
   cn,
   allFalseExcept,
+  allTrueExcept,
 } from "~/lib";
 import type { FromTo } from "~/lib/zodSchemas";
 import type { Uniques } from "~/types";
@@ -161,11 +162,11 @@ const CatButton = ({
         setFilter({
           category: category
             ? allFalseExcept(defaultFilter.category, category)
-            : defaultFilter.category,
+            : allTrueExcept(defaultFilter.category, "inom"),
           account: defaultFilter.account,
           person: person
             ? allFalseExcept(defaultFilter.person, person)
-            : defaultFilter.person,
+            : allTrueExcept(defaultFilter.person, "inom"),
           search: "",
         });
         setFilterTab("transactions");
