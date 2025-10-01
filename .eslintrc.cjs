@@ -6,7 +6,8 @@ const config = {
   },
   "plugins": [
     "@typescript-eslint",
-    "drizzle"
+    "drizzle",
+    "unused-imports"
   ],
   "extends": [
     "next/core-web-vitals",
@@ -23,10 +24,11 @@ const config = {
         "fixStyle": "inline-type-imports"
       }
     ],
+    
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {
-        "argsIgnorePattern": "^_"
+        "argsIgnorePattern": "^_", "varsIgnorePattern": "^_"
       }
     ],
     "@typescript-eslint/require-await": "off",
@@ -39,7 +41,8 @@ const config = {
       }
     ],
     "drizzle/enforce-delete-with-where": "error",
-    "drizzle/enforce-update-with-where": "error"
+    "drizzle/enforce-update-with-where": "error",
+    "unused-imports/no-unused-imports": "warn",
   }
 }
 module.exports = config;
