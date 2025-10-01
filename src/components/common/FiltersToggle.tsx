@@ -4,11 +4,13 @@ import { Button } from "../ui";
 import Icon from "./Icon";
 import { useMediaQuery } from "~/hooks/use-media-query";
 import { useEffect } from "react";
+import { cn } from "~/lib";
 
 const FiltersToggle = () => {
   const { setShowFilter, setShowDateFilter } = useStore();
   const showFilter = useStore((state) => state.showFilter);
   const showDateFilter = useStore((state) => state.showDateFilter);
+  const filterTab = useStore((state) => state.filterTab);
   const isDesktop = useMediaQuery("(min-width: 768px)", {
     initializeWithValue: false,
   });
@@ -22,7 +24,10 @@ const FiltersToggle = () => {
     <div className="absolute right-2 top-2 items-center gap-2 flex md:hidden">
       <Button
         variant="outline"
-        className={showFilter ? "border-primary" : ""}
+        className={cn(
+          showFilter ? "border-primary" : "",
+          filterTab === "aggregated" ? "hidden" : "",
+        )}
         onClick={() => setShowFilter(!showFilter)}
       >
         <Icon icon="Filter" />
