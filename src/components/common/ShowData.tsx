@@ -6,6 +6,7 @@ import {
   CategoryPlots,
   Balance,
   DateFilter,
+  FiltersToggle,
 } from "~/components/common";
 import { getUnique, applyTransactionFilters } from "~/lib";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui";
@@ -25,6 +26,7 @@ const ShowData = ({ changeDates }: Props) => {
 
   return (
     <section className="flex flex-1 flex-col gap-2 pt-2 md:pt-0">
+      <FiltersToggle />
       <DateFilter changeDates={changeDates} />{" "}
       <Tabs
         className="flex-1 min-h-0 md:gap-2 gap-0"
