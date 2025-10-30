@@ -23,7 +23,7 @@ describe("Change date", () => {
       expect(result).toEqual(expected);
     });
 
-    it.only("should handle decrementing from January to December of the previous year", () => {
+    it("should handle decrementing from January to December of the previous year", () => {
       const date = {
         year: 2020,
         month: 1,
