@@ -23,7 +23,7 @@ describe("Change date", () => {
       expect(result).toEqual(expected);
     });
 
-    it.only("should handle decrementing from January to December of the previous year", () => {
+    it("should handle decrementing from January to December of the previous year", () => {
       const date = {
         year: 2020,
         month: 1,
@@ -52,11 +52,11 @@ describe("Change date", () => {
     it("should handle incrementing from December to January of the next year", () => {
       const date = {
         year: 2020,
-        month: 11, // December
+        month: 12, // December
       };
       const expected = {
         year: 2021,
-        month: 0, // January of the next year
+        month: 1, // January of the next year
       };
       const result = incrementMonth(date);
       expect(result).toEqual(expected);
@@ -66,19 +66,21 @@ describe("Change date", () => {
     it("should minus one day", () => {
       const date = new Date("2020-01-02");
       const expected = {
-        from: new Date("2020-01-02"),
-        to: new Date("2020-01-02"),
+        from: new Date("2020-01-01T00:00:00.000Z"),
+        to: new Date("2020-01-01T23:59:59.999Z"),
       };
 
       const result = decrementDay(date);
       expect(result).toEqual(expected);
     });
+
     it("should plus one day", () => {
       const date = new Date("2020-01-01");
       const expected = {
-        from: new Date("2020-01-01"),
-        to: new Date("2020-01-02"),
+        from: new Date("2020-01-02T00:00:00.000Z"),
+        to: new Date("2020-01-02T23:59:59.999Z"),
       };
+
       const result = incrementDay(date);
       expect(result).toEqual(expected);
     });

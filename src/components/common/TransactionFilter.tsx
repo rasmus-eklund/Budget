@@ -11,30 +11,31 @@ import {
   SelectValue,
   Input,
 } from "~/components/ui";
-import { MultiSelect } from "~/components/common";
+import { Icon, MultiSelect } from "~/components/common";
 import { sortOptions } from "~/constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "~/stores/tx-store";
 import { cn, setAll } from "~/lib";
+import { useDebounceCallback } from "usehooks-ts";
 
 const TransactionFilter = ({ options }: { options: Uniques }) => {
   const { account, category, person } = options;
-  const [search, setSearch] = useState("");
   const { setTxSort, reset, setFilter } = useStore();
   const txSort = useStore((state) => state.txSort);
   const hasChanged = useStore((state) => state.hasChanged);
   const filter = useStore((state) => state.filter);
   const showFilter = useStore((state) => state.showFilter);
+  const debouncedSearch = useDebounceCallback(
+    (v: string) => setFilter({ ...filter, search: v }),
+    1000,
+  );
+
   return (
-    <form
+    <div
       className={cn(
         "flex flex-wrap md:flex-nowrap gap-2 p-1 pt-2",
         showFilter ? "" : "hidden",
       )}
-      onSubmit={(e) => {
-        e.preventDefault();
-        setFilter({ ...filter, search });
-      }}
     >
       <MultiSelect
         options={person}
@@ -87,19 +88,14 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
         }
         label="Konto"
       />
-      <Input
-        placeholder="Sök"
-        value={search}
-        onChange={({ target: { value } }) => setSearch(value)}
+
+      <SearchInput
+        value={filter.search}
+        onChange={debouncedSearch}
+        onClear={() => setFilter({ ...filter, search: "" })}
       />
       {hasChanged && (
-        <Button
-          type="button"
-          onClick={() => {
-            setSearch("");
-            reset();
-          }}
-        >
+        <Button type="button" onClick={reset}>
           Rensa filter
         </Button>
       )}
@@ -129,7 +125,48 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
           </SelectGroup>
         </SelectContent>
       </Select>
-    </form>
+    </div>
+  );
+};
+
+const SearchInput = ({
+  onChange,
+  onClear,
+  value,
+}: {
+  onChange: (v: string) => void;
+  onClear: () => void;
+  value: string;
+}) => {
+  const [search, setSearch] = useState(value);
+  const handleClear = () => {
+    setSearch("");
+    onClear();
+  };
+
+  useEffect(() => {
+    setSearch(value);
+  }, [value]);
+
+  return (
+    <div className="relative">
+      <Input
+        placeholder="Sök"
+        value={search}
+        onChange={({ target: { value } }) => {
+          setSearch(value);
+          onChange(value);
+        }}
+      />
+      <Icon
+        onClick={handleClear}
+        icon="X"
+        className={cn(
+          "absolute right-2 top-1/2 -translate-y-1/2 hover:scale-110 cursor-pointer transition-transform hidden",
+          search !== "" && "block",
+        )}
+      />
+    </div>
   );
 };
 
