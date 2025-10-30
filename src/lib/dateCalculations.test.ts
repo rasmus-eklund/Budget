@@ -52,11 +52,11 @@ describe("Change date", () => {
     it("should handle incrementing from December to January of the next year", () => {
       const date = {
         year: 2020,
-        month: 11, // December
+        month: 12, // December
       };
       const expected = {
         year: 2021,
-        month: 0, // January of the next year
+        month: 1, // January of the next year
       };
       const result = incrementMonth(date);
       expect(result).toEqual(expected);
