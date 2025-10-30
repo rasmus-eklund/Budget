@@ -66,19 +66,21 @@ describe("Change date", () => {
     it("should minus one day", () => {
       const date = new Date("2020-01-02");
       const expected = {
-        from: new Date("2020-01-02"),
-        to: new Date("2020-01-02"),
+        from: new Date("2020-01-01T00:00:00.000Z"),
+        to: new Date("2020-01-01T23:59:59.999Z"),
       };
 
       const result = decrementDay(date);
       expect(result).toEqual(expected);
     });
+
     it("should plus one day", () => {
       const date = new Date("2020-01-01");
       const expected = {
-        from: new Date("2020-01-01"),
-        to: new Date("2020-01-02"),
+        from: new Date("2020-01-02T00:00:00.000Z"),
+        to: new Date("2020-01-02T23:59:59.999Z"),
       };
+
       const result = incrementDay(date);
       expect(result).toEqual(expected);
     });
