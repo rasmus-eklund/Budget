@@ -76,6 +76,13 @@ export const useStore = create<{
   setTxSort: (txSort) => {
     if (txSort.sort !== "date-asc") {
       set({ hasChanged: true });
+    } else {
+      set({
+        hasChanged: filterChanged({
+          defaultFilter: get().options,
+          filter: get().filter,
+        }),
+      });
     }
     set({ txSort });
   },
