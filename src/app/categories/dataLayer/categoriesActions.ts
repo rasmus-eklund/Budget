@@ -108,6 +108,7 @@ export const replaceAllMatches = async ({
       });
       await tx.insert(match).values(matchValues);
     } catch (error) {
+      console.error(error);
       tx.rollback();
     }
   });
