@@ -8,6 +8,9 @@ const getUserId = async () => {
     redirect("/api/auth/login");
   }
   const user = await getUser();
+  if (!user) {
+    redirect("/api/auth/login");
+  }
   return user.id;
 };
 
