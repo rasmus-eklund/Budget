@@ -6,14 +6,13 @@ import getTxByDates from "../dataLayer/getData";
 import { useRouter } from "next/navigation";
 import { useStore } from "~/stores/tx-store";
 import { emptyOptions } from "~/constants";
-import { Spinner, ShowData } from "~/components/common";
+import { ShowData } from "~/components/common";
 
 type Props = { range: FromTo; userId: string };
 const GetTxsLayer = ({ range, userId }: Props) => {
   const router = useRouter();
   const { setTxs, setLoading, setRange } = useStore();
   const password = useStore((state) => state.password);
-  const loading = useStore((state) => state.loading);
 
   const getData = async (dates: FromTo) => {
     setLoading(true);
@@ -45,7 +44,6 @@ const GetTxsLayer = ({ range, userId }: Props) => {
       .finally(() => setLoading(false));
   }, [password, router, userId, setLoading, setTxs, setRange, range]);
 
-  if (loading || !password) return <Spinner />;
   return <ShowData changeDates={getData} />;
 };
 

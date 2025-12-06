@@ -105,7 +105,7 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
           setTxSort({ ...txSort, sort: value as SortOption })
         }
       >
-        <SelectTrigger className="w-[160px]">
+        <SelectTrigger>
           <SelectValue placeholder="Sortera" />
         </SelectTrigger>
         <SelectContent>

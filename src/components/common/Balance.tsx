@@ -14,12 +14,16 @@ import { capitalize, eachDayOfInterval } from "~/lib";
 import dayjs from "dayjs";
 import { colors } from "~/constants";
 import type { Tx } from "~/types";
+import { useStore } from "~/stores/tx-store";
+import Spinner from "./Spinner";
 
 type Props = {
   data: Tx[];
 };
 
 const Balance = (props: Props) => {
+  const loading = useStore((state) => state.loading);
+  if (loading) return <Spinner />;
   const range = getRange(props.data);
   const persons = getPersonAccounts(props.data);
   const { data, personAccounts } = fillMissingDates(props.data, range, persons);
