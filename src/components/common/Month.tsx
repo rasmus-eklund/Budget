@@ -25,7 +25,7 @@ type Props = {
 };
 
 const Month = ({ changeDate }: Props) => {
-  const { setMonth } = useStore();
+  const setMonth = useStore((state) => state.setMonth);
   const dates = useStore((state) => state.month);
   const range = useStore((state) => state.range);
   const { year, month } = dates;

@@ -20,7 +20,7 @@ const ShowData = ({ changeDates }: Props) => {
   const txSort = useStore((state) => state.txSort);
   const filterTab = useStore((state) => state.filterTab);
   const data = useStore((state) => state.txs);
-  const { setFilterTab } = useStore();
+  const setFilterTab = useStore((state) => state.setFilterTab);
   const txs = applyTransactionFilters({ data, filters: { filter, txSort } });
   const options = getUnique(data);
 

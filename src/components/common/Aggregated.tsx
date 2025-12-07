@@ -29,7 +29,7 @@ const Aggregated = ({ options: { person, category } }: Props) => {
   );
   const loading = useStore((state) => state.loading);
   const sticky = useStore((state) => state.sticky);
-  const { setSticky } = useStore();
+  const setSticky = useStore((state) => state.setSticky);
   if (loading) return <Spinner />;
   const peopleTotal = [...person, "total"];
   const nonClickableCategories = ["spending", "total"];
@@ -153,7 +153,8 @@ const CatButton = ({
   category,
   person,
 }: CatButtonProps) => {
-  const { setFilter, setFilterTab } = useStore();
+  const setFilter = useStore((state) => state.setFilter);
+  const setFilterTab = useStore((state) => state.setFilterTab);
   const defaultFilter = useStore((state) => state.filter);
   return (
     <button

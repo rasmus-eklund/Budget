@@ -20,7 +20,9 @@ import { useDebounceCallback } from "usehooks-ts";
 
 const TransactionFilter = ({ options }: { options: Uniques }) => {
   const { account, category, person } = options;
-  const { setTxSort, reset, setFilter } = useStore();
+  const setTxSort = useStore((state) => state.setTxSort);
+  const reset = useStore((state) => state.reset);
+  const setFilter = useStore((state) => state.setFilter);
   const txSort = useStore((state) => state.txSort);
   const hasChanged = useStore((state) => state.hasChanged);
   const filter = useStore((state) => state.filter);

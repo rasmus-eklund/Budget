@@ -245,7 +245,9 @@ const FileForm = ({ categories, people, userId }: Props) => {
 };
 
 const ShowTransactions = ({ txs, options }: { txs: Tx[]; options: Filter }) => {
-  const { setTxs, setRange, setLoading } = useStore();
+  const setTxs = useStore((state) => state.setTxs);
+  const setRange = useStore((state) => state.setRange);
+  const setLoading = useStore((state) => state.setLoading);
   useEffect(() => {
     const range = getFromTo(txs);
     if (!range) return;
