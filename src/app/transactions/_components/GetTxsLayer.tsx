@@ -1,17 +1,16 @@
 "use client";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { type FromTo } from "~/lib/zodSchemas";
 import { getLastMonthYear } from "~/lib";
 import getTxByDates from "../dataLayer/getData";
-import { useRouter } from "next/navigation";
 import { useStore } from "~/stores/tx-store";
 import { emptyOptions } from "~/constants";
 import { ShowData } from "~/components/common";
 
 type Props = { range: FromTo; userId: string };
-const GetTxsLayer = ({ range, userId }: Props) => {
-  const router = useRouter();
-  const { setTxs, setLoading, setRange } = useStore();
+const GetTxsLayer = ({ range: { from, to }, userId }: Props) => {
+  const setTxs = useStore((state) => state.setTxs);
+  const { setLoading, setRange } = useStore();
   const password = useStore((state) => state.password);
 
   const getData = async (dates: FromTo) => {
@@ -27,6 +26,7 @@ const GetTxsLayer = ({ range, userId }: Props) => {
 
   useEffect(() => {
     setLoading(true);
+    const range = { from, to };
     const dates = getLastMonthYear(range);
     getTxByDates({ dates, password, userId })
       .then((res) => {
@@ -42,7 +42,7 @@ const GetTxsLayer = ({ range, userId }: Props) => {
         setTxs({ txs: [], options: emptyOptions, reset: true });
       })
       .finally(() => setLoading(false));
-  }, [password, router, userId, setLoading, setTxs, setRange, range]);
+  }, [password, userId, setLoading, setTxs, setRange, from, to]);
 
   return <ShowData changeDates={getData} />;
 };
