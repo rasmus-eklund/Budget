@@ -9,7 +9,7 @@ import { cn } from "~/lib";
 
 type Props = { changeDates: (dates: FromTo) => Promise<void> };
 const DateFilter = ({ changeDates }: Props) => {
-  const { setDateTab } = useStore();
+  const setDateTab = useStore((state) => state.setDateTab);
   const dateTab = useStore((state) => state.dateTab);
   const showDateFilter = useStore((state) => state.showDateFilter);
   return (
