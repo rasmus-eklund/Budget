@@ -25,7 +25,7 @@ const ShowData = ({ changeDates }: Props) => {
   const options = getUnique(data);
 
   return (
-    <section className="flex flex-1 flex-col gap-2 pt-2 md:pt-0">
+    <section className="flex flex-1 flex-col gap-2">
       <FiltersToggle />
       <DateFilter changeDates={changeDates} />
       <Tabs
