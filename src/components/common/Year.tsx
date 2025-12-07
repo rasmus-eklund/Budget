@@ -19,7 +19,7 @@ type Props = {
 
 const Year = ({ changeDate }: Props) => {
   const { from, to } = useStore((state) => state.range);
-  const { setYear } = useStore();
+  const setYear = useStore((state) => state.setYear);
   const year = useStore((state) => state.year);
   const mostRecentYear = to.getFullYear();
   const submitYear = async (year: number) => {

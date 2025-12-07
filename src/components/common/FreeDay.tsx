@@ -9,7 +9,7 @@ import { useStore } from "~/stores/tx-store";
 type Props = { changeDate: (dates: FromTo) => Promise<void> };
 
 const FreeDay = ({ changeDate }: Props) => {
-  const { setDay } = useStore();
+  const setDay = useStore((state) => state.setDay);
   const { from, to } = useStore((state) => state.range);
   const day = useStore((state) => state.day);
   const onChange = async (dates: FromTo) => {

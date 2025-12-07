@@ -22,7 +22,7 @@ const defaultValues = {
   password: env.NEXT_PUBLIC_PASS ?? "",
 };
 const PasswordForm = () => {
-  const { updatePassword } = useStore();
+  const updatePassword = useStore((state) => state.updatePassword);
   const password = useStore((state) => state.password);
   const router = useRouter();
   const searchParams = useSearchParams();

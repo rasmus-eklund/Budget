@@ -7,7 +7,8 @@ import { useEffect } from "react";
 import { cn } from "~/lib";
 
 const FiltersToggle = () => {
-  const { setShowFilter, setShowDateFilter } = useStore();
+  const setShowFilter = useStore((state) => state.setShowFilter);
+  const setShowDateFilter = useStore((state) => state.setShowDateFilter);
   const showFilter = useStore((state) => state.showFilter);
   const showDateFilter = useStore((state) => state.showDateFilter);
   const filterTab = useStore((state) => state.filterTab);

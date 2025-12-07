@@ -18,7 +18,9 @@ const DemoPage = () => {
     };
   }, []);
 
-  const { setTxs, setRange, setLoading } = useStore();
+  const setLoading = useStore((state) => state.setLoading);
+  const setRange = useStore((state) => state.setRange);
+  const setTxs = useStore((state) => state.setTxs);
 
   const changeDates = async ({ from, to }: FromTo) =>
     setTxs({
