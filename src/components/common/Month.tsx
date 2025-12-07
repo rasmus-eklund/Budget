@@ -44,6 +44,7 @@ const Month = ({ changeDate }: Props) => {
       <Select
         value={year.toString()}
         onValueChange={async (value) => {
+          if (!value) return;
           const data = { year: Number(value), month };
           setMonth(data);
           await submitDates(getMonthRange(data));
