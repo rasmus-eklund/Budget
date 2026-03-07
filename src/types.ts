@@ -17,6 +17,8 @@ export type Internal = {
   id: string;
   belopp: number;
   bankAccountId: string;
+  person?: string;
+  text?: string;
 };
 
 export type Uniques = {
