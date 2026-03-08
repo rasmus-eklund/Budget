@@ -1,7 +1,7 @@
 "use client";
 
 import type { FromTo } from "~/lib/zodSchemas";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { applyCategory, getLastMonthYear } from "~/lib";
 import { ShowData } from "~/components/common";
 import { categories } from "./_generateData/categories";
@@ -20,24 +20,31 @@ const DemoPage = () => {
 
   const setLoading = useStore((state) => state.setLoading);
   const setRange = useStore((state) => state.setRange);
+  const setSelectedRange = useStore((state) => state.setSelectedRange);
   const setTxs = useStore((state) => state.setTxs);
 
-  const changeDates = async ({ from, to }: FromTo) =>
-    setTxs({
-      txs: data.txs.filter((i) => i.datum >= from && i.datum <= to),
-      options: data.options,
-    });
+  const getData = useCallback(
+    async ({ from, to }: FromTo, reset = false) => {
+      setSelectedRange({ from, to });
+      setTxs({
+        txs: data.txs.filter((i) => i.datum >= from && i.datum <= to),
+        options: data.options,
+        reset,
+      });
+    },
+    [data.options, data.txs, setSelectedRange, setTxs],
+  );
+
+  const changeDates = async ({ from, to }: FromTo) => {
+    await getData({ from, to });
+  };
 
   useEffect(() => {
     setRange(data.range);
-    const { from, to } = getLastMonthYear(data.range);
-    setTxs({
-      txs: data.txs.filter((i) => i.datum >= from && i.datum <= to),
-      options: data.options,
-      reset: true,
-    });
+    const dates = getLastMonthYear(data.range);
+    void getData(dates, true);
     setLoading(false);
-  }, [setRange, data.range, setTxs, data.txs, data.options, setLoading]);
+  }, [setRange, data.range, getData, setLoading]);
 
   return <ShowData changeDates={changeDates} />;
 };

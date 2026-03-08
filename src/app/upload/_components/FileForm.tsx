@@ -6,6 +6,7 @@ import {
   useState,
   useRef,
   useEffect,
+  useCallback,
 } from "react";
 import {
   Button,
@@ -247,26 +248,33 @@ const FileForm = ({ categories, people, userId }: Props) => {
 const ShowTransactions = ({ txs, options }: { txs: Tx[]; options: Filter }) => {
   const setTxs = useStore((state) => state.setTxs);
   const setRange = useStore((state) => state.setRange);
+  const setSelectedRange = useStore((state) => state.setSelectedRange);
   const setLoading = useStore((state) => state.setLoading);
+
+  const getData = useCallback(
+    async ({ from, to }: FromTo, reset = false) => {
+      setSelectedRange({ from, to });
+      setTxs({
+        txs: txs.filter((i) => i.datum >= from && i.datum <= to),
+        options,
+        reset,
+        tab: reset ? "transactions" : undefined,
+      });
+    },
+    [options, setSelectedRange, setTxs, txs],
+  );
+
   useEffect(() => {
     const range = getFromTo(txs);
     if (!range) return;
-    const { from, to } = getLastMonthYear(range);
     setRange(range);
-    setTxs({
-      txs: txs.filter((i) => i.datum >= from && i.datum <= to),
-      options,
-      reset: true,
-      tab: "transactions",
-    });
+    const dates = getLastMonthYear(range);
+    void getData(dates, true);
     setLoading(false);
-  }, [setRange, setTxs, txs, options, setLoading]);
+  }, [setRange, txs, getData, setLoading]);
 
   const changeDates = async ({ from, to }: FromTo) => {
-    setTxs({
-      txs: txs.filter((i) => i.datum >= from && i.datum <= to),
-      options,
-    });
+    await getData({ from, to });
   };
 
   return <ShowData changeDates={changeDates} />;
