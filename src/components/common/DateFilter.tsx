@@ -5,17 +5,56 @@ import { TabsContent, TabsList, TabsTrigger, Tabs } from "~/components/ui";
 import { FreeDay, Month, FreeDates, Year } from "~/components/common";
 import { useStore } from "~/stores/tx-store";
 import type { DateTab } from "~/types";
-import { cn } from "~/lib";
+import {
+  cn,
+  dateToString,
+  getDayRange,
+  getMonthRange,
+  isFullMonthRange,
+  isFullYearRange,
+  isSameDayRange,
+} from "~/lib";
 
 type Props = { changeDates: (dates: FromTo) => Promise<void> };
 const DateFilter = ({ changeDates }: Props) => {
   const setDateTab = useStore((state) => state.setDateTab);
   const dateTab = useStore((state) => state.dateTab);
+  const selectedRange = useStore((state) => state.selectedRange);
   const showDateFilter = useStore((state) => state.showDateFilter);
   return (
     <Tabs
       value={dateTab}
-      onValueChange={(value) => setDateTab(value as DateTab)}
+      onValueChange={async (value) => {
+        const nextTab = value as DateTab;
+        setDateTab(nextTab);
+        const { from } = selectedRange;
+        if (nextTab === "free") return;
+
+        if (nextTab === "day") {
+          if (isSameDayRange(selectedRange)) return;
+          await changeDates(getDayRange(dateToString(from)));
+          return;
+        }
+
+        if (nextTab === "month") {
+          if (isFullMonthRange(selectedRange)) return;
+          await changeDates(
+            getMonthRange({
+              year: from.getFullYear(),
+              month: from.getMonth() + 1,
+            }),
+          );
+          return;
+        }
+
+        if (nextTab === "year") {
+          if (isFullYearRange(selectedRange)) return;
+          await changeDates({
+            from: new Date(Date.UTC(from.getFullYear(), 0, 1)),
+            to: new Date(Date.UTC(from.getFullYear() + 1, 0, 0)),
+          });
+        }
+      }}
       className={cn("pt-2", showDateFilter ? "" : "hidden")}
     >
       <TabsList className="md:w-fit w-full">
