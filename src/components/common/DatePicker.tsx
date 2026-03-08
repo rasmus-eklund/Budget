@@ -39,8 +39,10 @@ const DatePicker = ({
         </PopoverTrigger>
         <PopoverContent className="w-auto overflow-hidden p-0" align="start">
           <Calendar
+            key={(date ?? range.to).toISOString()}
             mode="single"
             selected={date}
+            defaultMonth={date ?? range.to}
             captionLayout="dropdown"
             startMonth={range.from}
             endMonth={range.to}
