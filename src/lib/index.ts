@@ -27,6 +27,9 @@ import {
   getToDay,
   getFromDay,
   eachDayOfInterval,
+  isSameDayRange,
+  isFullMonthRange,
+  isFullYearRange,
 } from "./dateCalculations";
 import { markInternal } from "./findInternal";
 import getUnique from "./getUnique";
@@ -63,6 +66,9 @@ export {
   getDayRange,
   getToDay,
   getFromDay,
+  isSameDayRange,
+  isFullMonthRange,
+  isFullYearRange,
   markInternal,
   dateToString,
   toSek,
