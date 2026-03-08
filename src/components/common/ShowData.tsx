@@ -7,6 +7,7 @@ import {
   Balance,
   DateFilter,
   FiltersToggle,
+  Icon,
 } from "~/components/common";
 import { getUnique, applyTransactionFilters } from "~/lib";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui";
@@ -14,8 +15,11 @@ import type { FilterTab } from "~/types";
 import { useStore } from "~/stores/tx-store";
 import type { FromTo } from "~/lib/zodSchemas";
 
-type Props = { changeDates: (dates: FromTo) => Promise<void> };
-const ShowData = ({ changeDates }: Props) => {
+type Props = {
+  changeDates: (dates: FromTo) => Promise<void>;
+  canMarkInternal?: boolean;
+};
+const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
   const filter = useStore((state) => state.filter);
   const txSort = useStore((state) => state.txSort);
   const filterTab = useStore((state) => state.filterTab);
@@ -41,23 +45,50 @@ const ShowData = ({ changeDates }: Props) => {
         </TabsList>
         {filterTab !== "aggregated" && <TransactionFilter options={options} />}
         <TabsContent value="aggregated" className="flex-1 min-h-0">
-          <Aggregated options={options} />
+          <LoadingWrapper>
+            <Aggregated options={options} />
+          </LoadingWrapper>
         </TabsContent>
-        <TabsContent
-          value="transactions"
-          className="flex-1 min-h-0 flex flex-col"
-        >
-          <Transactions data={txs} changeDates={changeDates} />
+        <TabsContent value="transactions" className="flex-1 min-h-0 flex">
+          <LoadingWrapper>
+            <Transactions
+              data={txs}
+              changeDates={changeDates}
+              canMarkInternal={canMarkInternal}
+            />
+          </LoadingWrapper>
         </TabsContent>
         <TabsContent value="categoryBars">
-          <CategoryPlots data={txs} options={options} />
+          <LoadingWrapper>
+            <CategoryPlots data={txs} options={options} />
+          </LoadingWrapper>
         </TabsContent>
         <TabsContent value="balanceOverTime">
-          <Balance data={txs} />
+          <LoadingWrapper>
+            <Balance data={txs} />
+          </LoadingWrapper>
         </TabsContent>
       </Tabs>
     </section>
   );
 };
 
+const LoadingWrapper = ({ children }: { children: React.ReactNode }) => {
+  const loading = useStore((state) => state.loading);
+  return (
+    <div className="relative flex-1 min-h-0 flex">
+      {children}
+      {loading && (
+        <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center select-none bg-secondary/40 z-50">
+          <Icon
+            icon="Loader2Icon"
+            className="animate-spin size-8 text-primary"
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default ShowData;
+

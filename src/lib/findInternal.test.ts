@@ -52,6 +52,35 @@ describe("find internal", () => {
       const ids = findInternal(txs);
       expect(ids).toEqual([]);
     });
+    it("should find only same-person pair in ambiguous 4-group", () => {
+      const txs = [
+        { id: "1", belopp: 1325, bankAccountId: "A", person: "A" },
+        { id: "2", belopp: -1325, bankAccountId: "B", person: "A" },
+        { id: "3", belopp: 1325, bankAccountId: "B", person: "A" },
+        { id: "4", belopp: 1325, bankAccountId: "C", person: "B" },
+      ] as Internal[];
+      const ids = findInternal(txs);
+      expect(ids).toEqual(["2", "1"]);
+    });
+    it("should still match one pair in ambiguous 4-group without person", () => {
+      const txs: Internal[] = [
+        { id: "1", belopp: 1325, bankAccountId: "A" },
+        { id: "2", belopp: -1325, bankAccountId: "B" },
+        { id: "3", belopp: 1325, bankAccountId: "B" },
+        { id: "4", belopp: 1325, bankAccountId: "C" },
+      ];
+      const ids = findInternal(txs);
+      expect(ids).toEqual(["2", "1"]);
+    });
+    it("should allow cross-person internal when needed", () => {
+      const txs: Internal[] = [
+        { id: "1", belopp: -900, bankAccountId: "A", person: "A" },
+        { id: "2", belopp: 900, bankAccountId: "B", person: "B" },
+        { id: "3", belopp: 900, bankAccountId: "A", person: "A" },
+      ];
+      const ids = findInternal(txs);
+      expect(ids).toEqual(["1", "2"]);
+    });
   });
   describe("odd number of txs", () => {
     it("should find 0", () => {
@@ -66,7 +95,7 @@ describe("find internal", () => {
       const ids = findInternal(txs);
       expect(ids).toEqual([]);
     });
-    it("should find 2 internal, income", () => {
+    it("should find 2 internal from 3 odd, income", () => {
       const txs: Internal[] = [
         { id: "1", belopp: 650, bankAccountId: "AA" },
         { id: "2", belopp: -650, bankAccountId: "AA" },
@@ -78,7 +107,7 @@ describe("find internal", () => {
       const ids = findInternal(txs);
       expect(ids).toEqual(["2", "3"]);
     });
-    it("should find 2 internal, expense", () => {
+    it("should find 2 internal from 3 odd, expense", () => {
       const txs: Internal[] = [
         { id: "1", belopp: -650, bankAccountId: "AA" },
         { id: "2", belopp: 650, bankAccountId: "BA" },
@@ -90,7 +119,7 @@ describe("find internal", () => {
       const ids = findInternal(txs);
       expect(ids).toEqual(["1", "2"]);
     });
-    it.skip("should find 4 internal, income", () => {
+    it.skip("should find 4 internal from 5 odd, income", () => {
       const txs: Internal[] = [
         { id: "1", belopp: 650, bankAccountId: "AA" },
         { id: "2", belopp: -650, bankAccountId: "AA" },
@@ -102,7 +131,7 @@ describe("find internal", () => {
       const ids = findInternal(txs);
       expect(ids).toEqual(["2", "3", "4", "5"]);
     });
-    it.skip("should find 4 internal, expense", () => {
+    it.skip("should find 4 internal from 5 odd, expense", () => {
       const txs: Internal[] = [
         { id: "1", belopp: -650, bankAccountId: "AA" },
         { id: "2", belopp: 650, bankAccountId: "BA" },

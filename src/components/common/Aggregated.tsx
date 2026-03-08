@@ -14,7 +14,7 @@ import {
 import type { FromTo } from "~/lib/zodSchemas";
 import type { Uniques } from "~/types";
 import { Button } from "~/components/ui";
-import { Icon, Spinner } from "~/components/common";
+import { Icon } from "~/components/common";
 import { useStore } from "~/stores/tx-store";
 
 type Props = {
@@ -27,10 +27,8 @@ const Aggregated = ({ options: { person, category } }: Props) => {
     () => calculateSums({ data, category, person }),
     [data, person, category],
   );
-  const loading = useStore((state) => state.loading);
   const sticky = useStore((state) => state.sticky);
   const setSticky = useStore((state) => state.setSticky);
-  if (loading) return <Spinner />;
   const peopleTotal = [...person, "total"];
   const nonClickableCategories = ["spending", "total"];
   const categoriesTotal = [...category, ...nonClickableCategories].filter(
@@ -47,7 +45,7 @@ const Aggregated = ({ options: { person, category } }: Props) => {
   const catClass =
     "px-6 py-3 text-xs font-medium uppercase tracking-wider text-muted-foreground";
   return (
-    <div className="overflow-auto py-2">
+    <div className="overflow-auto py-2 flex-1">
       {dates ? (
         <h2 className={cn("p-2 text-lg", stickyClass)}>
           {getDateString(dates)}

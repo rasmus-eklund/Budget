@@ -56,7 +56,7 @@ export const readFiles = async (
     }
   }
   const start = performance.now();
-  const data = await markInternal(allTxs);
+  const data = markInternal(allTxs);
   const end = performance.now();
   console.log(`Processed ${data.length} txs in ${end - start} ms`);
   return { ok: true, data };

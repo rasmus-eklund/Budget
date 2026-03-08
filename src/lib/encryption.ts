@@ -1,3 +1,5 @@
+import { encryptedDataSchema, type EncryptedDataSchema } from "./zodSchemas";
+
 const encryptWithAES = async (text: string, password: string) => {
   const passphrase = new TextEncoder().encode(password);
   const encodedText = new TextEncoder().encode(text);
@@ -44,4 +46,17 @@ const decryptWithAES = async (ciphertext: Uint8Array, password: string) => {
   return new TextDecoder().decode(decrypted);
 };
 
-export { decryptWithAES, encryptWithAES };
+const decryptTxData = async (
+  data: string,
+  password: string,
+): Promise<EncryptedDataSchema> => {
+  const arr = new Uint8Array(data.split(",").map(Number));
+  const decrypted = await decryptWithAES(arr, password);
+  const parsed = encryptedDataSchema.safeParse(JSON.parse(decrypted));
+  if (!parsed.success) {
+    throw new Error("Korrupt data, ladda upp året igen.");
+  }
+  return parsed.data;
+};
+
+export { decryptTxData, encryptWithAES };

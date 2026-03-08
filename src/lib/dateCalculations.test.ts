@@ -6,6 +6,9 @@ import {
   decrementMonth,
   getFromTo,
   getYearRange,
+  isSameDayRange,
+  isFullMonthRange,
+  isFullYearRange,
 } from "./dateCalculations";
 
 describe("Change date", () => {
@@ -114,5 +117,55 @@ describe("Get max and min dates", () => {
     const { from, to } = tmp;
     expect(from).toBe(minDate);
     expect(to).toBe(maxDate);
+  });
+});
+
+describe("Range shape checks", () => {
+  it("should detect same day range", () => {
+    const range = {
+      from: new Date(2024, 4, 10, 0, 0, 0, 0),
+      to: new Date(2024, 4, 10, 23, 59, 59, 999),
+    };
+    expect(isSameDayRange(range)).toBe(true);
+  });
+
+  it("should detect non same day range", () => {
+    const range = {
+      from: new Date(2024, 4, 10, 0, 0, 0, 0),
+      to: new Date(2024, 4, 11, 23, 59, 59, 999),
+    };
+    expect(isSameDayRange(range)).toBe(false);
+  });
+
+  it("should detect full month range", () => {
+    const range = {
+      from: new Date(2024, 1, 1, 0, 0, 0, 0),
+      to: new Date(2024, 1, 29, 23, 59, 59, 999),
+    };
+    expect(isFullMonthRange(range)).toBe(true);
+  });
+
+  it("should detect non full month range", () => {
+    const range = {
+      from: new Date(2024, 1, 2, 0, 0, 0, 0),
+      to: new Date(2024, 1, 29, 23, 59, 59, 999),
+    };
+    expect(isFullMonthRange(range)).toBe(false);
+  });
+
+  it("should detect full year range", () => {
+    const range = {
+      from: new Date(2024, 0, 1, 0, 0, 0, 0),
+      to: new Date(2024, 11, 31, 23, 59, 59, 999),
+    };
+    expect(isFullYearRange(range)).toBe(true);
+  });
+
+  it("should detect non full year range", () => {
+    const range = {
+      from: new Date(2024, 0, 2, 0, 0, 0, 0),
+      to: new Date(2024, 11, 31, 23, 59, 59, 999),
+    };
+    expect(isFullYearRange(range)).toBe(false);
   });
 });

@@ -13,11 +13,9 @@ import {
   Cell,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui";
-import { Spinner } from "~/components/common";
 import { useMediaQuery } from "~/hooks/use-media-query";
 import { colors } from "~/constants";
 import { capitalize, toSek } from "~/lib";
-import { useStore } from "~/stores/tx-store";
 import type { Tx, Uniques } from "~/types";
 
 type Props = {
@@ -30,8 +28,6 @@ type Data = { name: string; value: number };
 type Persons = Record<string, Data[]>;
 
 const CategoryPlots = ({ data, options }: Props) => {
-  const loading = useStore((state) => state.loading);
-  if (loading) return <Spinner />;
   const sums: Sum[] = [];
   const persons: Persons = {};
   const cats = options.category.filter(
@@ -56,7 +52,7 @@ const CategoryPlots = ({ data, options }: Props) => {
     sums.push(record);
   }
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 flex-1">
       <CategoryBars sums={sums} options={options} />
       {Object.keys(persons).map((person) => (
         <CategoryPies

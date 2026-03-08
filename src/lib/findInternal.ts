@@ -33,6 +33,11 @@ export const findInternal = (day: Internal[]) => {
       for (const tx of theOne) {
         internalIds.add(tx.id);
       }
+    } else {
+      const heuristicIds = findInternalPairsByHeuristics(group);
+      for (const id of heuristicIds) {
+        internalIds.add(id);
+      }
     }
   }
 
@@ -67,6 +72,77 @@ const findInternalOddThree = (txs: Internal[], totalSum: number) => {
   return [];
 };
 
+const findInternalPairsByHeuristics = (group: Internal[]) => {
+  const negatives = group.filter((tx) => tx.belopp < 0);
+  const positives = group.filter((tx) => tx.belopp > 0);
+  if (negatives.length === 0 || positives.length === 0) {
+    return [];
+  }
+
+  const posHasNegativeSameAccount = new Set<string>();
+  const negAccounts = new Set(negatives.map((tx) => tx.bankAccountId));
+  for (const tx of positives) {
+    if (negAccounts.has(tx.bankAccountId)) {
+      posHasNegativeSameAccount.add(tx.bankAccountId);
+    }
+  }
+
+  const positiveCountByAccount = new Map<string, number>();
+  for (const tx of positives) {
+    positiveCountByAccount.set(
+      tx.bankAccountId,
+      (positiveCountByAccount.get(tx.bankAccountId) ?? 0) + 1,
+    );
+  }
+
+  const edges: { negIdx: number; posIdx: number; score: number }[] = [];
+  for (let negIdx = 0; negIdx < negatives.length; negIdx++) {
+    for (let posIdx = 0; posIdx < positives.length; posIdx++) {
+      const negative = negatives[negIdx];
+      if (!negative) continue;
+      const positive = positives[posIdx];
+      if (!positive) continue;
+      if (negative.bankAccountId === positive.bankAccountId) {
+        continue;
+      }
+      let score = 0;
+      if (
+        typeof negative.person === "string" &&
+        typeof positive.person === "string" &&
+        negative.person.toLowerCase() === positive.person.toLowerCase()
+      ) {
+        score += 20;
+      }
+      if (!posHasNegativeSameAccount.has(positive.bankAccountId)) {
+        score += 5;
+      }
+      if ((positiveCountByAccount.get(positive.bankAccountId) ?? 0) === 1) {
+        score += 2;
+      }
+      edges.push({ negIdx, posIdx, score });
+    }
+  }
+  edges.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    if (a.negIdx !== b.negIdx) return a.negIdx - b.negIdx;
+    return a.posIdx - b.posIdx;
+  });
+
+  const usedNeg = new Set<number>();
+  const usedPos = new Set<number>();
+  const ids: string[] = [];
+  for (const edge of edges) {
+    if (usedNeg.has(edge.negIdx) || usedPos.has(edge.posIdx)) {
+      continue;
+    }
+    usedNeg.add(edge.negIdx);
+    usedPos.add(edge.posIdx);
+    ids.push(negatives[edge.negIdx]!.id, positives[edge.posIdx]!.id);
+  }
+
+  return ids;
+};
+
 const groupTransactionsByDate = (txs: TxBankAccount[]) => {
   return txs.reduce(
     (acc, tx) => {
@@ -81,7 +157,7 @@ const groupTransactionsByDate = (txs: TxBankAccount[]) => {
   );
 };
 
-export const markInternal = async (txs: TxBankAccount[]) => {
+export const markInternal = (txs: TxBankAccount[]) => {
   const internal: string[] = [];
   const txsByDate = groupTransactionsByDate(txs);
   const dates = Object.keys(txsByDate);

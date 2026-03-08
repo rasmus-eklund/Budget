@@ -152,3 +152,26 @@ export const getFromDay = (fromString: string): Date => {
   from.setHours(0, 0, 0, 0);
   return from;
 };
+
+export const isSameDayRange = ({ from, to }: FromTo) =>
+  from.getFullYear() === to.getFullYear() &&
+  from.getMonth() === to.getMonth() &&
+  from.getDate() === to.getDate();
+
+export const isFullMonthRange = ({ from, to }: FromTo) => {
+  if (from.getFullYear() !== to.getFullYear()) return false;
+  if (from.getMonth() !== to.getMonth()) return false;
+  const lastDayOfMonth = new Date(
+    from.getFullYear(),
+    from.getMonth() + 1,
+    0,
+  ).getDate();
+  return from.getDate() === 1 && to.getDate() === lastDayOfMonth;
+};
+
+export const isFullYearRange = ({ from, to }: FromTo) =>
+  from.getFullYear() === to.getFullYear() &&
+  from.getMonth() === 0 &&
+  from.getDate() === 1 &&
+  to.getMonth() === 11 &&
+  to.getDate() === 31;

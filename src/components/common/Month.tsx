@@ -25,17 +25,15 @@ type Props = {
 };
 
 const Month = ({ changeDate }: Props) => {
-  const setMonth = useStore((state) => state.setMonth);
-  const dates = useStore((state) => state.month);
+  const selectedRange = useStore((state) => state.selectedRange);
   const range = useStore((state) => state.range);
-  const { year, month } = dates;
+  const year = selectedRange.from.getFullYear();
+  const month = selectedRange.from.getMonth() + 1;
   const { from, to } = range;
   const mostRecentYear = to.getFullYear();
   const mostRecentMonth = to.getMonth() + 1;
   const years = getYearRange({ from, to });
-  const submitDates = async (dates: FromTo) => {
-    await changeDate(dates);
-  };
+  const submitDates = async (dates: FromTo) => await changeDate(dates);
   return (
     <form
       className="flex md:flex-row flex-col md:items-center gap-1"
@@ -46,7 +44,6 @@ const Month = ({ changeDate }: Props) => {
         onValueChange={async (value) => {
           if (!value) return;
           const data = { year: Number(value), month };
-          setMonth(data);
           await submitDates(getMonthRange(data));
         }}
       >
@@ -69,7 +66,6 @@ const Month = ({ changeDate }: Props) => {
           size="icon"
           onClick={async () => {
             const dates = decrementMonth({ year, month });
-            setMonth(dates);
             await submitDates(getMonthRange(dates));
           }}
         >
@@ -80,7 +76,6 @@ const Month = ({ changeDate }: Props) => {
           onValueChange={async (value) => {
             if (!value) return;
             const data = { year, month: Number(value) };
-            setMonth(data);
             await submitDates(getMonthRange(data));
           }}
         >
@@ -102,7 +97,6 @@ const Month = ({ changeDate }: Props) => {
           type="button"
           onClick={async () => {
             const dates = incrementMonth({ year, month });
-            setMonth(dates);
             await submitDates(getMonthRange(dates));
           }}
         >
@@ -116,7 +110,6 @@ const Month = ({ changeDate }: Props) => {
           type="button"
           onClick={async () => {
             const data = { year: mostRecentYear, month: mostRecentMonth };
-            setMonth(data);
             await submitDates(getMonthRange(data));
           }}
         >

@@ -9,13 +9,9 @@ import { useStore } from "~/stores/tx-store";
 type Props = { changeDate: (dates: FromTo) => Promise<void> };
 
 const FreeDay = ({ changeDate }: Props) => {
-  const setDay = useStore((state) => state.setDay);
   const { from, to } = useStore((state) => state.range);
-  const day = useStore((state) => state.day);
-  const onChange = async (dates: FromTo) => {
-    setDay(dates.from);
-    await changeDate(dates);
-  };
+  const day = useStore((state) => state.selectedRange.from);
+  const onChange = async (dates: FromTo) => await changeDate(dates);
 
   return (
     <form
@@ -37,7 +33,6 @@ const FreeDay = ({ changeDate }: Props) => {
           range={{ from, to }}
           date={day}
           setDate={async (date) => {
-            setDay(date);
             await onChange(getDayRange(dateToString(date)));
           }}
         />

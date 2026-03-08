@@ -12,6 +12,7 @@ const GetTxsLayer = ({ range: { from, to }, userId }: Props) => {
   const setTxs = useStore((state) => state.setTxs);
   const setLoading = useStore((state) => state.setLoading);
   const setRange = useStore((state) => state.setRange);
+  const setSelectedRange = useStore((state) => state.setSelectedRange);
   const password = useStore((state) => state.password);
 
   const getData = useCallback(
@@ -19,11 +20,10 @@ const GetTxsLayer = ({ range: { from, to }, userId }: Props) => {
       setLoading(true);
       try {
         const res = await getTxByDates({ dates, password, userId });
-        setTxs(
-          res.ok
-            ? { txs: res.data, options: res.options, reset }
-            : { txs: [], options: emptyOptions, reset: true },
-        );
+        if (!res.ok)
+          return setTxs({ txs: [], options: emptyOptions, reset: true });
+        setSelectedRange(dates);
+        setTxs({ txs: res.data, options: res.options, reset });
       } catch (e) {
         console.error(e);
         setTxs({ txs: [], options: emptyOptions, reset: true });
@@ -31,7 +31,7 @@ const GetTxsLayer = ({ range: { from, to }, userId }: Props) => {
         setLoading(false);
       }
     },
-    [setTxs, setLoading, password, userId],
+    [setTxs, setLoading, setSelectedRange, password, userId],
   );
 
   useEffect(() => {
@@ -41,7 +41,8 @@ const GetTxsLayer = ({ range: { from, to }, userId }: Props) => {
     getData(dates, true);
   }, [setRange, from, to, getData]);
 
-  return <ShowData changeDates={getData} />;
+  return <ShowData changeDates={getData} canMarkInternal />;
 };
 
 export default GetTxsLayer;
+
