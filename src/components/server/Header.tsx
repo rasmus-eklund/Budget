@@ -5,6 +5,16 @@ import { Button } from "~/components/ui";
 import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
 
 const Header = async () => {
+  if (process.env.E2E_VISUAL === "1") {
+    return (
+      <header className="relative flex h-14 min-h-14 w-full max-w-5xl items-center border-b px-3">
+        <h1 className="w-full text-nowrap text-center text-xl font-bold text-primary">
+          <Link href={"/"}>RICA Banken</Link>
+        </h1>
+      </header>
+    );
+  }
+
   const authenticated = await isAuthenticated();
   return (
     <header className="relative flex h-14 min-h-14 w-full max-w-5xl items-center border-b px-3">
