@@ -1,28 +1,11 @@
 "use server";
 import { and, eq, gte, lte } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { applyCategory, decryptWithAES, getErrorMessage } from "~/lib";
-import {
-  type EncryptedDataSchema,
-  encryptedDataSchema,
-  type FromTo,
-} from "~/lib/zodSchemas";
+import { applyCategory, decryptTxData, getErrorMessage } from "~/lib";
+import { type FromTo } from "~/lib/zodSchemas";
 import { db } from "~/server/db";
 import { category, persons, txs } from "~/server/db/schema";
 import type { Filter, TxReturn } from "~/types";
-
-const decryptTxs = async (
-  data: string,
-  password: string,
-): Promise<EncryptedDataSchema> => {
-  const arr = new Uint8Array(data.split(",").map(Number));
-  const decrypted = await decryptWithAES(arr, password);
-  const parsed = encryptedDataSchema.safeParse(JSON.parse(decrypted));
-  if (!parsed.success) {
-    throw new Error("Korrupt data, ladda upp året igen.");
-  }
-  return parsed.data;
-};
 
 const getTxByDates = async ({
   dates: { from, to },
@@ -74,11 +57,12 @@ const getTxByDates = async ({
     data: [],
     options,
   };
+
   for (const person of personsRes) {
     for (const account of person.bankAccounts) {
       for (const { data, date, id } of account.txs) {
         try {
-          const decrypted = await decryptTxs(data, password);
+          const decrypted = await decryptTxData(data, password);
           out.data.push(
             applyCategory({
               tx: {
@@ -103,6 +87,7 @@ const getTxByDates = async ({
       }
     }
   }
+
   return out;
 };
 
