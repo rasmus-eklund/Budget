@@ -15,6 +15,9 @@
     "lint:fix": "next lint --fix",
     "start": "next start",
     "test": "bun test --watch",
+    "test:ui": "playwright test",
+    "test:ui:install": "playwright install chromium",
+    "test:ui:update": "playwright test --update-snapshots",
     "validate": "npm run format:check && npm run lint"
   },
   "dependencies": {
@@ -60,6 +63,7 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/bun": "^1.3.10",
     "@types/eslint": "^8.56.12",
     "@types/node": "^20.19.37",
