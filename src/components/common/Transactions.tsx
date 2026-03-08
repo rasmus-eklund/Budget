@@ -3,16 +3,14 @@ import { dateToString, toSek, capitalize, getDayRange } from "~/lib";
 import { Virtuoso } from "react-virtuoso";
 import type { Tx } from "~/types";
 import { cn } from "~/lib/utils";
-import { Spinner } from "~/components/common";
 import { useStore } from "~/stores/tx-store";
+import { MarkAsInternal } from "~/components/common";
 import type { FromTo } from "~/lib/zodSchemas";
 
 type Props = { data: Tx[]; changeDates: (dates: FromTo) => Promise<void> };
 const Transactions = ({ data, changeDates }: Props) => {
-  const loading = useStore((state) => state.loading);
-  if (loading) return <Spinner />;
   return (
-    <>
+    <div className="flex-1 min-h-0 flex flex-col">
       <Virtuoso
         className="flex-1 min-h-0"
         data={data}
@@ -21,7 +19,7 @@ const Transactions = ({ data, changeDates }: Props) => {
         )}
       />
       <ShowSum data={data} />
-    </>
+    </div>
   );
 };
 
@@ -39,31 +37,40 @@ const ShowSum = ({ data }: { data: Tx[] }) => {
 };
 
 const Transaction = ({
-  data: { belopp, datum, budgetgrupp, person, konto, text },
+  data,
   changeDates,
 }: {
   data: Tx;
   changeDates: (dates: FromTo) => Promise<void>;
 }) => {
+  const setDateTab = useStore((state) => state.setDateTab);
+  const { belopp, datum, budgetgrupp, person, konto, text } = data;
   return (
-    <li className="mb-2 mt-2 flex flex-col rounded-sm bg-accent p-1 shadow-lg">
-      <div className="grid grid-cols-2">
-        <button
-          className="cursor-pointer hover:scale-105 w-fit"
-          onClick={async () => changeDates(getDayRange(dateToString(datum)))}
-        >
-          <p className="font-semibold">{dateToString(datum)}</p>
-        </button>
-        <Sek sek={belopp} />
+    <li className="mb-2 mt-2 flex rounded-sm bg-accent p-1 shadow-lg items-center">
+      <div className="flex flex-col flex-1">
+        <div className="grid grid-cols-2">
+          <button
+            className="cursor-pointer hover:scale-105 w-fit"
+            onClick={async () => {
+              setDateTab("day");
+              const dates = getDayRange(dateToString(datum));
+              await changeDates(dates);
+            }}
+          >
+            <p className="font-semibold">{dateToString(datum)}</p>
+          </button>
+          <Sek sek={belopp} />
+        </div>
+        <div className="flex justify-between gap-2">
+          <p className="overflow-hidden text-ellipsis whitespace-nowrap pr-2 italic">
+            {text} - {capitalize(budgetgrupp)}
+          </p>
+          <p className="whitespace-nowrap">
+            {capitalize(person)} ({capitalize(konto)})
+          </p>
+        </div>
       </div>
-      <div className="flex justify-between gap-2">
-        <p className="overflow-hidden text-ellipsis whitespace-nowrap pr-2 italic">
-          {text} - {capitalize(budgetgrupp)}
-        </p>
-        <p className="whitespace-nowrap">
-          {capitalize(person)} ({capitalize(konto)})
-        </p>
-      </div>
+      <MarkAsInternal tx={data} changeDates={changeDates} />
     </li>
   );
 };
