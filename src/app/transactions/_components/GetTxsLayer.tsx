@@ -41,7 +41,8 @@ const GetTxsLayer = ({ range: { from, to }, userId }: Props) => {
     getData(dates, true);
   }, [setRange, from, to, getData]);
 
-  return <ShowData changeDates={getData} />;
+  return <ShowData changeDates={getData} canMarkInternal />;
 };
 
 export default GetTxsLayer;
+

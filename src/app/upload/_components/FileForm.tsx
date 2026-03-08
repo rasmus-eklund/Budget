@@ -277,7 +277,8 @@ const ShowTransactions = ({ txs, options }: { txs: Tx[]; options: Filter }) => {
     await getData({ from, to });
   };
 
-  return <ShowData changeDates={changeDates} />;
+  return <ShowData changeDates={changeDates} canMarkInternal={false} />;
 };
 
 export default FileForm;
+

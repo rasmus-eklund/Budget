@@ -7,15 +7,24 @@ import { useStore } from "~/stores/tx-store";
 import { MarkAsInternal } from "~/components/common";
 import type { FromTo } from "~/lib/zodSchemas";
 
-type Props = { data: Tx[]; changeDates: (dates: FromTo) => Promise<void> };
-const Transactions = ({ data, changeDates }: Props) => {
+type Props = {
+  data: Tx[];
+  changeDates: (dates: FromTo) => Promise<void>;
+  canMarkInternal: boolean;
+};
+const Transactions = ({ data, changeDates, canMarkInternal = true }: Props) => {
   return (
     <div className="flex-1 min-h-0 flex flex-col">
       <Virtuoso
         className="flex-1 min-h-0"
         data={data}
         itemContent={(_, tx) => (
-          <Transaction key={tx.id} data={tx} changeDates={changeDates} />
+          <Transaction
+            key={tx.id}
+            data={tx}
+            changeDates={changeDates}
+            canMarkInternal={canMarkInternal}
+          />
         )}
       />
       <ShowSum data={data} />
@@ -39,9 +48,11 @@ const ShowSum = ({ data }: { data: Tx[] }) => {
 const Transaction = ({
   data,
   changeDates,
+  canMarkInternal,
 }: {
   data: Tx;
   changeDates: (dates: FromTo) => Promise<void>;
+  canMarkInternal: boolean;
 }) => {
   const setDateTab = useStore((state) => state.setDateTab);
   const { belopp, datum, budgetgrupp, person, konto, text } = data;
@@ -70,7 +81,7 @@ const Transaction = ({
           </p>
         </div>
       </div>
-      <MarkAsInternal tx={data} changeDates={changeDates} />
+      {canMarkInternal && <MarkAsInternal tx={data} changeDates={changeDates} />}
     </li>
   );
 };
@@ -82,3 +93,4 @@ const Sek = ({ sek }: { sek: number }) => (
 );
 
 export default Transactions;
+

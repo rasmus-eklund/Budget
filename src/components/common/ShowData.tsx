@@ -15,8 +15,11 @@ import type { FilterTab } from "~/types";
 import { useStore } from "~/stores/tx-store";
 import type { FromTo } from "~/lib/zodSchemas";
 
-type Props = { changeDates: (dates: FromTo) => Promise<void> };
-const ShowData = ({ changeDates }: Props) => {
+type Props = {
+  changeDates: (dates: FromTo) => Promise<void>;
+  canMarkInternal?: boolean;
+};
+const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
   const filter = useStore((state) => state.filter);
   const txSort = useStore((state) => state.txSort);
   const filterTab = useStore((state) => state.filterTab);
@@ -48,7 +51,11 @@ const ShowData = ({ changeDates }: Props) => {
         </TabsContent>
         <TabsContent value="transactions" className="flex-1 min-h-0 flex">
           <LoadingWrapper>
-            <Transactions data={txs} changeDates={changeDates} />
+            <Transactions
+              data={txs}
+              changeDates={changeDates}
+              canMarkInternal={canMarkInternal}
+            />
           </LoadingWrapper>
         </TabsContent>
         <TabsContent value="categoryBars">
@@ -84,3 +91,4 @@ const LoadingWrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default ShowData;
+

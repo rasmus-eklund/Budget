@@ -46,7 +46,8 @@ const DemoPage = () => {
     setLoading(false);
   }, [setRange, data.range, getData, setLoading]);
 
-  return <ShowData changeDates={changeDates} />;
+  return <ShowData changeDates={changeDates} canMarkInternal={false} />;
 };
 
 export default DemoPage;
+
