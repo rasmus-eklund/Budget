@@ -30,7 +30,7 @@ const MarkAsInternal = ({
     setLoading(true);
     try {
       const res = await updateTransaction({
-        tx,
+        txId: tx.id,
         internal: !isInternal,
         password,
       });

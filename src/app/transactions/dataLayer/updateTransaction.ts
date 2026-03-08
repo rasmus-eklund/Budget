@@ -5,14 +5,13 @@ import { decryptTxData, encryptWithAES } from "~/lib";
 import getUserId from "~/server/getUserId";
 import { db } from "~/server/db";
 import { bankAccounts, persons, txs } from "~/server/db/schema";
-import type { Tx } from "~/types";
 
 export const updateTransaction = async ({
-  tx,
+  txId,
   internal,
   password,
 }: {
-  tx: Tx;
+  txId: string;
   internal: boolean;
   password: string;
 }) => {
@@ -28,7 +27,7 @@ export const updateTransaction = async ({
   const existing = await db.query.txs.findFirst({
     columns: { data: true },
     where: and(
-      eq(txs.id, tx.id),
+      eq(txs.id, txId),
       inArray(txs.bankAccountId, ownedAccountIdsQuery),
     ),
   });
@@ -58,10 +57,7 @@ export const updateTransaction = async ({
     .update(txs)
     .set({ data: encrypted.toString() })
     .where(
-      and(
-        eq(txs.id, tx.id),
-        inArray(txs.bankAccountId, ownedAccountIdsQuery),
-      ),
+      and(eq(txs.id, txId), inArray(txs.bankAccountId, ownedAccountIdsQuery)),
     )
     .returning({ id: txs.id });
 
