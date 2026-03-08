@@ -1,9 +1,10 @@
 "use server";
 
-import { eq } from "drizzle-orm";
-import { encryptWithAES } from "~/lib";
+import { and, eq, inArray } from "drizzle-orm";
+import { decryptTxData, encryptWithAES } from "~/lib";
+import getUserId from "~/server/getUserId";
 import { db } from "~/server/db";
-import { txs } from "~/server/db/schema";
+import { bankAccounts, persons, txs } from "~/server/db/schema";
 import type { Tx } from "~/types";
 
 export const updateTransaction = async ({
@@ -15,15 +16,40 @@ export const updateTransaction = async ({
   internal: boolean;
   password: string;
 }) => {
-  if (!password) {
-    throw new Error("Password missing.");
+  const userId = await getUserId();
+  if (!password) throw new Error("Password missing.");
+
+  const ownedAccountIdsQuery = db
+    .select({ id: bankAccounts.id })
+    .from(bankAccounts)
+    .innerJoin(persons, eq(persons.id, bankAccounts.personId))
+    .where(eq(persons.userId, userId));
+
+  const existing = await db.query.txs.findFirst({
+    columns: { data: true },
+    where: and(
+      eq(txs.id, tx.id),
+      inArray(txs.bankAccountId, ownedAccountIdsQuery),
+    ),
+  });
+
+  if (!existing) {
+    return { ok: false, error: "Kunde inte uppdatera transaktionen" };
   }
+
+  let currentTxData: Awaited<ReturnType<typeof decryptTxData>>;
+  try {
+    currentTxData = await decryptTxData(existing.data, password);
+  } catch {
+    return { ok: false, error: "Kunde inte uppdatera transaktionen" };
+  }
+
   const encrypted = await encryptWithAES(
     JSON.stringify({
-      text: tx.text,
+      text: currentTxData.text,
       budgetgrupp: internal ? "inom" : "övrigt",
-      belopp: tx.belopp,
-      saldo: tx.saldo,
+      belopp: currentTxData.belopp,
+      saldo: currentTxData.saldo,
     }),
     password,
   );
@@ -31,9 +57,17 @@ export const updateTransaction = async ({
   const res = await db
     .update(txs)
     .set({ data: encrypted.toString() })
-    .where(eq(txs.id, tx.id))
+    .where(
+      and(
+        eq(txs.id, tx.id),
+        inArray(txs.bankAccountId, ownedAccountIdsQuery),
+      ),
+    )
     .returning({ id: txs.id });
-  if (res.length === 0)
+
+  if (res.length === 0) {
     return { ok: false, error: "Kunde inte uppdatera transaktionen" };
+  }
+
   return { ok: true };
 };
