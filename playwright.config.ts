@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const PORT = Number(process.env.PLAYWRIGHT_PORT ?? 3000);
-const baseURL = `http://127.0.0.1:${PORT}`;
+const PORT = Number(process.env.PLAYWRIGHT_PORT ?? 4173);
+const baseURL = `http://localhost:${PORT}`;
 
 export default defineConfig({
   testDir: "./tests/ui",
@@ -15,9 +15,9 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
-    command: `bunx next dev --port ${PORT}`,
+    command: `bunx next build && bunx next start --port ${PORT}`,
     url: baseURL,
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
     timeout: 240_000,
     env: {
       SKIP_ENV_VALIDATION: "1",
