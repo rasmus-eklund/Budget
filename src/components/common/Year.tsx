@@ -19,8 +19,8 @@ type Props = {
 
 const Year = ({ changeDate }: Props) => {
   const { from, to } = useStore((state) => state.range);
-  const setYear = useStore((state) => state.setYear);
-  const year = useStore((state) => state.year);
+  const selectedRange = useStore((state) => state.selectedRange);
+  const year = selectedRange.from.getFullYear();
   const mostRecentYear = to.getFullYear();
   const submitYear = async (year: number) => {
     await changeDate({
@@ -42,7 +42,6 @@ const Year = ({ changeDate }: Props) => {
           size="icon"
           onClick={async () => {
             const newYear = year - 1;
-            setYear(newYear);
             await submitYear(newYear);
           }}
         >
@@ -52,7 +51,6 @@ const Year = ({ changeDate }: Props) => {
           value={year.toString()}
           onValueChange={async (year) => {
             const y = Number(year);
-            setYear(y);
             await submitYear(y);
           }}
         >
@@ -74,7 +72,6 @@ const Year = ({ changeDate }: Props) => {
           type="button"
           onClick={async () => {
             const newYear = year + 1;
-            setYear(newYear);
             await submitYear(newYear);
           }}
         >
@@ -86,7 +83,6 @@ const Year = ({ changeDate }: Props) => {
           variant="outline"
           type="button"
           onClick={async () => {
-            setYear(mostRecentYear);
             await submitYear(mostRecentYear);
           }}
         >

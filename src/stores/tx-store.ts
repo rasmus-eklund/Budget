@@ -27,16 +27,10 @@ export const useStore = create<{
   setTxSort: (sortOption: TxSort) => void;
   setFilterTab: (tab: FilterTab) => void;
   reset: () => void;
-  month: { year: number; month: number };
-  setMonth: (month: { year: number; month: number }) => void;
-  day: Date;
-  setDay: (day: Date) => void;
-  year: number;
-  setYear: (year: number) => void;
-  dates: FromTo;
-  setDates: (dates: FromTo) => void;
   range: FromTo;
   setRange: (range: FromTo) => void;
+  selectedRange: FromTo;
+  setSelectedRange: (selectedRange: FromTo) => void;
   sticky: boolean;
   setSticky: (sticky: boolean) => void;
   showFilter: boolean;
@@ -93,23 +87,10 @@ export const useStore = create<{
       txSort: { sort: "date-asc" },
       hasChanged: false,
     })),
-  month: { year: new Date().getFullYear(), month: new Date().getMonth() + 1 },
-  setMonth: (month) => set({ month }),
-  day: new Date(),
-  setDay: (day) => set({ day }),
-  year: new Date().getFullYear(),
-  setYear: (year) => set({ year }),
-  dates: { from: new Date(), to: new Date() },
-  setDates: (dates) => set({ dates }),
   range: { from: new Date(), to: new Date() },
-  setRange: (range) =>
-    set({
-      range,
-      month: { month: range.to.getMonth() + 1, year: range.to.getFullYear() },
-      day: range.to,
-      year: range.to.getFullYear(),
-      dates: range,
-    }),
+  setRange: (range) => set({ range }),
+  selectedRange: { from: new Date(), to: new Date() },
+  setSelectedRange: (selectedRange) => set({ selectedRange }),
   sticky: true,
   setSticky: (sticky) => set({ sticky }),
   showFilter: true,
