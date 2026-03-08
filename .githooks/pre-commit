@@ -1,0 +1,4 @@
+#!/bin/sh
+bun run format || exit 1
+bun run lint || exit 1
+git add -A
