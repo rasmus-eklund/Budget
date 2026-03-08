@@ -44,7 +44,6 @@ const ShowSum = ({ data }: { data: Tx[] }) => {
     </div>
   );
 };
-
 const Transaction = ({
   data,
   changeDates,
@@ -57,8 +56,8 @@ const Transaction = ({
   const setDateTab = useStore((state) => state.setDateTab);
   const { belopp, datum, budgetgrupp, person, konto, text } = data;
   return (
-    <li className="mb-2 mt-2 flex rounded-sm bg-accent p-1 shadow-lg items-center">
-      <div className="flex flex-col flex-1">
+    <li className="mb-2 mt-2 flex items-center gap-2 rounded-sm bg-accent p-1 shadow-lg overflow-hidden">
+      <div className="flex min-w-0 flex-1 flex-col">
         <div className="grid grid-cols-2">
           <button
             className="cursor-pointer hover:scale-105 w-fit"
@@ -72,16 +71,18 @@ const Transaction = ({
           </button>
           <Sek sek={belopp} />
         </div>
-        <div className="flex justify-between gap-2">
-          <p className="overflow-hidden text-ellipsis whitespace-nowrap pr-2 italic">
+        <div className="flex min-w-0 justify-between gap-2">
+          <p className="min-w-0 flex-1 truncate pr-2 italic">
             {text} - {capitalize(budgetgrupp)}
           </p>
-          <p className="whitespace-nowrap">
+          <p className="shrink-0 whitespace-nowrap">
             {capitalize(person)} ({capitalize(konto)})
           </p>
         </div>
       </div>
-      {canMarkInternal && <MarkAsInternal tx={data} changeDates={changeDates} />}
+      {canMarkInternal && (
+        <MarkAsInternal tx={data} changeDates={changeDates} />
+      )}
     </li>
   );
 };
@@ -93,4 +94,3 @@ const Sek = ({ sek }: { sek: number }) => (
 );
 
 export default Transactions;
-

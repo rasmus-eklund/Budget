@@ -47,7 +47,7 @@ const MarkAsInternal = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon" variant="ghost">
+        <Button size="icon" variant="ghost" className="shrink-0 size-2 self-start">
           {loading ? (
             <Icon icon="Loader" className="animate-spin" />
           ) : (
