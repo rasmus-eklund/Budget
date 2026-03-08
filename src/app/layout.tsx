@@ -5,6 +5,7 @@ import { AuthProvider } from "~/components/common";
 import { Header } from "~/components/server";
 import { env } from "~/env";
 import { cn } from "~/lib";
+import { Toaster } from "~/components/ui/sonner";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({
           <main className="flex flex-1 w-full max-w-5xl flex-col gap-4">
             {children}
           </main>
+          <Toaster />
         </body>
       </html>
     </AuthProvider>
