@@ -14,8 +14,9 @@ type Props = {
 };
 const Transactions = ({ data, changeDates, canMarkInternal = true }: Props) => {
   return (
-    <div className="flex-1 min-h-0 flex flex-col">
+    <div data-testid="transactions-root" className="flex-1 min-h-0 flex flex-col">
       <Virtuoso
+        data-testid="transactions-virtuoso"
         className="flex-1 min-h-0"
         data={data}
         itemContent={(_, tx) => (
@@ -56,8 +57,11 @@ const Transaction = ({
   const setDateTab = useStore((state) => state.setDateTab);
   const { belopp, datum, budgetgrupp, person, konto, text } = data;
   return (
-    <li className="mb-2 mt-2 flex items-center gap-2 rounded-sm bg-accent p-1 shadow-lg overflow-hidden">
-      <div className="flex min-w-0 flex-1 flex-col">
+    <li
+      data-testid="transaction-row"
+      className="mb-2 mt-2 flex items-center gap-2 rounded-sm bg-accent p-1 shadow-lg overflow-hidden"
+    >
+      <div data-testid="transaction-row-content" className="flex min-w-0 flex-1 flex-col">
         <div className="grid grid-cols-2">
           <button
             className="cursor-pointer hover:scale-105 w-fit"
@@ -72,10 +76,10 @@ const Transaction = ({
           <Sek sek={belopp} />
         </div>
         <div className="flex min-w-0 justify-between gap-2">
-          <p className="min-w-0 flex-1 truncate pr-2 italic">
+          <p data-testid="transaction-main-text" className="min-w-0 flex-1 truncate pr-2 italic">
             {text} - {capitalize(budgetgrupp)}
           </p>
-          <p className="shrink-0 whitespace-nowrap">
+          <p data-testid="transaction-side-text" className="shrink-0 whitespace-nowrap">
             {capitalize(person)} ({capitalize(konto)})
           </p>
         </div>
