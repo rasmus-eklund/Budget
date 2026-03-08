@@ -14,8 +14,9 @@ type Props = {
 };
 const Transactions = ({ data, changeDates, canMarkInternal = true }: Props) => {
   return (
-    <div className="flex-1 min-h-0 flex flex-col">
+    <div data-testid="transactions-root" className="flex-1 min-h-0 flex flex-col">
       <Virtuoso
+        data-testid="transactions-virtuoso"
         className="flex-1 min-h-0"
         data={data}
         itemContent={(_, tx) => (
@@ -44,7 +45,6 @@ const ShowSum = ({ data }: { data: Tx[] }) => {
     </div>
   );
 };
-
 const Transaction = ({
   data,
   changeDates,
@@ -57,8 +57,11 @@ const Transaction = ({
   const setDateTab = useStore((state) => state.setDateTab);
   const { belopp, datum, budgetgrupp, person, konto, text } = data;
   return (
-    <li className="mb-2 mt-2 flex rounded-sm bg-accent p-1 shadow-lg items-center">
-      <div className="flex flex-col flex-1">
+    <li
+      data-testid="transaction-row"
+      className="mb-2 mt-2 flex items-center gap-2 rounded-sm bg-accent p-1 shadow-lg overflow-hidden"
+    >
+      <div data-testid="transaction-row-content" className="flex min-w-0 flex-1 flex-col">
         <div className="grid grid-cols-2">
           <button
             className="cursor-pointer hover:scale-105 w-fit"
@@ -72,16 +75,18 @@ const Transaction = ({
           </button>
           <Sek sek={belopp} />
         </div>
-        <div className="flex justify-between gap-2">
-          <p className="overflow-hidden text-ellipsis whitespace-nowrap pr-2 italic">
+        <div className="flex min-w-0 justify-between gap-2">
+          <p data-testid="transaction-main-text" className="min-w-0 flex-1 truncate pr-2 italic">
             {text} - {capitalize(budgetgrupp)}
           </p>
-          <p className="whitespace-nowrap">
+          <p data-testid="transaction-side-text" className="shrink-0 whitespace-nowrap">
             {capitalize(person)} ({capitalize(konto)})
           </p>
         </div>
       </div>
-      {canMarkInternal && <MarkAsInternal tx={data} changeDates={changeDates} />}
+      {canMarkInternal && (
+        <MarkAsInternal tx={data} changeDates={changeDates} />
+      )}
     </li>
   );
 };
@@ -93,4 +98,3 @@ const Sek = ({ sek }: { sek: number }) => (
 );
 
 export default Transactions;
-
