@@ -2,7 +2,6 @@ import Link from "next/link";
 import { HeaderMenu } from "~/components/common";
 import { isAuthenticated } from "~/server/getUserId";
 import { Button } from "~/components/ui";
-import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
 
 const Header = async () => {
   if (process.env.E2E_VISUAL === "1") {
@@ -23,7 +22,7 @@ const Header = async () => {
           <HeaderMenu />
         ) : (
           <Button asChild data-cy="sign-in">
-            <LoginLink postLoginRedirectURL="/transactions">Logga in</LoginLink>
+            <Link href="/login">Logga in</Link>
           </Button>
         )}
       </div>
