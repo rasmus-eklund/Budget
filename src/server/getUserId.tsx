@@ -4,7 +4,7 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 const getUserId = async () => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
-  if (!user) redirect("/api/auth/login");
+  if (!user) redirect("/login?reason=session-expired");
   return user.id;
 };
 
