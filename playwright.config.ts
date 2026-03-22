@@ -35,14 +35,14 @@ export default defineConfig({
   },
   projects: [
     {
-      name: "linux-chromium-desktop",
+      name: "chromium-desktop",
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1280, height: 900 },
       },
     },
     {
-      name: "linux-chromium-mobile",
+      name: "chromium-mobile",
       use: {
         ...devices["Pixel 7"],
       },
