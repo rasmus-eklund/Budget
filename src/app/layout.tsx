@@ -22,21 +22,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthProvider>
-      <html lang="en" className="h-dvh">
-        <body
-          className={cn(
-            "flex flex-col items-center font-sans h-dvh",
-            inter.variable,
-          )}
-        >
+    <html lang="en" className="h-dvh">
+      <body
+        className={cn(
+          "flex h-dvh flex-col items-center font-sans",
+          inter.variable,
+        )}
+      >
+        <AuthProvider>
           <Header />
           <main className="flex flex-1 w-full max-w-5xl flex-col gap-4">
             {children}
           </main>
           <Toaster />
-        </body>
-      </html>
-    </AuthProvider>
+        </AuthProvider>
+      </body>
+    </html>
   );
 }
