@@ -12,6 +12,25 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: budget
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d budget"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:password@localhost:5432/budget
+      TEST_DATABASE_URL: postgresql://postgres:password@localhost:5432/budget
+      NODE_ENV: test
+      SKIP_ENV_VALIDATION: "1"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
