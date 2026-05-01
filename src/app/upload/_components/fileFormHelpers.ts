@@ -1,10 +1,19 @@
-import { encryptWithAES, markInternal, getErrorMessage, parseTxs } from "~/lib";
+import { encryptWithAES, getErrorMessage, parseTxs } from "~/lib";
 import type { TxBankAccount } from "~/lib/zodSchemas";
 import type { PersonAccounts, FileData, Tx } from "~/types";
-import { upload } from "../actions/uploadActions";
+import { getMergeBaseTransactions, upload } from "../actions/uploadActions";
 import type { InsertTx } from "~/server/db/schema";
 import ImportErrors from "./ImportErrors";
 import type { ReactNode } from "react";
+import { getUploadYear, getUploadedAccountIds } from "./uploadProcessing";
+export {
+  getUploadYear,
+  getUploadedAccountIds,
+  prepareFullReplaceTxs,
+  prepareMergeTxs,
+} from "./uploadProcessing";
+
+export type UploadMode = "replaceYear" | "mergeAccounts";
 
 export const getFileNames = (files: FileList | undefined) => {
   if (!files) {
@@ -55,27 +64,45 @@ export const readFiles = async (
       return { ok: false, error: `fil: ${file.name}, fel: ${message}` };
     }
   }
-  const start = performance.now();
-  const data = markInternal(allTxs);
-  const end = performance.now();
-  console.log(`Processed ${data.length} txs in ${end - start} ms`);
-  return { ok: true, data };
+  return { ok: true, data: allTxs };
 };
 
-export const uploadFiles = async ({
+export const getMergeBaseTxs = async ({
   password,
-  txs,
+  uploadedTxs,
   userId,
 }: {
   password: string;
+  uploadedTxs: TxBankAccount[];
+  userId: string;
+}) => {
+  const year = getUploadYear(uploadedTxs);
+  const accountIds = getUploadedAccountIds(uploadedTxs);
+  return await getMergeBaseTransactions({
+    excludedAccountIds: accountIds,
+    password,
+    userId,
+    year,
+  });
+};
+
+export const uploadFiles = async ({
+  mode = "replaceYear",
+  password,
+  replacedAccountIds = [],
+  txs,
+  userId,
+}: {
+  mode?: UploadMode;
+  password: string;
+  replacedAccountIds?: string[];
   txs: TxBankAccount[];
   userId: string;
 }) => {
-  const years = new Set<number>();
+  const year = getUploadYear(txs);
   const transactions: InsertTx[] = [];
   for (const { datum, id, bankAccountId, ...rest } of txs) {
     const encrypted = await encryptWithAES(JSON.stringify(rest), password);
-    const year = datum.getFullYear();
 
     transactions.push({
       bankAccountId,
@@ -84,13 +111,8 @@ export const uploadFiles = async ({
       data: encrypted.toString(),
       id,
     });
-    years.add(year);
   }
-  if (years.size !== 1) {
-    throw new Error("Ett år per uppladdning");
-  }
-  const [year] = Array.from(years) as [number];
-  await upload({ transactions, year, userId });
+  await upload({ mode, replacedAccountIds, transactions, year, userId });
 };
 
 export const addPersonAccount = (

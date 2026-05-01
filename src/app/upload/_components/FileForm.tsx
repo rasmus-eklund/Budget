@@ -15,15 +15,30 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Tabs,
+  TabsList,
+  TabsTrigger,
 } from "~/components/ui";
 import {
+  type UploadMode,
   readFiles,
   uploadFiles,
   addPersonAccount,
   findMatchingAccount,
+  getMergeBaseTxs,
+  getUploadedAccountIds,
+  getUploadYear,
+  prepareFullReplaceTxs,
+  prepareMergeTxs,
 } from "./fileFormHelpers";
 import type { Category, FileData, Filter, PersonAccounts, Tx } from "~/types";
-import { applyCategory, getFromTo, getLastMonthYear, capitalize } from "~/lib";
+import {
+  applyCategory,
+  getErrorMessage,
+  getFromTo,
+  getLastMonthYear,
+  capitalize,
+} from "~/lib";
 import { ShowData, Icon } from "~/components/common";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -37,6 +52,14 @@ const FileForm = ({ categories, people, userId }: Props) => {
   const password = useStore((state) => state.password);
   const [files, setFiles] = useState<FileData[]>([]);
   const [txs, setTxs] = useState<TxBankAccount[]>([]);
+  const [uploadMode, setUploadMode] = useState<UploadMode>("replaceYear");
+  const [replacedAccountIds, setReplacedAccountIds] = useState<string[]>([]);
+  const [mergeSummary, setMergeSummary] = useState<{
+    year: number;
+    keptCount: number;
+    uploadedCount: number;
+    accountIds: string[];
+  } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<{ error: boolean; message: ReactNode }>({
     error: false,
@@ -50,19 +73,56 @@ const FileForm = ({ categories, people, userId }: Props) => {
     }
   }, [password, router]);
 
+  const resetProcessedUpload = () => {
+    setTxs([]);
+    setFiles([]);
+    setReplacedAccountIds([]);
+    setMergeSummary(null);
+  };
+
   const processTxs = async () => {
     setLoading(true);
+    setError({ error: false, message: null });
     const res = await readFiles(files);
     if (!res.ok) {
       setError({ error: true, message: res.error });
       return setLoading(false);
     }
-    const y = new Set(res.data.map(({ datum }) => datum.getFullYear()));
-    if (y.size !== 1) {
-      setError({ error: true, message: "Ett år per uppladdning" });
+
+    let year: number;
+    try {
+      year = getUploadYear(res.data);
+    } catch (error) {
+      setError({ error: true, message: getErrorMessage(error) });
       return setLoading(false);
     }
-    setTxs(res.data);
+
+    if (uploadMode === "mergeAccounts") {
+      try {
+        const accountIds = getUploadedAccountIds(res.data);
+        const existingTxs = await getMergeBaseTxs({
+          password,
+          uploadedTxs: res.data,
+          userId,
+        });
+        setTxs(prepareMergeTxs({ existingTxs, uploadedTxs: res.data }));
+        setReplacedAccountIds(accountIds);
+        setMergeSummary({
+          accountIds,
+          keptCount: existingTxs.length,
+          uploadedCount: res.data.length,
+          year,
+        });
+      } catch (error) {
+        setError({ error: true, message: getErrorMessage(error) });
+        return setLoading(false);
+      }
+    } else {
+      setTxs(prepareFullReplaceTxs(res.data));
+      setReplacedAccountIds([]);
+      setMergeSummary(null);
+    }
+
     setLoading(false);
     setFiles([]);
   };
@@ -70,9 +130,20 @@ const FileForm = ({ categories, people, userId }: Props) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    await uploadFiles({ password, txs, userId });
-    setFiles([]);
-    setTxs([]);
+    setError({ error: false, message: null });
+    try {
+      await uploadFiles({
+        mode: uploadMode,
+        password,
+        replacedAccountIds,
+        txs,
+        userId,
+      });
+    } catch (error) {
+      setError({ error: true, message: getErrorMessage(error) });
+      return setLoading(false);
+    }
+    resetProcessedUpload();
     setLoading(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -101,7 +172,27 @@ const FileForm = ({ categories, people, userId }: Props) => {
   return (
     <>
       <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
-        <p>Transaktionerna du laddar upp kommer att ersätta året.</p>
+        <Tabs
+          value={uploadMode}
+          onValueChange={(value) => {
+            setUploadMode(value as UploadMode);
+            resetProcessedUpload();
+            setError({ error: false, message: null });
+            if (fileInputRef.current) {
+              fileInputRef.current.value = "";
+            }
+          }}
+        >
+          <TabsList className="w-full md:w-fit">
+            <TabsTrigger value="replaceYear">Ersätt år</TabsTrigger>
+            <TabsTrigger value="mergeAccounts">Slå ihop konton</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <p>
+          {uploadMode === "replaceYear"
+            ? "Transaktionerna du laddar upp ersätter hela året."
+            : "Valda konton ersätts för året. Övriga konton behålls och interna transaktioner räknas om."}
+        </p>
         {password && (
           <div className="flex gap-2">
             <Button asChild variant="secondary" className="cursor-pointer">
@@ -116,8 +207,7 @@ const FileForm = ({ categories, people, userId }: Props) => {
               onClick={(e) => {
                 const target = e.target as HTMLInputElement;
                 target.value = "";
-                setTxs([]);
-                setFiles([]);
+                resetProcessedUpload();
                 setError({ error: false, message: "" });
               }}
               onChange={(e) => {
@@ -219,6 +309,28 @@ const FileForm = ({ categories, people, userId }: Props) => {
             ))}
           </ul>
         )}
+        {mergeSummary && (
+          <div className="rounded-sm border bg-accent p-3 text-sm">
+            <p className="font-semibold">
+              Sammanslagning för {mergeSummary.year}
+            </p>
+            <p>
+              Konton som ersätts:{" "}
+              {mergeSummary.accountIds
+                .map(
+                  (id) =>
+                    options.find((option) => option.bankAccountId === id)
+                      ?.account ?? id,
+                )
+                .map(capitalize)
+                .join(", ")}
+            </p>
+            <p>
+              Behåller {mergeSummary.keptCount} befintliga transaktioner och
+              lägger till {mergeSummary.uploadedCount} nya.
+            </p>
+          </div>
+        )}
         {error.error && <>{error.message}</>}
       </form>
       {txs.length > 0 && (
@@ -281,4 +393,3 @@ const ShowTransactions = ({ txs, options }: { txs: Tx[]; options: Filter }) => {
 };
 
 export default FileForm;
-
