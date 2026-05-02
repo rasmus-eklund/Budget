@@ -13,12 +13,12 @@ const LoadingItems = ({ page }: Props) => {
       <div className="space-y-8">
         <div className="space-y-2">
           <Label>{page}</Label>
-          <Skeleton className="h-[30px] w-full py-1" />
+          <Skeleton className="h-7.5 w-full py-1" />
           <p className="text-sm text-muted-foreground">
             Lägg till en ny {page.toLowerCase()}.
           </p>
         </div>
-        <Skeleton className="h-[30px] w-[100px]" />
+        <Skeleton className="h-7.5 w-25" />
       </div>
     </div>
   );

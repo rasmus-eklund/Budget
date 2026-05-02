@@ -54,7 +54,7 @@ const Year = ({ changeDate }: Props) => {
             await submitYear(y);
           }}
         >
-          <SelectTrigger className="w-full md:w-[90px]">
+          <SelectTrigger className="w-full md:w-22.5">
             <SelectValue placeholder="" />
           </SelectTrigger>
           <SelectContent>

@@ -47,7 +47,7 @@ const Month = ({ changeDate }: Props) => {
           await submitDates(getMonthRange(data));
         }}
       >
-        <SelectTrigger className="md:w-[90px] w-full">
+        <SelectTrigger className="md:w-22.5 w-full">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -79,7 +79,7 @@ const Month = ({ changeDate }: Props) => {
             await submitDates(getMonthRange(data));
           }}
         >
-          <SelectTrigger className="md:w-[130px] md:flex-none flex-1">
+          <SelectTrigger className="md:w-32.5 md:flex-none flex-1">
             <SelectValue placeholder="" />
           </SelectTrigger>
           <SelectContent>
