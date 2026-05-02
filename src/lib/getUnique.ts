@@ -24,7 +24,9 @@ export const getDefaultOptions = (data: Tx[]) => {
 
 const reorder = (arr: string[]): string[] => [
   ...arr.filter((v) => v === "inkomst"),
-  ...arr.filter((v) => v !== "inkomst" && v !== "övrigt"),
+  ...arr
+    .filter((v) => v !== "inkomst" && v !== "övrigt")
+    .toSorted((a, b) => a.localeCompare(b)),
   ...arr.filter((v) => v === "övrigt"),
 ];
 export default getUnique;
