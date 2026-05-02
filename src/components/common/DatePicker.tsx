@@ -31,7 +31,7 @@ const DatePicker = ({
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className={cn("w-[130px] justify-between font-normal", className)}
+            className={cn("w-32.5 justify-between font-normal", className)}
           >
             {date ? dateToString(date) : "Select date"}
             <Icon icon="ChevronDownIcon" />
