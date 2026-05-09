@@ -20,7 +20,7 @@ const DatePickerRange = ({
   onChange,
   className,
 }: {
-  onChange: (dates: FromTo) => Promise<void>;
+  onChange: (dates: FromTo) => void | Promise<void>;
   dates: FromTo | undefined;
   setDate: (dates: FromTo) => void;
   range: FromTo;

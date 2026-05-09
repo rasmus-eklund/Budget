@@ -6,16 +6,16 @@ import { DatePickerRange } from "~/components/common";
 import { useStore } from "~/stores/tx-store";
 import { Button } from "~/components/ui";
 
-type Props = { changeDate: (dates: FromTo) => Promise<void> };
+type Props = { changeDate: (dates: FromTo) => void };
 
 const FreeDates = ({ changeDate }: Props) => {
-  const selectedRange = useStore((state) => state.selectedRange);
+  const draftRange = useStore((state) => state.draftRange);
   const { from, to } = useStore((state) => state.range);
-  const [dates, setDates] = useState<FromTo>(selectedRange);
+  const [dates, setDates] = useState<FromTo>(draftRange);
 
   useEffect(() => {
-    setDates(selectedRange);
-  }, [selectedRange]);
+    setDates(draftRange);
+  }, [draftRange]);
 
   const changeDates = async (dates: FromTo) => await changeDate(dates);
 

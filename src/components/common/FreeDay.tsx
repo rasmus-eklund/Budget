@@ -6,11 +6,11 @@ import { decrementDay, getDayRange, incrementDay, dateToString } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
 import { useStore } from "~/stores/tx-store";
 
-type Props = { changeDate: (dates: FromTo) => Promise<void> };
+type Props = { changeDate: (dates: FromTo) => void };
 
 const FreeDay = ({ changeDate }: Props) => {
   const { from, to } = useStore((state) => state.range);
-  const day = useStore((state) => state.selectedRange.from);
+  const day = useStore((state) => state.draftRange.from);
   const onChange = async (dates: FromTo) => await changeDate(dates);
 
   return (
