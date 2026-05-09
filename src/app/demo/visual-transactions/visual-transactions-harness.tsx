@@ -6,7 +6,30 @@ import { useStore } from "~/stores/tx-store";
 import type { Filter, Tx } from "~/types";
 import type { FromTo } from "~/lib/zodSchemas";
 
-const fixtureTxs: Tx[] = [
+type DateChangeCall = {
+  from: string;
+  to: string;
+};
+
+declare global {
+  interface Window {
+    __dateChangeCalls?: DateChangeCall[];
+  }
+}
+
+const serializeDate = (date: Date) =>
+  [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
+
+const serializeRange = ({ from, to }: FromTo): DateChangeCall => ({
+  from: serializeDate(from),
+  to: serializeDate(to),
+});
+
+const allFixtureTxs: Tx[] = [
   {
     id: "1",
     datum: new Date("2024-01-02T00:00:00.000Z"),
@@ -67,6 +90,26 @@ const fixtureTxs: Tx[] = [
     konto: "kortkonto-plus",
     person: "per",
   },
+  {
+    id: "7",
+    datum: new Date("2024-02-06T00:00:00.000Z"),
+    text: "Februari testtransaktion",
+    budgetgrupp: "mat",
+    belopp: -456.78,
+    saldo: 57753.39,
+    konto: "kortkonto-plus",
+    person: "per",
+  },
+  {
+    id: "8",
+    datum: new Date("2024-03-08T00:00:00.000Z"),
+    text: "Mars testtransaktion",
+    budgetgrupp: "rakningar",
+    belopp: -1200,
+    saldo: 56553.39,
+    konto: "spar",
+    person: "anna-katarina",
+  },
 ];
 
 const fixtureOptions: Filter = {
@@ -84,32 +127,64 @@ const fixtureOptions: Filter = {
   search: "",
 };
 
-const range: FromTo = {
+const visualRange: FromTo = {
   from: new Date("2024-01-01T00:00:00.000Z"),
-  to: new Date("2024-01-31T00:00:00.000Z"),
+  to: new Date("2024-01-31T23:59:59.999Z"),
 };
 
-const changeDates = async (_dates: FromTo) => { };
+const dateFilterRange: FromTo = {
+  from: new Date("2024-01-01T00:00:00.000Z"),
+  to: new Date("2024-03-31T23:59:59.999Z"),
+};
+
+const initialRange: FromTo = {
+  from: new Date("2024-01-01T00:00:00.000Z"),
+  to: new Date("2024-01-31T23:59:59.999Z"),
+};
+
+const filterTxs = ({ from, to }: FromTo) =>
+  allFixtureTxs.filter((tx) => tx.datum >= from && tx.datum <= to);
 
 const VisualTransactionsHarness = ({
   canMarkInternal = false,
+  dateFilterBehavior = false,
 }: {
   canMarkInternal?: boolean;
+  dateFilterBehavior?: boolean;
 }) => {
   const [ready, setReady] = useState(false);
+  const changeDates = async (dates: FromTo) => {
+    window.__dateChangeCalls = [
+      ...(window.__dateChangeCalls ?? []),
+      serializeRange(dates),
+    ];
+
+    await new Promise((resolve) => window.setTimeout(resolve, 50));
+
+    const state = useStore.getState();
+    state.setSelectedRange(dates);
+    state.setDraftRange(dates);
+    state.setTxs({
+      txs: filterTxs(dates),
+      options: fixtureOptions,
+    });
+  };
 
   useEffect(() => {
+    const range = dateFilterBehavior ? dateFilterRange : visualRange;
+    window.__dateChangeCalls = [];
     const state = useStore.getState();
     state.setLoading(false);
     state.setRange(range);
-    state.setSelectedRange(range);
+    state.setSelectedRange(initialRange);
+    state.setDraftRange(initialRange);
     state.setDateTab("month");
     state.setFilterTab("transactions");
     state.setShowFilter(true);
     state.setShowDateFilter(true);
     state.setTxSort({ sort: "date-asc" });
     state.setTxs({
-      txs: fixtureTxs,
+      txs: filterTxs(initialRange),
       options: fixtureOptions,
       reset: true,
       tab: "transactions",
@@ -122,7 +197,7 @@ const VisualTransactionsHarness = ({
     return () => {
       window.clearTimeout(timerId);
     };
-  }, []);
+  }, [dateFilterBehavior]);
 
   if (!ready) {
     return (
