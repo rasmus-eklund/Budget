@@ -21,14 +21,14 @@ import { type FromTo } from "~/lib/zodSchemas";
 import { useStore } from "~/stores/tx-store";
 
 type Props = {
-  changeDate: (dates: FromTo) => Promise<void>;
+  changeDate: (dates: FromTo) => void;
 };
 
 const Month = ({ changeDate }: Props) => {
-  const selectedRange = useStore((state) => state.selectedRange);
+  const draftRange = useStore((state) => state.draftRange);
   const range = useStore((state) => state.range);
-  const year = selectedRange.from.getFullYear();
-  const month = selectedRange.from.getMonth() + 1;
+  const year = draftRange.from.getFullYear();
+  const month = draftRange.from.getMonth() + 1;
   const { from, to } = range;
   const mostRecentYear = to.getFullYear();
   const mostRecentMonth = to.getMonth() + 1;
@@ -47,7 +47,10 @@ const Month = ({ changeDate }: Props) => {
           await submitDates(getMonthRange(data));
         }}
       >
-        <SelectTrigger className="md:w-22.5 w-full">
+        <SelectTrigger
+          data-testid="month-year-select"
+          className="md:w-22.5 w-full"
+        >
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -60,6 +63,7 @@ const Month = ({ changeDate }: Props) => {
       </Select>
       <div className="flex items-center gap-1 w-full md:w-fit">
         <Button
+          data-testid="month-prev"
           disabled={year <= from.getFullYear() && month <= from.getMonth() + 1}
           variant="outline"
           type="button"
@@ -79,7 +83,10 @@ const Month = ({ changeDate }: Props) => {
             await submitDates(getMonthRange(data));
           }}
         >
-          <SelectTrigger className="md:w-32.5 md:flex-none flex-1">
+          <SelectTrigger
+            data-testid="month-month-select"
+            className="md:w-32.5 md:flex-none flex-1"
+          >
             <SelectValue placeholder="" />
           </SelectTrigger>
           <SelectContent>
@@ -91,6 +98,7 @@ const Month = ({ changeDate }: Props) => {
           </SelectContent>
         </Select>
         <Button
+          data-testid="month-next"
           disabled={year === mostRecentYear && month === mostRecentMonth}
           variant="outline"
           size="icon"

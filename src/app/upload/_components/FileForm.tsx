@@ -360,12 +360,15 @@ const FileForm = ({ categories, people, userId }: Props) => {
 const ShowTransactions = ({ txs, options }: { txs: Tx[]; options: Filter }) => {
   const setTxs = useStore((state) => state.setTxs);
   const setRange = useStore((state) => state.setRange);
+  const setDraftRange = useStore((state) => state.setDraftRange);
   const setSelectedRange = useStore((state) => state.setSelectedRange);
   const setLoading = useStore((state) => state.setLoading);
 
   const getData = useCallback(
     async ({ from, to }: FromTo, reset = false) => {
-      setSelectedRange({ from, to });
+      const dates = { from, to };
+      setSelectedRange(dates);
+      setDraftRange(dates);
       setTxs({
         txs: txs.filter((i) => i.datum >= from && i.datum <= to),
         options,
@@ -373,7 +376,7 @@ const ShowTransactions = ({ txs, options }: { txs: Tx[]; options: Filter }) => {
         tab: reset ? "transactions" : undefined,
       });
     },
-    [options, setSelectedRange, setTxs, txs],
+    [options, setDraftRange, setSelectedRange, setTxs, txs],
   );
 
   useEffect(() => {

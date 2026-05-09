@@ -14,13 +14,13 @@ import { type FromTo } from "~/lib/zodSchemas";
 import { useStore } from "~/stores/tx-store";
 
 type Props = {
-  changeDate: (dates: FromTo) => Promise<void>;
+  changeDate: (dates: FromTo) => void;
 };
 
 const Year = ({ changeDate }: Props) => {
   const { from, to } = useStore((state) => state.range);
-  const selectedRange = useStore((state) => state.selectedRange);
-  const year = selectedRange.from.getFullYear();
+  const draftRange = useStore((state) => state.draftRange);
+  const year = draftRange.from.getFullYear();
   const mostRecentYear = to.getFullYear();
   const submitYear = async (year: number) => {
     await changeDate({
@@ -54,7 +54,7 @@ const Year = ({ changeDate }: Props) => {
             await submitYear(y);
           }}
         >
-          <SelectTrigger className="w-full md:w-22.5">
+          <SelectTrigger data-testid="year-select" className="w-full md:w-22.5">
             <SelectValue placeholder="" />
           </SelectTrigger>
           <SelectContent>

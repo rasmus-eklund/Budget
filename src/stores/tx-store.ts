@@ -29,6 +29,8 @@ export const useStore = create<{
   reset: () => void;
   range: FromTo;
   setRange: (range: FromTo) => void;
+  draftRange: FromTo;
+  setDraftRange: (draftRange: FromTo) => void;
   selectedRange: FromTo;
   setSelectedRange: (selectedRange: FromTo) => void;
   sticky: boolean;
@@ -89,6 +91,8 @@ export const useStore = create<{
     })),
   range: { from: new Date(), to: new Date() },
   setRange: (range) => set({ range }),
+  draftRange: { from: new Date(), to: new Date() },
+  setDraftRange: (draftRange) => set({ draftRange }),
   selectedRange: { from: new Date(), to: new Date() },
   setSelectedRange: (selectedRange) => set({ selectedRange }),
   sticky: true,
