@@ -13,12 +13,14 @@ const tx = ({
   category = "övrigt",
   date = new Date("2025-01-10"),
   id,
+  sourceOrder = 0,
 }: {
   account: string;
   amount: number;
   category?: string;
   date?: Date;
   id: string;
+  sourceOrder?: number;
 }): TxBankAccount => ({
   bankAccountId: account,
   belopp: amount,
@@ -26,6 +28,7 @@ const tx = ({
   datum: date,
   id,
   saldo: 0,
+  sourceOrder,
   text: id,
 });
 
@@ -46,10 +49,12 @@ describe("upload processing", () => {
       uploadedTxs: [tx({ account: "a", amount: -100, id: "uploaded" })],
     });
 
-    expect(data).toEqual([
-      expect.objectContaining({ budgetgrupp: "inom", id: "existing" }),
-      expect.objectContaining({ budgetgrupp: "inom", id: "uploaded" }),
-    ]);
+    expect(data).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ budgetgrupp: "inom", id: "existing" }),
+        expect.objectContaining({ budgetgrupp: "inom", id: "uploaded" }),
+      ]),
+    );
   });
 
   it("recalculates old internal labels during merge", () => {
@@ -67,6 +72,31 @@ describe("upload processing", () => {
 
     expect(data.find(({ id }) => id === "old-internal")?.budgetgrupp).toBe(
       "övrigt",
+    );
+  });
+
+  it("keeps ambiguous merge categorization stable regardless of kept transaction order", () => {
+    const existingTxs = [
+      tx({ account: "b", amount: -100, id: "kept-a", sourceOrder: 0 }),
+      tx({ account: "b", amount: -100, id: "kept-b", sourceOrder: 1 }),
+      tx({ account: "b", amount: -100, id: "kept-c", sourceOrder: 2 }),
+    ];
+    const uploadedTxs = [tx({ account: "a", amount: 100, id: "uploaded" })];
+
+    const idsMarkedInternal = (data: TxBankAccount[]) =>
+      data
+        .filter(({ budgetgrupp }) => budgetgrupp === "inom")
+        .map(({ id }) => id)
+        .sort();
+
+    const originalOrder = prepareMergeTxs({ existingTxs, uploadedTxs });
+    const reversedOrder = prepareMergeTxs({
+      existingTxs: [...existingTxs].reverse(),
+      uploadedTxs,
+    });
+
+    expect(idsMarkedInternal(reversedOrder)).toEqual(
+      idsMarkedInternal(originalOrder),
     );
   });
 
