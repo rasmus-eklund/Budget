@@ -20,6 +20,7 @@ export const txs = createTable("txs", {
   id: varchar("id", { length: 255 }).primaryKey(),
   year: integer("year").notNull(),
   date: timestamp("date").notNull(),
+  sourceOrder: integer("sourceOrder").notNull().default(1),
   data: text("data").notNull(),
   bankAccountId: varchar("bankAccountId", { length: 255 })
     .references(() => bankAccounts.id, { onDelete: "cascade" })
