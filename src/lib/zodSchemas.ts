@@ -83,6 +83,7 @@ export type TxBankAccount = z.infer<typeof csvSchema>[number] & {
   bankAccountId: string;
   budgetgrupp: string;
   id: string;
+  sourceOrder: number;
 };
 
 export const fromToSchema = z.object({
