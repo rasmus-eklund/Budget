@@ -56,6 +56,7 @@ const year = 2025;
 
 const accountA = "db-test-account-a";
 const accountB = "db-test-account-b";
+const accountC = "db-test-account-c";
 const otherAccount = "db-test-other-account";
 
 beforeAll(async () => {
@@ -220,6 +221,111 @@ describe("upload account merge db integration", () => {
     ).rejects.toThrow("Kunde inte uppdatera valt konto.");
   });
 
+  it("merges replacement transactions from two accounts after an initial full replace", async () => {
+    const initialTxs: TxBankAccount[] = [
+      txInput({
+        accountId: accountA,
+        amount: -999,
+        date: new Date("2025-01-09"),
+        id: "initial-account-a",
+        sourceOrder: 0,
+      }),
+      txInput({
+        accountId: accountB,
+        amount: 100,
+        date: new Date("2025-01-10"),
+        id: "kept-account-b-merge",
+        sourceOrder: 0,
+      }),
+      txInput({
+        accountId: accountC,
+        amount: -42,
+        date: new Date("2025-01-11"),
+        id: "initial-account-c",
+        sourceOrder: 0,
+      }),
+    ];
+
+    await uploadFiles({
+      mode: "replaceYear",
+      password,
+      txs: prepareFullReplaceTxs(initialTxs),
+      userId,
+    });
+
+    const uploadedTxs: TxBankAccount[] = [
+      txInput({
+        accountId: accountC,
+        amount: -42,
+        date: new Date("2025-01-11"),
+        id: "new-account-c-grocery",
+        sourceOrder: 0,
+      }),
+      txInput({
+        accountId: accountA,
+        amount: -100,
+        date: new Date("2025-01-10"),
+        id: "new-account-a-transfer",
+        sourceOrder: 0,
+      }),
+      txInput({
+        accountId: accountC,
+        amount: 250,
+        date: new Date("2025-01-12"),
+        id: "new-account-c-income",
+        sourceOrder: 1,
+      }),
+    ];
+
+    const existingTxs = await getMergeBaseTxs({
+      password,
+      uploadedTxs,
+      userId,
+    });
+    const mergedTxs = prepareMergeTxs({ existingTxs, uploadedTxs });
+
+    await uploadFiles({
+      mode: "mergeAccounts",
+      password,
+      replacedAccountIds: [accountA, accountC],
+      txs: mergedTxs,
+      userId,
+    });
+
+    const finalRows = await getNormalizedUserTxs([
+      accountA,
+      accountB,
+      accountC,
+    ]);
+
+    expect(finalRows).toEqual([
+      expect.objectContaining({
+        bankAccountId: accountB,
+        id: "kept-account-b-merge",
+        sourceOrder: 0,
+        tx: expect.objectContaining({ belopp: 100, budgetgrupp: "inom" }),
+      }),
+      expect.objectContaining({
+        bankAccountId: accountA,
+        id: "new-account-a-transfer",
+        sourceOrder: 0,
+        tx: expect.objectContaining({ belopp: -100, budgetgrupp: "inom" }),
+      }),
+      expect.objectContaining({
+        bankAccountId: accountC,
+        id: "new-account-c-grocery",
+        sourceOrder: 0,
+        tx: expect.objectContaining({ belopp: -42, budgetgrupp: "övrigt" }),
+      }),
+      expect.objectContaining({
+        bankAccountId: accountC,
+        id: "new-account-c-income",
+        sourceOrder: 1,
+        tx: expect.objectContaining({ belopp: 250, budgetgrupp: "övrigt" }),
+      }),
+    ]);
+  });
+
   it("produces the same end state as full replace when the final data is the same", async () => {
     const startingRows = [
       await encryptedTx({
@@ -327,6 +433,29 @@ const encryptedTx = async ({
   };
 };
 
+const txInput = ({
+  accountId,
+  amount,
+  date,
+  id,
+  sourceOrder,
+}: {
+  accountId: string;
+  amount: number;
+  date: Date;
+  id: string;
+  sourceOrder: number;
+}): TxBankAccount => ({
+  bankAccountId: accountId,
+  belopp: amount,
+  budgetgrupp: "övrigt",
+  datum: date,
+  id,
+  saldo: 0,
+  sourceOrder,
+  text: id,
+});
+
 const seedAccounts = async () => {
   await testDb.insert(schema.persons).values([
     { id: "db-test-person", name: "Test", userId },
@@ -335,6 +464,7 @@ const seedAccounts = async () => {
   await testDb.insert(schema.bankAccounts).values([
     { id: accountA, name: "Account A", personId: "db-test-person" },
     { id: accountB, name: "Account B", personId: "db-test-person" },
+    { id: accountC, name: "Account C", personId: "db-test-person" },
     {
       id: otherAccount,
       name: "Other Account",
@@ -362,11 +492,11 @@ const cleanTestRows = async () => {
     );
 };
 
-const getNormalizedUserTxs = async () => {
+const getNormalizedUserTxs = async (accountIds = [accountA, accountB]) => {
   const rows = await testDb
     .select()
     .from(schema.txs)
-    .where(inArray(schema.txs.bankAccountId, [accountA, accountB]))
+    .where(inArray(schema.txs.bankAccountId, accountIds))
     .orderBy(schema.txs.id);
 
   return await Promise.all(
