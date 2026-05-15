@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "~/server/db";
-import { and, inArray, eq, sql } from "drizzle-orm";
+import { and, asc, inArray, eq, sql } from "drizzle-orm";
 import {
   type InsertTx,
   category,
@@ -114,8 +114,15 @@ export const getMergeBaseTransactions = async ({
         columns: { id: true },
         with: {
           txs: {
-            columns: { id: true, date: true, data: true, bankAccountId: true },
+            columns: {
+              id: true,
+              date: true,
+              data: true,
+              bankAccountId: true,
+              sourceOrder: true,
+            },
             where: eq(txs.year, year),
+            orderBy: [asc(txs.date), asc(txs.sourceOrder), asc(txs.id)],
           },
         },
       },
@@ -133,6 +140,7 @@ export const getMergeBaseTransactions = async ({
           datum: tx.date,
           bankAccountId: tx.bankAccountId,
           id: tx.id,
+          sourceOrder: tx.sourceOrder,
         });
       }
     }
