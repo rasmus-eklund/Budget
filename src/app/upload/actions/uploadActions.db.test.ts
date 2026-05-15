@@ -153,6 +153,7 @@ describe("upload account merge db integration", () => {
         datum: new Date("2025-01-10"),
         id: "new-account-a",
         saldo: 900,
+        sourceOrder: 0,
         text: "New transfer",
       },
     ];
@@ -193,6 +194,8 @@ describe("upload account merge db integration", () => {
     expect(kept?.bankAccountId).toBe(accountB);
     expect(inserted?.bankAccountId).toBe(accountA);
     expect(other?.bankAccountId).toBe(otherAccount);
+    expect(kept?.sourceOrder).toBe(0);
+    expect(inserted?.sourceOrder).toBe(0);
 
     expect(await decryptTxData(kept!.data, password)).toEqual(
       expect.objectContaining({ budgetgrupp: "inom", belopp: 100 }),
@@ -241,6 +244,7 @@ describe("upload account merge db integration", () => {
       datum: new Date("2025-01-10"),
       id: "final-account-a",
       saldo: 900,
+      sourceOrder: 0,
       text: "Final account A",
     };
     const finalAccountB: TxBankAccount = {
@@ -250,6 +254,7 @@ describe("upload account merge db integration", () => {
       datum: new Date("2025-01-10"),
       id: "final-account-b",
       saldo: 0,
+      sourceOrder: 0,
       text: "final-account-b",
     };
 
@@ -293,12 +298,14 @@ const encryptedTx = async ({
   category,
   date,
   id,
+  sourceOrder = 0,
 }: {
   accountId: string;
   amount: number;
   category: string;
   date: Date;
   id: string;
+  sourceOrder?: number;
 }): Promise<InsertTx> => {
   const encrypted = await encryptWithAES(
     JSON.stringify({
@@ -315,6 +322,7 @@ const encryptedTx = async ({
     data: encrypted.toString(),
     date,
     id,
+    sourceOrder,
     year: date.getFullYear(),
   };
 };
@@ -362,10 +370,11 @@ const getNormalizedUserTxs = async () => {
     .orderBy(schema.txs.id);
 
   return await Promise.all(
-    rows.map(async ({ bankAccountId, data, date, id, year }) => ({
+    rows.map(async ({ bankAccountId, data, date, id, sourceOrder, year }) => ({
       bankAccountId,
       date: date.toISOString(),
       id,
+      sourceOrder,
       tx: await decryptTxData(data, password),
       year,
     })),
