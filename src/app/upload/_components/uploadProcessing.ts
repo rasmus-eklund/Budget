@@ -13,9 +13,20 @@ export const getUploadYear = (txs: TxBankAccount[]) => {
 export const getUploadedAccountIds = (txs: TxBankAccount[]) =>
   Array.from(new Set(txs.map(({ bankAccountId }) => bankAccountId)));
 
+const sortForInternalMarking = (txs: TxBankAccount[]) =>
+  [...txs].sort((a, b) => {
+    const dateDiff = a.datum.getTime() - b.datum.getTime();
+    if (dateDiff !== 0) return dateDiff;
+    const accountDiff = a.bankAccountId.localeCompare(b.bankAccountId);
+    if (accountDiff !== 0) return accountDiff;
+    const sourceOrderDiff = a.sourceOrder - b.sourceOrder;
+    if (sourceOrderDiff !== 0) return sourceOrderDiff;
+    return a.id.localeCompare(b.id);
+  });
+
 export const prepareFullReplaceTxs = (txs: TxBankAccount[]) => {
   const start = performance.now();
-  const data = markInternal(txs);
+  const data = markInternal(sortForInternalMarking(txs));
   const end = performance.now();
   console.log(`Processed ${data.length} txs in ${end - start} ms`);
   return data;
@@ -30,10 +41,12 @@ export const prepareMergeTxs = ({
 }) => {
   const start = performance.now();
   const data = markInternal(
-    [...existingTxs, ...uploadedTxs].map((tx) => ({
-      ...tx,
-      budgetgrupp: "övrigt",
-    })),
+    sortForInternalMarking(
+      [...existingTxs, ...uploadedTxs].map((tx) => ({
+        ...tx,
+        budgetgrupp: "övrigt",
+      })),
+    ),
   );
   const end = performance.now();
   console.log(`Processed ${data.length} txs in ${end - start} ms`);
