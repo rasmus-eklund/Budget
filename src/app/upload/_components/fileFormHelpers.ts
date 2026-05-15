@@ -101,7 +101,7 @@ export const uploadFiles = async ({
 }) => {
   const year = getUploadYear(txs);
   const transactions: InsertTx[] = [];
-  for (const { datum, id, bankAccountId, ...rest } of txs) {
+  for (const { datum, id, bankAccountId, sourceOrder, ...rest } of txs) {
     const encrypted = await encryptWithAES(JSON.stringify(rest), password);
 
     transactions.push({
@@ -110,6 +110,7 @@ export const uploadFiles = async ({
       date: datum,
       data: encrypted.toString(),
       id,
+      sourceOrder,
     });
   }
   await upload({ mode, replacedAccountIds, transactions, year, userId });
