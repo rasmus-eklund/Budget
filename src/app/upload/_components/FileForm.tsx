@@ -46,8 +46,8 @@ import { useStore } from "~/stores/tx-store";
 import type { FromTo, TxBankAccount } from "~/lib/zodSchemas";
 import { configs } from "~/constants";
 
-type Props = { categories: Category[]; people: PersonAccounts; userId: string };
-const FileForm = ({ categories, people, userId }: Props) => {
+type Props = { categories: Category[]; people: PersonAccounts };
+const FileForm = ({ categories, people }: Props) => {
   const router = useRouter();
   const password = useStore((state) => state.password);
   const [files, setFiles] = useState<FileData[]>([]);
@@ -103,7 +103,6 @@ const FileForm = ({ categories, people, userId }: Props) => {
         const existingTxs = await getMergeBaseTxs({
           password,
           uploadedTxs: res.data,
-          userId,
         });
         setTxs(prepareMergeTxs({ existingTxs, uploadedTxs: res.data }));
         setReplacedAccountIds(accountIds);
@@ -137,7 +136,6 @@ const FileForm = ({ categories, people, userId }: Props) => {
         password,
         replacedAccountIds,
         txs,
-        userId,
       });
     } catch (error) {
       setError({ error: true, message: getErrorMessage(error) });

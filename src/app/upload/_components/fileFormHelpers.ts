@@ -70,18 +70,15 @@ export const readFiles = async (
 export const getMergeBaseTxs = async ({
   password,
   uploadedTxs,
-  userId,
 }: {
   password: string;
   uploadedTxs: TxBankAccount[];
-  userId: string;
 }) => {
   const year = getUploadYear(uploadedTxs);
   const accountIds = getUploadedAccountIds(uploadedTxs);
   return await getMergeBaseTransactions({
     excludedAccountIds: accountIds,
     password,
-    userId,
     year,
   });
 };
@@ -91,13 +88,11 @@ export const uploadFiles = async ({
   password,
   replacedAccountIds = [],
   txs,
-  userId,
 }: {
   mode?: UploadMode;
   password: string;
   replacedAccountIds?: string[];
   txs: TxBankAccount[];
-  userId: string;
 }) => {
   const year = getUploadYear(txs);
   const transactions: InsertTx[] = [];
@@ -113,7 +108,7 @@ export const uploadFiles = async ({
       sourceOrder,
     });
   }
-  await upload({ mode, replacedAccountIds, transactions, year, userId });
+  await upload({ mode, replacedAccountIds, transactions, year });
 };
 
 export const addPersonAccount = (

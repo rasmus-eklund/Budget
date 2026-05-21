@@ -13,19 +13,14 @@ import {
   DeleteDialog,
 } from "~/components/common";
 import type { Name } from "~/types";
-import WithAuth, { type WithAuthProps } from "~/components/server/WithAuth";
+import WithAuth from "~/components/server/WithAuth";
 
 type Props = { params: Promise<{ id: string }> };
 
-const page = async (props: Props & WithAuthProps) => {
+const page = async (props: Props) => {
   const { id } = await props.params;
-  const { userId } = props;
-  const options = await getAllPeople(userId);
-  const {
-    name,
-    bankAccounts,
-    id: personId,
-  } = await getBankAccounts({ id, userId });
+  const options = await getAllPeople();
+  const { name, bankAccounts, id: personId } = await getBankAccounts(id);
   const addAccount = async ({ name }: Name) => {
     "use server";
     await addBankAccount({ name, personId });

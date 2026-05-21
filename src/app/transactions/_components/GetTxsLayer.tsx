@@ -9,8 +9,8 @@ import { emptyOptions } from "~/constants";
 import { ShowData, Spinner } from "~/components/common";
 import { toast } from "sonner";
 
-type Props = { range: FromTo; userId: string };
-const GetTxsLayer = ({ range: { from, to }, userId }: Props) => {
+type Props = { range: FromTo };
+const GetTxsLayer = ({ range: { from, to } }: Props) => {
   const [isReady, setIsReady] = useState(false);
   const router = useRouter();
   const requestIdRef = useRef(0);
@@ -31,7 +31,7 @@ const GetTxsLayer = ({ range: { from, to }, userId }: Props) => {
       }
       setLoading(true);
       try {
-        const res = await getTxByDates({ dates, password, userId });
+        const res = await getTxByDates({ dates, password });
         if (requestId !== requestIdRef.current) return;
         if (!res.ok)
           return setTxs({ txs: [], options: emptyOptions, reset: true });
@@ -48,15 +48,7 @@ const GetTxsLayer = ({ range: { from, to }, userId }: Props) => {
         }
       }
     },
-    [
-      setTxs,
-      setLoading,
-      setSelectedRange,
-      setDraftRange,
-      password,
-      userId,
-      router,
-    ],
+    [setTxs, setLoading, setSelectedRange, setDraftRange, password, router],
   );
 
   useEffect(() => {
