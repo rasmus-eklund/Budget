@@ -1,3 +1,5 @@
+import type { FromTo } from "~/lib/zodSchemas";
+
 export type SortOption =
   | "date-asc"
   | "date-desc"
@@ -43,6 +45,16 @@ export type TxReturn =
       options: Filter;
     }
   | { ok: false };
+
+export type ChangeDatesOptions = {
+  debounce?: boolean;
+  reset?: boolean;
+};
+
+export type ChangeDates = (
+  dates: FromTo,
+  options?: ChangeDatesOptions,
+) => Promise<void>;
 
 export type Category = { name: string; match: { name: string }[] };
 export type PersonAccounts = {

@@ -2,7 +2,10 @@
 
 import type { FromTo } from "~/lib/zodSchemas";
 import { TabsContent, TabsList, TabsTrigger, Tabs } from "~/components/ui";
-import { FreeDay, Month, FreeDates, Year } from "~/components/common";
+import FreeDay from "./FreeDay";
+import FreeDates from "./FreeDates";
+import Month from "./Month";
+import Year from "./Year";
 import { useStore } from "~/stores/tx-store";
 import type { DateTab } from "~/types";
 import {
@@ -14,21 +17,19 @@ import {
   isFullYearRange,
   isSameDayRange,
 } from "~/lib";
-import { useDebounceCallback } from "usehooks-ts";
+import type { ChangeDates } from "~/types";
 
-type Props = { changeDates: (dates: FromTo) => Promise<void> };
+type Props = { changeDates: ChangeDates };
 const DateFilter = ({ changeDates }: Props) => {
   const setDateTab = useStore((state) => state.setDateTab);
   const setDraftRange = useStore((state) => state.setDraftRange);
   const dateTab = useStore((state) => state.dateTab);
   const draftRange = useStore((state) => state.draftRange);
   const showDateFilter = useStore((state) => state.showDateFilter);
-  const debouncedChangeDates = useDebounceCallback((dates: FromTo) => {
-    void changeDates(dates);
-  }, 500);
+
   const requestDateChange = (dates: FromTo) => {
     setDraftRange(dates);
-    debouncedChangeDates(dates);
+    void changeDates(dates, { debounce: true });
   };
 
   return (

@@ -5,11 +5,11 @@ import type { Tx } from "~/types";
 import { cn } from "~/lib/utils";
 import { useStore } from "~/stores/tx-store";
 import MarkAsInternal from "./MarkAsInternal";
-import type { FromTo } from "~/lib/zodSchemas";
+import type { ChangeDates } from "~/types";
 
 type Props = {
   data: Tx[];
-  changeDates: (dates: FromTo) => Promise<void>;
+  changeDates: ChangeDates;
   canMarkInternal: boolean;
 };
 const Transactions = ({ data, changeDates, canMarkInternal = true }: Props) => {
@@ -57,7 +57,7 @@ const Transaction = ({
   canMarkInternal,
 }: {
   data: Tx;
-  changeDates: (dates: FromTo) => Promise<void>;
+  changeDates: ChangeDates;
   canMarkInternal: boolean;
 }) => {
   const setDateTab = useStore((state) => state.setDateTab);
@@ -77,7 +77,7 @@ const Transaction = ({
             onClick={async () => {
               setDateTab("day");
               const dates = getDayRange(dateToString(datum));
-              await changeDates(dates);
+              await changeDates(dates, { debounce: false });
             }}
           >
             <p className="font-semibold">{dateToString(datum)}</p>
