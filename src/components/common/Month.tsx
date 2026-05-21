@@ -15,7 +15,6 @@ import {
   getYearRange,
   getMonthRange,
   incrementMonth,
-  capitalize,
 } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
 import { useStore } from "~/stores/tx-store";
@@ -36,7 +35,7 @@ const Month = ({ changeDate }: Props) => {
   const submitDates = async (dates: FromTo) => await changeDate(dates);
   return (
     <form
-      className="flex md:flex-row flex-col md:items-center gap-1"
+      className="flex flex-col gap-1 md:flex-row md:items-center"
       onSubmit={(e) => e.preventDefault()}
     >
       <Select
@@ -49,7 +48,7 @@ const Month = ({ changeDate }: Props) => {
       >
         <SelectTrigger
           data-testid="month-year-select"
-          className="md:w-22.5 w-full"
+          className="w-full md:w-22.5"
         >
           <SelectValue />
         </SelectTrigger>
@@ -61,7 +60,7 @@ const Month = ({ changeDate }: Props) => {
           ))}
         </SelectContent>
       </Select>
-      <div className="flex items-center gap-1 w-full md:w-fit">
+      <div className="flex w-full items-center gap-1 md:w-fit">
         <Button
           data-testid="month-prev"
           disabled={year <= from.getFullYear() && month <= from.getMonth() + 1}
@@ -85,14 +84,18 @@ const Month = ({ changeDate }: Props) => {
         >
           <SelectTrigger
             data-testid="month-month-select"
-            className="md:w-32.5 md:flex-none flex-1"
+            className="flex-1 md:w-32.5 md:flex-none"
           >
             <SelectValue placeholder="" />
           </SelectTrigger>
           <SelectContent>
             {months.map((m, n) => (
-              <SelectItem key={`month-${m}`} value={(n + 1).toString()}>
-                {capitalize(m)}
+              <SelectItem
+                className="first-letter:capitalize"
+                key={`month-${m}`}
+                value={(n + 1).toString()}
+              >
+                {m}
               </SelectItem>
             ))}
           </SelectContent>

@@ -3,7 +3,6 @@
 import { useMemo } from "react";
 import {
   calculateSums,
-  capitalize,
   dateToString,
   toSek,
   getFromTo,
@@ -45,7 +44,7 @@ const Aggregated = ({ options: { person, category } }: Props) => {
   const catClass =
     "px-6 py-3 text-xs font-medium uppercase tracking-wider text-muted-foreground";
   return (
-    <div className="overflow-auto py-2 flex-1">
+    <div className="flex-1 overflow-auto py-2">
       {dates ? (
         <h2 className={cn("p-2 text-lg", stickyClass)}>
           {getDateString(dates)}
@@ -57,7 +56,7 @@ const Aggregated = ({ options: { person, category } }: Props) => {
             <th
               className={cn(
                 catClass,
-                "text-left bg-secondary flex items-center gap-1",
+                "flex items-center gap-1 bg-secondary text-left",
                 sticky && stickyClass,
               )}
             >
@@ -87,52 +86,51 @@ const Aggregated = ({ options: { person, category } }: Props) => {
           </tr>
         </thead>
         <tbody className="divide-y divide-secondary bg-background">
-          {categoriesTotal.map((category, categoryIndex) => (
-            <tr key={category}>
-              <td
-                className={cn(
-                  "whitespace-nowrap px-4 font-semibold tracking-wider bg-white",
-                  sticky && stickyClass,
-                )}
-              >
-                {nonClickableCategories.includes(category) ? (
-                  capitalize(category === "spending" ? "Utgifter" : category)
-                ) : (
-                  <CatButton category={category}>
-                    {capitalize(
-                      category === "spending" ? "Utgifter" : category,
-                    )}
-                  </CatButton>
-                )}
-              </td>
-              {peopleTotal.map((person, index) => {
-                const sek = sumsMemo[category]![person]!;
-                return (
-                  <td
-                    className={cn(
-                      "px-4 py-1 text-right",
-                      sek < 0 && "text-primary",
-                      index === peopleTotal.length - 1 && "font-semibold",
-                      categoryIndex >= categoriesTotal.length - 2 &&
-                        "font-bold",
-                    )}
-                    key={`${category}${person}`}
-                  >
-                    {nonClickableCategories.includes(category) ? (
-                      <p>{toSek(sek)}</p>
-                    ) : (
-                      <CatButton
-                        category={category}
-                        person={person !== "total" ? person : undefined}
-                      >
-                        {toSek(sek)}
-                      </CatButton>
-                    )}
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
+          {categoriesTotal.map((category, categoryIndex) => {
+            const name = category === "spending" ? "Utgifter" : category;
+            return (
+              <tr key={category}>
+                <td
+                  className={cn(
+                    "bg-white px-4 font-semibold tracking-wider whitespace-nowrap first-letter:capitalize",
+                    sticky && stickyClass,
+                  )}
+                >
+                  {nonClickableCategories.includes(category) ? (
+                    name
+                  ) : (
+                    <CatButton category={category}>{name}</CatButton>
+                  )}
+                </td>
+                {peopleTotal.map((person, index) => {
+                  const sek = sumsMemo[category]![person]!;
+                  return (
+                    <td
+                      className={cn(
+                        "px-4 py-1 text-right",
+                        sek < 0 && "text-primary",
+                        index === peopleTotal.length - 1 && "font-semibold",
+                        categoryIndex >= categoriesTotal.length - 2 &&
+                          "font-bold",
+                      )}
+                      key={`${category}${person}`}
+                    >
+                      {nonClickableCategories.includes(category) ? (
+                        <p>{toSek(sek)}</p>
+                      ) : (
+                        <CatButton
+                          category={category}
+                          person={person !== "total" ? person : undefined}
+                        >
+                          {toSek(sek)}
+                        </CatButton>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
@@ -156,7 +154,10 @@ const CatButton = ({
   const defaultFilter = useStore((state) => state.filter);
   return (
     <button
-      className={cn("cursor-pointer hover:scale-110", className)}
+      className={cn(
+        "cursor-pointer first-letter:capitalize hover:scale-110",
+        className,
+      )}
       onClick={() => {
         setFilter({
           category: category

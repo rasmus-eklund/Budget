@@ -16,7 +16,7 @@ const FreeDay = ({ changeDate }: Props) => {
   return (
     <form
       onSubmit={(e) => e.preventDefault()}
-      className="flex gap-1 flex-col md:flex-row md:items-center"
+      className="flex flex-col gap-1 md:flex-row md:items-center"
     >
       <div className="flex items-center gap-1">
         <Button

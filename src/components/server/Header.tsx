@@ -7,7 +7,7 @@ const Header = async () => {
   if (process.env.E2E_VISUAL === "1") {
     return (
       <header className="relative flex h-14 min-h-14 w-full max-w-5xl items-center border-b px-3">
-        <h1 className="w-full text-nowrap text-center text-xl font-bold text-primary">
+        <h1 className="w-full text-center text-xl font-bold text-nowrap text-primary">
           <Link href={"/"}>RICA Banken</Link>
         </h1>
       </header>
@@ -17,7 +17,7 @@ const Header = async () => {
   const authenticated = await isAuthenticated();
   return (
     <header className="relative flex h-14 min-h-14 w-full max-w-5xl items-center border-b px-3">
-      <div className="absolute left-2 top-2">
+      <div className="absolute top-2 left-2">
         {authenticated ? (
           <HeaderMenu />
         ) : (
@@ -26,7 +26,7 @@ const Header = async () => {
           </Button>
         )}
       </div>
-      <h1 className="w-full text-nowrap text-center text-xl font-bold text-primary">
+      <h1 className="w-full text-center text-xl font-bold text-nowrap text-primary">
         <Link href={"/"}>RICA Banken</Link>
       </h1>
     </header>

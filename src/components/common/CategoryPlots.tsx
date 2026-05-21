@@ -52,7 +52,7 @@ const CategoryPlots = ({ data, options }: Props) => {
     sums.push(record);
   }
   return (
-    <div className="flex flex-col gap-2 flex-1">
+    <div className="flex flex-1 flex-col gap-2">
       <CategoryBars sums={sums} options={options} />
       {Object.keys(persons).map((person) => (
         <CategoryPies
@@ -93,8 +93,8 @@ const CategoryBars = ({ sums, options }: { sums: Sum[]; options: Uniques }) => {
             ))}
             <Legend
               formatter={(item) => (
-                <p className="text-sm md:text-base">
-                  {capitalize(item as string)}
+                <p className="text-sm first-letter:capitalize md:text-base">
+                  {item}
                 </p>
               )}
             />
@@ -144,6 +144,6 @@ const CategoryPies = ({ data, name }: { name: string; data: Data[] }) => {
 };
 
 const PieLabel = ({ name, value }: { name: string; value: number }) =>
-  `${name}: ${toSek(value)}`;
+  `${capitalize(name)}: ${toSek(value)}`;
 
 export default CategoryPlots;

@@ -33,7 +33,7 @@ const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
       <FiltersToggle />
       <DateFilter changeDates={changeDates} />
       <Tabs
-        className="flex-1 min-h-0 md:gap-2 gap-0"
+        className="min-h-0 flex-1 gap-0 md:gap-2"
         value={filterTab}
         onValueChange={(value) => setFilterTab(value as FilterTab)}
       >
@@ -44,12 +44,12 @@ const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
           <TabsTrigger value="balanceOverTime">Saldo</TabsTrigger>
         </TabsList>
         {filterTab !== "aggregated" && <TransactionFilter options={options} />}
-        <TabsContent value="aggregated" className="flex-1 min-h-0">
+        <TabsContent value="aggregated" className="min-h-0 flex-1">
           <LoadingWrapper>
             <Aggregated options={options} />
           </LoadingWrapper>
         </TabsContent>
-        <TabsContent value="transactions" className="flex-1 min-h-0 flex">
+        <TabsContent value="transactions" className="flex min-h-0 flex-1">
           <LoadingWrapper>
             <Transactions
               data={txs}
@@ -76,13 +76,13 @@ const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
 const LoadingWrapper = ({ children }: { children: React.ReactNode }) => {
   const loading = useStore((state) => state.loading);
   return (
-    <div className="relative flex-1 min-h-0 flex">
+    <div className="relative flex min-h-0 flex-1">
       {children}
       {loading && (
-        <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center select-none bg-secondary/40 z-50">
+        <div className="absolute top-0 right-0 bottom-0 left-0 z-50 flex items-center justify-center bg-secondary/40 select-none">
           <Icon
             icon="Loader2Icon"
-            className="animate-spin size-8 text-primary"
+            className="size-8 animate-spin text-primary"
           />
         </div>
       )}
@@ -91,4 +91,3 @@ const LoadingWrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default ShowData;
-

@@ -1,5 +1,4 @@
 import type z from "zod";
-import { capitalize } from "~/lib";
 import type { CsvSchema } from "~/lib/zodSchemas";
 
 type ImportErrorsProps = {
@@ -37,7 +36,7 @@ const ImportErrors = ({ error, file, skip }: ImportErrorsProps) => {
           .filter((i) => i.message !== "")
           .map(({ index, field, message }) => (
             <li key={`${file}-${index}-${field}-${message}`}>
-              Rad {index + 1 + skip} - {capitalize(field)}: {message}
+              Rad {index + 1 + skip} - {field}: {message}
             </li>
           ))}
       </ul>

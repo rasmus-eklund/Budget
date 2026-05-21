@@ -10,7 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui";
-import { capitalize, eachDayOfInterval } from "~/lib";
+import { eachDayOfInterval } from "~/lib";
 import dayjs from "dayjs";
 import { colors } from "~/constants";
 import type { Tx } from "~/types";
@@ -45,7 +45,9 @@ const Balance = (props: Props) => {
                 name={pa}
               />
             ))}
-            <Legend formatter={(item) => capitalize(item as string)} />
+            <Legend
+              formatter={(item) => <p className="capitalize">{item}</p>}
+            />
           </LineChart>
         </ResponsiveContainer>
       </CardContent>

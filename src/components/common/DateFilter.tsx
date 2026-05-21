@@ -67,7 +67,7 @@ const DateFilter = ({ changeDates }: Props) => {
       }}
       className={cn("pt-2", showDateFilter ? "" : "hidden")}
     >
-      <TabsList className="md:w-fit w-full">
+      <TabsList className="w-full md:w-fit">
         <TabsTrigger data-testid="date-tab-month" value="month">
           Månad
         </TabsTrigger>

@@ -273,8 +273,14 @@ const FileForm = ({ categories, people, userId }: Props) => {
                         key={option.bankAccountId}
                         value={option.bankAccountId}
                       >
-                        {capitalize(option.person)} -{" "}
-                        {capitalize(option.account)}
+                        <span className="flex items-center gap-1">
+                          <span className="first-letter:uppercase">
+                            {option.person}
+                          </span>
+                          <span className="font-semibold first-letter:uppercase">
+                            {option.account}
+                          </span>
+                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -299,8 +305,12 @@ const FileForm = ({ categories, people, userId }: Props) => {
                   </SelectTrigger>
                   <SelectContent>
                     {configs.map((option) => (
-                      <SelectItem key={option.name} value={option.name}>
-                        {capitalize(option.name)}
+                      <SelectItem
+                        key={option.name}
+                        value={option.name}
+                        className="first-letter:uppercase"
+                      >
+                        {option.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

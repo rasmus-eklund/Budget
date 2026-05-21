@@ -22,7 +22,7 @@ const FiltersToggle = () => {
   }, [isDesktop, setShowFilter, setShowDateFilter]);
 
   return (
-    <div className="absolute right-2 top-2 items-center gap-2 flex md:hidden">
+    <div className="absolute top-2 right-2 flex items-center gap-2 md:hidden">
       <Button
         variant="outline"
         className={cn(

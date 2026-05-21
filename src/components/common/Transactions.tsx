@@ -14,10 +14,13 @@ type Props = {
 };
 const Transactions = ({ data, changeDates, canMarkInternal = true }: Props) => {
   return (
-    <div data-testid="transactions-root" className="flex-1 min-h-0 flex flex-col">
+    <div
+      data-testid="transactions-root"
+      className="flex min-h-0 flex-1 flex-col"
+    >
       <Virtuoso
         data-testid="transactions-virtuoso"
-        className="flex-1 min-h-0"
+        className="min-h-0 flex-1"
         data={data}
         itemContent={(_, tx) => (
           <Transaction
@@ -36,7 +39,7 @@ const Transactions = ({ data, changeDates, canMarkInternal = true }: Props) => {
 const ShowSum = ({ data }: { data: Tx[] }) => {
   const sum = data.reduce((a, b) => a + b.belopp, 0);
   return (
-    <div className="flex items-center justify-between gap-4 p-4 font-mono md:justify-end h-12 bg-secondary border-t">
+    <div className="flex h-12 items-center justify-between gap-4 border-t bg-secondary p-4 font-mono md:justify-end">
       <p className="pl-2">Antal: {data.length}</p>
       <div className="flex items-center gap-2">
         <p>Totalt:</p>
@@ -59,12 +62,15 @@ const Transaction = ({
   return (
     <li
       data-testid="transaction-row"
-      className="mb-2 mt-2 flex items-center gap-2 rounded-sm bg-accent p-1 shadow-lg overflow-hidden"
+      className="mt-2 mb-2 flex items-center gap-2 overflow-hidden rounded-sm bg-accent p-1 shadow-lg"
     >
-      <div data-testid="transaction-row-content" className="flex min-w-0 flex-1 flex-col">
+      <div
+        data-testid="transaction-row-content"
+        className="flex min-w-0 flex-1 flex-col"
+      >
         <div className="grid grid-cols-2">
           <button
-            className="cursor-pointer hover:scale-105 w-fit"
+            className="w-fit cursor-pointer hover:scale-105"
             onClick={async () => {
               setDateTab("day");
               const dates = getDayRange(dateToString(datum));
@@ -76,10 +82,16 @@ const Transaction = ({
           <Sek sek={belopp} />
         </div>
         <div className="flex min-w-0 justify-between gap-2">
-          <p data-testid="transaction-main-text" className="min-w-0 flex-1 truncate pr-2 italic">
+          <p
+            data-testid="transaction-main-text"
+            className="min-w-0 flex-1 truncate pr-2 italic"
+          >
             {text} - {capitalize(budgetgrupp)}
           </p>
-          <p data-testid="transaction-side-text" className="shrink-0 whitespace-nowrap">
+          <p
+            data-testid="transaction-side-text"
+            className="shrink-0 whitespace-nowrap"
+          >
             {capitalize(person)} ({capitalize(konto)})
           </p>
         </div>

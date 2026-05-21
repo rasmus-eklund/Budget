@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { capitalize } from "~/lib";
 import {
   addCategory,
   getAllCategories,
@@ -35,10 +34,10 @@ const Categories = async ({ userId }: WithAuthProps) => {
                 key={id}
               >
                 <Link
-                  className="hover:cursor-pointer"
+                  className="first-letter:uppercase hover:cursor-pointer"
                   href={`/categories/${id}`}
                 >
-                  {capitalize(name)}
+                  {name}
                 </Link>
                 <div className="flex items-center gap-2">
                   <EditItemForm
