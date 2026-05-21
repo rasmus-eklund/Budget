@@ -45,7 +45,7 @@ const Aggregated = ({ options: { person, category } }: Props) => {
   const catClass =
     "px-6 py-3 text-xs font-medium uppercase tracking-wider text-muted-foreground";
   return (
-    <div className="overflow-auto py-2 flex-1">
+    <div className="flex-1 overflow-auto py-2">
       {dates ? (
         <h2 className={cn("p-2 text-lg", stickyClass)}>
           {getDateString(dates)}
@@ -57,7 +57,7 @@ const Aggregated = ({ options: { person, category } }: Props) => {
             <th
               className={cn(
                 catClass,
-                "text-left bg-secondary flex items-center gap-1",
+                "flex items-center gap-1 bg-secondary text-left",
                 sticky && stickyClass,
               )}
             >
@@ -91,7 +91,7 @@ const Aggregated = ({ options: { person, category } }: Props) => {
             <tr key={category}>
               <td
                 className={cn(
-                  "whitespace-nowrap px-4 font-semibold tracking-wider bg-white",
+                  "bg-white px-4 font-semibold tracking-wider whitespace-nowrap",
                   sticky && stickyClass,
                 )}
               >

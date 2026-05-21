@@ -9,12 +9,7 @@ export default defineConfig([
   ...nextVitals,
 
   // Override default ignores
-  globalIgnores([
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
 
   // TypeScript + custom plugin rules
   {

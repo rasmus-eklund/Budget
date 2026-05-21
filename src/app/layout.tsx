@@ -31,7 +31,7 @@ export default function RootLayout({
       >
         <AuthProvider>
           <Header />
-          <main className="flex flex-1 w-full max-w-5xl flex-col gap-4">
+          <main className="flex w-full max-w-5xl flex-1 flex-col gap-4">
             {children}
           </main>
           <Toaster />

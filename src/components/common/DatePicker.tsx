@@ -26,7 +26,7 @@ const DatePicker = ({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex flex-col gap-3 flex-1">
+    <div className="flex flex-1 flex-col gap-3">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button

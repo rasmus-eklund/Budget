@@ -37,7 +37,7 @@ const HeaderMenu = () => {
           <DropdownMenuItem asChild key={path}>
             <Link
               className={cn(
-                "flex gap-2 items-center",
+                "flex items-center gap-2",
                 currentPath === path ? "text-primary" : "",
               )}
               href={

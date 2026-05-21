@@ -1,7 +1,6 @@
 "use client";
 
-import * as React from "react";
-import { cn, capitalize } from "~/lib";
+import { cn } from "~/lib";
 import {
   Popover,
   PopoverContent,
@@ -43,20 +42,26 @@ const MultiSelect = ({
           <Icon icon="ChevronsUpDown" className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-fit p-0">
+      <PopoverContent
+        className="max-h-(--radix-popover-content-available-height) w-fit overflow-hidden p-0"
+        sideOffset={5}
+        collisionPadding={10}
+      >
         <Command>
           <CommandInput placeholder="Sök" className="h-9" />
-          <CommandList>
+          <CommandList className="max-h-[calc(var(--radix-popover-content-available-height)-5.25rem)]">
             <CommandGroup>
               {options.map((item) => {
                 const checked = !!filterItems[item];
                 return (
                   <CommandItem key={item} value={item} onSelect={toggleItem}>
-                    {capitalize(item)}
+                    <span className="min-w-0 flex-1 truncate first-letter:uppercase">
+                      {item}
+                    </span>
                     <Icon
                       icon="Check"
                       className={cn(
-                        "ml-auto",
+                        "ml-auto shrink-0",
                         checked ? "opacity-100" : "opacity-0",
                       )}
                     />
@@ -66,7 +71,7 @@ const MultiSelect = ({
             </CommandGroup>
           </CommandList>
         </Command>
-        <div className="flex items-center gap-1 p-1">
+        <div className="flex shrink-0 items-center gap-1 p-1">
           <Button onClick={selectAll} className="flex-1" variant="outline">
             Alla
           </Button>

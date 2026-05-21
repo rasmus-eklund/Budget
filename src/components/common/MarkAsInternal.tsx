@@ -51,7 +51,7 @@ const MarkAsInternal = ({
           data-testid="mark-internal-trigger"
           size="icon"
           variant="ghost"
-          className="shrink-0 size-2 self-start"
+          className="size-2 shrink-0 self-start"
         >
           {loading ? (
             <Icon icon="Loader" className="animate-spin" />

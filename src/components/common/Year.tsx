@@ -31,7 +31,7 @@ const Year = ({ changeDate }: Props) => {
   const years = getYearRange({ from, to });
   return (
     <form
-      className="flex md:items-center gap-1 flex-col md:flex-row"
+      className="flex flex-col gap-1 md:flex-row md:items-center"
       onSubmit={(e) => e.preventDefault()}
     >
       <div className="flex items-center gap-1">

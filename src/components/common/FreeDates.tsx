@@ -20,7 +20,7 @@ const FreeDates = ({ changeDate }: Props) => {
   const changeDates = async (dates: FromTo) => await changeDate(dates);
 
   return (
-    <div className="flex md:items-center gap-1 flex-col md:flex-row">
+    <div className="flex flex-col gap-1 md:flex-row md:items-center">
       <DatePickerRange
         className="w-full md:w-fit"
         dates={dates}

@@ -35,7 +35,7 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
   return (
     <div
       className={cn(
-        "flex flex-wrap md:flex-nowrap gap-2 p-1 pt-2",
+        "flex flex-wrap gap-2 p-1 pt-2 md:flex-nowrap",
         showFilter ? "" : "hidden",
       )}
     >
@@ -164,7 +164,7 @@ const SearchInput = ({
         onClick={handleClear}
         icon="X"
         className={cn(
-          "absolute right-2 top-1/2 -translate-y-1/2 hover:scale-110 cursor-pointer transition-transform hidden",
+          "absolute top-1/2 right-2 hidden -translate-y-1/2 cursor-pointer transition-transform hover:scale-110",
           search !== "" && "block",
         )}
       />

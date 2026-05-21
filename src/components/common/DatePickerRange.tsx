@@ -29,7 +29,7 @@ const DatePickerRange = ({
   const [open, setOpen] = React.useState(false);
 
   return (
-    <div className="flex flex-col gap-3 flex-1 md:flex-none">
+    <div className="flex flex-1 flex-col gap-3 md:flex-none">
       <Popover modal={true} open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
