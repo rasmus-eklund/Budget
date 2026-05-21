@@ -273,14 +273,14 @@ const FileForm = ({ categories, people, userId }: Props) => {
                         key={option.bankAccountId}
                         value={option.bankAccountId}
                       >
-                        <div className="flex items-center gap-1">
-                          <p className="first-letter:uppercase">
+                        <span className="flex items-center gap-1">
+                          <span className="first-letter:uppercase">
                             {option.person}
-                          </p>
-                          <p className="font-semibold first-letter:uppercase">
+                          </span>
+                          <span className="font-semibold first-letter:uppercase">
                             {option.account}
-                          </p>
-                        </div>
+                          </span>
+                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
