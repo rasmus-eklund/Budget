@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui";
-import { Icon } from "~/components/common";
+import Icon from "./Icon";
 import type { Tx } from "~/types";
 import { useStore } from "~/stores/tx-store";
 import { useState } from "react";

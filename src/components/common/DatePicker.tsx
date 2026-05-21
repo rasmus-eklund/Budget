@@ -7,7 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui";
-import { Icon } from "~/components/common";
+import Icon from "./Icon";
 import { dateToString, cn } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
 import { useState } from "react";
