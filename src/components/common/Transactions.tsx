@@ -4,7 +4,7 @@ import { Virtuoso } from "react-virtuoso";
 import type { Tx } from "~/types";
 import { cn } from "~/lib/utils";
 import { useStore } from "~/stores/tx-store";
-import { MarkAsInternal } from "~/components/common";
+import MarkAsInternal from "./MarkAsInternal";
 import type { FromTo } from "~/lib/zodSchemas";
 
 type Props = {
@@ -39,7 +39,10 @@ const Transactions = ({ data, changeDates, canMarkInternal = true }: Props) => {
 const ShowSum = ({ data }: { data: Tx[] }) => {
   const sum = data.reduce((a, b) => a + b.belopp, 0);
   return (
-    <div className="flex h-12 items-center justify-between gap-4 border-t bg-secondary p-4 font-mono md:justify-end">
+    <div
+      data-testid="transactions-footer"
+      className="flex h-12 shrink-0 items-center justify-between gap-4 border-t bg-secondary p-4 font-mono md:justify-end"
+    >
       <p className="pl-2">Antal: {data.length}</p>
       <div className="flex items-center gap-2">
         <p>Totalt:</p>
