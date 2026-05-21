@@ -1,5 +1,5 @@
 "use client";
-import { dateToString, toSek, getDayRange } from "~/lib";
+import { dateToString, toSek, capitalize, getDayRange } from "~/lib";
 import { Virtuoso } from "react-virtuoso";
 import type { Tx } from "~/types";
 import { cn } from "~/lib/utils";
@@ -84,15 +84,15 @@ const Transaction = ({
         <div className="flex min-w-0 justify-between gap-2">
           <p
             data-testid="transaction-main-text"
-            className="min-w-0 flex-1 truncate pr-2 capitalize italic"
+            className="min-w-0 flex-1 truncate pr-2 italic"
           >
-            {text} - {budgetgrupp}
+            {text} - {capitalize(budgetgrupp)}
           </p>
           <p
             data-testid="transaction-side-text"
-            className="shrink-0 whitespace-nowrap capitalize"
+            className="shrink-0 whitespace-nowrap"
           >
-            {person} ({konto})
+            {capitalize(person)} ({capitalize(konto)})
           </p>
         </div>
       </div>
