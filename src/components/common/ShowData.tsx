@@ -11,12 +11,11 @@ import {
 } from "~/components/common";
 import { getUnique, applyTransactionFilters } from "~/lib";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui";
-import type { FilterTab } from "~/types";
+import type { ChangeDates, FilterTab } from "~/types";
 import { useStore } from "~/stores/tx-store";
-import type { FromTo } from "~/lib/zodSchemas";
 
 type Props = {
-  changeDates: (dates: FromTo) => Promise<void>;
+  changeDates: ChangeDates;
   canMarkInternal?: boolean;
 };
 const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {

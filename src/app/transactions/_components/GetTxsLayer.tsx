@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDebounceCallback } from "usehooks-ts";
 import { type FromTo } from "~/lib/zodSchemas";
 import { getErrorMessage, getLastMonthYear } from "~/lib";
 import getTxByDates from "../dataLayer/getData";
@@ -8,6 +9,7 @@ import { useStore } from "~/stores/tx-store";
 import { emptyOptions } from "~/constants";
 import { ShowData, Spinner } from "~/components/common";
 import { toast } from "sonner";
+import type { ChangeDatesOptions } from "~/types";
 
 type Props = { range: FromTo };
 const GetTxsLayer = ({ range: { from, to } }: Props) => {
@@ -21,7 +23,7 @@ const GetTxsLayer = ({ range: { from, to } }: Props) => {
   const setSelectedRange = useStore((state) => state.setSelectedRange);
   const password = useStore((state) => state.password);
 
-  const getData = useCallback(
+  const loadData = useCallback(
     async (dates: FromTo, reset = false) => {
       const requestId = ++requestIdRef.current;
       if (password === "") {
@@ -50,6 +52,26 @@ const GetTxsLayer = ({ range: { from, to } }: Props) => {
     },
     [setTxs, setLoading, setSelectedRange, setDraftRange, password, router],
   );
+  const debouncedLoadData = useDebounceCallback(
+    (dates: FromTo, reset: boolean) => {
+      void loadData(dates, reset);
+    },
+    500,
+  );
+
+  const getData = useCallback(
+    async (dates: FromTo, options: ChangeDatesOptions = {}) => {
+      const { debounce = false, reset = false } = options;
+      if (!debounce) {
+        debouncedLoadData.cancel();
+        await loadData(dates, reset);
+        return;
+      }
+
+      debouncedLoadData(dates, reset);
+    },
+    [debouncedLoadData, loadData],
+  );
 
   useEffect(() => {
     const range = { from, to };
@@ -59,7 +81,7 @@ const GetTxsLayer = ({ range: { from, to } }: Props) => {
       return;
     }
     const dates = getLastMonthYear(range);
-    getData(dates, true)
+    getData(dates, { reset: true })
       .catch((e) => toast.error(getErrorMessage(e)))
       .finally(() => setIsReady(true));
   }, [setRange, from, to, getData, password, router]);

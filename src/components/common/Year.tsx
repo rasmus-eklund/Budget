@@ -8,7 +8,8 @@ import {
   SelectValue,
   Button,
 } from "~/components/ui";
-import { Icon, Tooltip } from "~/components/common";
+import Icon from "./Icon";
+import Tooltip from "./Tooltip";
 import { getYearRange } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
 import { useStore } from "~/stores/tx-store";

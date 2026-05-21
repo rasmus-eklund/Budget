@@ -6,20 +6,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui";
-import { Icon } from "~/components/common";
-import type { Tx } from "~/types";
+import Icon from "./Icon";
+import type { ChangeDates, Tx } from "~/types";
 import { useStore } from "~/stores/tx-store";
 import { useState } from "react";
 import { toast } from "sonner";
 import { updateTransaction } from "~/app/transactions/dataLayer/updateTransaction";
-import type { FromTo } from "~/lib/zodSchemas";
 
 const MarkAsInternal = ({
   tx,
   changeDates,
 }: {
   tx: Tx;
-  changeDates: (dates: FromTo) => Promise<void>;
+  changeDates: ChangeDates;
 }) => {
   const [loading, setLoading] = useState(false);
   const password = useStore((state) => state.password);
