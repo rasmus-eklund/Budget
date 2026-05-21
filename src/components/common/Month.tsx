@@ -15,7 +15,6 @@ import {
   getYearRange,
   getMonthRange,
   incrementMonth,
-  capitalize,
 } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
 import { useStore } from "~/stores/tx-store";
@@ -91,8 +90,12 @@ const Month = ({ changeDate }: Props) => {
           </SelectTrigger>
           <SelectContent>
             {months.map((m, n) => (
-              <SelectItem key={`month-${m}`} value={(n + 1).toString()}>
-                {capitalize(m)}
+              <SelectItem
+                className="first-letter:capitalize"
+                key={`month-${m}`}
+                value={(n + 1).toString()}
+              >
+                {m}
               </SelectItem>
             ))}
           </SelectContent>

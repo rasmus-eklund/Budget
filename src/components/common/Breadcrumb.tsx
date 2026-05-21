@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui";
 import { Icon } from "~/components/common";
-import { capitalize } from "~/lib";
 
 type Props = {
   href: string;
@@ -38,8 +37,11 @@ const Breadcrumb = ({ href, name, options, current }: Props) => {
             <DropdownMenuContent align="start">
               {options.map(({ id, name }) => (
                 <DropdownMenuItem asChild key={id}>
-                  <BreadcrumbLink href={`${href}/${id}`}>
-                    {capitalize(name)}
+                  <BreadcrumbLink
+                    className="first-letter:capitalize"
+                    href={`${href}/${id}`}
+                  >
+                    {name}
                   </BreadcrumbLink>
                 </DropdownMenuItem>
               ))}
@@ -50,7 +52,9 @@ const Breadcrumb = ({ href, name, options, current }: Props) => {
           <Icon icon="Slash" className="size-4 fill-slate-500" />
         </BreadcrumbSeparator>
         <BreadcrumbItem>
-          <BreadcrumbPage>{capitalize(current)}</BreadcrumbPage>
+          <BreadcrumbPage className="first-letter:capitalize">
+            {current}
+          </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </ShadBreadcrumb>

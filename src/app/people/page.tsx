@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { capitalize } from "~/lib";
 import {
   addPerson,
   getAllPeople,
@@ -35,7 +34,9 @@ const Categories = async ({ userId }: WithAuthProps) => {
                 className="border-b-red flex h-8 items-center justify-between border-b"
                 key={id}
               >
-                <Link href={`/people/${id}`}>{capitalize(name)}</Link>
+                <Link className="first-letter:uppercase" href={`/people/${id}`}>
+                  {name}
+                </Link>
                 <div className="flex items-center gap-2">
                   <EditItemForm
                     data={{ name, id }}

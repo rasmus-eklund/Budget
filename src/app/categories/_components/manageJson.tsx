@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { capitalize } from "~/lib";
 import type { JsonData } from "~/lib/zodSchemas";
 import DownloadJsonButton from "./downloadJson";
 import UploadJsonButton from "./uploadJson";
@@ -45,16 +44,18 @@ const ManageJson = ({ userId }: Props) => {
               .sort((a, b) => a.name.localeCompare(b.name))
               .map(({ name, match }, i) => (
                 <div key={i} className="flex flex-col gap-1">
-                  <h4 className="text-md font-semibold">{capitalize(name)}</h4>
+                  <h4 className="text-md font-semibold first-letter:uppercase">
+                    {name}
+                  </h4>
                   <ul className="flex flex-wrap gap-1">
                     {match
                       .sort((a, b) => a.name.localeCompare(b.name))
                       .map(({ name }, i) => (
                         <li
-                          className="rounded-md bg-slate-400 px-2 py-1 text-sm"
+                          className="rounded-md bg-slate-400 px-2 py-1 text-sm first-letter:uppercase"
                           key={i}
                         >
-                          {capitalize(name)}
+                          {name}
                         </li>
                       ))}
                   </ul>

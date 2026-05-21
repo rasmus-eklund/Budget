@@ -12,7 +12,6 @@ import {
   EditItemForm,
   DeleteDialog,
 } from "~/components/common";
-import { capitalize } from "~/lib";
 import type { Name } from "~/types";
 import WithAuth, { type WithAuthProps } from "~/components/server/WithAuth";
 
@@ -40,7 +39,7 @@ const page = async (props: Props & WithAuthProps) => {
         options={options.map((i) => ({ id: i.name, name: i.name }))}
         current={name}
       />
-      <h2 className="text-lg font-semibold">{capitalize(name)}</h2>
+      <h2 className="text-lg font-semibold first-letter:uppercase">{name}</h2>
       <ul>
         {!bankAccounts || bankAccounts.length === 0 ? (
           <li>Du har inga bankkonton än.</li>
@@ -52,7 +51,7 @@ const page = async (props: Props & WithAuthProps) => {
                 className="border-b-red flex h-8 items-center justify-between border-b"
                 key={bankAccountId}
               >
-                <p>{capitalize(name)}</p>
+                <p className="first-letter:uppercase">{name}</p>
                 <div className="flex items-center gap-2">
                   <EditItemForm
                     data={{ name, id: bankAccountId }}

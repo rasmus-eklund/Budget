@@ -93,8 +93,8 @@ const CategoryBars = ({ sums, options }: { sums: Sum[]; options: Uniques }) => {
             ))}
             <Legend
               formatter={(item) => (
-                <p className="text-sm md:text-base">
-                  {capitalize(item as string)}
+                <p className="text-sm first-letter:capitalize md:text-base">
+                  {item}
                 </p>
               )}
             />
@@ -144,6 +144,6 @@ const CategoryPies = ({ data, name }: { name: string; data: Data[] }) => {
 };
 
 const PieLabel = ({ name, value }: { name: string; value: number }) =>
-  `${name}: ${toSek(value)}`;
+  `${capitalize(name)}: ${toSek(value)}`;
 
 export default CategoryPlots;
