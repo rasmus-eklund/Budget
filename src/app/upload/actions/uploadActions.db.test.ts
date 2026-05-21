@@ -22,6 +22,20 @@ import type {
   uploadFiles as UploadFiles,
 } from "../_components/fileFormHelpers";
 import type { upload as Upload } from "./uploadActions";
+import type {
+  removeBankAccount as RemoveBankAccount,
+  removePerson as RemovePerson,
+  renameBankAccount as RenameBankAccount,
+  renamePerson as RenamePerson,
+} from "../../people/dataLayer/peopleActions";
+import type {
+  getAllMatches as GetAllMatches,
+  removeCategory as RemoveCategory,
+  removeMatch as RemoveMatch,
+  replaceAllMatches as ReplaceAllMatches,
+  renameCategory as RenameCategory,
+  renameMatch as RenameMatch,
+} from "../../categories/dataLayer/categoriesActions";
 
 const TEST_DATABASE_URL =
   process.env.TEST_DATABASE_URL ??
@@ -37,6 +51,15 @@ mock.module("next/cache", () => ({
   revalidatePath: () => undefined,
 }));
 
+mock.module("next/navigation", () => ({
+  notFound: () => {
+    throw new Error("notFound");
+  },
+  redirect: (url: string) => {
+    throw new Error(`redirect:${url}`);
+  },
+}));
+
 assertLocalDatabaseUrl(TEST_DATABASE_URL);
 
 let sql: postgres.Sql;
@@ -48,16 +71,34 @@ let getMergeBaseTxs: typeof GetMergeBaseTxs;
 let prepareFullReplaceTxs: typeof PrepareFullReplaceTxs;
 let prepareMergeTxs: typeof PrepareMergeTxs;
 let upload: typeof Upload;
+let renameBankAccount: typeof RenameBankAccount;
+let removeBankAccount: typeof RemoveBankAccount;
+let renamePerson: typeof RenamePerson;
+let removePerson: typeof RemovePerson;
+let renameCategory: typeof RenameCategory;
+let removeCategory: typeof RemoveCategory;
+let renameMatch: typeof RenameMatch;
+let removeMatch: typeof RemoveMatch;
+let getAllMatches: typeof GetAllMatches;
+let replaceAllMatches: typeof ReplaceAllMatches;
 
 const userId = "db-test-user";
 const otherUserId = "db-test-other-user";
 const password = "test-password";
 const year = 2025;
 
+mock.module("~/server/getUserId", () => ({
+  default: async () => userId,
+}));
+
 const accountA = "db-test-account-a";
 const accountB = "db-test-account-b";
 const accountC = "db-test-account-c";
 const otherAccount = "db-test-other-account";
+const categoryA = "db-test-category-a";
+const otherCategory = "db-test-other-category";
+const matchA = "db-test-match-a";
+const otherMatch = "db-test-other-match";
 
 beforeAll(async () => {
   sql = postgres(TEST_DATABASE_URL, { connect_timeout: 2, prepare: false });
@@ -109,6 +150,21 @@ beforeAll(async () => {
 
   const actions = await import("./uploadActions");
   upload = actions.upload;
+
+  const peopleActions = await import("../../people/dataLayer/peopleActions");
+  renameBankAccount = peopleActions.renameBankAccount;
+  removeBankAccount = peopleActions.removeBankAccount;
+  renamePerson = peopleActions.renamePerson;
+  removePerson = peopleActions.removePerson;
+
+  const categoryActions =
+    await import("../../categories/dataLayer/categoriesActions");
+  renameCategory = categoryActions.renameCategory;
+  removeCategory = categoryActions.removeCategory;
+  renameMatch = categoryActions.renameMatch;
+  removeMatch = categoryActions.removeMatch;
+  getAllMatches = categoryActions.getAllMatches;
+  replaceAllMatches = categoryActions.replaceAllMatches;
 });
 
 afterAll(async () => {
@@ -118,6 +174,7 @@ afterAll(async () => {
 beforeEach(async () => {
   await cleanTestRows();
   await seedAccounts();
+  await seedCategories();
 });
 
 describe("upload account merge db integration", () => {
@@ -162,7 +219,6 @@ describe("upload account merge db integration", () => {
     const existingTxs = await getMergeBaseTxs({
       password,
       uploadedTxs,
-      userId,
     });
     const mergedTxs = prepareMergeTxs({ existingTxs, uploadedTxs });
 
@@ -171,7 +227,6 @@ describe("upload account merge db integration", () => {
       password,
       replacedAccountIds: [accountA],
       txs: mergedTxs,
-      userId,
     });
 
     const rows = await testDb
@@ -209,16 +264,41 @@ describe("upload account merge db integration", () => {
     );
   });
 
-  it("refuses to merge account ids owned by another user", () => {
-    expect(
+  it("refuses to merge account ids owned by another user", async () => {
+    await expectRejectsToThrow(
       upload({
         mode: "mergeAccounts",
         replacedAccountIds: [otherAccount],
         transactions: [],
-        userId,
         year,
       }),
-    ).rejects.toThrow("Kunde inte uppdatera valt konto.");
+      "Kunde inte uppdatera valt konto.",
+    );
+  });
+
+  it("refuses to insert replacement transactions for another user's account", async () => {
+    await expectRejectsToThrow(
+      upload({
+        mode: "replaceYear",
+        transactions: [
+          await encryptedTx({
+            accountId: otherAccount,
+            amount: 123,
+            category: "ovrigt",
+            date: new Date("2025-01-10"),
+            id: "crafted-other-user-tx",
+          }),
+        ],
+        year,
+      }),
+      "Kunde inte uppdatera valt konto.",
+    );
+
+    const rows = await testDb
+      .select()
+      .from(schema.txs)
+      .where(eq(schema.txs.id, "crafted-other-user-tx"));
+    expect(rows).toEqual([]);
   });
 
   it("merges replacement transactions from two accounts after an initial full replace", async () => {
@@ -250,7 +330,6 @@ describe("upload account merge db integration", () => {
       mode: "replaceYear",
       password,
       txs: prepareFullReplaceTxs(initialTxs),
-      userId,
     });
 
     const uploadedTxs: TxBankAccount[] = [
@@ -280,7 +359,6 @@ describe("upload account merge db integration", () => {
     const existingTxs = await getMergeBaseTxs({
       password,
       uploadedTxs,
-      userId,
     });
     const mergedTxs = prepareMergeTxs({ existingTxs, uploadedTxs });
 
@@ -289,7 +367,6 @@ describe("upload account merge db integration", () => {
       password,
       replacedAccountIds: [accountA, accountC],
       txs: mergedTxs,
-      userId,
     });
 
     const finalRows = await getNormalizedUserTxs([
@@ -368,7 +445,6 @@ describe("upload account merge db integration", () => {
     const mergeBaseTxs = await getMergeBaseTxs({
       password,
       uploadedTxs: [finalAccountA],
-      userId,
     });
     const mergedTxs = prepareMergeTxs({
       existingTxs: mergeBaseTxs,
@@ -379,7 +455,6 @@ describe("upload account merge db integration", () => {
       password,
       replacedAccountIds: [accountA],
       txs: mergedTxs,
-      userId,
     });
     const mergeState = await getNormalizedUserTxs();
 
@@ -390,11 +465,121 @@ describe("upload account merge db integration", () => {
       mode: "replaceYear",
       password,
       txs: prepareFullReplaceTxs([finalAccountA, finalAccountB]),
-      userId,
     });
     const replaceState = await getNormalizedUserTxs();
 
     expect(mergeState).toEqual(replaceState);
+  });
+});
+
+describe("server-owned user identity db integration", () => {
+  it("does not rename or delete another user's person or bank account", async () => {
+    await expectRejectsToThrow(
+      renameBankAccount({ id: otherAccount, name: "hacked account" }),
+      "Kunde inte byta bankkontots namn.",
+    );
+    await expectRejectsToThrow(
+      renamePerson({ id: "db-test-other-person", name: "hacked person" }),
+      "Kunde inte ändra personens namn",
+    );
+
+    const deleteAccountForm = new FormData();
+    deleteAccountForm.set("id", "db-test-person");
+    deleteAccountForm.set("bankAccountId", otherAccount);
+    await removeBankAccount(deleteAccountForm);
+
+    const deletePersonForm = new FormData();
+    deletePersonForm.set("id", "db-test-other-person");
+    await removePerson(deletePersonForm);
+
+    const [otherPerson] = await testDb
+      .select()
+      .from(schema.persons)
+      .where(eq(schema.persons.id, "db-test-other-person"));
+    const [otherBankAccount] = await testDb
+      .select()
+      .from(schema.bankAccounts)
+      .where(eq(schema.bankAccounts.id, otherAccount));
+
+    expect(otherPerson?.name).toBe("Other");
+    expect(otherBankAccount?.name).toBe("Other Account");
+  });
+
+  it("does not rename another user's category", async () => {
+    await expectRejectsToThrow(
+      renameCategory({ id: otherCategory, name: "hacked category" }),
+      "Kunde inte ändra kategorins namn",
+    );
+    const [categoryRow] = await testDb
+      .select()
+      .from(schema.category)
+      .where(eq(schema.category.id, otherCategory));
+    expect(categoryRow?.name).toBe("other-category");
+  });
+
+  it("does not rename another user's match", async () => {
+    await expectRejectsToThrow(
+      renameMatch({ id: otherMatch, name: "hacked match" }),
+      "Kunde inte ändra matchningens namn",
+    );
+    const [matchRow] = await testDb
+      .select()
+      .from(schema.match)
+      .where(eq(schema.match.id, otherMatch));
+    expect(matchRow?.name).toBe("other-match");
+  });
+
+  it("does not delete another user's category", async () => {
+    const deleteCategoryForm = new FormData();
+    deleteCategoryForm.set("id", otherCategory);
+    await removeCategory(deleteCategoryForm);
+    const [categoryRow] = await testDb
+      .select()
+      .from(schema.category)
+      .where(eq(schema.category.id, otherCategory));
+    expect(categoryRow?.name).toBe("other-category");
+  });
+
+  it("does not delete another user's match", async () => {
+    const deleteMatchForm = new FormData();
+    deleteMatchForm.set("id", otherMatch);
+    await expectRejectsToThrow(
+      removeMatch(deleteMatchForm),
+      "Kunde inte ta bort matchning",
+    );
+    const [matchRow] = await testDb
+      .select()
+      .from(schema.match)
+      .where(eq(schema.match.id, otherMatch));
+    expect(matchRow?.name).toBe("other-match");
+  });
+
+  it("exports and replaces category JSON only for the current user", async () => {
+    const exported = await getAllMatches();
+    expect(exported).toEqual([
+      { name: "category-a", match: [{ name: "match-a" }] },
+    ]);
+
+    await replaceAllMatches({
+      data: [{ name: "fresh-category", match: [{ name: "fresh-match" }] }],
+    });
+
+    const currentUserCategories = await testDb
+      .select({ name: schema.category.name })
+      .from(schema.category)
+      .where(eq(schema.category.userId, userId));
+    const [otherUserCategory] = await testDb
+      .select()
+      .from(schema.category)
+      .where(eq(schema.category.id, otherCategory));
+    const [otherUserMatch] = await testDb
+      .select()
+      .from(schema.match)
+      .where(eq(schema.match.id, otherMatch));
+
+    expect(currentUserCategories).toEqual([{ name: "fresh-category" }]);
+    expect(otherUserCategory?.name).toBe("other-category");
+    expect(otherUserMatch?.name).toBe("other-match");
   });
 });
 
@@ -473,7 +658,21 @@ const seedAccounts = async () => {
   ]);
 };
 
+const seedCategories = async () => {
+  await testDb.insert(schema.category).values([
+    { id: categoryA, name: "category-a", userId },
+    { id: otherCategory, name: "other-category", userId: otherUserId },
+  ]);
+  await testDb.insert(schema.match).values([
+    { id: matchA, name: "match-a", categoryId: categoryA },
+    { id: otherMatch, name: "other-match", categoryId: otherCategory },
+  ]);
+};
+
 const cleanTestRows = async () => {
+  await testDb
+    .delete(schema.category)
+    .where(inArray(schema.category.userId, [userId, otherUserId]));
   await testDb
     .delete(schema.persons)
     .where(
@@ -509,6 +708,21 @@ const getNormalizedUserTxs = async (accountIds = [accountA, accountB]) => {
       year,
     })),
   );
+};
+
+const expectRejectsToThrow = async (
+  promise: Promise<unknown>,
+  message: string,
+) => {
+  try {
+    await promise;
+  } catch (error) {
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).toContain(message);
+    return;
+  }
+
+  throw new Error(`Expected promise to reject with message: ${message}`);
 };
 
 function assertLocalDatabaseUrl(url: string) {

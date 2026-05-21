@@ -6,13 +6,13 @@ import {
 } from "./actions/uploadActions";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui";
 import YearCountChart from "./_components/YearCountChart";
-import WithAuth, { type WithAuthProps } from "~/components/server/WithAuth";
+import WithAuth from "~/components/server/WithAuth";
 
-const UploadPage = async ({ userId }: WithAuthProps) => {
+const UploadPage = async () => {
   const [data, categories, personAccounts] = await Promise.all([
-    getTxsPerYear(userId),
-    GetCategories(userId),
-    getPersonAccounts(userId),
+    getTxsPerYear(),
+    GetCategories(),
+    getPersonAccounts(),
   ]);
 
   return (
@@ -27,11 +27,7 @@ const UploadPage = async ({ userId }: WithAuthProps) => {
           </CardContent>
         </Card>
       )}
-      <FileForm
-        categories={categories}
-        people={personAccounts}
-        userId={userId}
-      />
+      <FileForm categories={categories} people={personAccounts} />
     </div>
   );
 };

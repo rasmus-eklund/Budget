@@ -10,14 +10,14 @@ import AddItemForm from "~/components/common/AddItemForm";
 import ManageJson from "./_components/manageJson";
 import DeleteDialog from "~/components/common/DeleteDialog";
 import EditItemForm from "~/components/common/EditItemForm";
-import WithAuth, { type WithAuthProps } from "~/components/server/WithAuth";
+import WithAuth from "~/components/server/WithAuth";
 import { type Name } from "~/types";
 
-const Categories = async ({ userId }: WithAuthProps) => {
-  const data = await getAllCategories(userId);
+const Categories = async () => {
+  const data = await getAllCategories();
   const handleAddCategory = async ({ name }: Name) => {
     "use server";
-    await addCategory({ name, userId });
+    await addCategory({ name });
   };
   return (
     <div className="flex flex-col gap-6 p-2">
@@ -54,12 +54,6 @@ const Categories = async ({ userId }: WithAuthProps) => {
                   >
                     <form action={removeCategory}>
                       <input hidden name="id" type="text" defaultValue={id} />
-                      <input
-                        hidden
-                        name="userId"
-                        type="text"
-                        defaultValue={userId}
-                      />
                       <DeleteButton icon={false} />
                     </form>
                   </DeleteDialog>
@@ -76,7 +70,7 @@ const Categories = async ({ userId }: WithAuthProps) => {
         }}
         uniques={data.map((i) => i.name)}
       />
-      <ManageJson userId={userId} />
+      <ManageJson />
     </div>
   );
 };

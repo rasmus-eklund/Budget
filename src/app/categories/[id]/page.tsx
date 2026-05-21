@@ -12,16 +12,15 @@ import {
   EditItemForm,
 } from "~/components/common";
 import type { Name } from "~/types";
-import WithAuth, { type WithAuthProps } from "~/components/server/WithAuth";
+import WithAuth from "~/components/server/WithAuth";
 
 type Props = { params: Promise<{ id: string }> };
 
-const page = async (props: Props & WithAuthProps) => {
+const page = async (props: Props) => {
   const params = await props.params;
   const { id: categoryId } = params;
-  const { userId } = props;
-  const options = await getAllCategories(userId);
-  const { name, match, unique } = await getMatches({ categoryId, userId });
+  const options = await getAllCategories();
+  const { name, match, unique } = await getMatches(categoryId);
   const onSubmit = async ({ name }: Name) => {
     "use server";
     await addMatch({ name, categoryId });
@@ -56,12 +55,6 @@ const page = async (props: Props & WithAuthProps) => {
                 />
                 <form className="flex items-center" action={removeMatch}>
                   <input hidden name="id" type="text" defaultValue={id} />
-                  <input
-                    hidden
-                    name="budgetgruppId"
-                    type="text"
-                    defaultValue={id}
-                  />
                   <DeleteButton />
                 </form>
               </div>

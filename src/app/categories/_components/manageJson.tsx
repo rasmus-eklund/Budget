@@ -7,13 +7,12 @@ import { Button } from "~/components/ui";
 import { replaceAllMatches } from "../dataLayer/categoriesActions";
 import { Icon } from "~/components/common";
 
-type Props = { userId: string };
-const ManageJson = ({ userId }: Props) => {
+const ManageJson = () => {
   const [jsonData, setJsonData] = useState<JsonData>([]);
   const [loading, setLoading] = useState(false);
   const handleUpload = async () => {
     setLoading(true);
-    await replaceAllMatches({ data: jsonData, userId });
+    await replaceAllMatches({ data: jsonData });
     setJsonData([]);
     setLoading(false);
   };
@@ -33,7 +32,7 @@ const ManageJson = ({ userId }: Props) => {
         kopia.
       </p>
       <div className="flex items-center gap-2">
-        <DownloadJsonButton className="w-fit cursor-pointer" userId={userId} />
+        <DownloadJsonButton className="w-fit cursor-pointer" />
         <UploadJsonButton onData={setJsonData} />
       </div>
       {jsonData.length !== 0 && (

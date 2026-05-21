@@ -11,14 +11,14 @@ import {
   DeleteDialog,
   EditItemForm,
 } from "~/components/common";
-import WithAuth, { type WithAuthProps } from "~/components/server/WithAuth";
+import WithAuth from "~/components/server/WithAuth";
 import { type Name } from "~/types";
 
-const Categories = async ({ userId }: WithAuthProps) => {
-  const data = await getAllPeople(userId);
+const Categories = async () => {
+  const data = await getAllPeople();
   const handleAddPerson = async ({ name }: Name) => {
     "use server";
-    await addPerson({ name, userId });
+    await addPerson({ name });
   };
   return (
     <div className="flex flex-col gap-6 p-2">
@@ -52,12 +52,6 @@ const Categories = async ({ userId }: WithAuthProps) => {
                   >
                     <form action={removePerson} className="flex items-center">
                       <input hidden name="id" type="text" defaultValue={id} />
-                      <input
-                        hidden
-                        name="userId"
-                        type="text"
-                        defaultValue={userId}
-                      />
                       <DeleteButton icon={false} />
                     </form>
                   </DeleteDialog>

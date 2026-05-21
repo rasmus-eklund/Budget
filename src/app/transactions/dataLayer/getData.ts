@@ -6,17 +6,16 @@ import { type FromTo } from "~/lib/zodSchemas";
 import { db } from "~/server/db";
 import { category, persons, txs } from "~/server/db/schema";
 import type { Filter, TxReturn } from "~/types";
+import getUserId from "~/server/getUserId";
 
 const getTxByDates = async ({
   dates: { from, to },
   password,
-  userId,
 }: {
   dates: FromTo;
   password: string;
-  userId: string;
 }): Promise<TxReturn> => {
-  if (!userId) return { ok: false };
+  const userId = await getUserId();
   if (password === "") redirect("/password?from=transactions");
   const categoriesReq = db.query.category.findMany({
     columns: { name: true },
