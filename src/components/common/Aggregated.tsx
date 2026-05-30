@@ -2,15 +2,14 @@
 
 import { useMemo } from "react";
 import {
-  calculateSums,
-  dateToString,
-  toSek,
-  getFromTo,
-  cn,
   allFalseExcept,
   allTrueExcept,
+  calculateSums,
+  cn,
+  dateToString,
+  getFromTo,
+  toSek,
 } from "~/lib";
-import type { FromTo } from "~/lib/zodSchemas";
 import type { Uniques } from "~/types";
 import { Button } from "~/components/ui";
 import { Icon } from "~/components/common";
@@ -20,35 +19,110 @@ type Props = {
   options: Uniques;
 };
 
-const Aggregated = ({ options: { person, category } }: Props) => {
-  const data = useStore((state) => state.txs);
-  const sumsMemo = useMemo(
-    () => calculateSums({ data, category, person }),
-    [data, person, category],
+const NON_CLICKABLE_CATEGORIES = ["spending", "total"] as const;
+const INTERNAL_CATEGORY = "inom";
+const DISPLAY_NAME_BY_CATEGORY: Record<string, string> = {
+  spending: "Utgifter",
+};
+
+const useAggregatedFilterActions = () => {
+  const setFilter = useStore((state) => state.setFilter);
+  const setFilterTab = useStore((state) => state.setFilterTab);
+  const defaultFilter = useStore((state) => state.filter);
+
+  return ({ category, person }: { category?: string; person?: string }) => {
+    setFilter({
+      category: category
+        ? allFalseExcept(defaultFilter.category, category)
+        : allTrueExcept(defaultFilter.category, INTERNAL_CATEGORY),
+      account: defaultFilter.account,
+      person: person
+        ? allFalseExcept(defaultFilter.person, person)
+        : allTrueExcept(defaultFilter.person, INTERNAL_CATEGORY),
+      search: "",
+    });
+    setFilterTab("transactions");
+  };
+};
+
+const useAggregatedTableModel = ({
+  txs,
+  person,
+  category,
+}: {
+  txs: ReturnType<typeof useStore.getState>["txs"];
+  person: string[];
+  category: string[];
+}) => {
+  const sums = useMemo(
+    () => calculateSums({ data: txs, category, person }),
+    [txs, person, category],
   );
   const sticky = useStore((state) => state.sticky);
   const setSticky = useStore((state) => state.setSticky);
-  const peopleTotal = [...person, "total"];
-  const nonClickableCategories = ["spending", "total"];
-  const categoriesTotal = [...category, ...nonClickableCategories].filter(
-    (i) => i != "inom",
+
+  const rowCategories = useMemo(
+    () =>
+      [...category, ...NON_CLICKABLE_CATEGORIES].filter(
+        (cat) => cat !== INTERNAL_CATEGORY,
+      ),
+    [category],
   );
-  const dates = getFromTo(data);
-  const getDateString = ({ from, to }: FromTo) => {
-    const f = dateToString(from);
-    const t = dateToString(to);
+
+  const visiblePeopleTotal = useMemo(
+    () =>
+      [...person, "total"].filter(
+        (p) =>
+          p === "total" ||
+          rowCategories.some((cat) => (sums[cat]?.[p] ?? 0) !== 0),
+      ),
+    [person, rowCategories, sums],
+  );
+
+  const datesLabel = useMemo(() => {
+    const dates = getFromTo(txs);
+    if (!dates) {
+      return undefined;
+    }
+    const f = dateToString(dates.from);
+    const t = dateToString(dates.to);
     return f !== t ? `${f} - ${t}` : f;
+  }, [txs]);
+
+  return {
+    sums,
+    sticky,
+    setSticky,
+    rowCategories,
+    visiblePeopleTotal,
+    datesLabel,
   };
+};
+
+const Aggregated = ({ options: { person, category } }: Props) => {
+  const txs = useStore((state) => state.txs);
+  const {
+    sums,
+    sticky,
+    setSticky,
+    rowCategories,
+    visiblePeopleTotal,
+    datesLabel,
+  } = useAggregatedTableModel({
+    txs,
+    person,
+    category,
+  });
+  const applyFilter = useAggregatedFilterActions();
 
   const stickyClass = "sticky left-0 z-10";
   const catClass =
     "px-6 py-3 text-xs font-medium uppercase tracking-wider text-muted-foreground";
+
   return (
     <div className="flex-1 overflow-auto py-2">
-      {dates ? (
-        <h2 className={cn("p-2 text-lg", stickyClass)}>
-          {getDateString(dates)}
-        </h2>
+      {datesLabel ? (
+        <h2 className={cn("p-2 text-lg", stickyClass)}>{datesLabel}</h2>
       ) : null}
       <table className="min-w-full divide-y divide-secondary">
         <thead className="bg-secondary">
@@ -69,16 +143,16 @@ const Aggregated = ({ options: { person, category } }: Props) => {
                 <Icon icon={sticky ? "PinOff" : "Pin"} />
               </Button>
             </th>
-            {peopleTotal.map((person) => (
-              <th key={person}>
-                {person === "total" ? (
-                  <p className={cn(catClass, "text-right")}>{person}</p>
+            {visiblePeopleTotal.map((p) => (
+              <th key={p}>
+                {p === "total" ? (
+                  <p className={cn(catClass, "text-right")}>{p}</p>
                 ) : (
                   <CatButton
                     className={cn(catClass, "w-full text-right")}
-                    person={person}
+                    onClick={() => applyFilter({ person: p })}
                   >
-                    {person}
+                    {p}
                   </CatButton>
                 )}
               </th>
@@ -86,43 +160,55 @@ const Aggregated = ({ options: { person, category } }: Props) => {
           </tr>
         </thead>
         <tbody className="divide-y divide-secondary bg-background">
-          {categoriesTotal.map((category, categoryIndex) => {
-            const name = category === "spending" ? "Utgifter" : category;
+          {rowCategories.map((cat, categoryIndex) => {
+            const isSummaryRow = categoryIndex >= rowCategories.length - 2;
+            const displayName = DISPLAY_NAME_BY_CATEGORY[cat] ?? cat;
+            const isStaticRow = NON_CLICKABLE_CATEGORIES.includes(
+              cat as (typeof NON_CLICKABLE_CATEGORIES)[number],
+            );
+
             return (
-              <tr key={category}>
+              <tr key={cat}>
                 <td
                   className={cn(
                     "bg-white px-4 font-semibold tracking-wider whitespace-nowrap first-letter:capitalize",
                     sticky && stickyClass,
                   )}
                 >
-                  {nonClickableCategories.includes(category) ? (
-                    name
+                  {isStaticRow ? (
+                    displayName
                   ) : (
-                    <CatButton category={category}>{name}</CatButton>
+                    <CatButton onClick={() => applyFilter({ category: cat })}>
+                      {displayName}
+                    </CatButton>
                   )}
                 </td>
-                {peopleTotal.map((person, index) => {
-                  const sek = sumsMemo[category]![person]!;
+
+                {visiblePeopleTotal.map((p, index) => {
+                  const value = sums[cat]?.[p] ?? 0;
+                  const isLastColumn = index === visiblePeopleTotal.length - 1;
                   return (
                     <td
+                      key={`${cat}${p}`}
                       className={cn(
                         "px-4 py-1 text-right",
-                        sek < 0 && "text-primary",
-                        index === peopleTotal.length - 1 && "font-semibold",
-                        categoryIndex >= categoriesTotal.length - 2 &&
-                          "font-bold",
+                        value < 0 && "text-primary",
+                        isLastColumn && "font-semibold",
+                        isSummaryRow && "font-bold",
                       )}
-                      key={`${category}${person}`}
                     >
-                      {nonClickableCategories.includes(category) ? (
-                        <p>{toSek(sek)}</p>
+                      {isStaticRow ? (
+                        <p>{toSek(value)}</p>
                       ) : (
                         <CatButton
-                          category={category}
-                          person={person !== "total" ? person : undefined}
+                          onClick={() =>
+                            applyFilter({
+                              category: cat,
+                              person: p !== "total" ? p : undefined,
+                            })
+                          }
                         >
-                          {toSek(sek)}
+                          {toSek(value)}
                         </CatButton>
                       )}
                     </td>
@@ -137,43 +223,24 @@ const Aggregated = ({ options: { person, category } }: Props) => {
   );
 };
 
-type CatButtonProps = {
-  children: React.ReactNode;
-  className?: string;
-  category?: string;
-  person?: string;
-};
 const CatButton = ({
   children,
   className,
-  category,
-  person,
-}: CatButtonProps) => {
-  const setFilter = useStore((state) => state.setFilter);
-  const setFilterTab = useStore((state) => state.setFilterTab);
-  const defaultFilter = useStore((state) => state.filter);
-  return (
-    <button
-      className={cn(
-        "cursor-pointer first-letter:capitalize hover:scale-110",
-        className,
-      )}
-      onClick={() => {
-        setFilter({
-          category: category
-            ? allFalseExcept(defaultFilter.category, category)
-            : allTrueExcept(defaultFilter.category, "inom"),
-          account: defaultFilter.account,
-          person: person
-            ? allFalseExcept(defaultFilter.person, person)
-            : allTrueExcept(defaultFilter.person, "inom"),
-          search: "",
-        });
-        setFilterTab("transactions");
-      }}
-    >
-      {children}
-    </button>
-  );
-};
+  onClick,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  onClick: () => void;
+}) => (
+  <button
+    className={cn(
+      "cursor-pointer first-letter:capitalize hover:scale-110",
+      className,
+    )}
+    onClick={onClick}
+  >
+    {children}
+  </button>
+);
+
 export default Aggregated;
