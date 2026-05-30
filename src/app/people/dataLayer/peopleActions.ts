@@ -110,10 +110,11 @@ export const renamePerson = async ({ name, id }: Name & { id: string }) => {
 
 export const getAllPeople = async () => {
   const userId = await getUserId();
-  return await db
+  const res = await db
     .select({ id: persons.id, name: persons.name })
     .from(persons)
     .where(eq(persons.userId, userId));
+  return res;
 };
 
 export const getBankAccounts = async (id: string) => {

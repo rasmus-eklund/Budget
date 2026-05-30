@@ -25,7 +25,7 @@ Object.assign(globalThis, {
   cancelAnimationFrame: (id: number) => clearTimeout(id),
 });
 
-mock.module("react-virtuoso", () => ({
+await mock.module("react-virtuoso", () => ({
   Virtuoso: ({
     data,
     itemContent,
@@ -35,12 +35,10 @@ mock.module("react-virtuoso", () => ({
     className?: string;
     data: Tx[];
     itemContent: (index: number, tx: Tx) => React.ReactNode;
-  }) => (
-    <ul {...props}>{data.map((tx, index) => itemContent(index, tx))}</ul>
-  ),
+  }) => <ul {...props}>{data.map((tx, index) => itemContent(index, tx))}</ul>,
 }));
 
-mock.module("~/app/transactions/dataLayer/updateTransaction", () => ({
+await mock.module("~/app/transactions/dataLayer/updateTransaction", () => ({
   updateTransaction: async () => ({ ok: true }),
 }));
 
@@ -135,13 +133,17 @@ const createDebouncedOrigin = (
   let timeout: ReturnType<typeof setTimeout> | null = null;
   return async (dates: FromTo, options: ChangeDatesOptions = {}) => {
     if (!options.debounce) {
-      if (timeout) clearTimeout(timeout);
+      if (timeout) {
+        clearTimeout(timeout);
+      }
       timeout = null;
       onLoad(dates, options);
       return;
     }
 
-    if (timeout) clearTimeout(timeout);
+    if (timeout) {
+      clearTimeout(timeout);
+    }
     timeout = setTimeout(() => {
       onLoad(dates, options);
     }, 500);

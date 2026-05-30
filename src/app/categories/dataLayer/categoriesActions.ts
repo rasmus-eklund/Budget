@@ -94,11 +94,13 @@ export const getMatches = async (categoryId: string) => {
 
 export const getAllMatches = async () => {
   const userId = await getUserId();
-  return await db.query.category.findMany({
+  const categories = await db.query.category.findMany({
     columns: { name: true },
     with: { match: { columns: { name: true } } },
     where: eq(category.userId, userId),
   });
+
+  return categories;
 };
 
 export const replaceAllMatches = async ({ data }: { data: JsonData }) => {
@@ -158,10 +160,11 @@ export const removeCategory = async (formData: FormData) => {
 
 export const getAllCategories = async () => {
   const userId = await getUserId();
-  return await db
+  const res = await db
     .select({ id: category.id, name: category.name })
     .from(category)
     .where(eq(category.userId, userId));
+  return res;
 };
 
 export const renameCategory = async ({ name, id }: Name & { id: string }) => {

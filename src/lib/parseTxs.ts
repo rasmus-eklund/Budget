@@ -27,12 +27,12 @@ const parseTxs = async ({ buffer, bankAccountId, config }: ParserProps) => {
       header: true,
       skipEmptyLines: true,
       beforeFirstChunk: (chunk) => {
-        if (config.skipLines <= 0) return chunk;
+        if (config.skipLines <= 0) {return chunk;}
         return chunk.split(/\r?\n/).slice(config.skipLines).join("\n");
       },
       complete: (result) => {
         if (result.errors.length > 0)
-          return reject(Error("Kunde inte läsa CSV filen."));
+          {return reject(Error("Kunde inte läsa CSV filen."));}
         const remapped = result.data.map((row) =>
           remapRow(row, config.columns),
         );

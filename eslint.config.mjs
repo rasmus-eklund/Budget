@@ -31,16 +31,22 @@ export default defineConfig([
     rules: {
       // TypeScript rules
       "@typescript-eslint/array-type": "off",
-      "@typescript-eslint/consistent-type-definitions": "off",
+      "@typescript-eslint/consistent-type-definitions": ["error", "type"],
       "@typescript-eslint/consistent-type-imports": [
-        "warn",
+        "error",
         { prefer: "type-imports", fixStyle: "inline-type-imports" },
       ],
       "@typescript-eslint/no-unused-vars": [
-        "warn",
+        "error",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
       "@typescript-eslint/require-await": "off",
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-unnecessary-type-assertion": "error",
+      "@typescript-eslint/no-unnecessary-condition": "warn",
+      "@typescript-eslint/await-thenable": "error",
+      "@typescript-eslint/return-await": ["error", "in-try-catch"],
       "@typescript-eslint/no-misused-promises": [
         "error",
         { checksVoidReturn: { attributes: false } },
@@ -51,7 +57,13 @@ export default defineConfig([
       "drizzle/enforce-update-with-where": "error",
 
       // unused-imports rules
-      "unused-imports/no-unused-imports": "warn",
+      "unused-imports/no-unused-imports": "error",
+
+      // General correctness
+      eqeqeq: ["error", "smart"],
+      "no-console": ["warn", { allow: ["warn", "error"] }],
+      "no-debugger": "error",
+      curly: ["error", "all"],
     },
   },
 ]);

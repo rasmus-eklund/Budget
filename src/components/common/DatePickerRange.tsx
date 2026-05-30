@@ -53,7 +53,7 @@ const DatePickerRange = ({
             showOutsideDays
             onSelect={(dates) => {
               dates?.from &&
-                dates?.to &&
+                dates.to &&
                 setDate({ from: dates.from, to: dates.to });
             }}
             footer={

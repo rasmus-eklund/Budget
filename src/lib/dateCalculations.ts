@@ -159,8 +159,8 @@ export const isSameDayRange = ({ from, to }: FromTo) =>
   from.getDate() === to.getDate();
 
 export const isFullMonthRange = ({ from, to }: FromTo) => {
-  if (from.getFullYear() !== to.getFullYear()) return false;
-  if (from.getMonth() !== to.getMonth()) return false;
+  if (from.getFullYear() !== to.getFullYear()) {return false;}
+  if (from.getMonth() !== to.getMonth()) {return false;}
   const lastDayOfMonth = new Date(
     from.getFullYear(),
     from.getMonth() + 1,

@@ -16,7 +16,7 @@ export const updateTransaction = async ({
   password: string;
 }) => {
   const userId = await getUserId();
-  if (!password) throw new Error("Password missing.");
+  if (!password) {throw new Error("Password missing.");}
 
   const ownedAccountIdsQuery = db
     .select({ id: bankAccounts.id })

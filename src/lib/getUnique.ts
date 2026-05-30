@@ -15,9 +15,9 @@ export const getDefaultOptions = (data: Tx[]) => {
   const category = new Set<string>();
 
   for (const tx of data) {
-    if (!person.has(tx.person)) person.add(tx.person);
-    if (!account.has(tx.konto)) account.add(tx.konto);
-    if (!category.has(tx.budgetgrupp)) category.add(tx.budgetgrupp);
+    if (!person.has(tx.person)) {person.add(tx.person);}
+    if (!account.has(tx.konto)) {account.add(tx.konto);}
+    if (!category.has(tx.budgetgrupp)) {category.add(tx.budgetgrupp);}
   }
   return { person, account, category };
 };

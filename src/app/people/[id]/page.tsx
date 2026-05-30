@@ -36,7 +36,7 @@ const page = async (props: Props) => {
       />
       <h2 className="text-lg font-semibold first-letter:uppercase">{name}</h2>
       <ul>
-        {!bankAccounts || bankAccounts.length === 0 ? (
+        {bankAccounts.length === 0 ? (
           <li>Du har inga bankkonton än.</li>
         ) : (
           bankAccounts

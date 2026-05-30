@@ -113,7 +113,7 @@ const fillMissingDates = (
 
   for (const tx of txs) {
     const key = `${tx.person}_${tx.konto}`;
-    if (!accountTxMap[key]) continue;
+    if (!accountTxMap[key]) {continue;}
     const dateKey = formatter(tx.datum);
     accountTxMap[key][dateKey] = tx.saldo;
     if (!accountFirstTx[key]) {

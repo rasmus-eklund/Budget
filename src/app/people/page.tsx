@@ -24,7 +24,7 @@ const Categories = async () => {
     <div className="flex flex-col gap-6 p-2">
       <h2 className="text-lg font-semibold">Dina personer:</h2>
       <ul className="flex flex-col gap-1">
-        {!data || data.length === 0 ? (
+        {data.length === 0 ? (
           <li>Du har inga personer än.</li>
         ) : (
           data

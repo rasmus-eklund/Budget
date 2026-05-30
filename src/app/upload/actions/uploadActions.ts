@@ -138,7 +138,7 @@ export const getMergeBaseTransactions = async ({
   const out: TxBankAccount[] = [];
   for (const person of data) {
     for (const account of person.bankAccounts) {
-      if (excluded.has(account.id)) continue;
+      if (excluded.has(account.id)) {continue;}
       for (const tx of account.txs) {
         const decrypted = await decryptTxData(tx.data, password);
         out.push({
@@ -183,7 +183,7 @@ export const GetCategories = async () => {
 
 export const getPersonAccounts = async () => {
   const userId = await getUserId();
-  return await db.query.persons.findMany({
+  return db.query.persons.findMany({
     columns: { id: true, name: true },
     where: eq(persons.userId, userId),
     with: { bankAccounts: { columns: { name: true, id: true } } },

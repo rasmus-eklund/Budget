@@ -47,11 +47,11 @@ Object.assign(process.env, {
   SKIP_ENV_VALIDATION: "1",
 });
 
-mock.module("next/cache", () => ({
+await mock.module("next/cache", () => ({
   revalidatePath: () => undefined,
 }));
 
-mock.module("next/navigation", () => ({
+await mock.module("next/navigation", () => ({
   notFound: () => {
     throw new Error("notFound");
   },
@@ -87,7 +87,7 @@ const otherUserId = "db-test-other-user";
 const password = "test-password";
 const year = 2025;
 
-mock.module("~/server/getUserId", () => ({
+await mock.module("~/server/getUserId", () => ({
   default: async () => userId,
 }));
 
@@ -168,7 +168,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await sql?.end();
+  await sql.end();
 });
 
 beforeEach(async () => {
@@ -698,7 +698,7 @@ const getNormalizedUserTxs = async (accountIds = [accountA, accountB]) => {
     .where(inArray(schema.txs.bankAccountId, accountIds))
     .orderBy(schema.txs.id);
 
-  return await Promise.all(
+  return Promise.all(
     rows.map(async ({ bankAccountId, data, date, id, sourceOrder, year }) => ({
       bankAccountId,
       date: date.toISOString(),

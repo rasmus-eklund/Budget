@@ -4,7 +4,6 @@ import { getFromTo } from "~/lib";
 
 export const generateData = () => {
   const txs: Tx[] = [];
-  console.log("Generating data");
   const people = ["Anna", "Per"] as const;
   const balance = {
     Anna: { Kort: 10000, Spar: 40000 },

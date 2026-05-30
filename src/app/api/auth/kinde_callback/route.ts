@@ -4,10 +4,7 @@ import { NextResponse } from "next/server";
 const staleStatePattern = "State not found";
 
 export const GET = async (request: Request) => {
-  const response = (await handleAuth(
-    request,
-    "kinde_callback",
-  )) as unknown as Response;
+  const response = handleAuth(request, "kinde_callback") as unknown as Response;
 
   if (response.status !== 500) {
     return response;
