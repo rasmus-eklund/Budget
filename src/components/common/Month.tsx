@@ -33,7 +33,7 @@ const Month = ({ changeDate }: Props) => {
   const mostRecentYear = to.getFullYear();
   const mostRecentMonth = to.getMonth() + 1;
   const years = getYearRange({ from, to });
-  const submitDates = async (dates: FromTo) => await changeDate(dates);
+  const submitDates = async (dates: FromTo) => changeDate(dates);
   return (
     <form
       className="flex flex-col gap-1 md:flex-row md:items-center"
@@ -42,7 +42,7 @@ const Month = ({ changeDate }: Props) => {
       <Select
         value={year.toString()}
         onValueChange={async (value) => {
-          if (!value) return;
+          if (!value) {return;}
           const data = { year: Number(value), month };
           await submitDates(getMonthRange(data));
         }}
@@ -78,7 +78,7 @@ const Month = ({ changeDate }: Props) => {
         <Select
           value={month.toString()}
           onValueChange={async (value) => {
-            if (!value) return;
+            if (!value) {return;}
             const data = { year, month: Number(value) };
             await submitDates(getMonthRange(data));
           }}

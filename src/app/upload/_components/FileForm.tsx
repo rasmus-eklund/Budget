@@ -210,7 +210,9 @@ const FileForm = ({ categories, people }: Props) => {
               }}
               onChange={(e) => {
                 const files = e.target.files;
-                if (!files) return;
+                if (!files) {
+                  return;
+                }
                 const data: FileData[] = [];
                 for (const file of files) {
                   data.push({
@@ -247,7 +249,7 @@ const FileForm = ({ categories, people }: Props) => {
             </Button>
           </div>
         )}
-        {files && (
+        {files.length !== 0 && (
           <ul className="flex flex-col gap-2">
             {files.map(({ file, bankAccountId, config }, i) => (
               <li className="flex items-center gap-2" key={`${file.name}_${i}`}>
@@ -389,7 +391,9 @@ const ShowTransactions = ({ txs, options }: { txs: Tx[]; options: Filter }) => {
 
   useEffect(() => {
     const range = getFromTo(txs);
-    if (!range) return;
+    if (!range) {
+      return;
+    }
     setRange(range);
     const dates = getLastMonthYear(range);
     void getData(dates, true);

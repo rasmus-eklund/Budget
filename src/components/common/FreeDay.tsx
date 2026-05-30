@@ -13,7 +13,7 @@ type Props = { changeDate: (dates: FromTo) => void };
 const FreeDay = ({ changeDate }: Props) => {
   const { from, to } = useStore((state) => state.range);
   const day = useStore((state) => state.draftRange.from);
-  const onChange = async (dates: FromTo) => await changeDate(dates);
+  const onChange = async (dates: FromTo) => changeDate(dates);
 
   return (
     <form
@@ -26,7 +26,7 @@ const FreeDay = ({ changeDate }: Props) => {
           disabled={day <= from}
           variant="outline"
           size="icon"
-          onClick={async () => await onChange(decrementDay(day))}
+          onClick={async () => onChange(decrementDay(day))}
         >
           <Icon icon="ChevronLeft" className="size-4" />
         </Button>
@@ -43,7 +43,7 @@ const FreeDay = ({ changeDate }: Props) => {
           disabled={day >= to}
           variant="outline"
           size="icon"
-          onClick={async () => await onChange(incrementDay(day))}
+          onClick={async () => onChange(incrementDay(day))}
         >
           <Icon icon="ChevronRight" className="size-4" />
         </Button>
@@ -52,7 +52,7 @@ const FreeDay = ({ changeDate }: Props) => {
         <Button
           type="button"
           variant="outline"
-          onClick={async () => await onChange(getDayRange(dateToString(to)))}
+          onClick={async () => onChange(getDayRange(dateToString(to)))}
         >
           <p className="md:hidden">Senaste dagen</p>
           <Icon icon="CalendarCheck" />

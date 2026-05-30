@@ -39,16 +39,22 @@ const DateFilter = ({ changeDates }: Props) => {
         const nextTab = value as DateTab;
         setDateTab(nextTab);
         const { from } = draftRange;
-        if (nextTab === "free") return;
+        if (nextTab === "free") {
+          return;
+        }
 
         if (nextTab === "day") {
-          if (isSameDayRange(draftRange)) return;
+          if (isSameDayRange(draftRange)) {
+            return;
+          }
           requestDateChange(getDayRange(dateToString(from)));
           return;
         }
 
         if (nextTab === "month") {
-          if (isFullMonthRange(draftRange)) return;
+          if (isFullMonthRange(draftRange)) {
+            return;
+          }
           requestDateChange(
             getMonthRange({
               year: from.getFullYear(),
@@ -58,13 +64,13 @@ const DateFilter = ({ changeDates }: Props) => {
           return;
         }
 
-        if (nextTab === "year") {
-          if (isFullYearRange(draftRange)) return;
-          requestDateChange({
-            from: new Date(Date.UTC(from.getFullYear(), 0, 1)),
-            to: new Date(Date.UTC(from.getFullYear() + 1, 0, 0)),
-          });
+        if (isFullYearRange(draftRange)) {
+          return;
         }
+        requestDateChange({
+          from: new Date(Date.UTC(from.getFullYear(), 0, 1)),
+          to: new Date(Date.UTC(from.getFullYear() + 1, 0, 0)),
+        });
       }}
       className={cn("pt-2", showDateFilter ? "" : "hidden")}
     >

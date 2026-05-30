@@ -76,7 +76,7 @@ export const getMergeBaseTxs = async ({
 }) => {
   const year = getUploadYear(uploadedTxs);
   const accountIds = getUploadedAccountIds(uploadedTxs);
-  return await getMergeBaseTransactions({
+  return getMergeBaseTransactions({
     excludedAccountIds: accountIds,
     password,
     year,

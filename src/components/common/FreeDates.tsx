@@ -17,7 +17,7 @@ const FreeDates = ({ changeDate }: Props) => {
     setDates(draftRange);
   }, [draftRange]);
 
-  const changeDates = async (dates: FromTo) => await changeDate(dates);
+  const changeDates = async (dates: FromTo) => changeDate(dates);
 
   return (
     <div className="flex flex-col gap-1 md:flex-row md:items-center">
@@ -30,10 +30,10 @@ const FreeDates = ({ changeDate }: Props) => {
       />
       <Button
         variant="outline"
-        onClick={async () => {
+        onClick={() => {
           const allDates = { from, to };
           setDates(allDates);
-          await changeDate(allDates);
+          changeDate(allDates);
         }}
       >
         All data

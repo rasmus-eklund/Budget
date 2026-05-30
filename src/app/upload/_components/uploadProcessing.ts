@@ -16,11 +16,17 @@ export const getUploadedAccountIds = (txs: TxBankAccount[]) =>
 const sortForInternalMarking = (txs: TxBankAccount[]) =>
   [...txs].sort((a, b) => {
     const dateDiff = a.datum.getTime() - b.datum.getTime();
-    if (dateDiff !== 0) return dateDiff;
+    if (dateDiff !== 0) {
+      return dateDiff;
+    }
     const accountDiff = a.bankAccountId.localeCompare(b.bankAccountId);
-    if (accountDiff !== 0) return accountDiff;
+    if (accountDiff !== 0) {
+      return accountDiff;
+    }
     const sourceOrderDiff = a.sourceOrder - b.sourceOrder;
-    if (sourceOrderDiff !== 0) return sourceOrderDiff;
+    if (sourceOrderDiff !== 0) {
+      return sourceOrderDiff;
+    }
     return a.id.localeCompare(b.id);
   });
 
@@ -28,7 +34,7 @@ export const prepareFullReplaceTxs = (txs: TxBankAccount[]) => {
   const start = performance.now();
   const data = markInternal(sortForInternalMarking(txs));
   const end = performance.now();
-  console.log(`Processed ${data.length} txs in ${end - start} ms`);
+  console.warn(`Processed ${data.length} txs in ${end - start} ms`);
   return data;
 };
 
@@ -49,6 +55,6 @@ export const prepareMergeTxs = ({
     ),
   );
   const end = performance.now();
-  console.log(`Processed ${data.length} txs in ${end - start} ms`);
+  console.warn(`Processed ${data.length} txs in ${end - start} ms`);
   return data;
 };

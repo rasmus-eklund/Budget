@@ -23,12 +23,12 @@ const Year = ({ changeDate }: Props) => {
   const draftRange = useStore((state) => state.draftRange);
   const year = draftRange.from.getFullYear();
   const mostRecentYear = to.getFullYear();
-  const submitYear = async (year: number) => {
-    await changeDate({
+  const submitYear = async (year: number) =>
+    changeDate({
       from: new Date(Date.UTC(year, 0, 1)),
       to: new Date(Date.UTC(year + 1, 0, 0)),
     });
-  };
+
   const years = getYearRange({ from, to });
   return (
     <form
