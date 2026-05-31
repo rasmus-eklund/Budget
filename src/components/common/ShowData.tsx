@@ -8,6 +8,7 @@ import {
   DateFilter,
   FiltersToggle,
   Icon,
+  Monthly,
 } from "~/components/common";
 import { getUnique, applyTransactionFilters } from "~/lib";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui";
@@ -39,6 +40,7 @@ const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
         <TabsList className="w-full md:w-fit">
           <TabsTrigger value="aggregated">Budget</TabsTrigger>
           <TabsTrigger value="transactions">Transaktioner</TabsTrigger>
+          <TabsTrigger value="monthly">Månatlig</TabsTrigger>
           <TabsTrigger value="categoryBars">Utgifter</TabsTrigger>
           <TabsTrigger value="balanceOverTime">Saldo</TabsTrigger>
         </TabsList>
@@ -55,6 +57,11 @@ const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
               changeDates={changeDates}
               canMarkInternal={canMarkInternal}
             />
+          </LoadingWrapper>
+        </TabsContent>
+        <TabsContent value="monthly" className="flex min-h-0 flex-1">
+          <LoadingWrapper>
+            <Monthly data={txs} options={options} />
           </LoadingWrapper>
         </TabsContent>
         <TabsContent value="categoryBars">
