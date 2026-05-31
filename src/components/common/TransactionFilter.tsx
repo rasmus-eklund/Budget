@@ -27,6 +27,7 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
   const hasChanged = useStore((state) => state.hasChanged);
   const filter = useStore((state) => state.filter);
   const showFilter = useStore((state) => state.showFilter);
+  const filterTab = useStore((state) => state.filterTab);
   const debouncedSearch = useDebounceCallback(
     (v: string) => setFilter({ ...filter, search: v }),
     1000,
@@ -101,32 +102,36 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
           Rensa filter
         </Button>
       )}
-      <Select
-        value={txSort.sort}
-        onValueChange={(value) =>
-          setTxSort({ ...txSort, sort: value as SortOption })
-        }
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Sortera" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>Datum</SelectLabel>
-            <SelectItem value={sortOptions.dateAsc}>Datumstigande</SelectItem>
-            <SelectItem value={sortOptions.dateDesc}>Datumfallande</SelectItem>
-          </SelectGroup>
-          <SelectGroup>
-            <SelectLabel>Belopp</SelectLabel>
-            <SelectItem value={sortOptions.amountAsc}>
-              Lågt till högt
-            </SelectItem>
-            <SelectItem value={sortOptions.amountDesc}>
-              Högt till lågt
-            </SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+      {["aggregated", "transactions"].includes(filterTab) && (
+        <Select
+          value={txSort.sort}
+          onValueChange={(value) =>
+            setTxSort({ ...txSort, sort: value as SortOption })
+          }
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Sortera" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Datum</SelectLabel>
+              <SelectItem value={sortOptions.dateAsc}>Datumstigande</SelectItem>
+              <SelectItem value={sortOptions.dateDesc}>
+                Datumfallande
+              </SelectItem>
+            </SelectGroup>
+            <SelectGroup>
+              <SelectLabel>Belopp</SelectLabel>
+              <SelectItem value={sortOptions.amountAsc}>
+                Lågt till högt
+              </SelectItem>
+              <SelectItem value={sortOptions.amountDesc}>
+                Högt till lågt
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      )}
     </div>
   );
 };
