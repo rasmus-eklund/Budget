@@ -25,13 +25,17 @@ type AggregatedPeriod = {
   period: string;
   users: PersonCategorySums;
 };
+type VisibleColumn = {
+  category: string;
+  person: string;
+};
 
 const formatPeriod = (date: Date, groupBy: GroupBy) => {
-  const year = date.getUTCFullYear();
+  const year = date.getFullYear();
   if (groupBy === "year") {
     return `${year}`;
   }
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   return `${year}-${month}`;
 };
 
@@ -119,12 +123,42 @@ const Monthly = ({ data, options }: Props) => {
     [aggregated, options.person, visibleCategories],
   );
 
+  const visibleColumns = useMemo<VisibleColumn[]>(
+    () =>
+      visibleCategories.flatMap((category) =>
+        visiblePeople.map((person) => ({ category, person })),
+      ),
+    [visibleCategories, visiblePeople],
+  );
+
+  const columnTotals = useMemo(() => {
+    const totals = visibleColumns.map(() => 0);
+    let grandTotal = 0;
+
+    for (const period of aggregated) {
+      visibleColumns.forEach(({ category, person }, index) => {
+        const value = period.users[person]?.[category] ?? 0;
+        totals[index] = (totals[index] ?? 0) + value;
+        grandTotal += value;
+      });
+    }
+
+    const periodCount = aggregated.length;
+    const averages =
+      periodCount === 0 ? totals : totals.map((total) => total / periodCount);
+    const grandAverage = periodCount === 0 ? 0 : grandTotal / periodCount;
+
+    return { totals, grandTotal, averages, grandAverage };
+  }, [aggregated, visibleColumns]);
+
   const stickyClass = "sticky left-0 z-10";
   const headClass =
     "px-4 py-2 text-xs font-semibold tracking-wider uppercase text-muted-foreground";
+  const totalClass = "bg-secondary font-semibold text-foreground";
+  const averageLabel = groupBy === "month" ? "Snitt/Månad" : "Snitt/År";
 
   return (
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
       <div className="w-45">
         <Select
           value={groupBy}
@@ -140,7 +174,7 @@ const Monthly = ({ data, options }: Props) => {
         </Select>
       </div>
 
-      <div className="min-h-0 min-w-0 flex-1 overflow-auto py-2">
+      <div className="min-h-0 min-w-0 flex-1 overflow-auto">
         <table className="min-w-full divide-y divide-secondary">
           <thead className="sticky top-0 z-20 bg-secondary">
             <tr>
@@ -173,36 +207,46 @@ const Monthly = ({ data, options }: Props) => {
                   {category}
                 </th>
               ))}
+              <th
+                rowSpan={2}
+                className={cn(headClass, "bg-secondary text-right")}
+              >
+                Total
+              </th>
             </tr>
 
             <tr>
-              {visibleCategories.flatMap((category) =>
-                visiblePeople.map((person) => (
-                  <th
-                    key={`${category}-${person}`}
-                    className="bg-secondary px-3 py-2 text-right text-xs font-medium tracking-wider text-muted-foreground first-letter:capitalize"
-                  >
-                    {person}
-                  </th>
-                )),
-              )}
+              {visibleColumns.map(({ category, person }) => (
+                <th
+                  key={`${category}-${person}`}
+                  className="bg-secondary px-3 py-2 text-right text-xs font-medium tracking-wider text-muted-foreground first-letter:capitalize"
+                >
+                  {person}
+                </th>
+              ))}
             </tr>
           </thead>
 
           <tbody className="divide-y divide-secondary bg-background">
-            {aggregated.map((row) => (
-              <tr key={row.period}>
-                <td
-                  className={cn(
-                    "bg-white px-4 py-2 align-top font-medium whitespace-nowrap",
-                    sticky && stickyClass,
-                  )}
-                >
-                  {row.period}
-                </td>
+            {aggregated.map((row) => {
+              const rowTotal = visibleColumns.reduce(
+                (sum, { category, person }) =>
+                  sum + (row.users[person]?.[category] ?? 0),
+                0,
+              );
 
-                {visibleCategories.flatMap((category) =>
-                  visiblePeople.map((person) => {
+              return (
+                <tr key={row.period}>
+                  <td
+                    className={cn(
+                      "bg-white px-4 py-2 align-top font-medium whitespace-nowrap",
+                      sticky && stickyClass,
+                    )}
+                  >
+                    {row.period}
+                  </td>
+
+                  {visibleColumns.map(({ category, person }) => {
                     const value = row.users[person]?.[category] ?? 0;
                     return (
                       <td
@@ -212,14 +256,90 @@ const Monthly = ({ data, options }: Props) => {
                           value < 0 && "text-primary",
                         )}
                       >
-                        {value === 0 ? "-" : toSek(value)}
+                        {toSek(value)}
                       </td>
                     );
-                  }),
-                )}
-              </tr>
-            ))}
+                  })}
+
+                  <td
+                    className={cn(
+                      "px-3 py-2 text-right text-sm whitespace-nowrap",
+                      totalClass,
+                      rowTotal < 0 && "text-primary",
+                    )}
+                  >
+                    {toSek(rowTotal)}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
+          <tfoot className="sticky bottom-0 z-20 bg-secondary">
+            <tr>
+              <td
+                className={cn(
+                  "px-4 py-2 font-semibold whitespace-nowrap",
+                  totalClass,
+                  sticky && stickyClass,
+                )}
+              >
+                Total
+              </td>
+              {columnTotals.totals.map((value, index) => (
+                <td
+                  key={`${visibleColumns[index]!.category}-${visibleColumns[index]!.person}-total`}
+                  className={cn(
+                    "px-3 py-2 text-right text-sm whitespace-nowrap",
+                    totalClass,
+                    value < 0 && "text-primary",
+                  )}
+                >
+                  {toSek(value)}
+                </td>
+              ))}
+              <td
+                className={cn(
+                  "px-3 py-2 text-right text-sm whitespace-nowrap",
+                  totalClass,
+                  columnTotals.grandTotal < 0 && "text-primary",
+                )}
+              >
+                {toSek(columnTotals.grandTotal)}
+              </td>
+            </tr>
+            <tr>
+              <td
+                className={cn(
+                  "px-4 py-2 font-semibold whitespace-nowrap",
+                  totalClass,
+                  sticky && stickyClass,
+                )}
+              >
+                {averageLabel}
+              </td>
+              {columnTotals.averages.map((value, index) => (
+                <td
+                  key={`${visibleColumns[index]!.category}-${visibleColumns[index]!.person}-average`}
+                  className={cn(
+                    "px-3 py-2 text-right text-sm whitespace-nowrap",
+                    totalClass,
+                    value < 0 && "text-primary",
+                  )}
+                >
+                  {toSek(value)}
+                </td>
+              ))}
+              <td
+                className={cn(
+                  "px-3 py-2 text-right text-sm whitespace-nowrap",
+                  totalClass,
+                  columnTotals.grandAverage < 0 && "text-primary",
+                )}
+              >
+                {toSek(columnTotals.grandAverage)}
+              </td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
