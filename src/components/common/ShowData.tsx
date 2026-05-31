@@ -40,7 +40,7 @@ const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
         <TabsList className="w-full md:w-fit">
           <TabsTrigger value="aggregated">Budget</TabsTrigger>
           <TabsTrigger value="transactions">Transaktioner</TabsTrigger>
-          <TabsTrigger value="monthly">Månatlig</TabsTrigger>
+          <TabsTrigger value="monthly">Perioder</TabsTrigger>
           <TabsTrigger value="categoryBars">Utgifter</TabsTrigger>
           <TabsTrigger value="balanceOverTime">Saldo</TabsTrigger>
         </TabsList>
