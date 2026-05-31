@@ -4,8 +4,10 @@ export const dateToString = (date: Date) =>
   });
 
 export const toSek = (num: number) =>
-  num.toLocaleString("sv-SE", {
-    style: "currency",
-    currency: "SEK",
-    useGrouping: true,
-  });
+  num === 0
+    ? "-"
+    : num.toLocaleString("sv-SE", {
+        style: "currency",
+        currency: "SEK",
+        useGrouping: true,
+      });
