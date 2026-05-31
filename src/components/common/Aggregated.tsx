@@ -122,17 +122,19 @@ const Aggregated = ({ options: { person, category } }: Props) => {
 
   const stickyClass = "sticky left-0 z-10";
   const catClass =
-    "px-6 py-3 text-xs font-medium uppercase tracking-wider text-muted-foreground";
+    "text-center w-full md:py-3 pl-4 pr-1 text-xs font-medium uppercase tracking-wider text-muted-foreground";
   const rowHeaderClass =
-    "bg-white px-4 font-semibold tracking-wider whitespace-nowrap first-letter:capitalize";
-  const amountCellClass = "px-4 py-1 text-right";
+    "bg-white pl-4 font-semibold tracking-wider whitespace-nowrap first-letter:capitalize text-xs md:text-base";
+  const amountCellClass = "pl-4 py-1 text-right text-xs md:text-base";
   const totalColumnClass = "font-semibold text-foreground";
   const summaryRowClass = "font-bold text-foreground";
 
   return (
     <div className="flex-1 overflow-auto py-2">
       {datesLabel ? (
-        <h2 className={cn("p-2 text-lg", stickyClass)}>{datesLabel}</h2>
+        <h2 className={cn("p-2 text-xs md:text-lg", stickyClass)}>
+          {datesLabel}
+        </h2>
       ) : null}
       <table className="min-w-full divide-y divide-secondary">
         <thead className="bg-secondary">
@@ -140,7 +142,7 @@ const Aggregated = ({ options: { person, category } }: Props) => {
             <th
               className={cn(
                 catClass,
-                "flex items-center gap-1 bg-secondary text-left",
+                "flex items-center bg-secondary text-left",
                 sticky && stickyClass,
               )}
             >
@@ -150,7 +152,10 @@ const Aggregated = ({ options: { person, category } }: Props) => {
                 size="icon"
                 onClick={() => setSticky(!sticky)}
               >
-                <Icon icon={sticky ? "PinOff" : "Pin"} />
+                <Icon
+                  className="size-3 md:size-4"
+                  icon={sticky ? "PinOff" : "Pin"}
+                />
               </Button>
             </th>
             {visiblePeopleTotal.map((p) => (
