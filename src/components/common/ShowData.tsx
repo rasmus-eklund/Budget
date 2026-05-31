@@ -28,6 +28,8 @@ const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
   const txs = applyTransactionFilters({ data, filters: { filter, txSort } });
   const options = getUnique(data);
 
+  const triggerClass = "text-xs md:text-base";
+
   return (
     <section className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
       <FiltersToggle />
@@ -37,12 +39,22 @@ const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
         value={filterTab}
         onValueChange={(value) => setFilterTab(value as FilterTab)}
       >
-        <TabsList className="w-full md:w-fit">
-          <TabsTrigger value="aggregated">Budget</TabsTrigger>
-          <TabsTrigger value="transactions">Transaktioner</TabsTrigger>
-          <TabsTrigger value="monthly">Perioder</TabsTrigger>
-          <TabsTrigger value="categoryBars">Utgifter</TabsTrigger>
-          <TabsTrigger value="balanceOverTime">Saldo</TabsTrigger>
+        <TabsList className="w-full shrink-0 overflow-auto md:w-fit">
+          <TabsTrigger className={triggerClass} value="aggregated">
+            Budget
+          </TabsTrigger>
+          <TabsTrigger className={triggerClass} value="transactions">
+            Transaktioner
+          </TabsTrigger>
+          <TabsTrigger className={triggerClass} value="monthly">
+            Perioder
+          </TabsTrigger>
+          <TabsTrigger className={triggerClass} value="categoryBars">
+            Utgifter
+          </TabsTrigger>
+          <TabsTrigger className={triggerClass} value="balanceOverTime">
+            Saldo
+          </TabsTrigger>
         </TabsList>
         {filterTab !== "aggregated" && <TransactionFilter options={options} />}
         <TabsContent value="aggregated" className="min-h-0 min-w-0 flex-1">
