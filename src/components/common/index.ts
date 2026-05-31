@@ -25,3 +25,4 @@ export { default as Icon } from "./Icon";
 export { default as Transactions } from "./Transactions";
 export { default as FiltersToggle } from "./FiltersToggle";
 export { default as MarkAsInternal } from "./MarkAsInternal";
+export { default as Monthly } from "./Periods";

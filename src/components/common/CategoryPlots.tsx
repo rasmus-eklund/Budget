@@ -36,7 +36,9 @@ const CategoryPlots = ({ data, options }: Props) => {
   for (const cat of cats) {
     const record: Record<string, string | number> = {};
     for (const person of options.person) {
-      if (!persons[person]) {persons[person] = [];}
+      if (!persons[person]) {
+        persons[person] = [];
+      }
       record.cat = cat;
       const sum = data
         .filter((tx) => tx.budgetgrupp === cat && tx.person === person)
@@ -109,7 +111,9 @@ const CategoryPies = ({ data, name }: { name: string; data: Data[] }) => {
   const isDesktop = useMediaQuery("(min-width: 768px)", {
     initializeWithValue: false,
   });
-  if (data.length === 0) {return null;}
+  if (data.length === 0) {
+    return null;
+  }
   return (
     <Card>
       <CardHeader>

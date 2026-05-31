@@ -33,7 +33,9 @@ const MarkAsInternal = ({
         internal: !isInternal,
         password,
       });
-      if (!res.ok) {toast.error(res.error);}
+      if (!res.ok) {
+        toast.error(res.error);
+      }
       await changeDates(selectedRange);
     } catch (e) {
       console.error(e);

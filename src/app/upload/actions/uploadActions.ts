@@ -138,7 +138,9 @@ export const getMergeBaseTransactions = async ({
   const out: TxBankAccount[] = [];
   for (const person of data) {
     for (const account of person.bankAccounts) {
-      if (excluded.has(account.id)) {continue;}
+      if (excluded.has(account.id)) {
+        continue;
+      }
       for (const tx of account.txs) {
         const decrypted = await decryptTxData(tx.data, password);
         out.push({

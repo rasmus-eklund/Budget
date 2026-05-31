@@ -10,6 +10,7 @@ export type TxSort = { sort: SortOption };
 export type FilterTab =
   | "aggregated"
   | "transactions"
+  | "monthly"
   | "categoryBars"
   | "balanceOverTime";
 

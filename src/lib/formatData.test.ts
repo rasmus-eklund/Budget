@@ -2,6 +2,10 @@ import { it, describe, expect } from "bun:test";
 import { dateToString, toSek } from "./formatData";
 
 describe("toSek", () => {
+  it("should render zero as -", () => {
+    expect(toSek(0)).toBe("-");
+  });
+
   it("should be 1,00 kr", () => {
     const sek = toSek(1).replace(/\u00A0/g, " ");
     const expected = "1,00 kr";

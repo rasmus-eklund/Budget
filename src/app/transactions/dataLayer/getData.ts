@@ -16,7 +16,9 @@ const getTxByDates = async ({
   password: string;
 }): Promise<TxReturn> => {
   const userId = await getUserId();
-  if (password === "") {redirect("/password?from=transactions");}
+  if (password === "") {
+    redirect("/password?from=transactions");
+  }
   const categoriesReq = db.query.category.findMany({
     columns: { name: true },
     where: eq(category.userId, userId),
