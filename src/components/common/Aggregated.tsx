@@ -19,11 +19,16 @@ type Props = {
   options: Uniques;
 };
 
-const NON_CLICKABLE_CATEGORIES = ["spending", "total"] as const;
+const SUMMARY_CATEGORIES = ["spending", "total"] as const;
 const INTERNAL_CATEGORY = "inom";
 const DISPLAY_NAME_BY_CATEGORY: Record<string, string> = {
   spending: "Utgifter",
 };
+
+const isSummaryCategory = (
+  category: string,
+): category is (typeof SUMMARY_CATEGORIES)[number] =>
+  SUMMARY_CATEGORIES.includes(category as (typeof SUMMARY_CATEGORIES)[number]);
 
 const useAggregatedFilterActions = () => {
   const setFilter = useStore((state) => state.setFilter);
@@ -63,7 +68,7 @@ const useAggregatedTableModel = ({
 
   const rowCategories = useMemo(
     () =>
-      [...category, ...NON_CLICKABLE_CATEGORIES].filter(
+      [...category, ...SUMMARY_CATEGORIES].filter(
         (cat) => cat !== INTERNAL_CATEGORY,
       ),
     [category],
@@ -118,6 +123,11 @@ const Aggregated = ({ options: { person, category } }: Props) => {
   const stickyClass = "sticky left-0 z-10";
   const catClass =
     "px-6 py-3 text-xs font-medium uppercase tracking-wider text-muted-foreground";
+  const rowHeaderClass =
+    "bg-white px-4 font-semibold tracking-wider whitespace-nowrap first-letter:capitalize";
+  const amountCellClass = "px-4 py-1 text-right";
+  const totalColumnClass = "font-semibold text-foreground";
+  const summaryRowClass = "font-bold text-foreground";
 
   return (
     <div className="flex-1 overflow-auto py-2">
@@ -160,22 +170,20 @@ const Aggregated = ({ options: { person, category } }: Props) => {
           </tr>
         </thead>
         <tbody className="divide-y divide-secondary bg-background">
-          {rowCategories.map((cat, categoryIndex) => {
-            const isSummaryRow = categoryIndex >= rowCategories.length - 2;
+          {rowCategories.map((cat) => {
+            const isSummaryRow = isSummaryCategory(cat);
             const displayName = DISPLAY_NAME_BY_CATEGORY[cat] ?? cat;
-            const isStaticRow = NON_CLICKABLE_CATEGORIES.includes(
-              cat as (typeof NON_CLICKABLE_CATEGORIES)[number],
-            );
 
             return (
               <tr key={cat}>
                 <td
                   className={cn(
-                    "bg-white px-4 font-semibold tracking-wider whitespace-nowrap first-letter:capitalize",
+                    rowHeaderClass,
+                    isSummaryRow && summaryRowClass,
                     sticky && stickyClass,
                   )}
                 >
-                  {isStaticRow ? (
+                  {isSummaryRow ? (
                     displayName
                   ) : (
                     <CatButton onClick={() => applyFilter({ category: cat })}>
@@ -191,13 +199,13 @@ const Aggregated = ({ options: { person, category } }: Props) => {
                     <td
                       key={`${cat}${p}`}
                       className={cn(
-                        "px-4 py-1 text-right",
+                        amountCellClass,
+                        isLastColumn && totalColumnClass,
+                        isSummaryRow && summaryRowClass,
                         value < 0 && "text-primary",
-                        isLastColumn && "font-semibold",
-                        isSummaryRow && "font-bold",
                       )}
                     >
-                      {isStaticRow ? (
+                      {isSummaryRow ? (
                         <p>{toSek(value)}</p>
                       ) : (
                         <CatButton
