@@ -34,14 +34,19 @@ const GetTxsLayer = ({ range: { from, to } }: Props) => {
       setLoading(true);
       try {
         const res = await getTxByDates({ dates, password });
-        if (requestId !== requestIdRef.current) {return;}
-        if (!res.ok)
-          {return setTxs({ txs: [], options: emptyOptions, reset: true });}
+        if (requestId !== requestIdRef.current) {
+          return;
+        }
+        if (!res.ok) {
+          return setTxs({ txs: [], options: emptyOptions, reset: true });
+        }
         setSelectedRange(dates);
         setDraftRange(dates);
         setTxs({ txs: res.data, options: res.options, reset });
       } catch (e) {
-        if (requestId !== requestIdRef.current) {return;}
+        if (requestId !== requestIdRef.current) {
+          return;
+        }
         toast.error(getErrorMessage(e));
         setTxs({ txs: [], options: emptyOptions, reset: true });
       } finally {
@@ -85,7 +90,9 @@ const GetTxsLayer = ({ range: { from, to } }: Props) => {
       .catch((e) => toast.error(getErrorMessage(e)))
       .finally(() => setIsReady(true));
   }, [setRange, from, to, getData, password, router]);
-  if (!isReady) {return <Spinner />;}
+  if (!isReady) {
+    return <Spinner />;
+  }
   return <ShowData changeDates={getData} canMarkInternal />;
 };
 

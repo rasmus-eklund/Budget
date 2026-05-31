@@ -22,7 +22,9 @@ describe("parseTxs", () => {
     });
 
     expect(result.ok).toBe(true);
-    if (!result.ok) {return;}
+    if (!result.ok) {
+      return;
+    }
 
     expect(
       result.data.map(({ text, sourceOrder }) => ({ text, sourceOrder })),

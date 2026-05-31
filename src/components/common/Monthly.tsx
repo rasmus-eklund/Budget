@@ -124,7 +124,7 @@ const Monthly = ({ data, options }: Props) => {
     "px-4 py-2 text-xs font-semibold tracking-wider uppercase text-muted-foreground";
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
       <div className="w-45">
         <Select
           value={groupBy}
@@ -140,7 +140,7 @@ const Monthly = ({ data, options }: Props) => {
         </Select>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-auto py-2">
+      <div className="min-h-0 min-w-0 flex-1 overflow-auto py-2">
         <table className="min-w-full divide-y divide-secondary">
           <thead className="sticky top-0 z-20 bg-secondary">
             <tr>

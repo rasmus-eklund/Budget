@@ -15,7 +15,9 @@ export const findInternal = (day: Internal[]) => {
   }
 
   for (const group of groups.values()) {
-    if (group.length < 2) {continue;}
+    if (group.length < 2) {
+      continue;
+    }
     const totalSum = sumBelopp(group);
     if (group.length % 2 === 0 && totalSum === 0) {
       let halfIncome = 0;
@@ -99,9 +101,13 @@ const findInternalPairsByHeuristics = (group: Internal[]) => {
   for (let negIdx = 0; negIdx < negatives.length; negIdx++) {
     for (let posIdx = 0; posIdx < positives.length; posIdx++) {
       const negative = negatives[negIdx];
-      if (!negative) {continue;}
+      if (!negative) {
+        continue;
+      }
       const positive = positives[posIdx];
-      if (!positive) {continue;}
+      if (!positive) {
+        continue;
+      }
       if (negative.bankAccountId === positive.bankAccountId) {
         continue;
       }
@@ -123,8 +129,12 @@ const findInternalPairsByHeuristics = (group: Internal[]) => {
     }
   }
   edges.sort((a, b) => {
-    if (b.score !== a.score) {return b.score - a.score;}
-    if (a.negIdx !== b.negIdx) {return a.negIdx - b.negIdx;}
+    if (b.score !== a.score) {
+      return b.score - a.score;
+    }
+    if (a.negIdx !== b.negIdx) {
+      return a.negIdx - b.negIdx;
+    }
     return a.posIdx - b.posIdx;
   });
 

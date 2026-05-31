@@ -29,11 +29,11 @@ const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
   const options = getUnique(data);
 
   return (
-    <section className="flex flex-1 flex-col gap-2">
+    <section className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
       <FiltersToggle />
       <DateFilter changeDates={changeDates} />
       <Tabs
-        className="min-h-0 flex-1 gap-0 md:gap-2"
+        className="min-h-0 min-w-0 flex-1 gap-0 md:gap-2"
         value={filterTab}
         onValueChange={(value) => setFilterTab(value as FilterTab)}
       >
@@ -45,12 +45,15 @@ const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
           <TabsTrigger value="balanceOverTime">Saldo</TabsTrigger>
         </TabsList>
         {filterTab !== "aggregated" && <TransactionFilter options={options} />}
-        <TabsContent value="aggregated" className="min-h-0 flex-1">
+        <TabsContent value="aggregated" className="min-h-0 min-w-0 flex-1">
           <LoadingWrapper>
             <Aggregated options={options} />
           </LoadingWrapper>
         </TabsContent>
-        <TabsContent value="transactions" className="flex min-h-0 flex-1">
+        <TabsContent
+          value="transactions"
+          className="flex min-h-0 min-w-0 flex-1"
+        >
           <LoadingWrapper>
             <Transactions
               data={txs}
@@ -59,7 +62,7 @@ const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
             />
           </LoadingWrapper>
         </TabsContent>
-        <TabsContent value="monthly" className="flex min-h-0 flex-1">
+        <TabsContent value="monthly" className="flex min-h-0 min-w-0 flex-1">
           <LoadingWrapper>
             <Monthly data={txs} options={options} />
           </LoadingWrapper>
@@ -82,7 +85,7 @@ const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
 const LoadingWrapper = ({ children }: { children: React.ReactNode }) => {
   const loading = useStore((state) => state.loading);
   return (
-    <div className="relative flex min-h-0 flex-1">
+    <div className="relative flex min-h-0 min-w-0 flex-1">
       {children}
       {loading && (
         <div className="absolute top-0 right-0 bottom-0 left-0 z-50 flex items-center justify-center bg-secondary/40 select-none">
