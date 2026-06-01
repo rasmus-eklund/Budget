@@ -3,11 +3,13 @@ import { useMemo, useState } from "react";
 import { Icon } from "~/components/common";
 import {
   Button,
+  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Switch,
 } from "~/components/ui";
 import { cn, toSek } from "~/lib";
 import { useStore } from "~/stores/tx-store";
@@ -27,7 +29,9 @@ type AggregatedPeriod = {
 };
 type VisibleColumn = {
   category: string;
-  person: string;
+  person?: string;
+  label: string;
+  key: string;
 };
 
 const formatPeriod = (date: Date, groupBy: GroupBy) => {
@@ -87,6 +91,7 @@ export const aggregateByPeriod = ({
 
 const Monthly = ({ data, options }: Props) => {
   const [groupBy, setGroupBy] = useState<GroupBy>("month");
+  const [collapsePeople, setCollapsePeople] = useState(false);
   const sticky = useStore((state) => state.sticky);
   const setSticky = useStore((state) => state.setSticky);
 
@@ -123,13 +128,24 @@ const Monthly = ({ data, options }: Props) => {
     [aggregated, options.person, visibleCategories],
   );
 
-  const visibleColumns = useMemo<VisibleColumn[]>(
-    () =>
-      visibleCategories.flatMap((category) =>
-        visiblePeople.map((person) => ({ category, person })),
-      ),
-    [visibleCategories, visiblePeople],
-  );
+  const visibleColumns = useMemo<VisibleColumn[]>(() => {
+    if (collapsePeople) {
+      return visibleCategories.map((category) => ({
+        category,
+        key: category,
+        label: "Summa",
+      }));
+    }
+
+    return visibleCategories.flatMap((category) =>
+      visiblePeople.map((person) => ({
+        category,
+        key: `${category}-${person}`,
+        label: person,
+        person,
+      })),
+    );
+  }, [collapsePeople, visibleCategories, visiblePeople]);
 
   const columnTotals = useMemo(() => {
     const totals = visibleColumns.map(() => 0);
@@ -137,7 +153,13 @@ const Monthly = ({ data, options }: Props) => {
 
     for (const period of aggregated) {
       visibleColumns.forEach(({ category, person }, index) => {
-        const value = period.users[person]?.[category] ?? 0;
+        const value = person
+          ? (period.users[person]?.[category] ?? 0)
+          : visiblePeople.reduce(
+              (sum, visiblePerson) =>
+                sum + (period.users[visiblePerson]?.[category] ?? 0),
+              0,
+            );
         totals[index] = (totals[index] ?? 0) + value;
         grandTotal += value;
       });
@@ -149,26 +171,40 @@ const Monthly = ({ data, options }: Props) => {
     const grandAverage = periodCount === 0 ? 0 : grandTotal / periodCount;
 
     return { totals, grandTotal, averages, grandAverage };
-  }, [aggregated, visibleColumns]);
+  }, [aggregated, visibleColumns, visiblePeople]);
 
   const stickyClass = "sticky left-0 z-10";
   const headClass =
     "px-4 py-2 text-xs font-semibold tracking-wider uppercase text-muted-foreground";
   const totalClass = "bg-secondary font-semibold text-foreground";
   const averageLabel = groupBy === "month" ? "Snitt/Månad" : "Snitt/År";
+  const categoryColumnSpan = collapsePeople ? 1 : visiblePeople.length;
   const categoryBorderClass = "border-x border-border";
   const categoryStartBorderClass = "border-l border-border";
   const categoryEndBorderClass = "border-r border-border";
   const getCategoryBoundaryClass = (index: number) =>
     cn(
-      index % visiblePeople.length === 0 && categoryStartBorderClass,
-      index % visiblePeople.length === visiblePeople.length - 1 &&
+      categoryColumnSpan > 0 &&
+        index % categoryColumnSpan === 0 &&
+        categoryStartBorderClass,
+      categoryColumnSpan > 0 &&
+        index % categoryColumnSpan === categoryColumnSpan - 1 &&
         categoryEndBorderClass,
     );
+  const getColumnValue = (row: AggregatedPeriod, column: VisibleColumn) => {
+    if (column.person) {
+      return row.users[column.person]?.[column.category] ?? 0;
+    }
+
+    return visiblePeople.reduce(
+      (sum, person) => sum + (row.users[person]?.[column.category] ?? 0),
+      0,
+    );
+  };
 
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
-      <div className="w-45">
+      <div className="flex flex-wrap items-center gap-2">
         <Select
           value={groupBy}
           onValueChange={(value) => setGroupBy(value as GroupBy)}
@@ -181,6 +217,16 @@ const Monthly = ({ data, options }: Props) => {
             <SelectItem value="year">År</SelectItem>
           </SelectContent>
         </Select>
+        <div className="flex h-9 items-center gap-2">
+          <Switch
+            id="collapse-people"
+            checked={collapsePeople}
+            onCheckedChange={setCollapsePeople}
+          />
+          <Label htmlFor="collapse-people" className="whitespace-nowrap">
+            Summera personer
+          </Label>
+        </div>
       </div>
 
       <div className="min-h-0 min-w-0 flex-1 overflow-auto">
@@ -188,7 +234,7 @@ const Monthly = ({ data, options }: Props) => {
           <thead className="sticky top-0 z-20 bg-secondary">
             <tr>
               <th
-                rowSpan={2}
+                rowSpan={collapsePeople ? 1 : 2}
                 className={cn(
                   headClass,
                   "bg-secondary text-left",
@@ -210,7 +256,7 @@ const Monthly = ({ data, options }: Props) => {
               {visibleCategories.map((category) => (
                 <th
                   key={category}
-                  colSpan={visiblePeople.length}
+                  colSpan={categoryColumnSpan}
                   className={cn(
                     headClass,
                     "bg-secondary text-center",
@@ -221,33 +267,34 @@ const Monthly = ({ data, options }: Props) => {
                 </th>
               ))}
               <th
-                rowSpan={2}
+                rowSpan={collapsePeople ? 1 : 2}
                 className={cn(headClass, "bg-secondary text-right")}
               >
                 Total
               </th>
             </tr>
 
-            <tr>
-              {visibleColumns.map(({ category, person }, index) => (
-                <th
-                  key={`${category}-${person}`}
-                  className={cn(
-                    "bg-secondary px-3 py-2 text-right text-xs font-medium tracking-wider text-muted-foreground first-letter:capitalize",
-                    getCategoryBoundaryClass(index),
-                  )}
-                >
-                  {person}
-                </th>
-              ))}
-            </tr>
+            {!collapsePeople && (
+              <tr>
+                {visibleColumns.map((column, index) => (
+                  <th
+                    key={column.key}
+                    className={cn(
+                      "bg-secondary px-3 py-2 text-right text-xs font-medium tracking-wider text-muted-foreground first-letter:capitalize",
+                      getCategoryBoundaryClass(index),
+                    )}
+                  >
+                    {column.label}
+                  </th>
+                ))}
+              </tr>
+            )}
           </thead>
 
           <tbody className="divide-y divide-secondary bg-background">
             {aggregated.map((row) => {
               const rowTotal = visibleColumns.reduce(
-                (sum, { category, person }) =>
-                  sum + (row.users[person]?.[category] ?? 0),
+                (sum, column) => sum + getColumnValue(row, column),
                 0,
               );
 
@@ -262,11 +309,11 @@ const Monthly = ({ data, options }: Props) => {
                     {row.period}
                   </td>
 
-                  {visibleColumns.map(({ category, person }, index) => {
-                    const value = row.users[person]?.[category] ?? 0;
+                  {visibleColumns.map((column, index) => {
+                    const value = getColumnValue(row, column);
                     return (
                       <td
-                        key={`${row.period}-${category}-${person}`}
+                        key={`${row.period}-${column.key}`}
                         className={cn(
                           "px-3 py-2 text-right text-sm whitespace-nowrap",
                           getCategoryBoundaryClass(index),
@@ -304,7 +351,7 @@ const Monthly = ({ data, options }: Props) => {
               </td>
               {columnTotals.totals.map((value, index) => (
                 <td
-                  key={`${visibleColumns[index]!.category}-${visibleColumns[index]!.person}-total`}
+                  key={`${visibleColumns[index]!.key}-total`}
                   className={cn(
                     "px-3 py-2 text-right text-sm whitespace-nowrap",
                     totalClass,
@@ -337,7 +384,7 @@ const Monthly = ({ data, options }: Props) => {
               </td>
               {columnTotals.averages.map((value, index) => (
                 <td
-                  key={`${visibleColumns[index]!.category}-${visibleColumns[index]!.person}-average`}
+                  key={`${visibleColumns[index]!.key}-average`}
                   className={cn(
                     "px-3 py-2 text-right text-sm whitespace-nowrap",
                     totalClass,
