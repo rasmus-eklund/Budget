@@ -156,6 +156,15 @@ const Monthly = ({ data, options }: Props) => {
     "px-4 py-2 text-xs font-semibold tracking-wider uppercase text-muted-foreground";
   const totalClass = "bg-secondary font-semibold text-foreground";
   const averageLabel = groupBy === "month" ? "Snitt/Månad" : "Snitt/År";
+  const categoryBorderClass = "border-x border-border";
+  const categoryStartBorderClass = "border-l border-border";
+  const categoryEndBorderClass = "border-r border-border";
+  const getCategoryBoundaryClass = (index: number) =>
+    cn(
+      index % visiblePeople.length === 0 && categoryStartBorderClass,
+      index % visiblePeople.length === visiblePeople.length - 1 &&
+        categoryEndBorderClass,
+    );
 
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
@@ -202,7 +211,11 @@ const Monthly = ({ data, options }: Props) => {
                 <th
                   key={category}
                   colSpan={visiblePeople.length}
-                  className={cn(headClass, "bg-secondary text-center")}
+                  className={cn(
+                    headClass,
+                    "bg-secondary text-center",
+                    categoryBorderClass,
+                  )}
                 >
                   {category}
                 </th>
@@ -216,10 +229,13 @@ const Monthly = ({ data, options }: Props) => {
             </tr>
 
             <tr>
-              {visibleColumns.map(({ category, person }) => (
+              {visibleColumns.map(({ category, person }, index) => (
                 <th
                   key={`${category}-${person}`}
-                  className="bg-secondary px-3 py-2 text-right text-xs font-medium tracking-wider text-muted-foreground first-letter:capitalize"
+                  className={cn(
+                    "bg-secondary px-3 py-2 text-right text-xs font-medium tracking-wider text-muted-foreground first-letter:capitalize",
+                    getCategoryBoundaryClass(index),
+                  )}
                 >
                   {person}
                 </th>
@@ -246,13 +262,14 @@ const Monthly = ({ data, options }: Props) => {
                     {row.period}
                   </td>
 
-                  {visibleColumns.map(({ category, person }) => {
+                  {visibleColumns.map(({ category, person }, index) => {
                     const value = row.users[person]?.[category] ?? 0;
                     return (
                       <td
                         key={`${row.period}-${category}-${person}`}
                         className={cn(
                           "px-3 py-2 text-right text-sm whitespace-nowrap",
+                          getCategoryBoundaryClass(index),
                           value < 0 && "text-primary",
                         )}
                       >
@@ -291,6 +308,7 @@ const Monthly = ({ data, options }: Props) => {
                   className={cn(
                     "px-3 py-2 text-right text-sm whitespace-nowrap",
                     totalClass,
+                    getCategoryBoundaryClass(index),
                     value < 0 && "text-primary",
                   )}
                 >
@@ -323,6 +341,7 @@ const Monthly = ({ data, options }: Props) => {
                   className={cn(
                     "px-3 py-2 text-right text-sm whitespace-nowrap",
                     totalClass,
+                    getCategoryBoundaryClass(index),
                     value < 0 && "text-primary",
                   )}
                 >
