@@ -5,7 +5,9 @@ import {
   incrementMonth,
   decrementMonth,
   getFromTo,
+  getPeriodCount,
   getYearRange,
+  isPeriodIncludedInAverage,
   isSameDayRange,
   isFullMonthRange,
   isFullYearRange,
@@ -97,6 +99,78 @@ describe("Get all years from - to", () => {
     expect(range).toStrictEqual([
       2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010,
     ]);
+  });
+});
+
+describe("Get period count", () => {
+  const now = new Date(2026, 5, 1, 12, 0, 0, 0);
+
+  it("excludes a partial month range", () => {
+    const range = {
+      from: new Date(2024, 0, 15, 0, 0, 0, 0),
+      to: new Date(2024, 0, 31, 23, 59, 59, 999),
+    };
+
+    expect(getPeriodCount(range, "month", now)).toBe(0);
+  });
+
+  it("counts complete months inside partial date ranges", () => {
+    const range = {
+      from: new Date(2024, 0, 15, 0, 0, 0, 0),
+      to: new Date(2024, 5, 10, 23, 59, 59, 999),
+    };
+
+    expect(getPeriodCount(range, "month", now)).toBe(4);
+  });
+
+  it("counts months across years", () => {
+    const range = {
+      from: new Date(2023, 10, 1, 0, 0, 0, 0),
+      to: new Date(2024, 1, 29, 23, 59, 59, 999),
+    };
+
+    expect(getPeriodCount(range, "month", now)).toBe(4);
+  });
+
+  it("excludes the current incomplete month", () => {
+    const range = {
+      from: new Date(2026, 0, 1, 0, 0, 0, 0),
+      to: new Date(2026, 5, 1, 23, 59, 59, 999),
+    };
+
+    expect(getPeriodCount(range, "month", now)).toBe(5);
+  });
+
+  it("counts complete years inclusively", () => {
+    const range = {
+      from: new Date(2023, 0, 1, 0, 0, 0, 0),
+      to: new Date(2025, 11, 31, 23, 59, 59, 999),
+    };
+
+    expect(getPeriodCount(range, "year", now)).toBe(3);
+  });
+
+  it("excludes the current incomplete year", () => {
+    const range = {
+      from: new Date(2026, 0, 1, 0, 0, 0, 0),
+      to: new Date(2026, 11, 31, 23, 59, 59, 999),
+    };
+
+    expect(getPeriodCount(range, "year", now)).toBe(0);
+  });
+
+  it("detects whether a month period is included in the average", () => {
+    const range = {
+      from: new Date(2026, 0, 1, 0, 0, 0, 0),
+      to: new Date(2026, 5, 1, 23, 59, 59, 999),
+    };
+
+    expect(isPeriodIncludedInAverage("2026-05", "month", range, now)).toBe(
+      true,
+    );
+    expect(isPeriodIncludedInAverage("2026-06", "month", range, now)).toBe(
+      false,
+    );
   });
 });
 

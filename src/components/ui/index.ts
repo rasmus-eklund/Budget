@@ -89,6 +89,7 @@ export {
   SelectValue,
 } from "./select";
 export { Skeleton } from "./skeleton";
+export { Switch } from "./switch";
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs";
 export {
   Tooltip,
