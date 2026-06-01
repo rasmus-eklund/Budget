@@ -2,6 +2,7 @@ import { type FromTo } from "~/lib/zodSchemas";
 import { dateToString } from "./formatData";
 
 type YM = { year: number; month: number };
+export type PeriodGroupBy = "month" | "year";
 
 export const decrementDay = (date: Date): FromTo => {
   const newDate = new Date(date);
@@ -61,6 +62,98 @@ export const getYearRange = ({ from, to }: FromTo) => {
     range.push(year);
   }
   return range;
+};
+
+const isFirstDayOfMonth = (date: Date) => date.getDate() === 1;
+
+const isLastDayOfMonth = (date: Date) =>
+  date.getDate() ===
+  new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+
+const isFirstDayOfYear = (date: Date) =>
+  date.getMonth() === 0 && date.getDate() === 1;
+
+const isLastDayOfYear = (date: Date) =>
+  date.getMonth() === 11 && date.getDate() === 31;
+
+const minDate = (a: Date, b: Date) => (a < b ? a : b);
+
+const getLastCompletedPeriodEnd = (groupBy: PeriodGroupBy, now: Date) => {
+  if (groupBy === "year") {
+    return new Date(now.getFullYear(), 0, 0, 23, 59, 59, 999);
+  }
+
+  return new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+};
+
+const getAverageMonthBounds = ({ from, to }: FromTo, now: Date) => {
+  const firstMonth = isFirstDayOfMonth(from)
+    ? new Date(from.getFullYear(), from.getMonth(), 1)
+    : new Date(from.getFullYear(), from.getMonth() + 1, 1);
+  const effectiveTo = minDate(to, getLastCompletedPeriodEnd("month", now));
+  const lastMonth = isLastDayOfMonth(effectiveTo)
+    ? new Date(effectiveTo.getFullYear(), effectiveTo.getMonth(), 1)
+    : new Date(effectiveTo.getFullYear(), effectiveTo.getMonth(), 0);
+
+  return { firstMonth, lastMonth };
+};
+
+const getAverageYearBounds = ({ from, to }: FromTo, now: Date) => {
+  const firstYear = isFirstDayOfYear(from)
+    ? from.getFullYear()
+    : from.getFullYear() + 1;
+  const effectiveTo = minDate(to, getLastCompletedPeriodEnd("year", now));
+  const lastYear = isLastDayOfYear(effectiveTo)
+    ? effectiveTo.getFullYear()
+    : effectiveTo.getFullYear() - 1;
+
+  return { firstYear, lastYear };
+};
+
+export const getPeriodCount = (
+  { from, to }: FromTo,
+  groupBy: PeriodGroupBy,
+  now = new Date(),
+) => {
+  if (groupBy === "year") {
+    const { firstYear, lastYear } = getAverageYearBounds({ from, to }, now);
+    return Math.max(0, lastYear - firstYear + 1);
+  }
+
+  const { firstMonth, lastMonth } = getAverageMonthBounds({ from, to }, now);
+  return Math.max(
+    0,
+    (lastMonth.getFullYear() - firstMonth.getFullYear()) * 12 +
+      lastMonth.getMonth() -
+      firstMonth.getMonth() +
+      1,
+  );
+};
+
+export const isPeriodIncludedInAverage = (
+  period: string,
+  groupBy: PeriodGroupBy,
+  range: FromTo,
+  now = new Date(),
+) => {
+  if (groupBy === "year") {
+    const year = Number(period);
+    if (!Number.isInteger(year)) {
+      return false;
+    }
+
+    const { firstYear, lastYear } = getAverageYearBounds(range, now);
+    return year >= firstYear && year <= lastYear;
+  }
+
+  const [year, month] = period.split("-").map(Number);
+  if (!year || !month) {
+    return false;
+  }
+
+  const periodStart = new Date(year, month - 1, 1);
+  const { firstMonth, lastMonth } = getAverageMonthBounds(range, now);
+  return periodStart >= firstMonth && periodStart <= lastMonth;
 };
 
 export const getFromTo = <T extends { datum: Date }>(txs: T[]) => {
