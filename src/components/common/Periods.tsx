@@ -150,9 +150,17 @@ const Monthly = ({ data, options }: Props) => {
 
   const columnTotals = useMemo(() => {
     const totals = visibleColumns.map(() => 0);
+    const averageTotals = visibleColumns.map(() => 0);
     let grandTotal = 0;
+    let averageGrandTotal = 0;
 
     for (const period of aggregated) {
+      const periodIncludedInAverage = isPeriodIncludedInAverage(
+        period.period,
+        groupBy,
+        selectedRange,
+      );
+
       visibleColumns.forEach(({ category, person }, index) => {
         const value = person
           ? (period.users[person]?.[category] ?? 0)
@@ -163,15 +171,21 @@ const Monthly = ({ data, options }: Props) => {
             );
         totals[index] = (totals[index] ?? 0) + value;
         grandTotal += value;
+
+        if (periodIncludedInAverage) {
+          averageTotals[index] = (averageTotals[index] ?? 0) + value;
+          averageGrandTotal += value;
+        }
       });
     }
 
     const periodCount = getPeriodCount(selectedRange, groupBy);
     const averages =
       periodCount === 0
-        ? totals.map(() => 0)
-        : totals.map((total) => total / periodCount);
-    const grandAverage = periodCount === 0 ? 0 : grandTotal / periodCount;
+        ? averageTotals.map(() => 0)
+        : averageTotals.map((total) => total / periodCount);
+    const grandAverage =
+      periodCount === 0 ? 0 : averageGrandTotal / periodCount;
 
     return { totals, grandTotal, averages, grandAverage };
   }, [aggregated, groupBy, selectedRange, visibleColumns, visiblePeople]);
