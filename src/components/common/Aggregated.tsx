@@ -120,19 +120,21 @@ const Aggregated = ({ options: { person, category } }: Props) => {
   });
   const applyFilter = useAggregatedFilterActions();
 
-  const stickyClass = "sticky left-0 z-10";
-  const catClass =
-    "text-center w-full md:py-3 pl-4 pr-1 text-xs font-medium uppercase tracking-wider text-muted-foreground";
-  const rowHeaderClass =
-    "bg-white pl-4 font-semibold tracking-wider whitespace-nowrap first-letter:capitalize text-xs md:text-base";
-  const amountCellClass = "pl-4 py-1 text-right text-xs md:text-base";
+  const stickyCellClass = "sticky left-0 z-10";
+  const headerCellClass =
+    "bg-secondary py-1 pl-4 pr-1 text-xs font-medium uppercase tracking-wider text-muted-foreground md:py-3";
+  const rowHeaderCellClass =
+    "bg-white pl-4 text-xs font-semibold tracking-wider whitespace-nowrap first-letter:capitalize md:text-base";
+  const amountCellClass = "pl-4 pr-1 py-1 text-right text-xs md:text-base";
+  const headerButtonClass = "inline-block uppercase";
+  const rowHeaderButtonClass = "first-letter:capitalize";
   const totalColumnClass = "font-semibold text-foreground";
   const summaryRowClass = "font-bold text-foreground";
 
   return (
     <div className="flex-1 overflow-auto py-2">
       {datesLabel ? (
-        <h2 className={cn("p-2 text-xs md:text-lg", stickyClass)}>
+        <h2 className={cn("p-2 text-xs md:text-lg", stickyCellClass)}>
           {datesLabel}
         </h2>
       ) : null}
@@ -141,30 +143,32 @@ const Aggregated = ({ options: { person, category } }: Props) => {
           <tr>
             <th
               className={cn(
-                catClass,
-                "flex items-center bg-secondary text-left",
-                sticky && stickyClass,
+                headerCellClass,
+                "text-left",
+                sticky && stickyCellClass,
               )}
             >
-              <p>Kategori</p>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSticky(!sticky)}
-              >
-                <Icon
-                  className="size-3 md:size-4"
-                  icon={sticky ? "PinOff" : "Pin"}
-                />
-              </Button>
+              <div className="flex items-center gap-2">
+                <p>Kategori</p>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSticky(!sticky)}
+                >
+                  <Icon
+                    className="size-3 md:size-4"
+                    icon={sticky ? "PinOff" : "Pin"}
+                  />
+                </Button>
+              </div>
             </th>
             {visiblePeopleTotal.map((p) => (
-              <th key={p}>
+              <th key={p} className={cn(headerCellClass, "text-right")}>
                 {p === "total" ? (
-                  <p className={cn(catClass, "text-right")}>{p}</p>
+                  <p>{p}</p>
                 ) : (
                   <CatButton
-                    className={cn(catClass, "w-full text-right")}
+                    className={headerButtonClass}
                     onClick={() => applyFilter({ person: p })}
                   >
                     {p}
@@ -183,15 +187,18 @@ const Aggregated = ({ options: { person, category } }: Props) => {
               <tr key={cat}>
                 <td
                   className={cn(
-                    rowHeaderClass,
+                    rowHeaderCellClass,
                     isSummaryRow && summaryRowClass,
-                    sticky && stickyClass,
+                    sticky && stickyCellClass,
                   )}
                 >
                   {isSummaryRow ? (
                     displayName
                   ) : (
-                    <CatButton onClick={() => applyFilter({ category: cat })}>
+                    <CatButton
+                      className={rowHeaderButtonClass}
+                      onClick={() => applyFilter({ category: cat })}
+                    >
                       {displayName}
                     </CatButton>
                   )}
@@ -246,10 +253,7 @@ const CatButton = ({
   onClick: () => void;
 }) => (
   <button
-    className={cn(
-      "cursor-pointer first-letter:capitalize hover:scale-110",
-      className,
-    )}
+    className={cn("cursor-pointer hover:scale-105", className)}
     onClick={onClick}
   >
     {children}
