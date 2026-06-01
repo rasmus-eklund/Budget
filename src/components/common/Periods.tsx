@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Icon } from "~/components/common";
+import { Icon, Tooltip } from "~/components/common";
 import {
   Button,
   Label,
@@ -11,7 +11,7 @@ import {
   SelectValue,
   Switch,
 } from "~/components/ui";
-import { cn, toSek } from "~/lib";
+import { cn, getPeriodCount, isPeriodIncludedInAverage, toSek } from "~/lib";
 import { useStore } from "~/stores/tx-store";
 import type { Tx, Uniques } from "~/types";
 
@@ -94,6 +94,7 @@ const Monthly = ({ data, options }: Props) => {
   const [collapsePeople, setCollapsePeople] = useState(false);
   const sticky = useStore((state) => state.sticky);
   const setSticky = useStore((state) => state.setSticky);
+  const selectedRange = useStore((state) => state.selectedRange);
 
   const aggregated = useMemo(
     () =>
@@ -165,13 +166,15 @@ const Monthly = ({ data, options }: Props) => {
       });
     }
 
-    const periodCount = aggregated.length;
+    const periodCount = getPeriodCount(selectedRange, groupBy);
     const averages =
-      periodCount === 0 ? totals : totals.map((total) => total / periodCount);
+      periodCount === 0
+        ? totals.map(() => 0)
+        : totals.map((total) => total / periodCount);
     const grandAverage = periodCount === 0 ? 0 : grandTotal / periodCount;
 
     return { totals, grandTotal, averages, grandAverage };
-  }, [aggregated, visibleColumns, visiblePeople]);
+  }, [aggregated, groupBy, selectedRange, visibleColumns, visiblePeople]);
 
   const stickyClass = "sticky left-0 z-10";
   const headClass =
@@ -293,6 +296,11 @@ const Monthly = ({ data, options }: Props) => {
 
           <tbody className="divide-y divide-secondary bg-background">
             {aggregated.map((row) => {
+              const periodIncludedInAverage = isPeriodIncludedInAverage(
+                row.period,
+                groupBy,
+                selectedRange,
+              );
               const rowTotal = visibleColumns.reduce(
                 (sum, column) => sum + getColumnValue(row, column),
                 0,
@@ -306,7 +314,16 @@ const Monthly = ({ data, options }: Props) => {
                       sticky && stickyClass,
                     )}
                   >
-                    {row.period}
+                    <div className="flex items-start gap-1">
+                      <span>{row.period}</span>
+                      {!periodIncludedInAverage && (
+                        <Tooltip title="Raden ingår inte i snittet då perioden inte är komplett.">
+                          <span className="cursor-help text-muted-foreground">
+                            *
+                          </span>
+                        </Tooltip>
+                      )}
+                    </div>
                   </td>
 
                   {visibleColumns.map((column, index) => {
