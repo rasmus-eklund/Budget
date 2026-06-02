@@ -1,6 +1,7 @@
 import type { Tx } from "~/types";
 import { categories } from "./categories";
 import { getFromTo } from "~/lib";
+import { emptySearchFilter } from "~/constants";
 
 export const generateData = () => {
   const txs: Tx[] = [];
@@ -91,7 +92,7 @@ export const generateData = () => {
       },
       person: Object.fromEntries(["Per", "Anna"].map((i) => [i, true])),
       account: Object.fromEntries(["Kort", "Spar"].map((a) => [a, true])),
-      search: "",
+      search: emptySearchFilter,
     },
   };
 };

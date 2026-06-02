@@ -7,6 +7,7 @@ import { db } from "~/server/db";
 import { category, persons, txs } from "~/server/db/schema";
 import type { Filter, TxReturn } from "~/types";
 import getUserId from "~/server/getUserId";
+import { emptySearchFilter } from "~/constants";
 
 const getTxByDates = async ({
   dates: { from, to },
@@ -50,7 +51,7 @@ const getTxByDates = async ({
       övrigt: true,
       inkomst: true,
     },
-    search: "",
+    search: emptySearchFilter,
   };
 
   const out: TxReturn = {

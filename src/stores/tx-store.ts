@@ -1,6 +1,13 @@
 import { create } from "zustand";
 import type { FromTo } from "~/lib/zodSchemas";
-import type { FilterTab, Tx, TxSort, DateTab, Filter } from "~/types";
+import type {
+  FilterTab,
+  Tx,
+  TxSort,
+  DateTab,
+  Filter,
+  PeriodGroupBy,
+} from "~/types";
 import { filterChanged, resetFilter } from "~/lib";
 import { emptyOptions } from "~/constants";
 
@@ -18,6 +25,10 @@ export const useStore = create<{
   updatePassword: (password: string) => void;
   dateTab: DateTab;
   setDateTab: (dateTab: DateTab) => void;
+  periodGroupBy: PeriodGroupBy;
+  setPeriodGroupBy: (periodGroupBy: PeriodGroupBy) => void;
+  collapsePeriodPeople: boolean;
+  setCollapsePeriodPeople: (collapsePeriodPeople: boolean) => void;
   options: Filter;
   filter: Filter;
   setFilter: (filter: Filter) => void;
@@ -59,6 +70,11 @@ export const useStore = create<{
   updatePassword: (password: string) => set({ password }),
   dateTab: "month",
   setDateTab: (dateTab) => set({ dateTab }),
+  periodGroupBy: "month",
+  setPeriodGroupBy: (periodGroupBy) => set({ periodGroupBy }),
+  collapsePeriodPeople: false,
+  setCollapsePeriodPeople: (collapsePeriodPeople) =>
+    set({ collapsePeriodPeople }),
   options: emptyOptions,
   filter: emptyOptions,
   setFilter: (filter) =>

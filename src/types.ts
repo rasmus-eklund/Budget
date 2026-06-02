@@ -16,6 +16,8 @@ export type FilterTab =
 
 export type DateTab = "month" | "day" | "year" | "free";
 
+export type PeriodGroupBy = "month" | "year";
+
 export type Internal = {
   id: string;
   belopp: number;
@@ -32,11 +34,18 @@ export type Uniques = {
 
 export type FilterItem = Record<string, boolean>;
 
+export type TextFilterMode = "include" | "exclude";
+
+export type TextFilter = {
+  mode: TextFilterMode;
+  terms: string[];
+};
+
 export type Filter = {
   person: FilterItem;
   account: FilterItem;
   category: FilterItem;
-  search: string;
+  search: TextFilter;
 };
 
 export type TxReturn =

@@ -10,6 +10,7 @@ import {
   getFromTo,
   toSek,
 } from "~/lib";
+import { emptySearchFilter } from "~/constants";
 import type { Uniques } from "~/types";
 import { Button } from "~/components/ui";
 import { Icon } from "~/components/common";
@@ -44,7 +45,7 @@ const useAggregatedFilterActions = () => {
       person: person
         ? allFalseExcept(defaultFilter.person, person)
         : allTrueExcept(defaultFilter.person, INTERNAL_CATEGORY),
-      search: "",
+      search: emptySearchFilter,
     });
     setFilterTab("transactions");
   };
