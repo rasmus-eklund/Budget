@@ -1,5 +1,6 @@
 "use client";
-import type { SortOption, Uniques } from "~/types";
+
+import type { SortOption, TextFilterMode, Uniques } from "~/types";
 import {
   Select,
   Button,
@@ -9,14 +10,15 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-  Input,
 } from "~/components/ui";
-import { Icon, MultiSelect } from "~/components/common";
+import {
+  FreeTextMultiCombobox,
+  LabeledSwitch,
+  MultiSelect,
+} from "~/components/common";
 import { sortOptions } from "~/constants";
-import { useEffect, useState } from "react";
 import { useStore } from "~/stores/tx-store";
 import { cn, setAll } from "~/lib";
-import { useDebounceCallback } from "usehooks-ts";
 
 const TransactionFilter = ({ options }: { options: Uniques }) => {
   const { account, category, person } = options;
@@ -28,10 +30,6 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
   const filter = useStore((state) => state.filter);
   const showFilter = useStore((state) => state.showFilter);
   const filterTab = useStore((state) => state.filterTab);
-  const debouncedSearch = useDebounceCallback(
-    (v: string) => setFilter({ ...filter, search: v }),
-    1000,
-  );
 
   return (
     <div
@@ -92,10 +90,15 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
         label="Konto"
       />
 
-      <SearchInput
-        value={filter.search}
-        onChange={debouncedSearch}
-        onClear={() => setFilter({ ...filter, search: "" })}
+      <SearchFilter
+        mode={filter.search.mode}
+        terms={filter.search.terms}
+        onModeChange={(mode) =>
+          setFilter({ ...filter, search: { ...filter.search, mode } })
+        }
+        onTermsChange={(terms) =>
+          setFilter({ ...filter, search: { ...filter.search, terms } })
+        }
       />
       {hasChanged && (
         <Button type="button" onClick={reset}>
@@ -136,42 +139,32 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
   );
 };
 
-const SearchInput = ({
-  onChange,
-  onClear,
-  value,
+const SearchFilter = ({
+  mode,
+  terms,
+  onModeChange,
+  onTermsChange,
 }: {
-  onChange: (v: string) => void;
-  onClear: () => void;
-  value: string;
+  mode: TextFilterMode;
+  terms: string[];
+  onModeChange: (mode: TextFilterMode) => void;
+  onTermsChange: (terms: string[]) => void;
 }) => {
-  const [search, setSearch] = useState(value);
-  const handleClear = () => {
-    setSearch("");
-    onClear();
-  };
-
-  useEffect(() => {
-    setSearch(value);
-  }, [value]);
-
   return (
-    <div className="relative">
-      <Input
-        placeholder="Sök"
-        value={search}
-        onChange={({ target: { value } }) => {
-          setSearch(value);
-          onChange(value);
-        }}
+    <div className="flex min-w-0 items-start gap-1">
+      <LabeledSwitch
+        id="search-filter-mode"
+        checked={mode === "exclude"}
+        onCheckedChange={(checked) =>
+          onModeChange(checked ? "exclude" : "include")
+        }
+        label={mode === "include" ? "Inkludera" : "Exkludera"}
+        ariaLabel="Växla mellan inkludera och exkludera"
       />
-      <Icon
-        onClick={handleClear}
-        icon="X"
-        className={cn(
-          "absolute top-1/2 right-2 hidden -translate-y-1/2 cursor-pointer transition-transform hover:scale-110",
-          search !== "" && "block",
-        )}
+      <FreeTextMultiCombobox
+        placeholder="Sök text"
+        value={terms}
+        onValueChange={onTermsChange}
       />
     </div>
   );
