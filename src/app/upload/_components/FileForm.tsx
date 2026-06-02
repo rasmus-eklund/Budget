@@ -44,7 +44,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useStore } from "~/stores/tx-store";
 import type { FromTo, TxBankAccount } from "~/lib/zodSchemas";
-import { configs } from "~/constants";
+import { configs, emptySearchFilter } from "~/constants";
 
 type Props = { categories: Category[]; people: PersonAccounts };
 const FileForm = ({ categories, people }: Props) => {
@@ -359,7 +359,7 @@ const FileForm = ({ categories, people }: Props) => {
               övrigt: true,
               inkomst: true,
             },
-            search: "",
+            search: emptySearchFilter,
           }}
         />
       )}

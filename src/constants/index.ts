@@ -1,4 +1,4 @@
-import type { FileData } from "~/types";
+import type { FileData, TextFilter } from "~/types";
 
 export const colors = [
   "#FF0000",
@@ -28,11 +28,16 @@ export const months = [
   "December",
 ];
 
+export const emptySearchFilter: TextFilter = {
+  mode: "include",
+  terms: [],
+};
+
 export const emptyOptions = {
   category: { inkomst: true, övrigt: true, inom: false },
   person: {},
   account: {},
-  search: "",
+  search: emptySearchFilter,
 };
 
 export const sortOptions = {
