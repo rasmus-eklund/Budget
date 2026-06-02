@@ -1,26 +1,16 @@
 "use client";
-import { useMemo, useState } from "react";
-import { Icon, Tooltip } from "~/components/common";
-import {
-  Button,
-  Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Switch,
-} from "~/components/ui";
+import { useMemo } from "react";
+import { Icon, LabeledSwitch, Tooltip } from "~/components/common";
+import { Button } from "~/components/ui";
 import { cn, getPeriodCount, isPeriodIncludedInAverage, toSek } from "~/lib";
 import { useStore } from "~/stores/tx-store";
-import type { Tx, Uniques } from "~/types";
+import type { PeriodGroupBy, Tx, Uniques } from "~/types";
 
 type Props = {
   data: Tx[];
   options: Uniques;
 };
 
-type GroupBy = "month" | "year";
 type CategorySums = Record<string, number>;
 type PersonCategorySums = Record<string, CategorySums>;
 type AggregatedPeriod = {
@@ -34,7 +24,7 @@ type VisibleColumn = {
   key: string;
 };
 
-const formatPeriod = (date: Date, groupBy: GroupBy) => {
+const formatPeriod = (date: Date, groupBy: PeriodGroupBy) => {
   const year = date.getFullYear();
   if (groupBy === "year") {
     return `${year}`;
@@ -50,7 +40,7 @@ export const aggregateByPeriod = ({
   categories,
 }: {
   data: Tx[];
-  groupBy: GroupBy;
+  groupBy: PeriodGroupBy;
   people: string[];
   categories: string[];
 }): AggregatedPeriod[] => {
@@ -90,8 +80,10 @@ export const aggregateByPeriod = ({
 };
 
 const Monthly = ({ data, options }: Props) => {
-  const [groupBy, setGroupBy] = useState<GroupBy>("month");
-  const [collapsePeople, setCollapsePeople] = useState(false);
+  const groupBy = useStore((state) => state.periodGroupBy);
+  const setGroupBy = useStore((state) => state.setPeriodGroupBy);
+  const collapsePeople = useStore((state) => state.collapsePeriodPeople);
+  const setCollapsePeople = useStore((state) => state.setCollapsePeriodPeople);
   const sticky = useStore((state) => state.sticky);
   const setSticky = useStore((state) => state.setSticky);
   const selectedRange = useStore((state) => state.selectedRange);
@@ -221,29 +213,21 @@ const Monthly = ({ data, options }: Props) => {
 
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
-      <div className="flex flex-wrap items-center gap-2">
-        <Select
-          value={groupBy}
-          onValueChange={(value) => setGroupBy(value as GroupBy)}
-        >
-          <SelectTrigger className="w-45">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="month">Månad</SelectItem>
-            <SelectItem value="year">År</SelectItem>
-          </SelectContent>
-        </Select>
-        <div className="flex h-9 items-center gap-2">
-          <Switch
-            id="collapse-people"
-            checked={collapsePeople}
-            onCheckedChange={setCollapsePeople}
-          />
-          <Label htmlFor="collapse-people" className="whitespace-nowrap">
-            Summera personer
-          </Label>
-        </div>
+      <div className="flex flex-wrap items-center gap-2 p-1">
+        <LabeledSwitch
+          id="period-group-by"
+          className="w-26"
+          checked={groupBy === "year"}
+          onCheckedChange={(checked) => setGroupBy(checked ? "year" : "month")}
+          label={groupBy === "month" ? "Månad" : "År"}
+          ariaLabel="Växla mellan månad och år"
+        />
+        <LabeledSwitch
+          id="collapse-people"
+          checked={collapsePeople}
+          onCheckedChange={setCollapsePeople}
+          label="Summera personer"
+        />
       </div>
 
       <div className="min-h-0 min-w-0 flex-1 overflow-auto">
