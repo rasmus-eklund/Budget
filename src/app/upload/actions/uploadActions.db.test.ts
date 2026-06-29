@@ -37,15 +37,12 @@ import type {
   renameMatch as RenameMatch,
 } from "../../categories/dataLayer/categoriesActions";
 
-const TEST_DATABASE_URL =
-  process.env.TEST_DATABASE_URL ??
-  "postgresql://postgres:password@localhost:5432/budget";
+const NODE_ENV = requireEnv("NODE_ENV");
+const DATABASE_URL = requireEnv("DATABASE_URL");
 
-Object.assign(process.env, {
-  DATABASE_URL: TEST_DATABASE_URL,
-  NODE_ENV: "test",
-  SKIP_ENV_VALIDATION: "1",
-});
+if (NODE_ENV !== "test") {
+  throw new Error(`Expected NODE_ENV=test, received ${NODE_ENV}`);
+}
 
 await mock.module("next/cache", () => ({
   revalidatePath: () => undefined,
@@ -60,7 +57,7 @@ await mock.module("next/navigation", () => ({
   },
 }));
 
-assertLocalDatabaseUrl(TEST_DATABASE_URL);
+assertComposeTestDatabaseUrl(DATABASE_URL);
 
 let sql: postgres.Sql;
 let testDb: PostgresJsDatabase<typeof schema>;
@@ -101,14 +98,14 @@ const matchA = "db-test-match-a";
 const otherMatch = "db-test-other-match";
 
 beforeAll(async () => {
-  sql = postgres(TEST_DATABASE_URL, { connect_timeout: 2, prepare: false });
+  sql = postgres(DATABASE_URL, { connect_timeout: 2, prepare: false });
   try {
     await sql.unsafe("select 1");
   } catch (error) {
     throw new Error(
       [
-        `Local Postgres is not available at ${TEST_DATABASE_URL}.`,
-        "Start the local test database, then rerun npm run test:db.",
+        `Compose-managed test Postgres is not available at ${DATABASE_URL}.`,
+        "Start the compose test workflow, then rerun bun run test:db.",
         String(error),
       ].join("\n"),
     );
@@ -118,9 +115,7 @@ beforeAll(async () => {
     cmd: ["bunx", "drizzle-kit", "push", "--force"],
     env: {
       ...process.env,
-      DATABASE_URL: TEST_DATABASE_URL,
-      NODE_ENV: "test",
-      SKIP_ENV_VALIDATION: "1",
+      DATABASE_URL,
     },
     stdout: "pipe",
     stderr: "pipe",
@@ -725,11 +720,34 @@ const expectRejectsToThrow = async (
   throw new Error(`Expected promise to reject with message: ${message}`);
 };
 
-function assertLocalDatabaseUrl(url: string) {
-  const parsed = new URL(url);
-  if (!["localhost", "127.0.0.1", "::1"].includes(parsed.hostname)) {
+function requireEnv(name: string) {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+
+  return value;
+}
+
+function assertComposeTestDatabaseUrl(url: string) {
+  const expected = buildExpectedTestDatabaseUrl();
+  if (url !== expected) {
     throw new Error(
-      `Refusing to run DB integration tests against non-local database: ${parsed.hostname}`,
+      [
+        "DATABASE_URL does not match the compose-defined test database URL.",
+        `Expected: ${expected}`,
+        `Received: ${url}`,
+      ].join("\n"),
     );
   }
+}
+
+function buildExpectedTestDatabaseUrl() {
+  const host = requireEnv("TEST_DATABASE_HOST");
+  const port = requireEnv("TEST_DATABASE_PORT");
+  const database = requireEnv("TEST_DATABASE_NAME");
+  const username = requireEnv("TEST_DATABASE_USER");
+  const password = requireEnv("TEST_DATABASE_PASSWORD");
+
+  return `postgresql://${username}:${password}@${host}:${port}/${database}`;
 }
