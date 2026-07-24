@@ -13,6 +13,7 @@ Object.assign(globalThis, {
   document: dom.window.document,
   HTMLElement: dom.window.HTMLElement,
   HTMLButtonElement: dom.window.HTMLButtonElement,
+  HTMLFormElement: dom.window.HTMLFormElement,
   DocumentFragment: dom.window.DocumentFragment,
   Event: dom.window.Event,
   CustomEvent: dom.window.CustomEvent,
