@@ -14,8 +14,10 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "start": "next start",
-    "test": "bun test --watch",
-    "test:db": "bun test src/app/upload/actions/uploadActions.db.test.ts",
+    "test": "bun run test:unit && bun run test:db",
+    "test:watch": "bun run test:unit --watch",
+    "test:unit": "bun test $(find src -type f \\( -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.spec.ts' -o -name '*.spec.tsx' \\) ! -name '*.db.test.ts')",
+    "test:db": "sh ./scripts/run-integration-tests.sh",
     "validate": "npm run format:check && npm run lint"
   },
   "dependencies": {
