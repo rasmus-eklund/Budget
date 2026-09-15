@@ -11,12 +11,7 @@ import {
 import { months } from "~/constants";
 import Icon from "./Icon";
 import Tooltip from "./Tooltip";
-import {
-  decrementMonth,
-  getYearRange,
-  getMonthRange,
-  incrementMonth,
-} from "~/lib";
+import { decrementMonth, getYearRange, getMonthRange, incrementMonth } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
 import { useStore } from "~/stores/tx-store";
 
@@ -49,10 +44,7 @@ const Month = ({ changeDate }: Props) => {
           await submitDates(getMonthRange(data));
         }}
       >
-        <SelectTrigger
-          data-testid="month-year-select"
-          className="w-full md:w-22.5"
-        >
+        <SelectTrigger data-testid="month-year-select" className="w-full md:w-22.5">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -87,10 +79,7 @@ const Month = ({ changeDate }: Props) => {
             await submitDates(getMonthRange(data));
           }}
         >
-          <SelectTrigger
-            data-testid="month-month-select"
-            className="flex-1 md:w-32.5 md:flex-none"
-          >
+          <SelectTrigger data-testid="month-month-select" className="flex-1 md:w-32.5 md:flex-none">
             <SelectValue placeholder="" />
           </SelectTrigger>
           <SelectContent>

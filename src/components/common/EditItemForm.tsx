@@ -33,22 +33,14 @@ type Props = {
 };
 type Name = { name: string };
 
-const EditItemForm = ({
-  data,
-  onSubmit,
-  formInfo: { description, label },
-  uniques,
-}: Props) => {
-  const nameSchema = z
-    .object({ name: z.string().min(2, "Minst 2 tecken.") })
-    .refine(
-      (v) =>
-        !uniques.map((i) => i.toLowerCase()).includes(v.name.toLowerCase()),
-      (v) => ({
-        message: `${capitalize(v.name)} finns redan som ${label.toLowerCase()}`,
-        path: ["name"],
-      }),
-    );
+const EditItemForm = ({ data, onSubmit, formInfo: { description, label }, uniques }: Props) => {
+  const nameSchema = z.object({ name: z.string().min(2, "Minst 2 tecken.") }).refine(
+    (v) => !uniques.map((i) => i.toLowerCase()).includes(v.name.toLowerCase()),
+    (v) => ({
+      message: `${capitalize(v.name)} finns redan som ${label.toLowerCase()}`,
+      path: ["name"],
+    }),
+  );
   const [open, setOpen] = useState(false);
   const form = useForm<Name>({
     resolver: zodResolver(nameSchema),
@@ -64,10 +56,7 @@ const EditItemForm = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button onClick={() => setOpen(true)}>
-          <Icon
-            icon="Pencil"
-            className="size-5 hover:scale-110 hover:cursor-pointer"
-          />
+          <Icon icon="Pencil" className="size-5 hover:scale-110 hover:cursor-pointer" />
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -76,10 +65,7 @@ const EditItemForm = ({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-8"
-          >
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
             <FormField
               control={form.control}
               name="name"
@@ -87,10 +73,7 @@ const EditItemForm = ({
                 <FormItem>
                   <FormLabel>{label}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={`Ny ${label.toLowerCase()}`}
-                      {...field}
-                    />
+                    <Input placeholder={`Ny ${label.toLowerCase()}`} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -98,19 +81,13 @@ const EditItemForm = ({
             />
             <DialogFooter className="flex flex-row justify-between md:justify-end">
               <DialogClose asChild>
-                <Button
-                  className="hover:cursor-pointer"
-                  type="button"
-                  variant="outline"
-                >
+                <Button className="hover:cursor-pointer" type="button" variant="outline">
                   Stäng
                 </Button>
               </DialogClose>
               <Button
                 type="submit"
-                disabled={
-                  !form.formState.isValid || form.formState.isSubmitting
-                }
+                disabled={!form.formState.isValid || form.formState.isSubmitting}
               >
                 {form.formState.isSubmitting ? (
                   <>

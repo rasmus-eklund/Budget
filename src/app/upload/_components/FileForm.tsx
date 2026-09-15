@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  type FormEvent,
-  type ReactNode,
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-} from "react";
+import { type FormEvent, type ReactNode, useState, useRef, useEffect, useCallback } from "react";
 import {
   Button,
   Select,
@@ -32,13 +25,7 @@ import {
   prepareMergeTxs,
 } from "./fileFormHelpers";
 import type { Category, FileData, Filter, PersonAccounts, Tx } from "~/types";
-import {
-  applyCategory,
-  getErrorMessage,
-  getFromTo,
-  getLastMonthYear,
-  capitalize,
-} from "~/lib";
+import { applyCategory, getErrorMessage, getFromTo, getLastMonthYear, capitalize } from "~/lib";
 import { ShowData, Icon } from "~/components/common";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -233,9 +220,7 @@ const FileForm = ({ categories, people }: Props) => {
               type="button"
               variant="outline"
               disabled={
-                files.length === 0 ||
-                error.error ||
-                files.some((i) => i.bankAccountId === "")
+                files.length === 0 || error.error || files.some((i) => i.bankAccountId === "")
               }
             >
               {loading ? "Laddar..." : "Bearbeta"}
@@ -269,14 +254,9 @@ const FileForm = ({ categories, people }: Props) => {
                   </SelectTrigger>
                   <SelectContent>
                     {options.map((option) => (
-                      <SelectItem
-                        key={option.bankAccountId}
-                        value={option.bankAccountId}
-                      >
+                      <SelectItem key={option.bankAccountId} value={option.bankAccountId}>
                         <span className="flex items-center gap-1">
-                          <span className="first-letter:uppercase">
-                            {option.person}
-                          </span>
+                          <span className="first-letter:uppercase">{option.person}</span>
                           <span className="font-semibold first-letter:uppercase">
                             {option.account}
                           </span>
@@ -292,9 +272,7 @@ const FileForm = ({ categories, people }: Props) => {
                       const newFiles = [...p];
                       newFiles[i] = {
                         ...newFiles[i]!,
-                        config: configs.find(
-                          (i) => i.name === (value as keyof typeof configs),
-                        )!,
+                        config: configs.find((i) => i.name === (value as keyof typeof configs))!,
                       };
                       return newFiles;
                     });
@@ -321,23 +299,17 @@ const FileForm = ({ categories, people }: Props) => {
         )}
         {mergeSummary && (
           <div className="rounded-sm border bg-accent p-3 text-sm">
-            <p className="font-semibold">
-              Sammanslagning för {mergeSummary.year}
-            </p>
+            <p className="font-semibold">Sammanslagning för {mergeSummary.year}</p>
             <p>
               Konton som ersätts:{" "}
               {mergeSummary.accountIds
-                .map(
-                  (id) =>
-                    options.find((option) => option.bankAccountId === id)
-                      ?.account ?? id,
-                )
+                .map((id) => options.find((option) => option.bankAccountId === id)?.account ?? id)
                 .map(capitalize)
                 .join(", ")}
             </p>
             <p>
-              Behåller {mergeSummary.keptCount} befintliga transaktioner och
-              lägger till {mergeSummary.uploadedCount} nya.
+              Behåller {mergeSummary.keptCount} befintliga transaktioner och lägger till{" "}
+              {mergeSummary.uploadedCount} nya.
             </p>
           </div>
         )}
@@ -345,9 +317,7 @@ const FileForm = ({ categories, people }: Props) => {
       </form>
       {txs.length > 0 && (
         <ShowTransactions
-          txs={addPersonAccount(people, txs).map((tx) =>
-            applyCategory({ tx, categories }),
-          )}
+          txs={addPersonAccount(people, txs).map((tx) => applyCategory({ tx, categories }))}
           options={{
             account: Object.fromEntries(
               people.flatMap((p) => p.bankAccounts.map((a) => [a.name, true])),

@@ -1,9 +1,5 @@
 import FileForm from "./_components/FileForm";
-import {
-  GetCategories,
-  getPersonAccounts,
-  getTxsPerYear,
-} from "./actions/uploadActions";
+import { GetCategories, getPersonAccounts, getTxsPerYear } from "./actions/uploadActions";
 import YearCountChart from "./_components/YearCountChart";
 import WithAuth from "~/components/server/WithAuth";
 

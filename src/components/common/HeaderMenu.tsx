@@ -36,15 +36,8 @@ const HeaderMenu = () => {
         {items.map(({ name, path, icon }) => (
           <DropdownMenuItem asChild key={path}>
             <Link
-              className={cn(
-                "flex items-center gap-2",
-                currentPath === path ? "text-primary" : "",
-              )}
-              href={
-                path === "password"
-                  ? `/${path}?from=${currentPath}`
-                  : `/${path}`
-              }
+              className={cn("flex items-center gap-2", currentPath === path ? "text-primary" : "")}
+              href={path === "password" ? `/${path}?from=${currentPath}` : `/${path}`}
             >
               <Icon icon={icon} className="mr-2 size-5" />
               {name}

@@ -5,12 +5,7 @@ import {
   removeMatch,
   renameMatch,
 } from "../dataLayer/categoriesActions";
-import {
-  DeleteButton,
-  Breadcrumb,
-  AddItemForm,
-  EditItemForm,
-} from "~/components/common";
+import { DeleteButton, Breadcrumb, AddItemForm, EditItemForm } from "~/components/common";
 import type { Name } from "~/types";
 import WithAuth from "~/components/server/WithAuth";
 
@@ -27,21 +22,13 @@ const page = async (props: Props) => {
   };
   return (
     <div className="flex flex-col gap-4 p-2">
-      <Breadcrumb
-        href="\categories"
-        name="Kategorier"
-        options={options}
-        current={name}
-      />
+      <Breadcrumb href="\categories" name="Kategorier" options={options} current={name} />
       <h2 className="text-lg font-semibold first-letter:uppercase">{name}</h2>
       <ul>
         {match
           .toSorted((a, b) => a.name.localeCompare(b.name))
           .map(({ name, id }) => (
-            <li
-              className="border-b-red flex h-8 items-center justify-between border-b"
-              key={id}
-            >
+            <li className="border-b-red flex h-8 items-center justify-between border-b" key={id}>
               <p className="first-letter:uppercase">{name}</p>
               <div className="flex items-center gap-2">
                 <EditItemForm

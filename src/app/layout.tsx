@@ -16,19 +16,10 @@ export const metadata = {
   description: "Hantera din privatekonomi",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-dvh">
-      <body
-        className={cn(
-          "flex h-dvh flex-col items-center font-sans",
-          inter.variable,
-        )}
-      >
+      <body className={cn("flex h-dvh flex-col items-center font-sans", inter.variable)}>
         <AuthProvider>
           <Header />
           <main className="flex min-h-0 w-full max-w-5xl min-w-0 flex-1 flex-col gap-4">

@@ -7,6 +7,7 @@ The desired end state is stricter: docker compose defines the test database cont
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Make docker compose the only place that defines test database host, port, database name, and credentials.
 - Ensure local and CI integration tests use the same compose-driven workflow.
 - Keep the CI path thin and Linux-first by delegating test startup to one shell script.
@@ -15,6 +16,7 @@ The desired end state is stricter: docker compose defines the test database cont
 - Fail fast when the runtime `DATABASE_URL` does not match the compose-defined test database.
 
 **Non-Goals:**
+
 - Redesigning the application’s general environment validation system.
 - Changing production database configuration or deployment behavior.
 - Introducing new test frameworks or changing the scope of the integration suite itself.

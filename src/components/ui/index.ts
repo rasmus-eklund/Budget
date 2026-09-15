@@ -70,12 +70,7 @@ export {
 } from "./form";
 export { Input } from "./input";
 export { Label } from "./label";
-export {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverAnchor,
-} from "./popover";
+export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor } from "./popover";
 export {
   Select,
   SelectContent,
@@ -91,9 +86,4 @@ export {
 export { Skeleton } from "./skeleton";
 export { Switch } from "./switch";
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs";
-export {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from "./tooltip";
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./tooltip";

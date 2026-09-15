@@ -34,13 +34,9 @@ const tx = ({
 
 describe("upload processing", () => {
   it("marks full replace transactions using only uploaded files", () => {
-    const data = prepareFullReplaceTxs([
-      tx({ account: "a", amount: -100, id: "uploaded" }),
-    ]);
+    const data = prepareFullReplaceTxs([tx({ account: "a", amount: -100, id: "uploaded" })]);
 
-    expect(data).toEqual([
-      expect.objectContaining({ budgetgrupp: "övrigt", id: "uploaded" }),
-    ]);
+    expect(data).toEqual([expect.objectContaining({ budgetgrupp: "övrigt", id: "uploaded" })]);
   });
 
   it("marks merge transactions using kept existing and uploaded files", () => {
@@ -70,9 +66,7 @@ describe("upload processing", () => {
       uploadedTxs: [tx({ account: "a", amount: -50, id: "uploaded" })],
     });
 
-    expect(data.find(({ id }) => id === "old-internal")?.budgetgrupp).toBe(
-      "övrigt",
-    );
+    expect(data.find(({ id }) => id === "old-internal")?.budgetgrupp).toBe("övrigt");
   });
 
   it("keeps ambiguous merge categorization stable regardless of kept transaction order", () => {
@@ -95,9 +89,7 @@ describe("upload processing", () => {
       uploadedTxs,
     });
 
-    expect(idsMarkedInternal(reversedOrder)).toEqual(
-      idsMarkedInternal(originalOrder),
-    );
+    expect(idsMarkedInternal(reversedOrder)).toEqual(idsMarkedInternal(originalOrder));
   });
 
   it("rejects uploads spanning multiple years", () => {

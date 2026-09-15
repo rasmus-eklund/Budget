@@ -12,11 +12,7 @@ const encryptWithAES = async (text: string, password: string) => {
     ["encrypt"],
   );
   const iv = crypto.getRandomValues(new Uint8Array(16));
-  const encrypted = await crypto.subtle.encrypt(
-    { name: "AES-CBC", iv },
-    key,
-    encodedText,
-  );
+  const encrypted = await crypto.subtle.encrypt({ name: "AES-CBC", iv }, key, encodedText);
   // Combine IV and encrypted data into a single Uint8Array
   const result = new Uint8Array(iv.length + encrypted.byteLength);
   result.set(iv, 0);
@@ -38,18 +34,11 @@ const decryptWithAES = async (ciphertext: Uint8Array, password: string) => {
     false,
     ["decrypt"],
   );
-  const decrypted = await crypto.subtle.decrypt(
-    { name: "AES-CBC", iv },
-    key,
-    encryptedData,
-  );
+  const decrypted = await crypto.subtle.decrypt({ name: "AES-CBC", iv }, key, encryptedData);
   return new TextDecoder().decode(decrypted);
 };
 
-const decryptTxData = async (
-  data: string,
-  password: string,
-): Promise<EncryptedDataSchema> => {
+const decryptTxData = async (data: string, password: string): Promise<EncryptedDataSchema> => {
   const arr = new Uint8Array(data.split(",").map(Number));
   const decrypted = await decryptWithAES(arr, password);
   const parsed = encryptedDataSchema.safeParse(JSON.parse(decrypted));

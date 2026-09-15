@@ -10,15 +10,9 @@ import { notFound, redirect } from "next/navigation";
 import type { Name } from "~/types";
 
 const ownedCategoryIds = (userId: string) =>
-  db
-    .select({ id: category.id })
-    .from(category)
-    .where(eq(category.userId, userId));
+  db.select({ id: category.id }).from(category).where(eq(category.userId, userId));
 
-export const addMatch = async ({
-  name,
-  categoryId,
-}: Name & { categoryId: string }) => {
+export const addMatch = async ({ name, categoryId }: Name & { categoryId: string }) => {
   const userId = await getUserId();
   const cat = await db.query.category.findFirst({
     columns: { id: true },
@@ -43,12 +37,7 @@ export const removeMatch = async (formData: FormData) => {
   const id = formData.get("id") as string;
   const deleted = await db
     .delete(match)
-    .where(
-      and(
-        eq(match.id, id),
-        inArray(match.categoryId, ownedCategoryIds(userId)),
-      ),
-    )
+    .where(and(eq(match.id, id), inArray(match.categoryId, ownedCategoryIds(userId))))
     .returning({ categoryId: match.categoryId });
   if (!deleted[0]) {
     throw new Error("Kunde inte ta bort matchning");
@@ -61,12 +50,7 @@ export const renameMatch = async ({ name, id }: Name & { id: string }) => {
   const res = await db
     .update(match)
     .set({ name: name.toLowerCase() })
-    .where(
-      and(
-        eq(match.id, id),
-        inArray(match.categoryId, ownedCategoryIds(userId)),
-      ),
-    )
+    .where(and(eq(match.id, id), inArray(match.categoryId, ownedCategoryIds(userId))))
     .returning({ id: match.id, categoryId: match.categoryId });
   if (!res[0]) {
     throw new Error("Kunde inte ändra matchningens namn");
@@ -152,9 +136,7 @@ export const addCategory = async ({ name }: Name) => {
 export const removeCategory = async (formData: FormData) => {
   const id = formData.get("id") as string;
   const userId = await getUserId();
-  await db
-    .delete(category)
-    .where(and(eq(category.id, id), eq(category.userId, userId)));
+  await db.delete(category).where(and(eq(category.id, id), eq(category.userId, userId)));
   revalidatePath("/categories");
 };
 

@@ -13,13 +13,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { updateTransaction } from "~/app/transactions/dataLayer/updateTransaction";
 
-const MarkAsInternal = ({
-  tx,
-  changeDates,
-}: {
-  tx: Tx;
-  changeDates: ChangeDates;
-}) => {
+const MarkAsInternal = ({ tx, changeDates }: { tx: Tx; changeDates: ChangeDates }) => {
   const [loading, setLoading] = useState(false);
   const password = useStore((state) => state.password);
   const selectedRange = useStore((state) => state.selectedRange);
@@ -54,11 +48,7 @@ const MarkAsInternal = ({
           variant="ghost"
           className="size-2 shrink-0 self-start"
         >
-          {loading ? (
-            <Icon icon="Loader" className="animate-spin" />
-          ) : (
-            <Icon icon="MoreVertical" />
-          )}
+          {loading ? <Icon icon="Loader" className="animate-spin" /> : <Icon icon="MoreVertical" />}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-44">

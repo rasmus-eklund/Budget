@@ -59,9 +59,7 @@ export const aggregateByPeriod = ({
     personSums[tx.budgetgrupp] = (personSums[tx.budgetgrupp] ?? 0) + tx.belopp;
   }
 
-  const sortedPeriods = Object.keys(periodMap).sort((a, b) =>
-    a.localeCompare(b),
-  );
+  const sortedPeriods = Object.keys(periodMap).sort((a, b) => a.localeCompare(b));
 
   return sortedPeriods.map((period) => {
     const users = periodMap[period]!;
@@ -103,9 +101,7 @@ const Monthly = ({ data, options }: Props) => {
     () =>
       options.category.filter((category) =>
         aggregated.some((period) =>
-          options.person.some(
-            (person) => period.users[person]?.[category] !== 0,
-          ),
+          options.person.some((person) => period.users[person]?.[category] !== 0),
         ),
       ),
     [aggregated, options.category, options.person],
@@ -157,8 +153,7 @@ const Monthly = ({ data, options }: Props) => {
         const value = person
           ? (period.users[person]?.[category] ?? 0)
           : visiblePeople.reduce(
-              (sum, visiblePerson) =>
-                sum + (period.users[visiblePerson]?.[category] ?? 0),
+              (sum, visiblePerson) => sum + (period.users[visiblePerson]?.[category] ?? 0),
               0,
             );
         totals[index] = (totals[index] ?? 0) + value;
@@ -176,8 +171,7 @@ const Monthly = ({ data, options }: Props) => {
       periodCount === 0
         ? averageTotals.map(() => 0)
         : averageTotals.map((total) => total / periodCount);
-    const grandAverage =
-      periodCount === 0 ? 0 : averageGrandTotal / periodCount;
+    const grandAverage = periodCount === 0 ? 0 : averageGrandTotal / periodCount;
 
     return { totals, grandTotal, averages, grandAverage };
   }, [aggregated, groupBy, selectedRange, visibleColumns, visiblePeople]);
@@ -193,9 +187,7 @@ const Monthly = ({ data, options }: Props) => {
   const categoryEndBorderClass = "border-r border-border";
   const getCategoryBoundaryClass = (index: number) =>
     cn(
-      categoryColumnSpan > 0 &&
-        index % categoryColumnSpan === 0 &&
-        categoryStartBorderClass,
+      categoryColumnSpan > 0 && index % categoryColumnSpan === 0 && categoryStartBorderClass,
       categoryColumnSpan > 0 &&
         index % categoryColumnSpan === categoryColumnSpan - 1 &&
         categoryEndBorderClass,
@@ -236,19 +228,11 @@ const Monthly = ({ data, options }: Props) => {
             <tr>
               <th
                 rowSpan={collapsePeople ? 1 : 2}
-                className={cn(
-                  headClass,
-                  "bg-secondary text-left",
-                  sticky && stickyClass,
-                )}
+                className={cn(headClass, "bg-secondary text-left", sticky && stickyClass)}
               >
                 <div className="flex items-center gap-1">
                   <p>Date</p>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setSticky(!sticky)}
-                  >
+                  <Button variant="ghost" size="icon" onClick={() => setSticky(!sticky)}>
                     <Icon icon={sticky ? "PinOff" : "Pin"} />
                   </Button>
                 </div>
@@ -258,11 +242,7 @@ const Monthly = ({ data, options }: Props) => {
                 <th
                   key={category}
                   colSpan={categoryColumnSpan}
-                  className={cn(
-                    headClass,
-                    "bg-secondary text-center",
-                    categoryBorderClass,
-                  )}
+                  className={cn(headClass, "bg-secondary text-center", categoryBorderClass)}
                 >
                   {category}
                 </th>
@@ -316,9 +296,7 @@ const Monthly = ({ data, options }: Props) => {
                       <span>{row.period}</span>
                       {!periodIncludedInAverage && (
                         <Tooltip title="Raden ingår inte i snittet då perioden inte är komplett.">
-                          <span className="cursor-help text-muted-foreground">
-                            *
-                          </span>
+                          <span className="cursor-help text-muted-foreground">*</span>
                         </Tooltip>
                       )}
                     </div>

@@ -5,13 +5,7 @@ import dayjs from "dayjs";
 import { type FromTo } from "~/lib/zodSchemas";
 import DatePickerRange from "./DatePickerRange";
 import { useStore } from "~/stores/tx-store";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui";
 
 type Props = { changeDate: (dates: FromTo) => void };
 type DatePreset = "6-months" | "1-year" | "3-years" | "5-years" | "all";
@@ -39,10 +33,7 @@ const getPresetDates = (preset: DatePreset, range: FromTo) => {
   const option = datePresets.find(({ value }) => value === preset);
   const amount = option?.amount ?? 0;
   const unit = option?.unit ?? "month";
-  const presetFrom = dayjs(range.to)
-    .subtract(amount, unit)
-    .startOf(unit)
-    .toDate();
+  const presetFrom = dayjs(range.to).subtract(amount, unit).startOf(unit).toDate();
   const rangeFrom = dayjs(range.from).startOf(unit).toDate();
   const from = presetFrom < rangeFrom ? rangeFrom : presetFrom;
 

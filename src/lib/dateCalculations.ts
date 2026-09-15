@@ -67,14 +67,11 @@ export const getYearRange = ({ from, to }: FromTo) => {
 const isFirstDayOfMonth = (date: Date) => date.getDate() === 1;
 
 const isLastDayOfMonth = (date: Date) =>
-  date.getDate() ===
-  new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  date.getDate() === new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 
-const isFirstDayOfYear = (date: Date) =>
-  date.getMonth() === 0 && date.getDate() === 1;
+const isFirstDayOfYear = (date: Date) => date.getMonth() === 0 && date.getDate() === 1;
 
-const isLastDayOfYear = (date: Date) =>
-  date.getMonth() === 11 && date.getDate() === 31;
+const isLastDayOfYear = (date: Date) => date.getMonth() === 11 && date.getDate() === 31;
 
 const minDate = (a: Date, b: Date) => (a < b ? a : b);
 
@@ -99,9 +96,7 @@ const getAverageMonthBounds = ({ from, to }: FromTo, now: Date) => {
 };
 
 const getAverageYearBounds = ({ from, to }: FromTo, now: Date) => {
-  const firstYear = isFirstDayOfYear(from)
-    ? from.getFullYear()
-    : from.getFullYear() + 1;
+  const firstYear = isFirstDayOfYear(from) ? from.getFullYear() : from.getFullYear() + 1;
   const effectiveTo = minDate(to, getLastCompletedPeriodEnd("year", now));
   const lastYear = isLastDayOfYear(effectiveTo)
     ? effectiveTo.getFullYear()
@@ -110,11 +105,7 @@ const getAverageYearBounds = ({ from, to }: FromTo, now: Date) => {
   return { firstYear, lastYear };
 };
 
-export const getPeriodCount = (
-  { from, to }: FromTo,
-  groupBy: PeriodGroupBy,
-  now = new Date(),
-) => {
+export const getPeriodCount = ({ from, to }: FromTo, groupBy: PeriodGroupBy, now = new Date()) => {
   if (groupBy === "year") {
     const { firstYear, lastYear } = getAverageYearBounds({ from, to }, now);
     return Math.max(0, lastYear - firstYear + 1);
@@ -187,9 +178,7 @@ export const eachDayOfInterval = ({ from, to }: FromTo) => {
   endDate.setHours(0, 0, 0, 0);
 
   if (endDate < startDate) {
-    throw new RangeError(
-      "Invalid interval: end date must be after or equal to the start date",
-    );
+    throw new RangeError("Invalid interval: end date must be after or equal to the start date");
   }
 
   const dates = [];
@@ -258,11 +247,7 @@ export const isFullMonthRange = ({ from, to }: FromTo) => {
   if (from.getMonth() !== to.getMonth()) {
     return false;
   }
-  const lastDayOfMonth = new Date(
-    from.getFullYear(),
-    from.getMonth() + 1,
-    0,
-  ).getDate();
+  const lastDayOfMonth = new Date(from.getFullYear(), from.getMonth() + 1, 0).getDate();
   return from.getDate() === 1 && to.getDate() === lastDayOfMonth;
 };
 

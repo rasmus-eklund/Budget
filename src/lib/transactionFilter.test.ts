@@ -1,10 +1,5 @@
 import { it, describe, expect } from "bun:test";
-import {
-  filterChanged,
-  type Part,
-  resetFilter,
-  transactionFilter,
-} from "./transactionFilter";
+import { filterChanged, type Part, resetFilter, transactionFilter } from "./transactionFilter";
 import { type Filter } from "~/types";
 
 const data: Part[] = [
@@ -51,9 +46,7 @@ describe("Transaction filter", () => {
       person: { A: true, B: false },
       category: { mat: true, transport: false, inom: false },
     });
-    const expected: Part[] = [
-      { text: "", person: "A", budgetgrupp: "mat", konto: "A" },
-    ];
+    const expected: Part[] = [{ text: "", person: "A", budgetgrupp: "mat", konto: "A" }];
     const result = data.filter((d) => transactionFilter({ ...d, filter }));
     expect(result).toEqual(expected);
   });
@@ -91,9 +84,7 @@ describe("Transaction filter", () => {
       category: { mat: true, transport: true, inom: false },
       account: { A: true, B: false, C: false },
     });
-    const expected: Part[] = [
-      { text: "", person: "A", budgetgrupp: "mat", konto: "A" },
-    ];
+    const expected: Part[] = [{ text: "", person: "A", budgetgrupp: "mat", konto: "A" }];
     const result = data.filter((d) => transactionFilter({ ...d, filter }));
     expect(result).toEqual(expected);
   });
@@ -103,9 +94,7 @@ describe("Transaction filter", () => {
       category: { mat: true, transport: true, inom: false },
       search: { mode: "include", terms: ["sl"] },
     });
-    const expected: Part[] = [
-      { text: "sl", person: "A", budgetgrupp: "transport", konto: "B" },
-    ];
+    const expected: Part[] = [{ text: "sl", person: "A", budgetgrupp: "transport", konto: "B" }];
     const result = data.filter((d) => transactionFilter({ ...d, filter }));
     expect(result).toEqual(expected);
   });

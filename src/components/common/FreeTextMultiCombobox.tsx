@@ -83,11 +83,7 @@ const FreeTextMultiCombobox = ({
         <ComboboxChipsInput
           placeholder={value.length === 0 ? placeholder : undefined}
           onKeyDown={(event) => {
-            if (
-              event.key !== "Enter" &&
-              event.key !== "Tab" &&
-              event.key !== ","
-            ) {
+            if (event.key !== "Enter" && event.key !== "Tab" && event.key !== ",") {
               return;
             }
 
@@ -101,9 +97,7 @@ const FreeTextMultiCombobox = ({
       {canAdd && (
         <ComboboxContent anchor={anchorRef}>
           <ComboboxList>
-            <ComboboxItem value={trimmedInput}>
-              Lägg till &quot;{trimmedInput}&quot;
-            </ComboboxItem>
+            <ComboboxItem value={trimmedInput}>Lägg till &quot;{trimmedInput}&quot;</ComboboxItem>
           </ComboboxList>
         </ComboboxContent>
       )}

@@ -28,10 +28,7 @@ export const updateTransaction = async ({
 
   const existing = await db.query.txs.findFirst({
     columns: { data: true },
-    where: and(
-      eq(txs.id, txId),
-      inArray(txs.bankAccountId, ownedAccountIdsQuery),
-    ),
+    where: and(eq(txs.id, txId), inArray(txs.bankAccountId, ownedAccountIdsQuery)),
   });
 
   if (!existing) {
@@ -58,9 +55,7 @@ export const updateTransaction = async ({
   const res = await db
     .update(txs)
     .set({ data: encrypted.toString() })
-    .where(
-      and(eq(txs.id, txId), inArray(txs.bankAccountId, ownedAccountIdsQuery)),
-    )
+    .where(and(eq(txs.id, txId), inArray(txs.bankAccountId, ownedAccountIdsQuery)))
     .returning({ id: txs.id });
 
   if (res.length === 0) {

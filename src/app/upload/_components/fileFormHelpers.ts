@@ -26,9 +26,7 @@ export const getFileNames = (files: FileList | undefined) => {
   return names;
 };
 
-export const hasCorrectFilenames = (
-  fileList: FileList,
-): { success: boolean; name: string } => {
+export const hasCorrectFilenames = (fileList: FileList): { success: boolean; name: string } => {
   const pattern = /.+_.+\.csv/;
   for (const file of fileList) {
     const filename = file.name;
@@ -41,9 +39,7 @@ export const hasCorrectFilenames = (
 
 export const readFiles = async (
   files: FileData[],
-): Promise<
-  { ok: true; data: TxBankAccount[] } | { ok: false; error: ReactNode }
-> => {
+): Promise<{ ok: true; data: TxBankAccount[] } | { ok: false; error: ReactNode }> => {
   const allTxs: TxBankAccount[] = [];
   for (const { file, bankAccountId, config } of files) {
     const bytes = await file.arrayBuffer();
@@ -111,10 +107,7 @@ export const uploadFiles = async ({
   await upload({ mode, replacedAccountIds, transactions, year });
 };
 
-export const addPersonAccount = (
-  people: PersonAccounts,
-  txs: TxBankAccount[],
-): Tx[] => {
+export const addPersonAccount = (people: PersonAccounts, txs: TxBankAccount[]): Tx[] => {
   const accounts: Record<string, { person: string; konto: string }> = {};
   for (const person of people) {
     for (const account of person.bankAccounts) {

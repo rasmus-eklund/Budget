@@ -24,21 +24,14 @@ type Props = {
   uniques: string[];
 };
 
-const AddItemForm = ({
-  onSubmit,
-  formInfo: { description, label },
-  uniques,
-}: Props) => {
-  const nameSchema = z
-    .object({ name: z.string().min(2, "Minst 2 tecken.") })
-    .refine(
-      (v) =>
-        !uniques.map((i) => i.toLowerCase()).includes(v.name.toLowerCase()),
-      (v) => ({
-        message: `${capitalize(v.name)} finns redan som ${label.toLowerCase()}`,
-        path: ["name"],
-      }),
-    );
+const AddItemForm = ({ onSubmit, formInfo: { description, label }, uniques }: Props) => {
+  const nameSchema = z.object({ name: z.string().min(2, "Minst 2 tecken.") }).refine(
+    (v) => !uniques.map((i) => i.toLowerCase()).includes(v.name.toLowerCase()),
+    (v) => ({
+      message: `${capitalize(v.name)} finns redan som ${label.toLowerCase()}`,
+      path: ["name"],
+    }),
+  );
   const form = useForm<Name>({
     resolver: zodResolver(nameSchema),
     defaultValues: { name: "" },

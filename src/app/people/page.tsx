@@ -1,16 +1,6 @@
 import Link from "next/link";
-import {
-  addPerson,
-  getAllPeople,
-  removePerson,
-  renamePerson,
-} from "./dataLayer/peopleActions";
-import {
-  DeleteButton,
-  AddItemForm,
-  DeleteDialog,
-  EditItemForm,
-} from "~/components/common";
+import { addPerson, getAllPeople, removePerson, renamePerson } from "./dataLayer/peopleActions";
+import { DeleteButton, AddItemForm, DeleteDialog, EditItemForm } from "~/components/common";
 import WithAuth from "~/components/server/WithAuth";
 import { type Name } from "~/types";
 
@@ -30,10 +20,7 @@ const Categories = async () => {
           data
             .toSorted((a, b) => a.name.localeCompare(b.name))
             .map(({ id, name }) => (
-              <li
-                className="border-b-red flex h-8 items-center justify-between border-b"
-                key={id}
-              >
+              <li className="border-b-red flex h-8 items-center justify-between border-b" key={id}>
                 <Link className="first-letter:uppercase" href={`/people/${id}`}>
                   {name}
                 </Link>
@@ -47,9 +34,7 @@ const Categories = async () => {
                     }}
                     uniques={data.map((i) => i.name)}
                   />
-                  <DeleteDialog
-                    info={{ title: "personen", entity: "bankloggar" }}
-                  >
+                  <DeleteDialog info={{ title: "personen", entity: "bankloggar" }}>
                     <form action={removePerson} className="flex items-center">
                       <input hidden name="id" type="text" defaultValue={id} />
                       <DeleteButton icon={false} />

@@ -26,9 +26,7 @@ const DISPLAY_NAME_BY_CATEGORY: Record<string, string> = {
   spending: "Utgifter",
 };
 
-const isSummaryCategory = (
-  category: string,
-): category is (typeof SUMMARY_CATEGORIES)[number] =>
+const isSummaryCategory = (category: string): category is (typeof SUMMARY_CATEGORIES)[number] =>
   SUMMARY_CATEGORIES.includes(category as (typeof SUMMARY_CATEGORIES)[number]);
 
 const useAggregatedFilterActions = () => {
@@ -68,19 +66,14 @@ const useAggregatedTableModel = ({
   const setSticky = useStore((state) => state.setSticky);
 
   const rowCategories = useMemo(
-    () =>
-      [...category, ...SUMMARY_CATEGORIES].filter(
-        (cat) => cat !== INTERNAL_CATEGORY,
-      ),
+    () => [...category, ...SUMMARY_CATEGORIES].filter((cat) => cat !== INTERNAL_CATEGORY),
     [category],
   );
 
   const visiblePeopleTotal = useMemo(
     () =>
       [...person, "total"].filter(
-        (p) =>
-          p === "total" ||
-          rowCategories.some((cat) => (sums[cat]?.[p] ?? 0) !== 0),
+        (p) => p === "total" || rowCategories.some((cat) => (sums[cat]?.[p] ?? 0) !== 0),
       ),
     [person, rowCategories, sums],
   );
@@ -107,18 +100,12 @@ const useAggregatedTableModel = ({
 
 const Aggregated = ({ options: { person, category } }: Props) => {
   const txs = useStore((state) => state.txs);
-  const {
-    sums,
-    sticky,
-    setSticky,
-    rowCategories,
-    visiblePeopleTotal,
-    datesLabel,
-  } = useAggregatedTableModel({
-    txs,
-    person,
-    category,
-  });
+  const { sums, sticky, setSticky, rowCategories, visiblePeopleTotal, datesLabel } =
+    useAggregatedTableModel({
+      txs,
+      person,
+      category,
+    });
   const applyFilter = useAggregatedFilterActions();
 
   const stickyCellClass = "sticky left-0 z-10";
@@ -135,31 +122,16 @@ const Aggregated = ({ options: { person, category } }: Props) => {
   return (
     <div className="flex-1 overflow-auto py-2">
       {datesLabel ? (
-        <h2 className={cn("p-2 text-xs md:text-lg", stickyCellClass)}>
-          {datesLabel}
-        </h2>
+        <h2 className={cn("p-2 text-xs md:text-lg", stickyCellClass)}>{datesLabel}</h2>
       ) : null}
       <table className="min-w-full divide-y divide-secondary">
         <thead className="bg-secondary">
           <tr>
-            <th
-              className={cn(
-                headerCellClass,
-                "text-left",
-                sticky && stickyCellClass,
-              )}
-            >
+            <th className={cn(headerCellClass, "text-left", sticky && stickyCellClass)}>
               <div className="flex items-center gap-2">
                 <p>Kategori</p>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSticky(!sticky)}
-                >
-                  <Icon
-                    className="size-3 md:size-4"
-                    icon={sticky ? "PinOff" : "Pin"}
-                  />
+                <Button variant="ghost" size="icon" onClick={() => setSticky(!sticky)}>
+                  <Icon className="size-3 md:size-4" icon={sticky ? "PinOff" : "Pin"} />
                 </Button>
               </div>
             </th>
@@ -253,10 +225,7 @@ const CatButton = ({
   className?: string;
   onClick: () => void;
 }) => (
-  <button
-    className={cn("cursor-pointer hover:scale-105", className)}
-    onClick={onClick}
-  >
+  <button className={cn("cursor-pointer hover:scale-105", className)} onClick={onClick}>
     {children}
   </button>
 );

@@ -27,9 +27,7 @@ const UploadJsonButton = ({ className, onData }: Props) => {
           if (!e.target?.result) {
             return;
           }
-          const parsed = jsonSchema.safeParse(
-            JSON.parse(e.target.result as string),
-          );
+          const parsed = jsonSchema.safeParse(JSON.parse(e.target.result as string));
           if (!parsed.success) {
             setError("Fel i JSON-filen.");
             return;

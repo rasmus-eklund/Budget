@@ -10,10 +10,7 @@ const ImportErrors = ({ error, file, skip }: ImportErrorsProps) => {
   if (error.issues.length === 0) {
     return null;
   }
-  const items = new Map<
-    string,
-    { index: number; field: string; message: string }
-  >();
+  const items = new Map<string, { index: number; field: string; message: string }>();
   for (const {
     path: [index, field],
     message,
