@@ -11,11 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui";
-import {
-  FreeTextMultiCombobox,
-  LabeledSwitch,
-  MultiSelect,
-} from "~/components/common";
+import { FreeTextMultiCombobox, LabeledSwitch, MultiSelect } from "~/components/common";
 import { sortOptions } from "~/constants";
 import { useStore } from "~/stores/tx-store";
 import { cn, setAll } from "~/lib";
@@ -32,12 +28,7 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
   const filterTab = useStore((state) => state.filterTab);
 
   return (
-    <div
-      className={cn(
-        "flex flex-wrap gap-2 p-1 pt-2 md:flex-nowrap",
-        showFilter ? "" : "hidden",
-      )}
-    >
+    <div className={cn("flex flex-wrap gap-2 p-1 pt-2 md:flex-nowrap", showFilter ? "" : "hidden")}>
       <MultiSelect
         options={person}
         filterItems={filter.person}
@@ -47,12 +38,8 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
             person: { ...filter.person, [item]: !filter.person[item] },
           });
         }}
-        clearAll={() =>
-          setFilter({ ...filter, person: setAll(filter.person, false) })
-        }
-        selectAll={() =>
-          setFilter({ ...filter, person: setAll(filter.person, true) })
-        }
+        clearAll={() => setFilter({ ...filter, person: setAll(filter.person, false) })}
+        selectAll={() => setFilter({ ...filter, person: setAll(filter.person, true) })}
         label="Person"
       />
       <MultiSelect
@@ -64,12 +51,8 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
             category: { ...filter.category, [item]: !filter.category[item] },
           });
         }}
-        clearAll={() =>
-          setFilter({ ...filter, category: setAll(filter.category, false) })
-        }
-        selectAll={() =>
-          setFilter({ ...filter, category: setAll(filter.category, true) })
-        }
+        clearAll={() => setFilter({ ...filter, category: setAll(filter.category, false) })}
+        selectAll={() => setFilter({ ...filter, category: setAll(filter.category, true) })}
         label="Kategori"
       />
       <MultiSelect
@@ -81,24 +64,16 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
             account: { ...filter.account, [item]: !filter.account[item] },
           });
         }}
-        clearAll={() =>
-          setFilter({ ...filter, account: setAll(filter.account, false) })
-        }
-        selectAll={() =>
-          setFilter({ ...filter, account: setAll(filter.account, true) })
-        }
+        clearAll={() => setFilter({ ...filter, account: setAll(filter.account, false) })}
+        selectAll={() => setFilter({ ...filter, account: setAll(filter.account, true) })}
         label="Konto"
       />
 
       <SearchFilter
         mode={filter.search.mode}
         terms={filter.search.terms}
-        onModeChange={(mode) =>
-          setFilter({ ...filter, search: { ...filter.search, mode } })
-        }
-        onTermsChange={(terms) =>
-          setFilter({ ...filter, search: { ...filter.search, terms } })
-        }
+        onModeChange={(mode) => setFilter({ ...filter, search: { ...filter.search, mode } })}
+        onTermsChange={(terms) => setFilter({ ...filter, search: { ...filter.search, terms } })}
       />
       {hasChanged && (
         <Button type="button" onClick={reset}>
@@ -108,9 +83,7 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
       {["aggregated", "transactions"].includes(filterTab) && (
         <Select
           value={txSort.sort}
-          onValueChange={(value) =>
-            setTxSort({ ...txSort, sort: value as SortOption })
-          }
+          onValueChange={(value) => setTxSort({ ...txSort, sort: value as SortOption })}
         >
           <SelectTrigger>
             <SelectValue placeholder="Sortera" />
@@ -119,18 +92,12 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
             <SelectGroup>
               <SelectLabel>Datum</SelectLabel>
               <SelectItem value={sortOptions.dateAsc}>Datumstigande</SelectItem>
-              <SelectItem value={sortOptions.dateDesc}>
-                Datumfallande
-              </SelectItem>
+              <SelectItem value={sortOptions.dateDesc}>Datumfallande</SelectItem>
             </SelectGroup>
             <SelectGroup>
               <SelectLabel>Belopp</SelectLabel>
-              <SelectItem value={sortOptions.amountAsc}>
-                Lågt till högt
-              </SelectItem>
-              <SelectItem value={sortOptions.amountDesc}>
-                Högt till lågt
-              </SelectItem>
+              <SelectItem value={sortOptions.amountAsc}>Lågt till högt</SelectItem>
+              <SelectItem value={sortOptions.amountDesc}>Högt till lågt</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -155,17 +122,11 @@ const SearchFilter = ({
       <LabeledSwitch
         id="search-filter-mode"
         checked={mode === "exclude"}
-        onCheckedChange={(checked) =>
-          onModeChange(checked ? "exclude" : "include")
-        }
+        onCheckedChange={(checked) => onModeChange(checked ? "exclude" : "include")}
         label={mode === "include" ? "Inkludera" : "Exkludera"}
         ariaLabel="Växla mellan inkludera och exkludera"
       />
-      <FreeTextMultiCombobox
-        placeholder="Sök text"
-        value={terms}
-        onValueChange={onTermsChange}
-      />
+      <FreeTextMultiCombobox placeholder="Sök text" value={terms} onValueChange={onTermsChange} />
     </div>
   );
 };

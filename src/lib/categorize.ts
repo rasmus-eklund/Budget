@@ -1,7 +1,6 @@
 import type { Tx, Category } from "~/types";
 
-const normalize = (s: string): string =>
-  s.toLowerCase().replace(/[^a-z0-9]/g, "");
+const normalize = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]/g, "");
 
 const tokenize = (s: string): string[] =>
   s
@@ -9,10 +8,7 @@ const tokenize = (s: string): string[] =>
     .split(/[^a-z0-9]+/)
     .filter(Boolean);
 
-export const categorize = (
-  text: string,
-  categories: Category[],
-): string | null => {
+export const categorize = (text: string, categories: Category[]): string | null => {
   const normText = normalize(text);
   const tokens = tokenize(text);
 
@@ -28,9 +24,7 @@ export const categorize = (
 
       if (normPattern.length <= 3) {
         // Short patterns: tokenized match, require each token ≥2 chars
-        isMatch = patternTokens.every(
-          (pt) => pt.length >= 2 && tokens.includes(pt),
-        );
+        isMatch = patternTokens.every((pt) => pt.length >= 2 && tokens.includes(pt));
       } else {
         // Long patterns: only exact substring match
         isMatch = normText.includes(normPattern);
@@ -47,13 +41,7 @@ export const categorize = (
   return bestCategory;
 };
 
-export const applyCategory = ({
-  tx,
-  categories,
-}: {
-  tx: Tx;
-  categories: Category[];
-}) => {
+export const applyCategory = ({ tx, categories }: { tx: Tx; categories: Category[] }) => {
   if (tx.budgetgrupp === "inom") {
     return tx;
   }

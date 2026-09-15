@@ -87,9 +87,7 @@ describe("categorize", () => {
   });
 
   it("should not match truncated pattern unless provided", () => {
-    const cats: Category[] = [
-      { name: "alkohol", match: [{ name: "systembolaget" }] },
-    ];
+    const cats: Category[] = [{ name: "alkohol", match: [{ name: "systembolaget" }] }];
     const result = categorize("systembo", cats);
 
     expect(result).toBeNull();

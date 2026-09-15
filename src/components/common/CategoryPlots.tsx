@@ -30,9 +30,7 @@ type Persons = Record<string, Data[]>;
 const CategoryPlots = ({ data, options }: Props) => {
   const sums: Sum[] = [];
   const persons: Persons = {};
-  const cats = options.category.filter(
-    (c) => !(c === "inkomst" || c === "inom"),
-  );
+  const cats = options.category.filter((c) => !(c === "inkomst" || c === "inom"));
   for (const cat of cats) {
     const record: Record<string, string | number> = {};
     for (const person of options.person) {
@@ -57,11 +55,7 @@ const CategoryPlots = ({ data, options }: Props) => {
     <div className="flex flex-1 flex-col gap-2">
       <CategoryBars sums={sums} options={options} />
       {Object.keys(persons).map((person) => (
-        <CategoryPies
-          data={persons[person]!}
-          name={capitalize(person)}
-          key={person}
-        />
+        <CategoryPies data={persons[person]!} name={capitalize(person)} key={person} />
       ))}
     </div>
   );
@@ -78,26 +72,17 @@ const CategoryBars = ({ sums, options }: { sums: Sum[]; options: Uniques }) => {
       </CardHeader>
       <CardContent>
         <ResponsiveContainer height={300}>
-          <BarChart
-            data={sums}
-            barCategoryGap={isDesktop ? "5%" : "1%"}
-            barGap={"1%"}
-          >
+          <BarChart data={sums} barCategoryGap={isDesktop ? "5%" : "1%"} barGap={"1%"}>
             <Tooltip cursor={false} />
             <CartesianGrid />
             <YAxis />
-            <XAxis
-              dataKey={"cat"}
-              tickFormatter={(item) => capitalize(item as string)}
-            />
+            <XAxis dataKey={"cat"} tickFormatter={(item) => capitalize(item as string)} />
             {options.person.map((person, i) => (
               <Bar key={person} dataKey={person} fill={colors[i]} />
             ))}
             <Legend
               formatter={(item) => (
-                <p className="text-sm first-letter:capitalize md:text-base">
-                  {item}
-                </p>
+                <p className="text-sm first-letter:capitalize md:text-base">{item}</p>
               )}
             />
           </BarChart>
@@ -133,11 +118,7 @@ const CategoryPies = ({ data, name }: { name: string; data: Data[] }) => {
               label={PieLabel}
             >
               {data.map(({ name }, i) => (
-                <Cell
-                  key={`cell-${name}`}
-                  fill={colors[i]}
-                  fontSize={isDesktop ? 20 : 10}
-                />
+                <Cell key={`cell-${name}`} fill={colors[i]} fontSize={isDesktop ? 20 : 10} />
               ))}
             </Pie>
           </PieChart>

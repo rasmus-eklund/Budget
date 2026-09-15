@@ -6,9 +6,7 @@ type IconComponent = ComponentType<{
   className?: string;
 }>;
 export type IconName = {
-  [K in keyof typeof Lucide]: (typeof Lucide)[K] extends IconComponent
-    ? K
-    : never;
+  [K in keyof typeof Lucide]: (typeof Lucide)[K] extends IconComponent ? K : never;
 }[keyof typeof Lucide];
 
 type IconProps = ComponentProps<(typeof Lucide)[IconName]>;

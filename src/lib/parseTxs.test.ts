@@ -26,9 +26,7 @@ describe("parseTxs", () => {
       return;
     }
 
-    expect(
-      result.data.map(({ text, sourceOrder }) => ({ text, sourceOrder })),
-    ).toEqual([
+    expect(result.data.map(({ text, sourceOrder }) => ({ text, sourceOrder }))).toEqual([
       { text: "third", sourceOrder: 0 },
       { text: "second", sourceOrder: 1 },
       { text: "first", sourceOrder: 2 },

@@ -8,10 +8,7 @@ import type { Name } from "~/types";
 import { randomUUID } from "crypto";
 import { notFound, redirect } from "next/navigation";
 
-export const addBankAccount = async ({
-  name,
-  personId,
-}: Name & { personId: string }) => {
+export const addBankAccount = async ({ name, personId }: Name & { personId: string }) => {
   const userId = await getUserId();
   const person = await db.query.persons.findFirst({
     columns: { id: true },
@@ -38,20 +35,12 @@ const ownedAccountIds = (userId: string) =>
     .innerJoin(persons, eq(persons.id, bankAccounts.personId))
     .where(eq(persons.userId, userId));
 
-export const renameBankAccount = async ({
-  name,
-  id,
-}: Name & { id: string }) => {
+export const renameBankAccount = async ({ name, id }: Name & { id: string }) => {
   const userId = await getUserId();
   const res = await db
     .update(bankAccounts)
     .set({ name: name.toLowerCase() })
-    .where(
-      and(
-        eq(bankAccounts.id, id),
-        inArray(bankAccounts.id, ownedAccountIds(userId)),
-      ),
-    )
+    .where(and(eq(bankAccounts.id, id), inArray(bankAccounts.id, ownedAccountIds(userId))))
     .returning({ id: bankAccounts.id, personId: bankAccounts.personId });
   if (!res[0]) {
     throw new Error("Kunde inte byta bankkontots namn.");
@@ -66,10 +55,7 @@ export const removeBankAccount = async (formData: FormData) => {
   await db
     .delete(bankAccounts)
     .where(
-      and(
-        eq(bankAccounts.id, bankAccountId),
-        inArray(bankAccounts.id, ownedAccountIds(userId)),
-      ),
+      and(eq(bankAccounts.id, bankAccountId), inArray(bankAccounts.id, ownedAccountIds(userId))),
     );
   revalidatePath(`/people/${id}`);
 };
@@ -89,9 +75,7 @@ export const addPerson = async ({ name: personName }: Name) => {
 export const removePerson = async (formData: FormData) => {
   const id = formData.get("id") as string;
   const userId = await getUserId();
-  await db
-    .delete(persons)
-    .where(and(eq(persons.id, id), eq(persons.userId, userId)));
+  await db.delete(persons).where(and(eq(persons.id, id), eq(persons.userId, userId)));
   revalidatePath("/people");
 };
 

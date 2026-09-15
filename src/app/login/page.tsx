@@ -25,9 +25,7 @@ const LoginPage = async ({ searchParams }: Props) => {
         </div>
 
         <Button asChild className="w-full">
-          <LoginLink postLoginRedirectURL="/transactions">
-            Fortsätt till inloggning
-          </LoginLink>
+          <LoginLink postLoginRedirectURL="/transactions">Fortsätt till inloggning</LoginLink>
         </Button>
 
         <Button asChild variant="ghost" className="w-full">

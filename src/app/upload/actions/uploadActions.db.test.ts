@@ -1,12 +1,4 @@
-import {
-  afterAll,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  mock,
-} from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, mock } from "bun:test";
 import postgres from "postgres";
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { and, eq, inArray } from "drizzle-orm";
@@ -152,8 +144,7 @@ beforeAll(async () => {
   renamePerson = peopleActions.renamePerson;
   removePerson = peopleActions.removePerson;
 
-  const categoryActions =
-    await import("../../categories/dataLayer/categoriesActions");
+  const categoryActions = await import("../../categories/dataLayer/categoriesActions");
   renameCategory = categoryActions.renameCategory;
   removeCategory = categoryActions.removeCategory;
   renameMatch = categoryActions.renameMatch;
@@ -227,16 +218,10 @@ describe("upload account merge db integration", () => {
     const rows = await testDb
       .select()
       .from(schema.txs)
-      .where(
-        inArray(schema.txs.bankAccountId, [accountA, accountB, otherAccount]),
-      )
+      .where(inArray(schema.txs.bankAccountId, [accountA, accountB, otherAccount]))
       .orderBy(schema.txs.id);
 
-    expect(rows.map(({ id }) => id)).toEqual([
-      "kept-account-b",
-      "new-account-a",
-      "other-user-tx",
-    ]);
+    expect(rows.map(({ id }) => id)).toEqual(["kept-account-b", "new-account-a", "other-user-tx"]);
 
     const kept = rows.find(({ id }) => id === "kept-account-b");
     const inserted = rows.find(({ id }) => id === "new-account-a");
@@ -364,11 +349,7 @@ describe("upload account merge db integration", () => {
       txs: mergedTxs,
     });
 
-    const finalRows = await getNormalizedUserTxs([
-      accountA,
-      accountB,
-      accountC,
-    ]);
+    const finalRows = await getNormalizedUserTxs([accountA, accountB, accountC]);
 
     expect(finalRows).toEqual([
       expect.objectContaining({
@@ -538,10 +519,7 @@ describe("server-owned user identity db integration", () => {
   it("does not delete another user's match", async () => {
     const deleteMatchForm = new FormData();
     deleteMatchForm.set("id", otherMatch);
-    await expectRejectsToThrow(
-      removeMatch(deleteMatchForm),
-      "Kunde inte ta bort matchning",
-    );
+    await expectRejectsToThrow(removeMatch(deleteMatchForm), "Kunde inte ta bort matchning");
     const [matchRow] = await testDb
       .select()
       .from(schema.match)
@@ -551,9 +529,7 @@ describe("server-owned user identity db integration", () => {
 
   it("exports and replaces category JSON only for the current user", async () => {
     const exported = await getAllMatches();
-    expect(exported).toEqual([
-      { name: "category-a", match: [{ name: "match-a" }] },
-    ]);
+    expect(exported).toEqual([{ name: "category-a", match: [{ name: "match-a" }] }]);
 
     await replaceAllMatches({
       data: [{ name: "fresh-category", match: [{ name: "fresh-match" }] }],
@@ -670,19 +646,11 @@ const cleanTestRows = async () => {
     .where(inArray(schema.category.userId, [userId, otherUserId]));
   await testDb
     .delete(schema.persons)
-    .where(
-      and(
-        eq(schema.persons.userId, userId),
-        eq(schema.persons.id, "db-test-person"),
-      ),
-    );
+    .where(and(eq(schema.persons.userId, userId), eq(schema.persons.id, "db-test-person")));
   await testDb
     .delete(schema.persons)
     .where(
-      and(
-        eq(schema.persons.userId, otherUserId),
-        eq(schema.persons.id, "db-test-other-person"),
-      ),
+      and(eq(schema.persons.userId, otherUserId), eq(schema.persons.id, "db-test-other-person")),
     );
 };
 
@@ -705,10 +673,7 @@ const getNormalizedUserTxs = async (accountIds = [accountA, accountB]) => {
   );
 };
 
-const expectRejectsToThrow = async (
-  promise: Promise<unknown>,
-  message: string,
-) => {
+const expectRejectsToThrow = async (promise: Promise<unknown>, message: string) => {
   try {
     await promise;
   } catch (error) {

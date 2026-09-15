@@ -3,13 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { db } from "~/server/db";
 import { and, asc, inArray, eq, sql } from "drizzle-orm";
-import {
-  type InsertTx,
-  category,
-  persons,
-  txs,
-  bankAccounts,
-} from "~/server/db/schema";
+import { type InsertTx, category, persons, txs, bankAccounts } from "~/server/db/schema";
 import { decryptTxData } from "~/lib";
 import type { TxBankAccount } from "~/lib/zodSchemas";
 import getUserId from "~/server/getUserId";
@@ -33,11 +27,7 @@ export const upload = async ({
   });
   const accountIds = accounts.flatMap((a) => a.bankAccounts.map((b) => b.id));
   const ownedAccountIds = new Set(accountIds);
-  if (
-    transactions.some(
-      (transaction) => !ownedAccountIds.has(transaction.bankAccountId),
-    )
-  ) {
+  if (transactions.some((transaction) => !ownedAccountIds.has(transaction.bankAccountId))) {
     throw new Error("Kunde inte uppdatera valt konto.");
   }
 
@@ -45,12 +35,7 @@ export const upload = async ({
     if (accountIds.length !== 0) {
       await db
         .delete(txs)
-        .where(
-          and(
-            eq(txs.year, Number(year)),
-            inArray(txs.bankAccountId, accountIds),
-          ),
-        );
+        .where(and(eq(txs.year, Number(year)), inArray(txs.bankAccountId, accountIds)));
     }
     await db.insert(txs).values(transactions);
     revalidatePath("/upload");
@@ -76,9 +61,7 @@ export const upload = async ({
   await db.transaction(async (tx) => {
     await tx
       .delete(txs)
-      .where(
-        and(eq(txs.year, Number(year)), inArray(txs.bankAccountId, replaceIds)),
-      );
+      .where(and(eq(txs.year, Number(year)), inArray(txs.bankAccountId, replaceIds)));
 
     if (newTransactions.length !== 0) {
       await tx.insert(txs).values(newTransactions);

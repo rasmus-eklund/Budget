@@ -97,10 +97,7 @@ export const generateData = () => {
   };
 };
 
-const getRandomDates = (
-  firstDateOfMonth: Date,
-  numberOfDates: number,
-): Date[] => {
+const getRandomDates = (firstDateOfMonth: Date, numberOfDates: number): Date[] => {
   const dates: Date[] = [];
 
   const month = firstDateOfMonth.getMonth();

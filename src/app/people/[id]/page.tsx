@@ -57,19 +57,9 @@ const page = async (props: Props) => {
                       label: "Kontonamn",
                     }}
                   />
-                  <DeleteDialog
-                    info={{ title: "ditt bankkonto", entity: "bankloggar" }}
-                  >
-                    <form
-                      action={removeBankAccount}
-                      className="flex items-center"
-                    >
-                      <input
-                        hidden
-                        name="bankAccountId"
-                        type="text"
-                        defaultValue={bankAccountId}
-                      />
+                  <DeleteDialog info={{ title: "ditt bankkonto", entity: "bankloggar" }}>
+                    <form action={removeBankAccount} className="flex items-center">
+                      <input hidden name="bankAccountId" type="text" defaultValue={bankAccountId} />
                       <input hidden name="id" type="text" defaultValue={id} />
                       <DeleteButton icon={false} />
                     </form>

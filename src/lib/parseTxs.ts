@@ -1,15 +1,8 @@
 import { parse } from "papaparse";
-import {
-  type TxBankAccount,
-  type CsvSchema,
-  csvSchema,
-} from "~/lib/zodSchemas";
-import { v4 as uuid } from "uuid";
+import { type TxBankAccount, type CsvSchema, csvSchema } from "~/lib/zodSchemas";
 import type { ZodError } from "zod";
 
-type ParseResult =
-  | { ok: true; data: TxBankAccount[] }
-  | { ok: false; error: ZodError<CsvSchema> };
+type ParseResult = { ok: true; data: TxBankAccount[] } | { ok: false; error: ZodError<CsvSchema> };
 
 type ParserProps = {
   buffer: Buffer;
@@ -36,9 +29,7 @@ const parseTxs = async ({ buffer, bankAccountId, config }: ParserProps) => {
         if (result.errors.length > 0) {
           return reject(Error("Kunde inte läsa CSV filen."));
         }
-        const remapped = result.data.map((row) =>
-          remapRow(row, config.columns),
-        );
+        const remapped = result.data.map((row) => remapRow(row, config.columns));
         const parsed = csvSchema.safeParse(remapped);
         if (!parsed.success) {
           return resolve({ ok: false, error: parsed.error });
@@ -47,7 +38,7 @@ const parseTxs = async ({ buffer, bankAccountId, config }: ParserProps) => {
           ...d,
           budgetgrupp: "övrigt",
           bankAccountId,
-          id: uuid(),
+          id: crypto.randomUUID(),
           sourceOrder,
         }));
         resolve({ ok: true, data: tmpData });

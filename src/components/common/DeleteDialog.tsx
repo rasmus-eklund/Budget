@@ -18,27 +18,19 @@ const DeleteDialog = ({ children, info: { title, entity } }: Props) => {
     <Dialog>
       <DialogTrigger asChild>
         <button>
-          <Icon
-            icon="Trash"
-            className="cursor-pointer hover:scale-110 hover:text-primary"
-          />
+          <Icon icon="Trash" className="cursor-pointer hover:scale-110 hover:text-primary" />
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Ta bort {title.toLowerCase()}</DialogTitle>
           <DialogDescription>
-            Detta kommer att ta bort {title.toLowerCase()} tillsammans med alla
-            kopplade {entity}.
+            Detta kommer att ta bort {title.toLowerCase()} tillsammans med alla kopplade {entity}.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex flex-row justify-between md:justify-end">
           <DialogClose asChild>
-            <Button
-              className="hover:cursor-pointer"
-              type="button"
-              variant="secondary"
-            >
+            <Button className="hover:cursor-pointer" type="button" variant="secondary">
               Avbryt
             </Button>
           </DialogClose>

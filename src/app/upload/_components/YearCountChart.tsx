@@ -1,22 +1,8 @@
 "use client";
 import { useState } from "react";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Icon } from "~/components/common";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle } from "~/components/ui";
 
 type Props = { data: { year: number; count: number }[] };
 

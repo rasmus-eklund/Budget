@@ -45,9 +45,7 @@ const Balance = (props: Props) => {
                 name={pa}
               />
             ))}
-            <Legend
-              formatter={(item) => <p className="capitalize">{item}</p>}
-            />
+            <Legend formatter={(item) => <p className="capitalize">{item}</p>} />
           </LineChart>
         </ResponsiveContainer>
       </CardContent>
@@ -64,9 +62,7 @@ const getRange = (txs: Tx[]) => {
   const startDate = new Date(
     Date.UTC(minD.getUTCFullYear(), minD.getUTCMonth(), minD.getUTCDate()),
   );
-  const endDate = new Date(
-    Date.UTC(maxD.getUTCFullYear(), maxD.getUTCMonth(), maxD.getUTCDate()),
-  );
+  const endDate = new Date(Date.UTC(maxD.getUTCFullYear(), maxD.getUTCMonth(), maxD.getUTCDate()));
   return eachDayOfInterval({ from: startDate, to: endDate });
 };
 
@@ -86,11 +82,7 @@ const getPersonAccounts = (txs: Tx[]) => {
   return out;
 };
 
-const fillMissingDates = (
-  txs: Tx[],
-  allDates: Date[],
-  persons: Record<string, string[]>,
-) => {
+const fillMissingDates = (txs: Tx[], allDates: Date[], persons: Record<string, string[]>) => {
   const personAccountsSet = new Set<string>();
   for (const person in persons) {
     for (const account of persons[person]!) {
@@ -99,10 +91,7 @@ const fillMissingDates = (
   }
 
   const accountTxMap: Record<string, Record<string, number>> = {};
-  const accountFirstTx: Record<
-    string,
-    { date: Date; saldo: number } | undefined
-  > = {};
+  const accountFirstTx: Record<string, { date: Date; saldo: number } | undefined> = {};
 
   for (const acc of personAccountsSet) {
     accountTxMap[acc] = {};
@@ -137,10 +126,7 @@ const fillMissingDates = (
         currentBalances[account] = accountTxMap[account]![dateKey];
       }
       if (currentBalances[account] === undefined) {
-        if (
-          accountFirstTx[account] &&
-          d.getTime() < accountFirstTx[account].date.getTime()
-        ) {
+        if (accountFirstTx[account] && d.getTime() < accountFirstTx[account].date.getTime()) {
           currentBalances[account] = accountFirstTx[account].saldo;
         } else {
           currentBalances[account] = 0;

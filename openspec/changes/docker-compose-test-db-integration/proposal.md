@@ -15,9 +15,11 @@ The current database integration test setup adds extra indirection by remapping 
 ## Capabilities
 
 ### New Capabilities
+
 - `test-database-workflow`: Integration test workflow that is explicitly driven by `NODE_ENV=test`, uses docker compose for the test database environment, and validates that the runtime database URL matches the compose contract.
 
 ### Modified Capabilities
+
 - None
 
 ## Impact

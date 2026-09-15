@@ -23,12 +23,7 @@ const DownloadJsonButton = ({ className }: { className?: string }) => {
   };
 
   return (
-    <Button
-      variant="outline"
-      className={className}
-      disabled={loading}
-      onClick={handleDownload}
-    >
+    <Button variant="outline" className={className} disabled={loading} onClick={handleDownload}>
       Ladda ner
     </Button>
   );

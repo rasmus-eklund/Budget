@@ -2,13 +2,7 @@
 
 import * as React from "react";
 
-import {
-  Button,
-  Calendar,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui";
+import { Button, Calendar, Popover, PopoverContent, PopoverTrigger } from "~/components/ui";
 import Icon from "./Icon";
 import { dateToString, cn } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
@@ -32,10 +26,7 @@ const DatePickerRange = ({
     <div className="flex flex-1 flex-col gap-3 md:flex-none">
       <Popover modal={true} open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            className={cn("justify-between font-normal", className)}
-          >
+          <Button variant="outline" className={cn("justify-between font-normal", className)}>
             <Title dates={dates} />
             <Icon icon="ChevronDownIcon" />
           </Button>
@@ -52,9 +43,7 @@ const DatePickerRange = ({
             reverseYears
             showOutsideDays
             onSelect={(dates) => {
-              dates?.from &&
-                dates.to &&
-                setDate({ from: dates.from, to: dates.to });
+              dates?.from && dates.to && setDate({ from: dates.from, to: dates.to });
             }}
             footer={
               <div className="flex justify-end gap-2">

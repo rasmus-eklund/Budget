@@ -59,15 +59,11 @@ const findInternalOddThree = (txs: Internal[], totalSum: number) => {
       accounts.get(key)!.push(tx);
     }
   }
-  const txArray = Array.from(accounts.values()).find(
-    (txArray) => txArray.length > 1,
-  );
+  const txArray = Array.from(accounts.values()).find((txArray) => txArray.length > 1);
   if (!txArray) {
     throw new Error("Could not find the one...\n" + JSON.stringify(txs));
   }
-  const matchingTransaction = txArray.find(
-    (transaction) => transaction.belopp === totalSum,
-  );
+  const matchingTransaction = txArray.find((transaction) => transaction.belopp === totalSum);
   if (matchingTransaction) {
     return txs.filter((i) => i.id !== matchingTransaction.id);
   }

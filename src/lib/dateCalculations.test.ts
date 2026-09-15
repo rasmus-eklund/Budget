@@ -96,9 +96,7 @@ describe("Get all years from - to", () => {
   it("should be 1 to 10", () => {
     const fromTo = { from: new Date("2000-01-01"), to: new Date("2010-01-01") };
     const range = getYearRange(fromTo);
-    expect(range).toStrictEqual([
-      2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010,
-    ]);
+    expect(range).toStrictEqual([2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010]);
   });
 });
 
@@ -165,12 +163,8 @@ describe("Get period count", () => {
       to: new Date(2026, 5, 1, 23, 59, 59, 999),
     };
 
-    expect(isPeriodIncludedInAverage("2026-05", "month", range, now)).toBe(
-      true,
-    );
-    expect(isPeriodIncludedInAverage("2026-06", "month", range, now)).toBe(
-      false,
-    );
+    expect(isPeriodIncludedInAverage("2026-05", "month", range, now)).toBe(true);
+    expect(isPeriodIncludedInAverage("2026-06", "month", range, now)).toBe(false);
   });
 });
 

@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Button,
-  Calendar,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui";
+import { Button, Calendar, Popover, PopoverContent, PopoverTrigger } from "~/components/ui";
 import Icon from "./Icon";
 import { dateToString, cn } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
@@ -29,10 +23,7 @@ const DatePicker = ({
     <div className="flex flex-1 flex-col gap-3">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            className={cn("w-32.5 justify-between font-normal", className)}
-          >
+          <Button variant="outline" className={cn("w-32.5 justify-between font-normal", className)}>
             {date ? dateToString(date) : "Select date"}
             <Icon icon="ChevronDownIcon" />
           </Button>

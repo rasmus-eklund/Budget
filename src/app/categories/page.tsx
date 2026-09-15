@@ -29,10 +29,7 @@ const Categories = async () => {
           data
             .toSorted((a, b) => a.name.localeCompare(b.name))
             .map(({ id, name }) => (
-              <li
-                className="border-b-red flex h-8 items-center justify-between border-b"
-                key={id}
-              >
+              <li className="border-b-red flex h-8 items-center justify-between border-b" key={id}>
                 <Link
                   className="first-letter:uppercase hover:cursor-pointer"
                   href={`/categories/${id}`}
@@ -49,9 +46,7 @@ const Categories = async () => {
                     }}
                     uniques={data.map((i) => i.name)}
                   />
-                  <DeleteDialog
-                    info={{ title: "kategorin", entity: "matchningar" }}
-                  >
+                  <DeleteDialog info={{ title: "kategorin", entity: "matchningar" }}>
                     <form action={removeCategory}>
                       <input hidden name="id" type="text" defaultValue={id} />
                       <DeleteButton icon={false} />

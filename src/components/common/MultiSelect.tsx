@@ -33,11 +33,7 @@ const MultiSelect = ({
   return (
     <Popover modal={true}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          className="w-fit justify-between"
-        >
+        <Button variant="outline" role="combobox" className="w-fit justify-between">
           {label}
           <Icon icon="ChevronsUpDown" className="opacity-50" />
         </Button>
@@ -55,15 +51,10 @@ const MultiSelect = ({
                 const checked = !!filterItems[item];
                 return (
                   <CommandItem key={item} value={item} onSelect={toggleItem}>
-                    <span className="min-w-0 flex-1 truncate first-letter:uppercase">
-                      {item}
-                    </span>
+                    <span className="min-w-0 flex-1 truncate first-letter:uppercase">{item}</span>
                     <Icon
                       icon="Check"
-                      className={cn(
-                        "ml-auto shrink-0",
-                        checked ? "opacity-100" : "opacity-0",
-                      )}
+                      className={cn("ml-auto shrink-0", checked ? "opacity-100" : "opacity-0")}
                     />
                   </CommandItem>
                 );

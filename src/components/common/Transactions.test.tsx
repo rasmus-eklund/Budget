@@ -21,8 +21,7 @@ Object.assign(globalThis, {
   Node: dom.window.Node,
   navigator: dom.window.navigator,
   getComputedStyle: dom.window.getComputedStyle,
-  requestAnimationFrame: (callback: FrameRequestCallback) =>
-    setTimeout(callback, 0),
+  requestAnimationFrame: (callback: FrameRequestCallback) => setTimeout(callback, 0),
   cancelAnimationFrame: (id: number) => clearTimeout(id),
 });
 
@@ -125,12 +124,9 @@ const resetStore = () => {
   });
 };
 
-const waitForDebounce = () =>
-  new Promise((resolve) => setTimeout(resolve, 550));
+const waitForDebounce = () => new Promise((resolve) => setTimeout(resolve, 550));
 
-const createDebouncedOrigin = (
-  onLoad: (dates: FromTo, options: ChangeDatesOptions) => void,
-) => {
+const createDebouncedOrigin = (onLoad: (dates: FromTo, options: ChangeDatesOptions) => void) => {
   let timeout: ReturnType<typeof setTimeout> | null = null;
   return async (dates: FromTo, options: ChangeDatesOptions = {}) => {
     if (!options.debounce) {
@@ -156,11 +152,7 @@ describe("Transactions", () => {
     const data = Array.from({ length: 80 }, (_, index) => makeTx(index));
 
     render(
-      <Transactions
-        data={data}
-        changeDates={async () => undefined}
-        canMarkInternal={false}
-      />,
+      <Transactions data={data} changeDates={async () => undefined} canMarkInternal={false} />,
     );
 
     const root = screen.getByTestId("transactions-root");
@@ -224,28 +216,20 @@ describe("DateFilter", () => {
 
     render(<DateFilter changeDates={changeDates} />);
 
-    expect(screen.getByTestId("month-month-select").textContent).toContain(
-      "Januari",
-    );
+    expect(screen.getByTestId("month-month-select").textContent).toContain("Januari");
 
     fireEvent.click(screen.getByTestId("month-next"));
-    expect(screen.getByTestId("month-month-select").textContent).toContain(
-      "Februari",
-    );
+    expect(screen.getByTestId("month-month-select").textContent).toContain("Februari");
 
     fireEvent.click(screen.getByTestId("month-next"));
-    expect(screen.getByTestId("month-month-select").textContent).toContain(
-      "Mars",
-    );
+    expect(screen.getByTestId("month-month-select").textContent).toContain("Mars");
     expect(changeCalls).toEqual([]);
 
     await act(async () => {
       await waitForDebounce();
     });
 
-    await waitFor(() =>
-      expect(changeCalls).toEqual([{ from: "2024-03-01", to: "2024-03-31" }]),
-    );
+    await waitFor(() => expect(changeCalls).toEqual([{ from: "2024-03-01", to: "2024-03-31" }]));
   });
 
   it("debounces date-tab conversion and submits the converted draft range once", async () => {
@@ -260,18 +244,14 @@ describe("DateFilter", () => {
       button: 0,
       ctrlKey: false,
     });
-    expect(screen.getByTestId("date-tab-day").getAttribute("data-state")).toBe(
-      "active",
-    );
+    expect(screen.getByTestId("date-tab-day").getAttribute("data-state")).toBe("active");
     expect(changeCalls).toEqual([]);
 
     await act(async () => {
       await waitForDebounce();
     });
 
-    await waitFor(() =>
-      expect(changeCalls).toEqual([{ from: "2024-01-01", to: "2024-01-01" }]),
-    );
+    await waitFor(() => expect(changeCalls).toEqual([{ from: "2024-01-01", to: "2024-01-01" }]));
   });
 
   it("keeps loaded rows unchanged while a debounced date request is pending", async () => {
@@ -298,9 +278,7 @@ describe("DateFilter", () => {
 
     fireEvent.click(screen.getByTestId("month-next"));
 
-    expect(screen.getByTestId("month-month-select").textContent).toContain(
-      "Februari",
-    );
+    expect(screen.getByTestId("month-month-select").textContent).toContain("Februari");
     expect(screen.getByText("ICA Kvantum")).toBeTruthy();
     expect(screen.queryByText("Februari testtransaktion")).toBeNull();
 
@@ -308,9 +286,7 @@ describe("DateFilter", () => {
       await waitForDebounce();
     });
 
-    await waitFor(() =>
-      expect(screen.getByText("Februari testtransaktion")).toBeTruthy(),
-    );
+    await waitFor(() => expect(screen.getByText("Februari testtransaktion")).toBeTruthy());
     expect(screen.queryByText("ICA Kvantum")).toBeNull();
   });
 });

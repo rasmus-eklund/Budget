@@ -62,16 +62,9 @@ const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
             <Aggregated options={options} />
           </LoadingWrapper>
         </TabsContent>
-        <TabsContent
-          value="transactions"
-          className="flex min-h-0 min-w-0 flex-1"
-        >
+        <TabsContent value="transactions" className="flex min-h-0 min-w-0 flex-1">
           <LoadingWrapper>
-            <Transactions
-              data={txs}
-              changeDates={changeDates}
-              canMarkInternal={canMarkInternal}
-            />
+            <Transactions data={txs} changeDates={changeDates} canMarkInternal={canMarkInternal} />
           </LoadingWrapper>
         </TabsContent>
         <TabsContent value="monthly" className="flex min-h-0 min-w-0 flex-1">
@@ -101,10 +94,7 @@ const LoadingWrapper = ({ children }: { children: React.ReactNode }) => {
       {children}
       {loading && (
         <div className="absolute top-0 right-0 bottom-0 left-0 z-50 flex items-center justify-center bg-secondary/40 select-none">
-          <Icon
-            icon="Loader2Icon"
-            className="size-8 animate-spin text-primary"
-          />
+          <Icon icon="Loader2Icon" className="size-8 animate-spin text-primary" />
         </div>
       )}
     </div>

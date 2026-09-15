@@ -40,16 +40,9 @@ const PasswordForm = () => {
   };
   return (
     <>
-      {error && (
-        <p className="p-4">
-          Fel lösenord. Kunde inte avkryptera dina bankloggar.
-        </p>
-      )}
+      {error && <p className="p-4">Fel lösenord. Kunde inte avkryptera dina bankloggar.</p>}
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(handleSubmit)}
-          className="space-y-8 p-8"
-        >
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8 p-8">
           <FormField
             control={form.control}
             name="password"
@@ -61,8 +54,7 @@ const PasswordForm = () => {
                 </FormControl>
                 <FormMessage />
                 <FormDescription>
-                  Lösenordet används för att kryptera och avkryptera dina
-                  bankloggar.
+                  Lösenordet används för att kryptera och avkryptera dina bankloggar.
                 </FormDescription>
               </FormItem>
             )}

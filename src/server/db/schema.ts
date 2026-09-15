@@ -1,12 +1,5 @@
 import { relations } from "drizzle-orm";
-import {
-  integer,
-  pgTableCreator,
-  text,
-  timestamp,
-  unique,
-  varchar,
-} from "drizzle-orm/pg-core";
+import { integer, pgTableCreator, text, timestamp, unique, varchar } from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -70,16 +63,13 @@ export const bankAccounts = createTable(
   },
 );
 
-export const bankAccountsRelations = relations(
-  bankAccounts,
-  ({ one, many }) => ({
-    txs: many(txs),
-    person: one(persons, {
-      fields: [bankAccounts.personId],
-      references: [persons.id],
-    }),
+export const bankAccountsRelations = relations(bankAccounts, ({ one, many }) => ({
+  txs: many(txs),
+  person: one(persons, {
+    fields: [bankAccounts.personId],
+    references: [persons.id],
   }),
-);
+}));
 
 export const category = createTable(
   "category",

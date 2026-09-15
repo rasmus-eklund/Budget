@@ -27,9 +27,8 @@ const ManageJson = () => {
   return (
     <div className="flex flex-col gap-2">
       <p className="text-sm">
-        Här kan du ladda ner en säkerhetskopia av alla dina kategorier och
-        matchningar i JSON-format. Du kan också ladda upp en tidigare sparad
-        kopia.
+        Här kan du ladda ner en säkerhetskopia av alla dina kategorier och matchningar i
+        JSON-format. Du kan också ladda upp en tidigare sparad kopia.
       </p>
       <div className="flex items-center gap-2">
         <DownloadJsonButton className="w-fit cursor-pointer" />
@@ -43,9 +42,7 @@ const ManageJson = () => {
               .sort((a, b) => a.name.localeCompare(b.name))
               .map(({ name, match }, i) => (
                 <div key={i} className="flex flex-col gap-1">
-                  <h4 className="text-md font-semibold first-letter:uppercase">
-                    {name}
-                  </h4>
+                  <h4 className="text-md font-semibold first-letter:uppercase">{name}</h4>
                   <ul className="flex flex-wrap gap-1">
                     {match
                       .sort((a, b) => a.name.localeCompare(b.name))

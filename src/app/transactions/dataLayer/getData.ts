@@ -36,10 +36,7 @@ const getTxByDates = async ({
     },
   });
 
-  const [categories, personsRes] = await Promise.all([
-    categoriesReq,
-    personsReq,
-  ]);
+  const [categories, personsRes] = await Promise.all([categoriesReq, personsReq]);
   const options: Filter = {
     account: Object.fromEntries(
       personsRes.flatMap((p) => p.bankAccounts.map((a) => [a.name, true])),
@@ -79,9 +76,7 @@ const getTxByDates = async ({
           );
         } catch (error) {
           const message = getErrorMessage(error);
-          if (
-            message === "The operation failed for an operation-specific reason"
-          ) {
+          if (message === "The operation failed for an operation-specific reason") {
             redirect("/password?from=transactions&error=true");
           }
           return { ok: false };

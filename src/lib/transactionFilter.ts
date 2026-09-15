@@ -30,18 +30,12 @@ const textFilter = (text: string, search: Filter["search"]) => {
   }
 
   const normalizedText = text.toLowerCase();
-  const hasMatch = search.terms.some((term) =>
-    normalizedText.includes(term.toLowerCase()),
-  );
+  const hasMatch = search.terms.some((term) => normalizedText.includes(term.toLowerCase()));
 
   return search.mode === "include" ? hasMatch : !hasMatch;
 };
 
-export const transactionSort = <T extends TransactionSort>(
-  a: T,
-  b: T,
-  sortFilter: TxSort,
-) => {
+export const transactionSort = <T extends TransactionSort>(a: T, b: T, sortFilter: TxSort) => {
   if (sortFilter.sort === sortOptions.dateAsc) {
     return Number(a.datum) - Number(b.datum);
   }

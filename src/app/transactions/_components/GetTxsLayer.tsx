@@ -57,12 +57,9 @@ const GetTxsLayer = ({ range: { from, to } }: Props) => {
     },
     [setTxs, setLoading, setSelectedRange, setDraftRange, password, router],
   );
-  const debouncedLoadData = useDebounceCallback(
-    (dates: FromTo, reset: boolean) => {
-      void loadData(dates, reset);
-    },
-    500,
-  );
+  const debouncedLoadData = useDebounceCallback((dates: FromTo, reset: boolean) => {
+    void loadData(dates, reset);
+  }, 500);
 
   const getData = useCallback(
     async (dates: FromTo, options: ChangeDatesOptions = {}) => {

@@ -14,9 +14,7 @@ const LoadingItems = ({ page }: Props) => {
         <div className="space-y-2">
           <Label>{page}</Label>
           <Skeleton className="h-7.5 w-full py-1" />
-          <p className="text-sm text-muted-foreground">
-            Lägg till en ny {page.toLowerCase()}.
-          </p>
+          <p className="text-sm text-muted-foreground">Lägg till en ny {page.toLowerCase()}.</p>
         </div>
         <Skeleton className="h-7.5 w-25" />
       </div>

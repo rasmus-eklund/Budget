@@ -14,10 +14,7 @@ type Props = {
 };
 const Transactions = ({ data, changeDates, canMarkInternal = true }: Props) => {
   return (
-    <div
-      data-testid="transactions-root"
-      className="flex min-h-0 flex-1 flex-col"
-    >
+    <div data-testid="transactions-root" className="flex min-h-0 flex-1 flex-col">
       <Virtuoso
         data-testid="transactions-virtuoso"
         className="min-h-0 flex-1"
@@ -67,10 +64,7 @@ const Transaction = ({
       data-testid="transaction-row"
       className="mt-2 mb-2 flex items-center gap-2 overflow-hidden rounded-sm bg-accent p-1 shadow-lg"
     >
-      <div
-        data-testid="transaction-row-content"
-        className="flex min-w-0 flex-1 flex-col"
-      >
+      <div data-testid="transaction-row-content" className="flex min-w-0 flex-1 flex-col">
         <div className="grid grid-cols-2">
           <button
             className="w-fit cursor-pointer hover:scale-105"
@@ -85,31 +79,21 @@ const Transaction = ({
           <Sek sek={belopp} />
         </div>
         <div className="flex min-w-0 justify-between gap-2">
-          <p
-            data-testid="transaction-main-text"
-            className="min-w-0 flex-1 truncate pr-2 italic"
-          >
+          <p data-testid="transaction-main-text" className="min-w-0 flex-1 truncate pr-2 italic">
             {text} - {capitalize(budgetgrupp)}
           </p>
-          <p
-            data-testid="transaction-side-text"
-            className="shrink-0 whitespace-nowrap"
-          >
+          <p data-testid="transaction-side-text" className="shrink-0 whitespace-nowrap">
             {capitalize(person)} ({capitalize(konto)})
           </p>
         </div>
       </div>
-      {canMarkInternal && (
-        <MarkAsInternal tx={data} changeDates={changeDates} />
-      )}
+      {canMarkInternal && <MarkAsInternal tx={data} changeDates={changeDates} />}
     </li>
   );
 };
 
 const Sek = ({ sek }: { sek: number }) => (
-  <p className={cn("text-right font-mono", sek < 0 && "text-primary")}>
-    {toSek(sek)}
-  </p>
+  <p className={cn("text-right font-mono", sek < 0 && "text-primary")}>{toSek(sek)}</p>
 );
 
 export default Transactions;
