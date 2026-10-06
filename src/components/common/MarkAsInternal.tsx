@@ -41,26 +41,30 @@ const MarkAsInternal = ({ tx, changeDates }: { tx: Tx; changeDates: ChangeDates 
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          data-testid="mark-internal-trigger"
-          size="icon"
-          variant="ghost"
-          className="size-2 shrink-0 self-start"
-        >
-          {loading ? <Icon icon="Loader" className="animate-spin" /> : <Icon icon="MoreVertical" />}
-        </Button>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            data-testid="mark-internal-trigger"
+            size="icon"
+            variant="ghost"
+            className="size-2 shrink-0 self-start"
+          />
+        }
+      >
+        {loading ? <Icon icon="Loader" className="animate-spin" /> : <Icon icon="MoreVertical" />}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-44">
-        <DropdownMenuItem asChild>
-          <Button
-            onClick={handleMarkAsInternal}
-            disabled={loading}
-            className="w-full"
-            variant="ghost"
-          >
-            {isInternal ? "Avmarkera" : "Markera"} som inom
-          </Button>
+        <DropdownMenuItem
+          render={
+            <Button
+              onClick={handleMarkAsInternal}
+              disabled={loading}
+              className="w-full"
+              variant="ghost"
+            />
+          }
+        >
+          {isInternal ? "Avmarkera" : "Markera"} som inom
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

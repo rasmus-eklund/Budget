@@ -180,10 +180,12 @@ const FileForm = ({ categories, people }: Props) => {
         </p>
         {password && (
           <div className="flex gap-2">
-            <Button asChild variant="secondary" className="cursor-pointer">
-              <label className="select-none" htmlFor="file-upload">
-                Välj filer
-              </label>
+            <Button
+              variant="secondary"
+              className="cursor-pointer"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              Välj filer
             </Button>
             <input
               className="hidden"
@@ -242,6 +244,9 @@ const FileForm = ({ categories, people }: Props) => {
                 <Select
                   value={bankAccountId}
                   onValueChange={(value) => {
+                    if (!value) {
+                      return;
+                    }
                     setFiles((p) => {
                       const newFiles = [...p];
                       newFiles[i] = { ...newFiles[i]!, bankAccountId: value };
@@ -268,6 +273,9 @@ const FileForm = ({ categories, people }: Props) => {
                 <Select
                   value={config.name}
                   onValueChange={(value) => {
+                    if (!value) {
+                      return;
+                    }
                     setFiles((p) => {
                       const newFiles = [...p];
                       newFiles[i] = {

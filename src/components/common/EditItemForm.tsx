@@ -54,11 +54,13 @@ const EditItemForm = ({ data, onSubmit, formInfo: { description, label }, unique
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <button onClick={() => setOpen(true)}>
-          <Icon icon="Pencil" className="size-5 hover:scale-110 hover:cursor-pointer" />
-        </button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <button onClick={() => setOpen(true)}>
+            <Icon icon="Pencil" className="size-5 hover:scale-110 hover:cursor-pointer" />
+          </button>
+        }
+      />
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Ändra {label.toLowerCase()}</DialogTitle>
@@ -80,10 +82,10 @@ const EditItemForm = ({ data, onSubmit, formInfo: { description, label }, unique
               )}
             />
             <DialogFooter className="flex flex-row justify-between md:justify-end">
-              <DialogClose asChild>
-                <Button className="hover:cursor-pointer" type="button" variant="outline">
-                  Stäng
-                </Button>
+              <DialogClose
+                render={<Button className="hover:cursor-pointer" type="button" variant="outline" />}
+              >
+                Stäng
               </DialogClose>
               <Button
                 type="submit"

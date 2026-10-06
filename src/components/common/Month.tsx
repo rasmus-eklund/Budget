@@ -80,7 +80,7 @@ const Month = ({ changeDate }: Props) => {
           }}
         >
           <SelectTrigger data-testid="month-month-select" className="flex-1 md:w-32.5 md:flex-none">
-            <SelectValue placeholder="" />
+            <SelectValue>{months[month - 1]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {months.map((m, n) => (

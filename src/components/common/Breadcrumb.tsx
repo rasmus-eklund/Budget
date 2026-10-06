@@ -36,10 +36,13 @@ const Breadcrumb = ({ href, name, options, current }: Props) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
               {options.map(({ id, name }) => (
-                <DropdownMenuItem asChild key={id}>
-                  <BreadcrumbLink className="first-letter:capitalize" href={`${href}/${id}`}>
-                    {name}
-                  </BreadcrumbLink>
+                <DropdownMenuItem
+                  key={id}
+                  render={
+                    <BreadcrumbLink className="first-letter:capitalize" href={`${href}/${id}`} />
+                  }
+                >
+                  {name}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
