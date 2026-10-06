@@ -1,3 +1,4 @@
+import { Temporal } from "@js-temporal/polyfill";
 import type { Tx } from "~/types";
 import { categories } from "./categories";
 import { getFromTo } from "~/lib";
@@ -13,9 +14,9 @@ export const generateData = () => {
   for (let year = 2020; year < 2024; year++) {
     const raise = getRandomFloat(1.01, 1.15);
     const salary = { Per: 22000 * raise, Anna: 17000 * raise } as const;
-    for (let month = 0; month < 12; month++) {
+    for (let month = 1; month <= 12; month++) {
       for (const person of people) {
-        const firstDateOfMonth = new Date(year, month, 1);
+        const firstDateOfMonth = Temporal.PlainDate.from({ year, month, day: 1 });
         const spending = getSpending();
         const randomDates = getRandomDates(firstDateOfMonth, spending.length);
         for (let i = 0; i < randomDates.length; i++) {
@@ -51,7 +52,7 @@ export const generateData = () => {
         const income: Tx = {
           belopp: salary[person],
           budgetgrupp: "övrigt",
-          datum: new Date(year, month, 25),
+          datum: Temporal.PlainDate.from({ year, month, day: 25 }),
           id: "0",
           konto: "Spar",
           person,
@@ -64,7 +65,7 @@ export const generateData = () => {
         const rent: Tx = {
           belopp,
           budgetgrupp: "övrigt",
-          datum: new Date(year, month + 1, 0),
+          datum: Temporal.PlainDate.from({ year, month, day: firstDateOfMonth.daysInMonth }),
           id: "0",
           konto: "Spar",
           person,
@@ -97,17 +98,20 @@ export const generateData = () => {
   };
 };
 
-const getRandomDates = (firstDateOfMonth: Date, numberOfDates: number): Date[] => {
-  const dates: Date[] = [];
-
-  const month = firstDateOfMonth.getMonth();
-  const year = firstDateOfMonth.getFullYear();
-
-  const lastDate = new Date(year, month + 1, 0).getDate();
+const getRandomDates = (
+  firstDateOfMonth: Temporal.PlainDate,
+  numberOfDates: number,
+): Temporal.PlainDate[] => {
+  const dates: Temporal.PlainDate[] = [];
+  const lastDate = firstDateOfMonth.daysInMonth;
 
   for (let i = 0; i < numberOfDates; i++) {
     const randomDay = Math.floor(Math.random() * lastDate) + 1;
-    const randomDate = new Date(year, month, randomDay);
+    const randomDate = Temporal.PlainDate.from({
+      year: firstDateOfMonth.year,
+      month: firstDateOfMonth.month,
+      day: randomDay,
+    });
     dates.push(randomDate);
   }
 
@@ -153,8 +157,9 @@ type Internal = {
   belopp: number;
   kortBalance: number;
   sparBalance: number;
-  datum: Date;
+  datum: Temporal.PlainDate;
 };
+
 const internal = (i: Internal): [Tx, Tx] => {
   const { person, datum } = i;
   const belopp = getRandomNumber(i.belopp, i.belopp * 10);

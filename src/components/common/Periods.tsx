@@ -24,12 +24,15 @@ type VisibleColumn = {
   key: string;
 };
 
-const formatPeriod = (date: Date, groupBy: PeriodGroupBy) => {
-  const year = date.getFullYear();
+import { Temporal } from "@js-temporal/polyfill";
+
+const formatPeriod = (date: Temporal.PlainDate | Date, groupBy: PeriodGroupBy) => {
+  const year = date instanceof Temporal.PlainDate ? date.year : date.getFullYear();
   if (groupBy === "year") {
     return `${year}`;
   }
-  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const monthNum = date instanceof Temporal.PlainDate ? date.month : date.getMonth() + 1;
+  const month = String(monthNum).padStart(2, "0");
   return `${year}-${month}`;
 };
 

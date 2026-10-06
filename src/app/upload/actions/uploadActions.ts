@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "~/server/db";
 import { and, asc, inArray, eq, sql } from "drizzle-orm";
 import { type InsertTx, category, persons, txs, bankAccounts } from "~/server/db/schema";
-import { decryptTxData } from "~/lib";
+import { decryptTxData, toPlainDate } from "~/lib";
 import type { TxBankAccount } from "~/lib/zodSchemas";
 import getUserId from "~/server/getUserId";
 
@@ -128,7 +128,7 @@ export const getMergeBaseTransactions = async ({
         const decrypted = await decryptTxData(tx.data, password);
         out.push({
           ...decrypted,
-          datum: tx.date,
+          datum: toPlainDate(tx.date),
           bankAccountId: tx.bankAccountId,
           id: tx.id,
           sourceOrder: tx.sourceOrder,

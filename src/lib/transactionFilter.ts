@@ -8,7 +8,9 @@ export type Part = {
   text: string;
 };
 
-type TransactionSort = { datum: Date; belopp: number };
+import { Temporal } from "@js-temporal/polyfill";
+
+type TransactionSort = { datum: Temporal.PlainDate | Date; belopp: number };
 
 export const transactionFilter = <T extends Part & { filter: Filter }>({
   konto,
@@ -37,9 +39,15 @@ const textFilter = (text: string, search: Filter["search"]) => {
 
 export const transactionSort = <T extends TransactionSort>(a: T, b: T, sortFilter: TxSort) => {
   if (sortFilter.sort === sortOptions.dateAsc) {
+    if (a.datum instanceof Temporal.PlainDate && b.datum instanceof Temporal.PlainDate) {
+      return Temporal.PlainDate.compare(a.datum, b.datum);
+    }
     return Number(a.datum) - Number(b.datum);
   }
   if (sortFilter.sort === sortOptions.dateDesc) {
+    if (a.datum instanceof Temporal.PlainDate && b.datum instanceof Temporal.PlainDate) {
+      return Temporal.PlainDate.compare(b.datum, a.datum);
+    }
     return Number(b.datum) - Number(a.datum);
   }
   if (sortFilter.sort === sortOptions.amountAsc) {

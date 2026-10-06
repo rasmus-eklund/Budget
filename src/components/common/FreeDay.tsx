@@ -1,5 +1,4 @@
-"use client";
-
+import { Temporal } from "@js-temporal/polyfill";
 import { Button } from "~/components/ui";
 import DatePicker from "./DatePicker";
 import Icon from "./Icon";
@@ -23,7 +22,7 @@ const FreeDay = ({ changeDate }: Props) => {
       <div className="flex items-center gap-1">
         <Button
           type="button"
-          disabled={day <= from}
+          disabled={Temporal.PlainDate.compare(day, from) <= 0}
           variant="outline"
           size="icon"
           onClick={async () => onChange(decrementDay(day))}
@@ -40,7 +39,7 @@ const FreeDay = ({ changeDate }: Props) => {
         />
         <Button
           type="button"
-          disabled={day >= to}
+          disabled={Temporal.PlainDate.compare(day, to) >= 0}
           variant="outline"
           size="icon"
           onClick={async () => onChange(incrementDay(day))}

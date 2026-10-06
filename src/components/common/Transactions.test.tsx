@@ -50,9 +50,11 @@ const { useStore } = await import("~/stores/tx-store");
 
 afterEach(() => cleanup());
 
+import { Temporal } from "@js-temporal/polyfill";
+
 const makeTx = (index: number): Tx => ({
   id: `tx-${index}`,
-  datum: new Date(2024, 0, index + 1),
+  datum: Temporal.PlainDate.from({ year: 2024, month: 1, day: index + 1 }),
   text: `Transaction ${index}`,
   budgetgrupp: "mat",
   belopp: -100 - index,
@@ -62,26 +64,18 @@ const makeTx = (index: number): Tx => ({
 });
 
 const serializeRange = ({ from, to }: FromTo) => ({
-  from: [
-    from.getFullYear(),
-    String(from.getMonth() + 1).padStart(2, "0"),
-    String(from.getDate()).padStart(2, "0"),
-  ].join("-"),
-  to: [
-    to.getFullYear(),
-    String(to.getMonth() + 1).padStart(2, "0"),
-    String(to.getDate()).padStart(2, "0"),
-  ].join("-"),
+  from: from.toString(),
+  to: to.toString(),
 });
 
 const initialRange: FromTo = {
-  from: new Date(2024, 0, 1, 0, 0, 0, 0),
-  to: new Date(2024, 0, 31, 23, 59, 59, 999),
+  from: Temporal.PlainDate.from("2024-01-01"),
+  to: Temporal.PlainDate.from("2024-01-31"),
 };
 
 const fullRange: FromTo = {
-  from: new Date(2024, 0, 1, 0, 0, 0, 0),
-  to: new Date(2024, 2, 31, 23, 59, 59, 999),
+  from: Temporal.PlainDate.from("2024-01-01"),
+  to: Temporal.PlainDate.from("2024-03-31"),
 };
 
 const fixtureTxs = [
@@ -89,24 +83,28 @@ const fixtureTxs = [
     ...makeTx(1),
     id: "jan",
     text: "ICA Kvantum",
-    datum: new Date(2024, 0, 2),
+    datum: Temporal.PlainDate.from("2024-01-02"),
   },
   {
     ...makeTx(2),
     id: "feb",
     text: "Februari testtransaktion",
-    datum: new Date(2024, 1, 6),
+    datum: Temporal.PlainDate.from("2024-02-06"),
   },
   {
     ...makeTx(3),
     id: "mar",
     text: "Mars testtransaktion",
-    datum: new Date(2024, 2, 8),
+    datum: Temporal.PlainDate.from("2024-03-08"),
   },
 ];
 
 const filterTxs = ({ from, to }: FromTo) =>
-  fixtureTxs.filter((tx) => tx.datum >= from && tx.datum <= to);
+  fixtureTxs.filter(
+    (tx) =>
+      Temporal.PlainDate.compare(tx.datum, from) >= 0 &&
+      Temporal.PlainDate.compare(tx.datum, to) <= 0,
+  );
 
 const resetStore = () => {
   useStore.setState({

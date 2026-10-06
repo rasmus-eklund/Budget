@@ -14,6 +14,8 @@ import { getYearRange } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
 import { useStore } from "~/stores/tx-store";
 
+import { Temporal } from "@js-temporal/polyfill";
+
 type Props = {
   changeDate: (dates: FromTo) => void;
 };
@@ -21,12 +23,12 @@ type Props = {
 const Year = ({ changeDate }: Props) => {
   const { from, to } = useStore((state) => state.range);
   const draftRange = useStore((state) => state.draftRange);
-  const year = draftRange.from.getFullYear();
-  const mostRecentYear = to.getFullYear();
+  const year = draftRange.from.year;
+  const mostRecentYear = to.year;
   const submitYear = async (year: number) =>
     changeDate({
-      from: new Date(Date.UTC(year, 0, 1)),
-      to: new Date(Date.UTC(year + 1, 0, 0)),
+      from: Temporal.PlainDate.from({ year, month: 1, day: 1 }),
+      to: Temporal.PlainDate.from({ year, month: 12, day: 31 }),
     });
 
   const years = getYearRange({ from, to });
@@ -37,7 +39,7 @@ const Year = ({ changeDate }: Props) => {
     >
       <div className="flex items-center gap-1">
         <Button
-          disabled={from.getFullYear() === year}
+          disabled={from.year === year}
           variant="outline"
           type="button"
           size="icon"

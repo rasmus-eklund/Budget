@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { Temporal } from "@js-temporal/polyfill";
 import {
   decrementDay,
   incrementDay,
@@ -18,11 +19,11 @@ describe("Change date", () => {
     it("should decrement one month", () => {
       const date = {
         year: 2020,
-        month: 2, // March (0-indexed)
+        month: 2,
       };
       const expected = {
         year: 2020,
-        month: 1, // February
+        month: 1,
       };
       const result = decrementMonth(date);
       expect(result).toEqual(expected);
@@ -44,11 +45,11 @@ describe("Change date", () => {
     it("should increment one month", () => {
       const date = {
         year: 2020,
-        month: 1, // January
+        month: 1,
       };
       const expected = {
         year: 2020,
-        month: 2, // February
+        month: 2,
       };
       const result = incrementMonth(date);
       expect(result).toEqual(expected);
@@ -57,11 +58,11 @@ describe("Change date", () => {
     it("should handle incrementing from December to January of the next year", () => {
       const date = {
         year: 2020,
-        month: 12, // December
+        month: 12,
       };
       const expected = {
         year: 2021,
-        month: 1, // January of the next year
+        month: 1,
       };
       const result = incrementMonth(date);
       expect(result).toEqual(expected);
@@ -69,10 +70,10 @@ describe("Change date", () => {
   });
   describe("day", () => {
     it("should minus one day", () => {
-      const date = new Date("2020-01-02");
+      const date = Temporal.PlainDate.from("2020-01-02");
       const expected = {
-        from: new Date("2020-01-01T00:00:00.000Z"),
-        to: new Date("2020-01-01T23:59:59.999Z"),
+        from: Temporal.PlainDate.from("2020-01-01"),
+        to: Temporal.PlainDate.from("2020-01-01"),
       };
 
       const result = decrementDay(date);
@@ -80,10 +81,10 @@ describe("Change date", () => {
     });
 
     it("should plus one day", () => {
-      const date = new Date("2020-01-01");
+      const date = Temporal.PlainDate.from("2020-01-01");
       const expected = {
-        from: new Date("2020-01-02T00:00:00.000Z"),
-        to: new Date("2020-01-02T23:59:59.999Z"),
+        from: Temporal.PlainDate.from("2020-01-02"),
+        to: Temporal.PlainDate.from("2020-01-02"),
       };
 
       const result = incrementDay(date);
@@ -94,19 +95,22 @@ describe("Change date", () => {
 
 describe("Get all years from - to", () => {
   it("should be 1 to 10", () => {
-    const fromTo = { from: new Date("2000-01-01"), to: new Date("2010-01-01") };
+    const fromTo = {
+      from: Temporal.PlainDate.from("2000-01-01"),
+      to: Temporal.PlainDate.from("2010-01-01"),
+    };
     const range = getYearRange(fromTo);
     expect(range).toStrictEqual([2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010]);
   });
 });
 
 describe("Get period count", () => {
-  const now = new Date(2026, 5, 1, 12, 0, 0, 0);
+  const now = Temporal.PlainDate.from("2026-06-01");
 
   it("excludes a partial month range", () => {
     const range = {
-      from: new Date(2024, 0, 15, 0, 0, 0, 0),
-      to: new Date(2024, 0, 31, 23, 59, 59, 999),
+      from: Temporal.PlainDate.from("2024-01-15"),
+      to: Temporal.PlainDate.from("2024-01-31"),
     };
 
     expect(getPeriodCount(range, "month", now)).toBe(0);
@@ -114,8 +118,8 @@ describe("Get period count", () => {
 
   it("counts complete months inside partial date ranges", () => {
     const range = {
-      from: new Date(2024, 0, 15, 0, 0, 0, 0),
-      to: new Date(2024, 5, 10, 23, 59, 59, 999),
+      from: Temporal.PlainDate.from("2024-01-15"),
+      to: Temporal.PlainDate.from("2024-06-10"),
     };
 
     expect(getPeriodCount(range, "month", now)).toBe(4);
@@ -123,8 +127,8 @@ describe("Get period count", () => {
 
   it("counts months across years", () => {
     const range = {
-      from: new Date(2023, 10, 1, 0, 0, 0, 0),
-      to: new Date(2024, 1, 29, 23, 59, 59, 999),
+      from: Temporal.PlainDate.from("2023-11-01"),
+      to: Temporal.PlainDate.from("2024-02-29"),
     };
 
     expect(getPeriodCount(range, "month", now)).toBe(4);
@@ -132,8 +136,8 @@ describe("Get period count", () => {
 
   it("excludes the current incomplete month", () => {
     const range = {
-      from: new Date(2026, 0, 1, 0, 0, 0, 0),
-      to: new Date(2026, 5, 1, 23, 59, 59, 999),
+      from: Temporal.PlainDate.from("2026-01-01"),
+      to: Temporal.PlainDate.from("2026-06-01"),
     };
 
     expect(getPeriodCount(range, "month", now)).toBe(5);
@@ -141,8 +145,8 @@ describe("Get period count", () => {
 
   it("counts complete years inclusively", () => {
     const range = {
-      from: new Date(2023, 0, 1, 0, 0, 0, 0),
-      to: new Date(2025, 11, 31, 23, 59, 59, 999),
+      from: Temporal.PlainDate.from("2023-01-01"),
+      to: Temporal.PlainDate.from("2025-12-31"),
     };
 
     expect(getPeriodCount(range, "year", now)).toBe(3);
@@ -150,8 +154,8 @@ describe("Get period count", () => {
 
   it("excludes the current incomplete year", () => {
     const range = {
-      from: new Date(2026, 0, 1, 0, 0, 0, 0),
-      to: new Date(2026, 11, 31, 23, 59, 59, 999),
+      from: Temporal.PlainDate.from("2026-01-01"),
+      to: Temporal.PlainDate.from("2026-12-31"),
     };
 
     expect(getPeriodCount(range, "year", now)).toBe(0);
@@ -159,8 +163,8 @@ describe("Get period count", () => {
 
   it("detects whether a month period is included in the average", () => {
     const range = {
-      from: new Date(2026, 0, 1, 0, 0, 0, 0),
-      to: new Date(2026, 5, 1, 23, 59, 59, 999),
+      from: Temporal.PlainDate.from("2026-01-01"),
+      to: Temporal.PlainDate.from("2026-06-01"),
     };
 
     expect(isPeriodIncludedInAverage("2026-05", "month", range, now)).toBe(true);
@@ -170,12 +174,12 @@ describe("Get period count", () => {
 
 describe("Get max and min dates", () => {
   it("should find max and min", () => {
-    const minDate = new Date("2021-01-01");
-    const maxDate = new Date("2024-02-01");
+    const minDate = Temporal.PlainDate.from("2021-01-01");
+    const maxDate = Temporal.PlainDate.from("2024-02-01");
     const data = [
       { datum: minDate },
-      { datum: new Date("2022-02-01") },
-      { datum: new Date("2023-03-01") },
+      { datum: Temporal.PlainDate.from("2022-02-01") },
+      { datum: Temporal.PlainDate.from("2023-03-01") },
       { datum: maxDate },
     ];
     const tmp = getFromTo(data);
@@ -191,48 +195,48 @@ describe("Get max and min dates", () => {
 describe("Range shape checks", () => {
   it("should detect same day range", () => {
     const range = {
-      from: new Date(2024, 4, 10, 0, 0, 0, 0),
-      to: new Date(2024, 4, 10, 23, 59, 59, 999),
+      from: Temporal.PlainDate.from("2024-05-10"),
+      to: Temporal.PlainDate.from("2024-05-10"),
     };
     expect(isSameDayRange(range)).toBe(true);
   });
 
   it("should detect non same day range", () => {
     const range = {
-      from: new Date(2024, 4, 10, 0, 0, 0, 0),
-      to: new Date(2024, 4, 11, 23, 59, 59, 999),
+      from: Temporal.PlainDate.from("2024-05-10"),
+      to: Temporal.PlainDate.from("2024-05-11"),
     };
     expect(isSameDayRange(range)).toBe(false);
   });
 
   it("should detect full month range", () => {
     const range = {
-      from: new Date(2024, 1, 1, 0, 0, 0, 0),
-      to: new Date(2024, 1, 29, 23, 59, 59, 999),
+      from: Temporal.PlainDate.from("2024-02-01"),
+      to: Temporal.PlainDate.from("2024-02-29"),
     };
     expect(isFullMonthRange(range)).toBe(true);
   });
 
   it("should detect non full month range", () => {
     const range = {
-      from: new Date(2024, 1, 2, 0, 0, 0, 0),
-      to: new Date(2024, 1, 29, 23, 59, 59, 999),
+      from: Temporal.PlainDate.from("2024-02-02"),
+      to: Temporal.PlainDate.from("2024-02-29"),
     };
     expect(isFullMonthRange(range)).toBe(false);
   });
 
   it("should detect full year range", () => {
     const range = {
-      from: new Date(2024, 0, 1, 0, 0, 0, 0),
-      to: new Date(2024, 11, 31, 23, 59, 59, 999),
+      from: Temporal.PlainDate.from("2024-01-01"),
+      to: Temporal.PlainDate.from("2024-12-31"),
     };
     expect(isFullYearRange(range)).toBe(true);
   });
 
   it("should detect non full year range", () => {
     const range = {
-      from: new Date(2024, 0, 2, 0, 0, 0, 0),
-      to: new Date(2024, 11, 31, 23, 59, 59, 999),
+      from: Temporal.PlainDate.from("2024-01-02"),
+      to: Temporal.PlainDate.from("2024-12-31"),
     };
     expect(isFullYearRange(range)).toBe(false);
   });

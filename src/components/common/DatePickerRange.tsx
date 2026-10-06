@@ -1,11 +1,26 @@
 "use client";
 
 import * as React from "react";
-
+import { Temporal } from "@js-temporal/polyfill";
 import { Button, Calendar, Popover, PopoverContent, PopoverTrigger } from "~/components/ui";
 import Icon from "./Icon";
 import { dateToString, cn } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
+
+const plainDateToDate = (pDate: Temporal.PlainDate | undefined): Date | undefined => {
+  if (!pDate) {
+    return undefined;
+  }
+  return new Date(pDate.year, pDate.month - 1, pDate.day);
+};
+
+const dateToPlainDate = (date: Date): Temporal.PlainDate => {
+  return Temporal.PlainDate.from({
+    year: date.getFullYear(),
+    month: date.getMonth() + 1,
+    day: date.getDate(),
+  });
+};
 
 const DatePickerRange = ({
   dates,
@@ -22,6 +37,13 @@ const DatePickerRange = ({
 }) => {
   const [open, setOpen] = React.useState(false);
 
+  const selectedRange = dates
+    ? { from: plainDateToDate(dates.from), to: plainDateToDate(dates.to) }
+    : undefined;
+  const startMonthDate = plainDateToDate(range.from);
+  const endMonthDate = plainDateToDate(range.to);
+  const defaultMonthDate = selectedRange?.from ?? endMonthDate;
+
   return (
     <div className="flex flex-1 flex-col gap-3 md:flex-none">
       <Popover modal={true} open={open} onOpenChange={setOpen}>
@@ -33,17 +55,22 @@ const DatePickerRange = ({
         </PopoverTrigger>
         <PopoverContent className="w-auto overflow-hidden p-0" align="start">
           <Calendar
-            key={(dates?.from ?? range.to).toISOString()}
+            key={(dates?.from ?? range.to).toString()}
             mode="range"
-            selected={dates}
-            defaultMonth={dates?.from ?? range.to}
+            selected={selectedRange}
+            defaultMonth={defaultMonthDate}
             captionLayout="dropdown"
-            startMonth={range.from}
-            endMonth={range.to}
+            startMonth={startMonthDate}
+            endMonth={endMonthDate}
             reverseYears
             showOutsideDays
-            onSelect={(dates) => {
-              dates?.from && dates.to && setDate({ from: dates.from, to: dates.to });
+            onSelect={(rangeSelection) => {
+              if (rangeSelection?.from && rangeSelection.to) {
+                setDate({
+                  from: dateToPlainDate(rangeSelection.from),
+                  to: dateToPlainDate(rangeSelection.to),
+                });
+              }
             }}
             footer={
               <div className="flex justify-end gap-2">

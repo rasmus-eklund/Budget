@@ -14,6 +14,7 @@ export {
 } from "./transactionFilter";
 export { dateToString, toSek } from "./formatData";
 export {
+  toPlainDate,
   decrementDay,
   incrementDay,
   incrementMonth,

@@ -5,6 +5,22 @@ import Icon from "./Icon";
 import { dateToString, cn } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
 import { useState } from "react";
+import { Temporal } from "@js-temporal/polyfill";
+
+const plainDateToDate = (pDate: Temporal.PlainDate | undefined): Date | undefined => {
+  if (!pDate) {
+    return undefined;
+  }
+  return new Date(pDate.year, pDate.month - 1, pDate.day);
+};
+
+const dateToPlainDate = (date: Date): Temporal.PlainDate => {
+  return Temporal.PlainDate.from({
+    year: date.getFullYear(),
+    month: date.getMonth() + 1,
+    day: date.getDate(),
+  });
+};
 
 const DatePicker = ({
   date,
@@ -12,12 +28,16 @@ const DatePicker = ({
   range,
   className,
 }: {
-  date: Date | undefined;
-  setDate: (date: Date) => void;
+  date: Temporal.PlainDate | undefined;
+  setDate: (date: Temporal.PlainDate) => void;
   range: FromTo;
   className?: string;
 }) => {
   const [open, setOpen] = useState(false);
+  const selectedDate = plainDateToDate(date);
+  const startMonthDate = plainDateToDate(range.from);
+  const endMonthDate = plainDateToDate(range.to);
+  const defaultMonthDate = selectedDate ?? endMonthDate;
 
   return (
     <div className="flex flex-1 flex-col gap-3">
@@ -30,17 +50,19 @@ const DatePicker = ({
         </PopoverTrigger>
         <PopoverContent className="w-auto overflow-hidden p-0" align="start">
           <Calendar
-            key={(date ?? range.to).toISOString()}
+            key={(date ?? range.to).toString()}
             mode="single"
-            selected={date}
-            defaultMonth={date ?? range.to}
+            selected={selectedDate}
+            defaultMonth={defaultMonthDate}
             captionLayout="dropdown"
-            startMonth={range.from}
-            endMonth={range.to}
+            startMonth={startMonthDate}
+            endMonth={endMonthDate}
             reverseYears
             showOutsideDays
-            onSelect={(date) => {
-              date && setDate(date);
+            onSelect={(selected) => {
+              if (selected) {
+                setDate(dateToPlainDate(selected));
+              }
               setOpen(false);
             }}
           />

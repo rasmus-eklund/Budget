@@ -10,7 +10,7 @@ import type { ChangeDates } from "~/types";
 type Props = {
   data: Tx[];
   changeDates: ChangeDates;
-  canMarkInternal: boolean;
+  canMarkInternal?: boolean;
 };
 const Transactions = ({ data, changeDates, canMarkInternal = true }: Props) => {
   return (

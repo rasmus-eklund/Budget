@@ -1,8 +1,13 @@
+import { Temporal } from "@js-temporal/polyfill";
 import { markInternal } from "~/lib";
 import type { TxBankAccount } from "~/lib/zodSchemas";
 
 export const getUploadYear = (txs: TxBankAccount[]) => {
-  const years = new Set(txs.map(({ datum }) => datum.getFullYear()));
+  const years = new Set(
+    txs.map(({ datum }) =>
+      datum instanceof Temporal.PlainDate ? datum.year : (datum as Temporal.PlainDate).year,
+    ),
+  );
   if (years.size !== 1) {
     throw new Error("Ett år per uppladdning");
   }
@@ -15,7 +20,10 @@ export const getUploadedAccountIds = (txs: TxBankAccount[]) =>
 
 const sortForInternalMarking = (txs: TxBankAccount[]) =>
   [...txs].sort((a, b) => {
-    const dateDiff = a.datum.getTime() - b.datum.getTime();
+    const dateDiff =
+      a.datum instanceof Temporal.PlainDate && b.datum instanceof Temporal.PlainDate
+        ? Temporal.PlainDate.compare(a.datum, b.datum)
+        : String(a.datum).localeCompare(String(b.datum));
     if (dateDiff !== 0) {
       return dateDiff;
     }

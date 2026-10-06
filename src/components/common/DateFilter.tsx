@@ -1,5 +1,6 @@
 "use client";
 
+import { Temporal } from "@js-temporal/polyfill";
 import type { FromTo } from "~/lib/zodSchemas";
 import { TabsContent, TabsList, TabsTrigger, Tabs } from "~/components/ui";
 import FreeDay from "./FreeDay";
@@ -57,8 +58,8 @@ const DateFilter = ({ changeDates }: Props) => {
           }
           requestDateChange(
             getMonthRange({
-              year: from.getFullYear(),
-              month: from.getMonth() + 1,
+              year: from.year,
+              month: from.month,
             }),
           );
           return;
@@ -68,8 +69,8 @@ const DateFilter = ({ changeDates }: Props) => {
           return;
         }
         requestDateChange({
-          from: new Date(Date.UTC(from.getFullYear(), 0, 1)),
-          to: new Date(Date.UTC(from.getFullYear() + 1, 0, 0)),
+          from: Temporal.PlainDate.from({ year: from.year, month: 1, day: 1 }),
+          to: Temporal.PlainDate.from({ year: from.year, month: 12, day: 31 }),
         });
       }}
       className={cn("pt-2", showDateFilter ? "" : "hidden")}

@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui";
 import { eachDayOfInterval } from "~/lib";
-import dayjs from "dayjs";
+import { Temporal } from "@js-temporal/polyfill";
 import { colors } from "~/constants";
 import type { Tx } from "~/types";
 
@@ -53,16 +53,23 @@ const Balance = (props: Props) => {
   );
 };
 
-const formatter = (date: Date) => dayjs(date).format("YY-MM-DD");
+const formatter = (date: Temporal.PlainDate) =>
+  `${String(date.year).slice(-2)}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`;
 
 const getRange = (txs: Tx[]) => {
-  const dates = txs.map((tx) => Number(tx.datum));
-  const minD = new Date(Math.min(...dates));
-  const maxD = new Date(Math.max(...dates));
-  const startDate = new Date(
-    Date.UTC(minD.getUTCFullYear(), minD.getUTCMonth(), minD.getUTCDate()),
-  );
-  const endDate = new Date(Date.UTC(maxD.getUTCFullYear(), maxD.getUTCMonth(), maxD.getUTCDate()));
+  if (txs.length === 0) {
+    return [];
+  }
+  let startDate = txs[0]!.datum;
+  let endDate = txs[0]!.datum;
+  for (const tx of txs) {
+    if (Temporal.PlainDate.compare(tx.datum, startDate) < 0) {
+      startDate = tx.datum;
+    }
+    if (Temporal.PlainDate.compare(tx.datum, endDate) > 0) {
+      endDate = tx.datum;
+    }
+  }
   return eachDayOfInterval({ from: startDate, to: endDate });
 };
 
@@ -82,7 +89,11 @@ const getPersonAccounts = (txs: Tx[]) => {
   return out;
 };
 
-const fillMissingDates = (txs: Tx[], allDates: Date[], persons: Record<string, string[]>) => {
+const fillMissingDates = (
+  txs: Tx[],
+  allDates: Temporal.PlainDate[],
+  persons: Record<string, string[]>,
+) => {
   const personAccountsSet = new Set<string>();
   for (const person in persons) {
     for (const account of persons[person]!) {
@@ -91,16 +102,17 @@ const fillMissingDates = (txs: Tx[], allDates: Date[], persons: Record<string, s
   }
 
   const accountTxMap: Record<string, Record<string, number>> = {};
-  const accountFirstTx: Record<string, { date: Date; saldo: number } | undefined> = {};
+  const accountFirstTx: Record<string, { date: Temporal.PlainDate; saldo: number } | undefined> =
+    {};
 
   for (const acc of personAccountsSet) {
     accountTxMap[acc] = {};
     accountFirstTx[acc] = undefined;
   }
 
-  txs.sort((a, b) => a.datum.getTime() - b.datum.getTime());
+  const sortedTxs = [...txs].sort((a, b) => Temporal.PlainDate.compare(a.datum, b.datum));
 
-  for (const tx of txs) {
+  for (const tx of sortedTxs) {
     const key = `${tx.person}_${tx.konto}`;
     if (!accountTxMap[key]) {
       continue;
@@ -115,7 +127,7 @@ const fillMissingDates = (txs: Tx[], allDates: Date[], persons: Record<string, s
   const filledTransactions: Record<string, string | number>[] = [];
   const currentBalances: Record<string, number> = {};
 
-  const sortedDates = [...allDates].sort((a, b) => a.getTime() - b.getTime());
+  const sortedDates = [...allDates].sort((a, b) => Temporal.PlainDate.compare(a, b));
 
   for (const d of sortedDates) {
     const dateKey = formatter(d);
@@ -126,7 +138,10 @@ const fillMissingDates = (txs: Tx[], allDates: Date[], persons: Record<string, s
         currentBalances[account] = accountTxMap[account]![dateKey];
       }
       if (currentBalances[account] === undefined) {
-        if (accountFirstTx[account] && d.getTime() < accountFirstTx[account].date.getTime()) {
+        if (
+          accountFirstTx[account] &&
+          Temporal.PlainDate.compare(d, accountFirstTx[account].date) < 0
+        ) {
           currentBalances[account] = accountFirstTx[account].saldo;
         } else {
           currentBalances[account] = 0;

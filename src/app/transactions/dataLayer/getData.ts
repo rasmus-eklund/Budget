@@ -1,7 +1,7 @@
 "use server";
 import { and, eq, gte, lte } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { applyCategory, decryptTxData, getErrorMessage } from "~/lib";
+import { applyCategory, decryptTxData, getErrorMessage, toPlainDate } from "~/lib";
 import { type FromTo } from "~/lib/zodSchemas";
 import { db } from "~/server/db";
 import { category, persons, txs } from "~/server/db/schema";
@@ -20,6 +20,10 @@ const getTxByDates = async ({
   if (password === "") {
     redirect("/password?from=transactions");
   }
+
+  const fromDate = new Date(Date.UTC(from.year, from.month - 1, from.day, 0, 0, 0, 0));
+  const toDate = new Date(Date.UTC(to.year, to.month - 1, to.day, 23, 59, 59, 999));
+
   const categoriesReq = db.query.category.findMany({
     columns: { name: true },
     where: eq(category.userId, userId),
@@ -30,7 +34,7 @@ const getTxByDates = async ({
     with: {
       bankAccounts: {
         with: {
-          txs: { where: and(gte(txs.date, from), lte(txs.date, to)) },
+          txs: { where: and(gte(txs.date, fromDate), lte(txs.date, toDate)) },
         },
       },
     },
@@ -66,7 +70,7 @@ const getTxByDates = async ({
             applyCategory({
               tx: {
                 ...decrypted,
-                datum: date,
+                datum: toPlainDate(date),
                 person: person.name,
                 konto: account.name,
                 id,

@@ -1,62 +1,68 @@
+import { Temporal } from "@js-temporal/polyfill";
 import { type FromTo } from "~/lib/zodSchemas";
 import { dateToString } from "./formatData";
 
 type YM = { year: number; month: number };
 export type PeriodGroupBy = "month" | "year";
 
-export const decrementDay = (date: Date): FromTo => {
-  const newDate = new Date(date);
-  newDate.setDate(newDate.getDate() - 1);
-
-  const from = new Date(newDate);
-  from.setHours(0, 0, 0, 0);
-
-  const to = new Date(newDate);
-  to.setHours(23, 59, 59, 999);
-
-  return { from, to };
+export const toPlainDate = (input: string | Temporal.PlainDate | Date): Temporal.PlainDate => {
+  if (input instanceof Temporal.PlainDate) {
+    return input;
+  }
+  if (input instanceof Date) {
+    if (isNaN(input.getTime())) {
+      throw new Error("Invalid date format. Expected 'YYYY-MM-DD'.");
+    }
+    const year = input.getFullYear();
+    const month = String(input.getMonth() + 1).padStart(2, "0");
+    const day = String(input.getDate()).padStart(2, "0");
+    return Temporal.PlainDate.from(`${year}-${month}-${day}`);
+  }
+  if (typeof input === "string") {
+    const datePart = input.split("T")[0]!;
+    try {
+      return Temporal.PlainDate.from(datePart);
+    } catch {
+      throw new Error("Invalid date format. Expected 'YYYY-MM-DD'.");
+    }
+  }
+  throw new Error("Invalid date format. Expected 'YYYY-MM-DD'.");
 };
 
-export const incrementDay = (date: Date): FromTo => {
-  const newDate = new Date(date);
-  newDate.setDate(newDate.getDate() + 1);
+export const decrementDay = (date: Temporal.PlainDate | Date): FromTo => {
+  const pDate = toPlainDate(date);
+  const prev = pDate.subtract({ days: 1 });
+  return { from: prev, to: prev };
+};
 
-  const from = new Date(newDate);
-  from.setHours(0, 0, 0, 0);
-
-  const to = new Date(newDate);
-  to.setHours(23, 59, 59, 999);
-
-  return { from, to };
+export const incrementDay = (date: Temporal.PlainDate | Date): FromTo => {
+  const pDate = toPlainDate(date);
+  const next = pDate.add({ days: 1 });
+  return { from: next, to: next };
 };
 
 export const incrementMonth = ({ year, month }: YM) => {
-  if (month < 12) {
-    return { year, month: month + 1 };
-  } else {
-    return { year: year + 1, month: 1 };
-  }
+  const ym = Temporal.PlainYearMonth.from({ year, month }).add({ months: 1 });
+  return { year: ym.year, month: ym.month };
 };
 
 export const decrementMonth = ({ year, month }: YM) => {
   if (month < 1 || month > 12) {
     throw new Error("Month must be between 1 and 12");
   }
-  if (month === 1) {
-    return { year: year - 1, month: 12 };
-  }
-  return { year, month: month - 1 };
+  const ym = Temporal.PlainYearMonth.from({ year, month }).subtract({ months: 1 });
+  return { year: ym.year, month: ym.month };
 };
 
 export const getLastMonthYear = (range: FromTo) =>
   getMonthRange({
-    month: range.to.getMonth() + 1,
-    year: range.to.getFullYear(),
+    month: range.to.month,
+    year: range.to.year,
   });
 
 export const getYearRange = ({ from, to }: FromTo) => {
-  const start = from.getFullYear();
-  const end = to.getFullYear();
+  const start = from.year;
+  const end = to.year;
   const range: number[] = [];
   for (let year = start; year <= end; year++) {
     range.push(year);
@@ -64,69 +70,85 @@ export const getYearRange = ({ from, to }: FromTo) => {
   return range;
 };
 
-const isFirstDayOfMonth = (date: Date) => date.getDate() === 1;
+const isFirstDayOfMonth = (date: Temporal.PlainDate) => date.day === 1;
 
-const isLastDayOfMonth = (date: Date) =>
-  date.getDate() === new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+const isLastDayOfMonth = (date: Temporal.PlainDate) => date.day === date.daysInMonth;
 
-const isFirstDayOfYear = (date: Date) => date.getMonth() === 0 && date.getDate() === 1;
+const isFirstDayOfYear = (date: Temporal.PlainDate) => date.month === 1 && date.day === 1;
 
-const isLastDayOfYear = (date: Date) => date.getMonth() === 11 && date.getDate() === 31;
+const isLastDayOfYear = (date: Temporal.PlainDate) => date.month === 12 && date.day === 31;
 
-const minDate = (a: Date, b: Date) => (a < b ? a : b);
+const minDate = (a: Temporal.PlainDate, b: Temporal.PlainDate) =>
+  Temporal.PlainDate.compare(a, b) <= 0 ? a : b;
 
-const getLastCompletedPeriodEnd = (groupBy: PeriodGroupBy, now: Date) => {
+const getLastCompletedPeriodEnd = (groupBy: PeriodGroupBy, now: Temporal.PlainDate) => {
   if (groupBy === "year") {
-    return new Date(now.getFullYear(), 0, 0, 23, 59, 59, 999);
+    return Temporal.PlainDate.from({ year: now.year - 1, month: 12, day: 31 });
   }
 
-  return new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+  const prevMonth = Temporal.PlainYearMonth.from({ year: now.year, month: now.month }).subtract({
+    months: 1,
+  });
+  return Temporal.PlainDate.from({
+    year: prevMonth.year,
+    month: prevMonth.month,
+    day: prevMonth.daysInMonth,
+  });
 };
 
-const getAverageMonthBounds = ({ from, to }: FromTo, now: Date) => {
+const getAverageMonthBounds = ({ from, to }: FromTo, now: Temporal.PlainDate) => {
   const firstMonth = isFirstDayOfMonth(from)
-    ? new Date(from.getFullYear(), from.getMonth(), 1)
-    : new Date(from.getFullYear(), from.getMonth() + 1, 1);
+    ? Temporal.PlainDate.from({ year: from.year, month: from.month, day: 1 })
+    : Temporal.PlainYearMonth.from({ year: from.year, month: from.month })
+        .add({ months: 1 })
+        .toPlainDate({ day: 1 });
+
   const effectiveTo = minDate(to, getLastCompletedPeriodEnd("month", now));
+
   const lastMonth = isLastDayOfMonth(effectiveTo)
-    ? new Date(effectiveTo.getFullYear(), effectiveTo.getMonth(), 1)
-    : new Date(effectiveTo.getFullYear(), effectiveTo.getMonth(), 0);
+    ? Temporal.PlainDate.from({ year: effectiveTo.year, month: effectiveTo.month, day: 1 })
+    : Temporal.PlainYearMonth.from({ year: effectiveTo.year, month: effectiveTo.month })
+        .subtract({ months: 1 })
+        .toPlainDate({ day: 1 });
 
   return { firstMonth, lastMonth };
 };
 
-const getAverageYearBounds = ({ from, to }: FromTo, now: Date) => {
-  const firstYear = isFirstDayOfYear(from) ? from.getFullYear() : from.getFullYear() + 1;
+const getAverageYearBounds = ({ from, to }: FromTo, now: Temporal.PlainDate) => {
+  const firstYear = isFirstDayOfYear(from) ? from.year : from.year + 1;
   const effectiveTo = minDate(to, getLastCompletedPeriodEnd("year", now));
-  const lastYear = isLastDayOfYear(effectiveTo)
-    ? effectiveTo.getFullYear()
-    : effectiveTo.getFullYear() - 1;
+  const lastYear = isLastDayOfYear(effectiveTo) ? effectiveTo.year : effectiveTo.year - 1;
 
   return { firstYear, lastYear };
 };
 
-export const getPeriodCount = ({ from, to }: FromTo, groupBy: PeriodGroupBy, now = new Date()) => {
+export const getPeriodCount = (
+  { from, to }: FromTo,
+  groupBy: PeriodGroupBy,
+  nowInput: Temporal.PlainDate | Date = Temporal.Now.plainDateISO(),
+) => {
+  const now = toPlainDate(nowInput);
   if (groupBy === "year") {
     const { firstYear, lastYear } = getAverageYearBounds({ from, to }, now);
     return Math.max(0, lastYear - firstYear + 1);
   }
 
   const { firstMonth, lastMonth } = getAverageMonthBounds({ from, to }, now);
-  return Math.max(
-    0,
-    (lastMonth.getFullYear() - firstMonth.getFullYear()) * 12 +
-      lastMonth.getMonth() -
-      firstMonth.getMonth() +
-      1,
-  );
+  if (Temporal.PlainDate.compare(firstMonth, lastMonth) > 0) {
+    return 0;
+  }
+  const yearDiff = lastMonth.year - firstMonth.year;
+  const monthDiff = lastMonth.month - firstMonth.month;
+  return Math.max(0, yearDiff * 12 + monthDiff + 1);
 };
 
 export const isPeriodIncludedInAverage = (
   period: string,
   groupBy: PeriodGroupBy,
   range: FromTo,
-  now = new Date(),
+  nowInput: Temporal.PlainDate | Date = Temporal.Now.plainDateISO(),
 ) => {
+  const now = toPlainDate(nowInput);
   if (groupBy === "year") {
     const year = Number(period);
     if (!Number.isInteger(year)) {
@@ -142,12 +164,15 @@ export const isPeriodIncludedInAverage = (
     return false;
   }
 
-  const periodStart = new Date(year, month - 1, 1);
+  const periodStart = Temporal.PlainDate.from({ year, month, day: 1 });
   const { firstMonth, lastMonth } = getAverageMonthBounds(range, now);
-  return periodStart >= firstMonth && periodStart <= lastMonth;
+  return (
+    Temporal.PlainDate.compare(periodStart, firstMonth) >= 0 &&
+    Temporal.PlainDate.compare(periodStart, lastMonth) <= 0
+  );
 };
 
-export const getFromTo = <T extends { datum: Date }>(txs: T[]) => {
+export const getFromTo = <T extends { datum: Temporal.PlainDate }>(txs: T[]) => {
   if (!txs[0]) {
     return false;
   }
@@ -155,10 +180,10 @@ export const getFromTo = <T extends { datum: Date }>(txs: T[]) => {
   let to = txs[0].datum;
 
   for (const { datum } of txs) {
-    if (datum < from) {
+    if (Temporal.PlainDate.compare(datum, from) < 0) {
       from = datum;
     }
-    if (datum > to) {
+    if (Temporal.PlainDate.compare(datum, to) > 0) {
       to = datum;
     }
   }
@@ -171,22 +196,16 @@ export const FromToString = ({ from, to }: FromTo) => {
 };
 
 export const eachDayOfInterval = ({ from, to }: FromTo) => {
-  const startDate = new Date(from);
-  startDate.setHours(0, 0, 0, 0);
-
-  const endDate = new Date(to);
-  endDate.setHours(0, 0, 0, 0);
-
-  if (endDate < startDate) {
+  if (Temporal.PlainDate.compare(to, from) < 0) {
     throw new RangeError("Invalid interval: end date must be after or equal to the start date");
   }
 
-  const dates = [];
-  const currentDate = new Date(startDate);
+  const dates: Temporal.PlainDate[] = [];
+  let current = from;
 
-  while (currentDate <= endDate) {
-    dates.push(new Date(currentDate));
-    currentDate.setDate(currentDate.getDate() + 1);
+  while (Temporal.PlainDate.compare(current, to) <= 0) {
+    dates.push(current);
+    current = current.add({ days: 1 });
   }
 
   return dates;
@@ -196,64 +215,24 @@ export const getMonthRange = ({ year, month }: YM): FromTo => {
   if (month < 1 || month > 12) {
     throw new Error("Month must be between 1 and 12");
   }
-  const from = new Date(year, month - 1, 1, 0, 0, 0, 0);
-  const to = new Date(year, month, 0, 23, 59, 59, 999);
+  const from = Temporal.PlainDate.from({ year, month, day: 1 });
+  const to = Temporal.PlainDate.from({ year, month, day: from.daysInMonth });
   return { from, to };
 };
 
-export const getDayRange = (dateString: string): FromTo => {
-  const date = new Date(dateString);
-
-  if (isNaN(date.getTime())) {
-    throw new Error("Invalid date format. Expected 'YYYY-MM-DD'.");
-  }
-
-  const from = new Date(date);
-  from.setHours(0, 0, 0, 0);
-
-  const to = new Date(date);
-  to.setHours(23, 59, 59, 999);
-
-  return { from, to };
+export const getDayRange = (dateInput: string | Temporal.PlainDate | Date): FromTo => {
+  const pDate = toPlainDate(dateInput);
+  return { from: pDate, to: pDate };
 };
 
-export const getToDay = (toString: string): Date => {
-  const to = new Date(toString);
-  if (isNaN(to.getTime())) {
-    throw new Error("Invalid date format. Expected 'YYYY-MM-DD'.");
-  }
-  to.setHours(23, 59, 59, 999);
-  return to;
-};
+export const getToDay = (toString: string): Temporal.PlainDate => toPlainDate(toString);
 
-export const getFromDay = (fromString: string): Date => {
-  const from = new Date(fromString);
-  if (isNaN(from.getTime())) {
-    throw new Error("Invalid date format. Expected 'YYYY-MM-DD'.");
-  }
-  from.setHours(0, 0, 0, 0);
-  return from;
-};
+export const getFromDay = (fromString: string): Temporal.PlainDate => toPlainDate(fromString);
 
-export const isSameDayRange = ({ from, to }: FromTo) =>
-  from.getFullYear() === to.getFullYear() &&
-  from.getMonth() === to.getMonth() &&
-  from.getDate() === to.getDate();
+export const isSameDayRange = ({ from, to }: FromTo) => from.equals(to);
 
-export const isFullMonthRange = ({ from, to }: FromTo) => {
-  if (from.getFullYear() !== to.getFullYear()) {
-    return false;
-  }
-  if (from.getMonth() !== to.getMonth()) {
-    return false;
-  }
-  const lastDayOfMonth = new Date(from.getFullYear(), from.getMonth() + 1, 0).getDate();
-  return from.getDate() === 1 && to.getDate() === lastDayOfMonth;
-};
+export const isFullMonthRange = ({ from, to }: FromTo) =>
+  from.year === to.year && from.month === to.month && from.day === 1 && to.day === from.daysInMonth;
 
 export const isFullYearRange = ({ from, to }: FromTo) =>
-  from.getFullYear() === to.getFullYear() &&
-  from.getMonth() === 0 &&
-  from.getDate() === 1 &&
-  to.getMonth() === 11 &&
-  to.getDate() === 31;
+  from.year === to.year && from.month === 1 && from.day === 1 && to.month === 12 && to.day === 31;

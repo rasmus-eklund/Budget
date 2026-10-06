@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import dayjs from "dayjs";
+import { Temporal } from "@js-temporal/polyfill";
 import { type FromTo } from "~/lib/zodSchemas";
 import DatePickerRange from "./DatePickerRange";
 import { useStore } from "~/stores/tx-store";
@@ -33,11 +33,38 @@ const getPresetDates = (preset: DatePreset, range: FromTo) => {
   const option = datePresets.find(({ value }) => value === preset);
   const amount = option?.amount ?? 0;
   const unit = option?.unit ?? "month";
-  const presetFrom = dayjs(range.to).subtract(amount, unit).startOf(unit).toDate();
-  const rangeFrom = dayjs(range.from).startOf(unit).toDate();
-  const from = presetFrom < rangeFrom ? rangeFrom : presetFrom;
 
-  return { from, to: dayjs(range.to).endOf(unit).toDate() };
+  let presetFrom: Temporal.PlainDate;
+  let rangeFrom: Temporal.PlainDate;
+  let endTo: Temporal.PlainDate;
+
+  if (unit === "month") {
+    presetFrom = Temporal.PlainDate.from({
+      year: range.to.year,
+      month: range.to.month,
+      day: 1,
+    }).subtract({ months: amount });
+    rangeFrom = Temporal.PlainDate.from({
+      year: range.from.year,
+      month: range.from.month,
+      day: 1,
+    });
+    endTo = Temporal.PlainDate.from({
+      year: range.to.year,
+      month: range.to.month,
+      day: range.to.daysInMonth,
+    });
+  } else {
+    presetFrom = Temporal.PlainDate.from({ year: range.to.year, month: 1, day: 1 }).subtract({
+      years: amount,
+    });
+    rangeFrom = Temporal.PlainDate.from({ year: range.from.year, month: 1, day: 1 });
+    endTo = Temporal.PlainDate.from({ year: range.to.year, month: 12, day: 31 });
+  }
+
+  const from = Temporal.PlainDate.compare(presetFrom, rangeFrom) < 0 ? rangeFrom : presetFrom;
+
+  return { from, to: endTo };
 };
 
 const FreeDates = ({ changeDate }: Props) => {

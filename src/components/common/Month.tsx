@@ -22,11 +22,11 @@ type Props = {
 const Month = ({ changeDate }: Props) => {
   const draftRange = useStore((state) => state.draftRange);
   const range = useStore((state) => state.range);
-  const year = draftRange.from.getFullYear();
-  const month = draftRange.from.getMonth() + 1;
+  const year = draftRange.from.year;
+  const month = draftRange.from.month;
   const { from, to } = range;
-  const mostRecentYear = to.getFullYear();
-  const mostRecentMonth = to.getMonth() + 1;
+  const mostRecentYear = to.year;
+  const mostRecentMonth = to.month;
   const years = getYearRange({ from, to });
   const submitDates = async (dates: FromTo) => changeDate(dates);
   return (
@@ -58,7 +58,7 @@ const Month = ({ changeDate }: Props) => {
       <div className="flex w-full items-center gap-1 md:w-fit">
         <Button
           data-testid="month-prev"
-          disabled={year <= from.getFullYear() && month <= from.getMonth() + 1}
+          disabled={year <= from.year && month <= from.month}
           variant="outline"
           type="button"
           size="icon"

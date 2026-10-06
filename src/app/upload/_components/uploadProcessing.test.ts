@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { Temporal } from "@js-temporal/polyfill";
 import type { TxBankAccount } from "~/lib/zodSchemas";
 import {
   getUploadedAccountIds,
@@ -11,14 +12,14 @@ const tx = ({
   account,
   amount,
   category = "övrigt",
-  date = new Date("2025-01-10"),
+  date = Temporal.PlainDate.from("2025-01-10"),
   id,
   sourceOrder = 0,
 }: {
   account: string;
   amount: number;
   category?: string;
-  date?: Date;
+  date?: Temporal.PlainDate;
   id: string;
   sourceOrder?: number;
 }): TxBankAccount => ({
@@ -95,8 +96,8 @@ describe("upload processing", () => {
   it("rejects uploads spanning multiple years", () => {
     expect(() =>
       getUploadYear([
-        tx({ account: "a", amount: 1, date: new Date("2025-01-01"), id: "1" }),
-        tx({ account: "a", amount: 1, date: new Date("2026-01-01"), id: "2" }),
+        tx({ account: "a", amount: 1, date: Temporal.PlainDate.from("2025-01-01"), id: "1" }),
+        tx({ account: "a", amount: 1, date: Temporal.PlainDate.from("2026-01-01"), id: "2" }),
       ]),
     ).toThrow("Ett år per uppladdning");
   });

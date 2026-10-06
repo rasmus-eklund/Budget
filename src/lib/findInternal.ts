@@ -152,7 +152,7 @@ const findInternalPairsByHeuristics = (group: Internal[]) => {
 const groupTransactionsByDate = (txs: TxBankAccount[]) => {
   return txs.reduce(
     (acc, tx) => {
-      const date = tx.datum.toDateString();
+      const date = typeof tx.datum === "string" ? tx.datum : tx.datum.toString();
       if (!acc[date]) {
         acc[date] = [];
       }

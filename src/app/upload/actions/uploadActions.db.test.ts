@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, mock } from "bun:test";
+import { toPlainDate } from "~/lib";
 import postgres from "postgres";
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { and, eq, inArray } from "drizzle-orm";
@@ -194,7 +195,7 @@ describe("upload account merge db integration", () => {
         bankAccountId: accountA,
         belopp: -100,
         budgetgrupp: "övrigt",
-        datum: new Date("2025-01-10"),
+        datum: toPlainDate("2025-01-10"),
         id: "new-account-a",
         saldo: 900,
         sourceOrder: 0,
@@ -400,7 +401,7 @@ describe("upload account merge db integration", () => {
       bankAccountId: accountA,
       belopp: -100,
       budgetgrupp: "övrigt",
-      datum: new Date("2025-01-10"),
+      datum: toPlainDate("2025-01-10"),
       id: "final-account-a",
       saldo: 900,
       sourceOrder: 0,
@@ -410,7 +411,7 @@ describe("upload account merge db integration", () => {
       bankAccountId: accountB,
       belopp: 100,
       budgetgrupp: "övrigt",
-      datum: new Date("2025-01-10"),
+      datum: toPlainDate("2025-01-10"),
       id: "final-account-b",
       saldo: 0,
       sourceOrder: 0,
@@ -605,7 +606,7 @@ const txInput = ({
   bankAccountId: accountId,
   belopp: amount,
   budgetgrupp: "övrigt",
-  datum: date,
+  datum: toPlainDate(date),
   id,
   saldo: 0,
   sourceOrder,

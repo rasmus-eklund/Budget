@@ -18,10 +18,12 @@ describe("toSek", () => {
   });
 });
 
+import { Temporal } from "@js-temporal/polyfill";
+
 describe("dateToString", () => {
   it("should be 2024-01-01", () => {
     const string = "2024-01-01";
-    const date = new Date(string);
+    const date = Temporal.PlainDate.from(string);
     const formattedDate = dateToString(date);
     expect(formattedDate).toStrictEqual(string);
   });

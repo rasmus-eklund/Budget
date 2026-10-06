@@ -1,11 +1,11 @@
 import { z } from "zod";
-import dayjs from "dayjs";
+import { Temporal } from "@js-temporal/polyfill";
 
 const numberSchema = z
   .string()
   .min(1, "Minst 1 siffra")
   .transform((val, ctx) => {
-    const cleaned = val.replace(/[^\d,.\-]/g, "").replace(/\s+/g, "");
+    const cleaned = val.replace(/[^\d,.-]/g, "").replace(/\s+/g, "");
     let normalized = cleaned;
     if (/,/.test(cleaned) && /\./.test(cleaned)) {
       normalized = cleaned.replace(/,/g, "");
@@ -41,16 +41,25 @@ const dateSchema = z
       message: `Felaktigt datum format: ${v}. Använd formatet YYYY-MM-DD.`,
     }),
   )
-  .refine(
-    (v) => {
-      const parsed = dayjs(v, "YYYY-MM-DD", true);
-      return parsed.isValid() && parsed.format("YYYY-MM-DD") === v;
-    },
-    (v) => ({
-      message: `Felaktigt datum format: ${v}. Använd formatet YYYY-MM-DD.`,
-    }),
-  )
-  .transform((v) => dayjs(v, "YYYY-MM-DD").toDate());
+  .transform((v, ctx) => {
+    try {
+      const parsed = Temporal.PlainDate.from(v);
+      if (parsed.toString() !== v) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Felaktigt datum format: ${v}. Använd formatet YYYY-MM-DD.`,
+        });
+        return z.NEVER;
+      }
+      return parsed;
+    } catch {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Felaktigt datum format: ${v}. Använd formatet YYYY-MM-DD.`,
+      });
+      return z.NEVER;
+    }
+  });
 
 export const csvSchema = z
   .array(
@@ -83,9 +92,33 @@ export type TxBankAccount = z.infer<typeof csvSchema>[number] & {
   sourceOrder: number;
 };
 
+export const plainDateSchema = z
+  .union([
+    z.instanceof(Temporal.PlainDate),
+    z.instanceof(Date),
+    z.string(),
+    z.object({ year: z.number(), month: z.number(), day: z.number() }),
+  ])
+  .transform((val) => {
+    if (val instanceof Temporal.PlainDate) {
+      return val;
+    }
+    if (val instanceof Date) {
+      const year = val.getFullYear();
+      const month = String(val.getMonth() + 1).padStart(2, "0");
+      const day = String(val.getDate()).padStart(2, "0");
+      return Temporal.PlainDate.from(`${year}-${month}-${day}`);
+    }
+    if (typeof val === "string") {
+      const datePart = val.split("T")[0]!;
+      return Temporal.PlainDate.from(datePart);
+    }
+    return Temporal.PlainDate.from(val as Temporal.PlainDateLike);
+  });
+
 export const fromToSchema = z.object({
-  from: z.coerce.date(),
-  to: z.coerce.date(),
+  from: plainDateSchema,
+  to: plainDateSchema,
 });
 export type FromTo = z.infer<typeof fromToSchema>;
 

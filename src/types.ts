@@ -1,3 +1,4 @@
+import type { Temporal } from "@js-temporal/polyfill";
 import type { FromTo } from "~/lib/zodSchemas";
 
 export type SortOption = "date-asc" | "date-desc" | "amount-asc" | "amount-desc";
@@ -77,7 +78,7 @@ export type FileData = {
 
 export type Tx = {
   id: string;
-  datum: Date;
+  datum: Temporal.PlainDate;
   text: string;
   budgetgrupp: string;
   belopp: number;

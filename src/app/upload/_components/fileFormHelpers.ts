@@ -98,7 +98,7 @@ export const uploadFiles = async ({
     transactions.push({
       bankAccountId,
       year,
-      date: datum,
+      date: new Date(Date.UTC(datum.year, datum.month - 1, datum.day)),
       data: encrypted.toString(),
       id,
       sourceOrder,

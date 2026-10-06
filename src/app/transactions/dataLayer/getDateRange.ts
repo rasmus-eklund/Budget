@@ -2,6 +2,7 @@ import { eq, max, min } from "drizzle-orm";
 import { db } from "~/server/db";
 import { bankAccounts, persons, txs } from "~/server/db/schema";
 import getUserId from "~/server/getUserId";
+import { toPlainDate } from "~/lib";
 
 export const getDateRange = async () => {
   const userId = await getUserId();
@@ -18,5 +19,5 @@ export const getDateRange = async () => {
   if (!from || !to) {
     return false;
   }
-  return { from, to };
+  return { from: toPlainDate(from), to: toPlainDate(to) };
 };

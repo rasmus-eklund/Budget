@@ -1,8 +1,11 @@
 import { create } from "zustand";
+import { Temporal } from "@js-temporal/polyfill";
 import type { FromTo } from "~/lib/zodSchemas";
 import type { FilterTab, Tx, TxSort, DateTab, Filter, PeriodGroupBy } from "~/types";
 import { filterChanged, resetFilter } from "~/lib";
 import { emptyOptions } from "~/constants";
+
+const now = Temporal.Now.plainDateISO();
 
 export const useStore = create<{
   txs: Tx[];
@@ -92,11 +95,11 @@ export const useStore = create<{
       txSort: { sort: "date-asc" },
       hasChanged: false,
     })),
-  range: { from: new Date(), to: new Date() },
+  range: { from: now, to: now },
   setRange: (range) => set({ range }),
-  draftRange: { from: new Date(), to: new Date() },
+  draftRange: { from: now, to: now },
   setDraftRange: (draftRange) => set({ draftRange }),
-  selectedRange: { from: new Date(), to: new Date() },
+  selectedRange: { from: now, to: now },
   setSelectedRange: (selectedRange) => set({ selectedRange }),
   sticky: true,
   setSticky: (sticky) => set({ sticky }),
