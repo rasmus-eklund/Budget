@@ -18,10 +18,10 @@ type DatePresetOption = {
 };
 
 const datePresets: DatePresetOption[] = [
-  { label: "senaste 6 månaderna", value: "6-months", amount: 6, unit: "month" },
-  { label: "senaste året", value: "1-year", amount: 1, unit: "year" },
-  { label: "senaste 3 åren", value: "3-years", amount: 3, unit: "year" },
-  { label: "senaste 5 åren", value: "5-years", amount: 5, unit: "year" },
+  { label: "6 månaderna", value: "6-months", amount: 6, unit: "month" },
+  { label: "året", value: "1-year", amount: 1, unit: "year" },
+  { label: "3 åren", value: "3-years", amount: 3, unit: "year" },
+  { label: "5 åren", value: "5-years", amount: 5, unit: "year" },
   { label: "all data", value: "all" },
 ];
 
@@ -79,8 +79,7 @@ const FreeDates = ({ changeDate }: Props) => {
           changeDate(presetDates);
         }}
         options={datePresets.map(({ label, value }) => ({ value, label }))}
-        placeholder="Välj period"
-        triggerClassName="w-full md:w-52"
+        placeholder="Välj senaste"
       />
     </div>
   );

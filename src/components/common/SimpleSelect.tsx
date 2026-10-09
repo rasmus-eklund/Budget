@@ -40,7 +40,7 @@ const SimpleSelect = ({
   value,
   onValueChange,
   placeholder,
-  triggerClassName,
+  triggerClassName = "w-full md:w-fit max-w-96",
   testId,
 }: SimpleSelectProps) => {
   const flatOptions = isGrouped(options) ? options.flatMap((g) => g.options) : options;

@@ -250,7 +250,6 @@ const FileForm = ({ categories, people }: Props) => {
                     label: option.label,
                   }))}
                   placeholder="Välj konto"
-                  triggerClassName="w-fit max-w-96"
                 />
                 <SimpleSelect
                   value={config.name}
@@ -272,8 +271,7 @@ const FileForm = ({ categories, people }: Props) => {
                     label: option.name,
                     className: "first-letter:uppercase",
                   }))}
-                  placeholder="Välj konto"
-                  triggerClassName="w-fit max-w-96"
+                  placeholder="Välj bank"
                 />
               </li>
             ))}

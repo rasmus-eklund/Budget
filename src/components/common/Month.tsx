@@ -41,7 +41,6 @@ const Month = ({ changeDate }: Props) => {
           value: y.toString(),
           label: y,
         }))}
-        triggerClassName="w-full md:w-22.5"
         testId="month-year-select"
       />
       <div className="flex w-full items-center gap-1 md:w-fit">
@@ -72,7 +71,6 @@ const Month = ({ changeDate }: Props) => {
             label: m,
             className: "first-letter:capitalize",
           }))}
-          triggerClassName="flex-1 md:w-32.5 md:flex-none"
           testId="month-month-select"
         />
         <Button

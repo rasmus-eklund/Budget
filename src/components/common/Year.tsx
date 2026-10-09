@@ -52,7 +52,6 @@ const Year = ({ changeDate }: Props) => {
             value: y.toString(),
             label: y,
           }))}
-          triggerClassName="w-full md:w-22.5"
           testId="year-select"
           placeholder=""
         />
