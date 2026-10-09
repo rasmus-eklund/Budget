@@ -1,6 +1,7 @@
 "use client";
 
-import { type FormEvent, type ReactNode, useState, useRef, useEffect, useCallback } from "react";
+import type { FormEvent, ReactNode, ChangeEvent } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Button, Tabs, TabsList, TabsTrigger } from "~/components/ui";
 import { SimpleSelect, ShowData, Icon } from "~/components/common";
 import {
@@ -124,6 +125,7 @@ const FileForm = ({ categories, people }: Props) => {
       fileInputRef.current.value = "";
     }
   };
+
   const options = people.flatMap((p) =>
     p.bankAccounts.map((a) => ({
       value: a.id,
@@ -133,6 +135,54 @@ const FileForm = ({ categories, people }: Props) => {
       bankAccountId: a.id,
     })),
   );
+
+  const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) {
+      return;
+    }
+    const data: FileData[] = [];
+    for (const file of files) {
+      data.push({
+        bankAccountId: findMatchingAccount(file.name, options),
+        file,
+        config: configs[0]!,
+      });
+    }
+    setFiles(data);
+  };
+
+  const onAccountChange = (value: string) => {
+    if (!value) {
+      return;
+    }
+    setFiles((p) => {
+      const newFiles = [...p];
+      if (!newFiles[0]) {
+        return newFiles;
+      }
+      newFiles[0] = { ...newFiles[0], bankAccountId: value };
+      return newFiles;
+    });
+  };
+
+  const onBankChange = (value: string) => {
+    if (!value) {
+      return;
+    }
+    setFiles((p) => {
+      const newFiles = [...p];
+      if (!newFiles[0]) {
+        return newFiles;
+      }
+      newFiles[0] = {
+        ...newFiles[0],
+        config: configs.find((i) => i.name === (value as keyof typeof configs))!,
+      };
+      return newFiles;
+    });
+  };
+
   if (people.length === 0) {
     return (
       <p>
@@ -146,6 +196,7 @@ const FileForm = ({ categories, people }: Props) => {
       </p>
     );
   }
+
   return (
     <>
       <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
@@ -189,21 +240,7 @@ const FileForm = ({ categories, people }: Props) => {
                 resetProcessedUpload();
                 setError({ error: false, message: "" });
               }}
-              onChange={(e) => {
-                const files = e.target.files;
-                if (!files) {
-                  return;
-                }
-                const data: FileData[] = [];
-                for (const file of files) {
-                  data.push({
-                    bankAccountId: findMatchingAccount(file.name, options),
-                    file,
-                    config: configs[0]!,
-                  });
-                }
-                setFiles(data);
-              }}
+              onChange={onFileChange}
               type="file"
               name="files"
               multiple
@@ -235,16 +272,7 @@ const FileForm = ({ categories, people }: Props) => {
                 <h2>{file.name}</h2>
                 <SimpleSelect
                   value={bankAccountId}
-                  onValueChange={(value) => {
-                    if (!value) {
-                      return;
-                    }
-                    setFiles((p) => {
-                      const newFiles = [...p];
-                      newFiles[i] = { ...newFiles[i]!, bankAccountId: value };
-                      return newFiles;
-                    });
-                  }}
+                  onValueChange={onAccountChange}
                   options={options.map((option) => ({
                     value: option.value,
                     label: option.label,
@@ -253,19 +281,7 @@ const FileForm = ({ categories, people }: Props) => {
                 />
                 <SimpleSelect
                   value={config.name}
-                  onValueChange={(value) => {
-                    if (!value) {
-                      return;
-                    }
-                    setFiles((p) => {
-                      const newFiles = [...p];
-                      newFiles[i] = {
-                        ...newFiles[i]!,
-                        config: configs.find((i) => i.name === (value as keyof typeof configs))!,
-                      };
-                      return newFiles;
-                    });
-                  }}
+                  onValueChange={onBankChange}
                   options={configs.map((option) => ({
                     value: option.name,
                     label: option.name,
