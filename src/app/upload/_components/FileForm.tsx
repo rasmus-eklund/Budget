@@ -5,6 +5,7 @@ import {
   Button,
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -136,6 +137,8 @@ const FileForm = ({ categories, people }: Props) => {
   };
   const options = people.flatMap((p) =>
     p.bankAccounts.map((a) => ({
+      value: a.id,
+      label: <OptionLabel option={{ person: p.name, account: a.name, bankAccountId: a.id }} />,
       person: p.name,
       account: a.name,
       bankAccountId: a.id,
@@ -242,6 +245,7 @@ const FileForm = ({ categories, people }: Props) => {
               <li className="flex items-center gap-2" key={`${file.name}_${i}`}>
                 <h2>{file.name}</h2>
                 <Select
+                  items={options}
                   value={bankAccountId}
                   onValueChange={(value) => {
                     if (!value) {
@@ -258,16 +262,13 @@ const FileForm = ({ categories, people }: Props) => {
                     <SelectValue placeholder="Välj konto" />
                   </SelectTrigger>
                   <SelectContent>
-                    {options.map((option) => (
-                      <SelectItem key={option.bankAccountId} value={option.bankAccountId}>
-                        <span className="flex items-center gap-1">
-                          <span className="first-letter:uppercase">{option.person}</span>
-                          <span className="font-semibold first-letter:uppercase">
-                            {option.account}
-                          </span>
-                        </span>
-                      </SelectItem>
-                    ))}
+                    <SelectGroup>
+                      {options.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
                 <Select
@@ -342,6 +343,19 @@ const FileForm = ({ categories, people }: Props) => {
         />
       )}
     </>
+  );
+};
+
+const OptionLabel = ({
+  option,
+}: {
+  option: { person: string; account: string; bankAccountId: string };
+}) => {
+  return (
+    <span className="flex items-center gap-1">
+      <span className="first-letter:uppercase">{option.person}</span>
+      <span className="font-semibold first-letter:uppercase">{option.account}</span>
+    </span>
   );
 };
 

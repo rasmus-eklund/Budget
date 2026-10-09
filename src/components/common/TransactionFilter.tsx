@@ -26,6 +26,15 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
   const filter = useStore((state) => state.filter);
   const showFilter = useStore((state) => state.showFilter);
   const filterTab = useStore((state) => state.filterTab);
+  const dateOptions = [
+    { value: sortOptions.dateAsc, label: "Datumstigande" },
+    { value: sortOptions.dateDesc, label: "Datumfallande" },
+  ];
+  const amountOptions = [
+    { value: sortOptions.amountAsc, label: "Lågt till högt" },
+    { value: sortOptions.amountDesc, label: "Högt till lågt" },
+  ];
+  const allOptions = [{ value: null, label: "Sortera" }, ...dateOptions, ...amountOptions];
 
   return (
     <div className={cn("flex flex-wrap gap-2 p-1 pt-2 md:flex-nowrap", showFilter ? "" : "hidden")}>
@@ -82,6 +91,7 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
       )}
       {["aggregated", "transactions"].includes(filterTab) && (
         <Select
+          items={allOptions}
           value={txSort.sort}
           onValueChange={(value) => setTxSort({ ...txSort, sort: value as SortOption })}
         >
@@ -91,13 +101,19 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Datum</SelectLabel>
-              <SelectItem value={sortOptions.dateAsc}>Datumstigande</SelectItem>
-              <SelectItem value={sortOptions.dateDesc}>Datumfallande</SelectItem>
+              {dateOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
             </SelectGroup>
             <SelectGroup>
               <SelectLabel>Belopp</SelectLabel>
-              <SelectItem value={sortOptions.amountAsc}>Lågt till högt</SelectItem>
-              <SelectItem value={sortOptions.amountDesc}>Högt till lågt</SelectItem>
+              {amountOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>

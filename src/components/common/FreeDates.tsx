@@ -70,6 +70,7 @@ const FreeDates = ({ changeDate }: Props) => {
         onChange={changeDates}
       />
       <Select
+        items={datePresets}
         value={selectedPreset}
         onValueChange={(value) => {
           const preset = value as DatePreset;
