@@ -1,17 +1,13 @@
 "use client";
 
 import type { SortOption, TextFilterMode, Uniques } from "~/types";
+import { Button } from "~/components/ui";
 import {
-  Select,
-  Button,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui";
-import { FreeTextMultiCombobox, LabeledSwitch, MultiSelect } from "~/components/common";
+  FreeTextMultiCombobox,
+  LabeledSwitch,
+  MultiSelect,
+  SimpleSelect,
+} from "~/components/common";
 import { sortOptions } from "~/constants";
 import { useStore } from "~/stores/tx-store";
 import { cn, setAll } from "~/lib";
@@ -34,7 +30,6 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
     { value: sortOptions.amountAsc, label: "Lågt till högt" },
     { value: sortOptions.amountDesc, label: "Högt till lågt" },
   ];
-  const allOptions = [{ value: null, label: "Sortera" }, ...dateOptions, ...amountOptions];
 
   return (
     <div className={cn("flex flex-wrap gap-2 p-1 pt-2 md:flex-nowrap", showFilter ? "" : "hidden")}>
@@ -90,33 +85,21 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
         </Button>
       )}
       {["aggregated", "transactions"].includes(filterTab) && (
-        <Select
-          items={allOptions}
+        <SimpleSelect
           value={txSort.sort}
           onValueChange={(value) => setTxSort({ ...txSort, sort: value as SortOption })}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Sortera" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Datum</SelectLabel>
-              {dateOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-            <SelectGroup>
-              <SelectLabel>Belopp</SelectLabel>
-              {amountOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+          options={[
+            {
+              groupLabel: "Datum",
+              options: dateOptions.map(({ value, label }) => ({ value, label })),
+            },
+            {
+              groupLabel: "Belopp",
+              options: amountOptions.map(({ value, label }) => ({ value, label })),
+            },
+          ]}
+          placeholder="Sortera"
+        />
       )}
     </div>
   );

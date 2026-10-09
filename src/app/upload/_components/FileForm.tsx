@@ -1,18 +1,8 @@
 "use client";
 
 import { type FormEvent, type ReactNode, useState, useRef, useEffect, useCallback } from "react";
-import {
-  Button,
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "~/components/ui";
+import { Button, Tabs, TabsList, TabsTrigger } from "~/components/ui";
+import { SimpleSelect, ShowData, Icon } from "~/components/common";
 import {
   type UploadMode,
   readFiles,
@@ -27,7 +17,6 @@ import {
 } from "./fileFormHelpers";
 import type { Category, FileData, Filter, PersonAccounts, Tx } from "~/types";
 import { applyCategory, getErrorMessage, getFromTo, getLastMonthYear, capitalize } from "~/lib";
-import { ShowData, Icon } from "~/components/common";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useStore } from "~/stores/tx-store";
@@ -244,8 +233,7 @@ const FileForm = ({ categories, people }: Props) => {
             {files.map(({ file, bankAccountId, config }, i) => (
               <li className="flex items-center gap-2" key={`${file.name}_${i}`}>
                 <h2>{file.name}</h2>
-                <Select
-                  items={options}
+                <SimpleSelect
                   value={bankAccountId}
                   onValueChange={(value) => {
                     if (!value) {
@@ -257,21 +245,14 @@ const FileForm = ({ categories, people }: Props) => {
                       return newFiles;
                     });
                   }}
-                >
-                  <SelectTrigger className="w-fit max-w-96">
-                    <SelectValue placeholder="Välj konto" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {options.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <Select
+                  options={options.map((option) => ({
+                    value: option.value,
+                    label: option.label,
+                  }))}
+                  placeholder="Välj konto"
+                  triggerClassName="w-fit max-w-96"
+                />
+                <SimpleSelect
                   value={config.name}
                   onValueChange={(value) => {
                     if (!value) {
@@ -286,22 +267,14 @@ const FileForm = ({ categories, people }: Props) => {
                       return newFiles;
                     });
                   }}
-                >
-                  <SelectTrigger className="w-fit max-w-96">
-                    <SelectValue placeholder="Välj konto" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {configs.map((option) => (
-                      <SelectItem
-                        key={option.name}
-                        value={option.name}
-                        className="first-letter:uppercase"
-                      >
-                        {option.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  options={configs.map((option) => ({
+                    value: option.name,
+                    label: option.name,
+                    className: "first-letter:uppercase",
+                  }))}
+                  placeholder="Välj konto"
+                  triggerClassName="w-fit max-w-96"
+                />
               </li>
             ))}
           </ul>

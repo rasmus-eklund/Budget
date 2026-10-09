@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import { type FromTo } from "~/lib/zodSchemas";
 import DatePickerRange from "./DatePickerRange";
 import { useStore } from "~/stores/tx-store";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui";
+import { SimpleSelect } from "~/components/common";
 
 type Props = { changeDate: (dates: FromTo) => void };
 type DatePreset = "6-months" | "1-year" | "3-years" | "5-years" | "all";
@@ -69,8 +69,7 @@ const FreeDates = ({ changeDate }: Props) => {
         range={{ from, to }}
         onChange={changeDates}
       />
-      <Select
-        items={datePresets}
+      <SimpleSelect
         value={selectedPreset}
         onValueChange={(value) => {
           const preset = value as DatePreset;
@@ -79,18 +78,10 @@ const FreeDates = ({ changeDate }: Props) => {
           setDates(presetDates);
           changeDate(presetDates);
         }}
-      >
-        <SelectTrigger className="w-full md:w-52">
-          <SelectValue placeholder="Välj period" />
-        </SelectTrigger>
-        <SelectContent>
-          {datePresets.map(({ label, value }) => (
-            <SelectItem key={value} value={value}>
-              {label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        options={datePresets.map(({ label, value }) => ({ value, label }))}
+        placeholder="Välj period"
+        triggerClassName="w-full md:w-52"
+      />
     </div>
   );
 };
