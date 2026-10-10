@@ -6,10 +6,7 @@ import { Header } from "~/components/server";
 import { env } from "~/env";
 import { cn } from "~/lib";
 import { Toaster } from "~/components/ui/sonner";
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata = {
   title: env.NODE_ENV === "development" ? "DEV:RICA Banken" : "RICA Banken",
@@ -18,7 +15,7 @@ export const metadata = {
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="h-dvh">
+    <html lang="en" className={cn("h-dvh", "font-sans", inter.variable)}>
       <body className={cn("flex h-dvh flex-col items-center font-sans", inter.variable)}>
         <AuthProvider>
           <Header />

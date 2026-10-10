@@ -32,20 +32,21 @@ const MultiSelect = ({
 }) => {
   return (
     <Popover modal={true}>
-      <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" className="w-fit justify-between">
-          {label}
-          <Icon icon="ChevronsUpDown" className="opacity-50" />
-        </Button>
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={
+          <Button variant="outline" role="combobox" className="w-fit justify-between">
+            {label}
+            <Icon icon="ChevronsUpDown" className="opacity-50" />
+          </Button>
+        }
+      />
       <PopoverContent
-        className="max-h-(--radix-popover-content-available-height) w-fit overflow-hidden p-0"
+        className="max-h-(--available-height) w-fit overflow-hidden p-0"
         sideOffset={5}
-        collisionPadding={10}
       >
         <Command>
           <CommandInput placeholder="Sök" className="h-9" />
-          <CommandList className="max-h-[calc(var(--radix-popover-content-available-height)-5.25rem)]">
+          <CommandList className="max-h-[calc(var(--available-height)-5.25rem)]">
             <CommandGroup>
               {options.map((item) => {
                 const checked = !!filterItems[item];

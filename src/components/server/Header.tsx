@@ -21,8 +21,8 @@ const Header = async () => {
         {authenticated ? (
           <HeaderMenu />
         ) : (
-          <Button asChild data-cy="sign-in">
-            <Link href="/login">Logga in</Link>
+          <Button data-cy="sign-in" render={<Link href="/login" />}>
+            Logga in
           </Button>
         )}
       </div>

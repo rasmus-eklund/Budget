@@ -21,6 +21,7 @@ export { default as LoadingItems } from "./LoadingItems";
 export { default as LabeledSwitch } from "./LabeledSwitch";
 export { default as MultiSelect } from "./MultiSelect";
 export { default as ShowData } from "./ShowData";
+export { default as SimpleSelect } from "./SimpleSelect";
 export { default as Tooltip } from "./Tooltip";
 export { default as HeaderMenu } from "./HeaderMenu";
 export { default as Icon } from "./Icon";

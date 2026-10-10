@@ -16,11 +16,13 @@ type Props = { children: ReactNode; info: { title: string; entity: string } };
 const DeleteDialog = ({ children, info: { title, entity } }: Props) => {
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <button>
-          <Icon icon="Trash" className="cursor-pointer hover:scale-110 hover:text-primary" />
-        </button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <button>
+            <Icon icon="Trash" className="cursor-pointer hover:scale-110 hover:text-primary" />
+          </button>
+        }
+      />
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Ta bort {title.toLowerCase()}</DialogTitle>
@@ -29,10 +31,10 @@ const DeleteDialog = ({ children, info: { title, entity } }: Props) => {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex flex-row justify-between md:justify-end">
-          <DialogClose asChild>
-            <Button className="hover:cursor-pointer" type="button" variant="secondary">
-              Avbryt
-            </Button>
+          <DialogClose
+            render={<Button className="hover:cursor-pointer" type="button" variant="secondary" />}
+          >
+            Avbryt
           </DialogClose>
           {children}
         </DialogFooter>

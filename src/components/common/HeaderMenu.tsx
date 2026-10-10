@@ -27,31 +27,37 @@ const HeaderMenu = () => {
   ];
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button size="icon" variant="ghost">
-          <Icon icon="Menu" className="size-6" />
-        </Button>
+      <DropdownMenuTrigger render={<Button size="icon" variant="ghost" />}>
+        <Icon icon="Menu" className="size-6" />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-44">
         {items.map(({ name, path, icon }) => (
-          <DropdownMenuItem asChild key={path}>
-            <Link
-              className={cn("flex items-center gap-2", currentPath === path ? "text-primary" : "")}
-              href={path === "password" ? `/${path}?from=${currentPath}` : `/${path}`}
-            >
-              <Icon icon={icon} className="mr-2 size-5" />
-              {name}
-            </Link>
+          <DropdownMenuItem
+            key={path}
+            render={
+              <Link
+                className={cn(
+                  "flex items-center gap-2",
+                  currentPath === path ? "text-primary" : "",
+                )}
+                href={path === "password" ? `/${path}?from=${currentPath}` : `/${path}`}
+              />
+            }
+          >
+            <Icon icon={icon} className="mr-2 size-5" />
+            {name}
           </DropdownMenuItem>
         ))}
 
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <LogoutLink className="flex items-center gap-2">
-            <Icon icon="LogOut" className="mr-2 size-5" />
-            Logga ut
-          </LogoutLink>
-        </DropdownMenuItem>
+        <DropdownMenuItem
+          render={
+            <LogoutLink className="flex items-center gap-2">
+              <Icon icon="LogOut" className="mr-2 size-5" />
+              Logga ut
+            </LogoutLink>
+          }
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   );

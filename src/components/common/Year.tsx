@@ -1,13 +1,7 @@
 "use client";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Button,
-} from "~/components/ui";
+import { Button } from "~/components/ui";
+import { SimpleSelect } from "~/components/common";
 import Icon from "./Icon";
 import Tooltip from "./Tooltip";
 import { getYearRange } from "~/lib";
@@ -48,24 +42,19 @@ const Year = ({ changeDate }: Props) => {
         >
           <Icon icon="ChevronLeft" />
         </Button>
-        <Select
+        <SimpleSelect
           value={year.toString()}
           onValueChange={async (year) => {
             const y = Number(year);
             await submitYear(y);
           }}
-        >
-          <SelectTrigger data-testid="year-select" className="w-full md:w-22.5">
-            <SelectValue placeholder="" />
-          </SelectTrigger>
-          <SelectContent>
-            {years.reverse().map((year) => (
-              <SelectItem key={`year-${year}`} value={year.toString()}>
-                {year}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          options={years.reverse().map((y) => ({
+            value: y.toString(),
+            label: y,
+          }))}
+          testId="year-select"
+          placeholder=""
+        />
         <Button
           disabled={mostRecentYear === year}
           variant="outline"

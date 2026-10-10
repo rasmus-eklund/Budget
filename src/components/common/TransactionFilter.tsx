@@ -1,17 +1,13 @@
 "use client";
 
 import type { SortOption, TextFilterMode, Uniques } from "~/types";
+import { Button } from "~/components/ui";
 import {
-  Select,
-  Button,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui";
-import { FreeTextMultiCombobox, LabeledSwitch, MultiSelect } from "~/components/common";
+  FreeTextMultiCombobox,
+  LabeledSwitch,
+  MultiSelect,
+  SimpleSelect,
+} from "~/components/common";
 import { sortOptions } from "~/constants";
 import { useStore } from "~/stores/tx-store";
 import { cn, setAll } from "~/lib";
@@ -26,6 +22,14 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
   const filter = useStore((state) => state.filter);
   const showFilter = useStore((state) => state.showFilter);
   const filterTab = useStore((state) => state.filterTab);
+  const dateOptions = [
+    { value: sortOptions.dateAsc, label: "Datumstigande" },
+    { value: sortOptions.dateDesc, label: "Datumfallande" },
+  ];
+  const amountOptions = [
+    { value: sortOptions.amountAsc, label: "Lågt till högt" },
+    { value: sortOptions.amountDesc, label: "Högt till lågt" },
+  ];
 
   return (
     <div className={cn("flex flex-wrap gap-2 p-1 pt-2 md:flex-nowrap", showFilter ? "" : "hidden")}>
@@ -81,26 +85,21 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
         </Button>
       )}
       {["aggregated", "transactions"].includes(filterTab) && (
-        <Select
+        <SimpleSelect
           value={txSort.sort}
           onValueChange={(value) => setTxSort({ ...txSort, sort: value as SortOption })}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Sortera" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Datum</SelectLabel>
-              <SelectItem value={sortOptions.dateAsc}>Datumstigande</SelectItem>
-              <SelectItem value={sortOptions.dateDesc}>Datumfallande</SelectItem>
-            </SelectGroup>
-            <SelectGroup>
-              <SelectLabel>Belopp</SelectLabel>
-              <SelectItem value={sortOptions.amountAsc}>Lågt till högt</SelectItem>
-              <SelectItem value={sortOptions.amountDesc}>Högt till lågt</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+          options={[
+            {
+              groupLabel: "Datum",
+              options: dateOptions.map(({ value, label }) => ({ value, label })),
+            },
+            {
+              groupLabel: "Belopp",
+              options: amountOptions.map(({ value, label }) => ({ value, label })),
+            },
+          ]}
+          placeholder="Sortera"
+        />
       )}
     </div>
   );
