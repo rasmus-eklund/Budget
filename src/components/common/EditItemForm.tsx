@@ -94,7 +94,7 @@ const EditItemForm = ({ data, onSubmit, formInfo: { description, label }, unique
                 {form.formState.isSubmitting ? (
                   <>
                     Vänta
-                    <Icon icon="Loader2Icon" className="animate-spin" />
+                    <Icon icon="Loader" className="animate-spin" />
                   </>
                 ) : (
                   "Ändra"

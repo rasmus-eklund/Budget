@@ -82,7 +82,7 @@ const LoadingWrapper = ({ children }: { children: React.ReactNode }) => {
       {children}
       {loading && (
         <div className="absolute top-0 right-0 bottom-0 left-0 z-50 flex items-center justify-center bg-secondary/40 select-none">
-          <Icon icon="Loader2Icon" className="size-8 animate-spin text-primary" />
+          <Icon icon="Loader" className="size-8 animate-spin text-primary" />
         </div>
       )}
     </div>

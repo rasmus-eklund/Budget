@@ -32,7 +32,9 @@ const TransactionFilter = ({ options }: { options: Uniques }) => {
   ];
 
   return (
-    <div className={cn("flex flex-wrap gap-2 p-1 pt-2 md:flex-nowrap", showFilter ? "" : "hidden")}>
+    <div
+      className={cn("flex flex-wrap gap-2 py-2 md:flex-nowrap md:p-0", showFilter ? "" : "hidden")}
+    >
       <MultiSelect
         options={person}
         filterItems={filter.person}
@@ -117,7 +119,7 @@ const SearchFilter = ({
   onTermsChange: (terms: string[]) => void;
 }) => {
   return (
-    <div className="flex min-w-0 items-start gap-1">
+    <div className="flex min-w-0 items-start gap-2">
       <LabeledSwitch
         id="search-filter-mode"
         checked={mode === "exclude"}

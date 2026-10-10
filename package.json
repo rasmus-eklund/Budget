@@ -18,7 +18,8 @@
     "test:watch": "bun run test:unit --watch",
     "test:unit": "bun test $(find src -type f \\( -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.spec.ts' -o -name '*.spec.tsx' \\) ! -name '*.db.test.ts')",
     "test:db": "sh ./scripts/run-integration-tests.sh",
-    "validate": "bun run format:check && bun run lint"
+    "validate": "bun run format:check && bun run lint",
+    "type-check": "bunx tsc --noEmit"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^0.7.0",

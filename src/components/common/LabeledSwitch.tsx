@@ -21,7 +21,7 @@ const LabeledSwitch = ({
   return (
     <div
       className={cn(
-        "flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-1 shadow-xs select-none dark:bg-input/30",
+        "flex h-full cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-1 shadow-xs select-none dark:bg-input/30",
         className,
       )}
       onClick={() => onCheckedChange(!checked)}
