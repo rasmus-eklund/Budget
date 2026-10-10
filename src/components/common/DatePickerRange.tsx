@@ -29,7 +29,7 @@ const DatePickerRange = ({
           render={
             <Button variant="outline" className={cn("justify-between font-normal", className)}>
               <Title dates={dates} />
-              <Icon icon="ChevronDownIcon" />
+              <Icon icon="ChevronDown" />
             </Button>
           }
         />
@@ -45,7 +45,9 @@ const DatePickerRange = ({
             reverseYears
             showOutsideDays
             onSelect={(dates) => {
-              dates?.from && dates.to && setDate({ from: dates.from, to: dates.to });
+              if (dates?.from && dates.to) {
+                setDate({ from: dates.from, to: dates.to });
+              }
             }}
             footer={
               <div className="flex justify-end gap-2">

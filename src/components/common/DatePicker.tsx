@@ -29,7 +29,7 @@ const DatePicker = ({
               className={cn("w-32.5 justify-between font-normal", className)}
             >
               {date ? dateToString(date) : "Select date"}
-              <Icon icon="ChevronDownIcon" />
+              <Icon icon="ChevronDown" />
             </Button>
           }
         />
@@ -45,7 +45,9 @@ const DatePicker = ({
             reverseYears
             showOutsideDays
             onSelect={(date) => {
-              date && setDate(date);
+              if (date) {
+                setDate(date);
+              }
               setOpen(false);
             }}
           />

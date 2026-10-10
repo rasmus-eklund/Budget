@@ -261,7 +261,7 @@ const FileForm = ({ categories, people }: Props) => {
               disabled={txs.length === 0 || !password || loading}
             >
               Ladda upp
-              {loading && <Icon icon="Loader2Icon" className="animate-spin" />}
+              {loading && <Icon icon="Loader" className="animate-spin" />}
             </Button>
           </div>
         )}
