@@ -47,12 +47,14 @@ const DatePickerRange = ({
   return (
     <div className="flex flex-1 flex-col gap-3 md:flex-none">
       <Popover modal={true} open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className={cn("justify-between font-normal", className)}>
-            <Title dates={dates} />
-            <Icon icon="ChevronDownIcon" />
-          </Button>
-        </PopoverTrigger>
+        <PopoverTrigger
+          render={
+            <Button variant="outline" className={cn("justify-between font-normal", className)}>
+              <Title dates={dates} />
+              <Icon icon="ChevronDown" />
+            </Button>
+          }
+        />
         <PopoverContent className="w-auto overflow-hidden p-0" align="start">
           <Calendar
             key={(dates?.from ?? range.to).toString()}

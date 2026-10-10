@@ -24,12 +24,15 @@ const LoginPage = async ({ searchParams }: Props) => {
           </p>
         </div>
 
-        <Button asChild className="w-full">
-          <LoginLink postLoginRedirectURL="/transactions">Fortsätt till inloggning</LoginLink>
-        </Button>
+        <Button
+          className="w-full"
+          render={
+            <LoginLink postLoginRedirectURL="/transactions">Fortsätt till inloggning</LoginLink>
+          }
+        />
 
-        <Button asChild variant="ghost" className="w-full">
-          <Link href="/">Till startsidan</Link>
+        <Button variant="ghost" className="w-full" render={<Link href="/" />}>
+          Till startsidan
         </Button>
       </div>
     </section>

@@ -11,6 +11,7 @@ const dom = new JSDOM("<!doctype html><html><body></body></html>", {
 Object.assign(globalThis, {
   window: dom.window,
   document: dom.window.document,
+  Element: dom.window.Element,
   HTMLElement: dom.window.HTMLElement,
   HTMLButtonElement: dom.window.HTMLButtonElement,
   HTMLFormElement: dom.window.HTMLFormElement,
@@ -238,11 +239,10 @@ describe("DateFilter", () => {
 
     render(<DateFilter changeDates={changeDates} />);
 
-    fireEvent.mouseDown(screen.getByTestId("date-tab-day"), {
-      button: 0,
-      ctrlKey: false,
+    fireEvent.click(screen.getByTestId("date-tab-day"));
+    await waitFor(() => {
+      expect(screen.getByTestId("date-tab-day").getAttribute("aria-selected")).toBe("true");
     });
-    expect(screen.getByTestId("date-tab-day").getAttribute("data-state")).toBe("active");
     expect(changeCalls).toEqual([]);
 
     await act(async () => {

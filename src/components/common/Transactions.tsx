@@ -12,7 +12,7 @@ type Props = {
   changeDates: ChangeDates;
   canMarkInternal?: boolean;
 };
-const Transactions = ({ data, changeDates, canMarkInternal = true }: Props) => {
+const Transactions = ({ data, changeDates, canMarkInternal }: Props) => {
   return (
     <div data-testid="transactions-root" className="flex min-h-0 flex-1 flex-col">
       <Virtuoso

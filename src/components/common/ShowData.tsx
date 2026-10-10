@@ -28,33 +28,21 @@ const ShowData = ({ changeDates, canMarkInternal = true }: Props) => {
   const txs = applyTransactionFilters({ data, filters: { filter, txSort } });
   const options = getUnique(data);
 
-  const triggerClass = "text-xs md:text-base";
-
   return (
     <section className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
       <FiltersToggle />
       <DateFilter changeDates={changeDates} />
       <Tabs
-        className="min-h-0 min-w-0 flex-1 gap-0 md:gap-2"
         value={filterTab}
         onValueChange={(value) => setFilterTab(value as FilterTab)}
+        className="min-h-0 min-w-0 flex-1 gap-0 md:gap-2"
       >
-        <TabsList className="w-full shrink-0 overflow-auto md:w-fit">
-          <TabsTrigger className={triggerClass} value="aggregated">
-            Budget
-          </TabsTrigger>
-          <TabsTrigger className={triggerClass} value="transactions">
-            Transaktioner
-          </TabsTrigger>
-          <TabsTrigger className={triggerClass} value="monthly">
-            Perioder
-          </TabsTrigger>
-          <TabsTrigger className={triggerClass} value="categoryBars">
-            Utgifter
-          </TabsTrigger>
-          <TabsTrigger className={triggerClass} value="balanceOverTime">
-            Saldo
-          </TabsTrigger>
+        <TabsList className="w-full md:w-fit">
+          <TabsTrigger value="aggregated">Budget</TabsTrigger>
+          <TabsTrigger value="transactions">Transaktioner</TabsTrigger>
+          <TabsTrigger value="monthly">Perioder</TabsTrigger>
+          <TabsTrigger value="categoryBars">Utgifter</TabsTrigger>
+          <TabsTrigger value="balanceOverTime">Saldo</TabsTrigger>
         </TabsList>
         {filterTab !== "aggregated" && <TransactionFilter options={options} />}
         <TabsContent value="aggregated" className="min-h-0 min-w-0 flex-1">
@@ -94,7 +82,7 @@ const LoadingWrapper = ({ children }: { children: React.ReactNode }) => {
       {children}
       {loading && (
         <div className="absolute top-0 right-0 bottom-0 left-0 z-50 flex items-center justify-center bg-secondary/40 select-none">
-          <Icon icon="Loader2Icon" className="size-8 animate-spin text-primary" />
+          <Icon icon="Loader" className="size-8 animate-spin text-primary" />
         </div>
       )}
     </div>

@@ -20,7 +20,7 @@ const ManageJson = () => {
     return (
       <div className="flex h-full w-full items-center justify-center gap-2">
         <p>Laddar upp...</p>
-        <Icon icon="Loader2Icon" className="animate-spin" />
+        <Icon icon="Loader" className="animate-spin" />
       </div>
     );
   }

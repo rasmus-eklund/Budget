@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, type ChangeEvent } from "react";
+import { useRef, useState, type ChangeEvent } from "react";
 import { Button } from "~/components/ui";
 import { type JsonData, jsonSchema } from "~/lib/zodSchemas";
 
 type Props = { className?: string; onData: (data: JsonData) => void };
 const UploadJsonButton = ({ className, onData }: Props) => {
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
     setError(null);
@@ -45,10 +46,15 @@ const UploadJsonButton = ({ className, onData }: Props) => {
 
   return (
     <div className={className}>
-      <Button variant="outline" asChild className="cursor-pointer">
-        <label htmlFor="json-upload">Ladda upp</label>
+      <Button
+        variant="outline"
+        className="cursor-pointer"
+        onClick={() => fileInputRef.current?.click()}
+      >
+        Ladda upp
       </Button>
       <input
+        ref={fileInputRef}
         className="hidden"
         id="json-upload"
         type="file"

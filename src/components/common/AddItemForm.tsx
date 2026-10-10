@@ -66,7 +66,7 @@ const AddItemForm = ({ onSubmit, formInfo: { description, label }, uniques }: Pr
           {form.formState.isSubmitting ? (
             <>
               Vänta
-              <Icon icon="Loader2Icon" className="animate-spin" />
+              <Icon icon="Loader" className="animate-spin" />
             </>
           ) : (
             "Lägg till"

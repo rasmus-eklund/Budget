@@ -1,17 +1,9 @@
 "use client";
 
-import { type FormEvent, type ReactNode, useState, useRef, useEffect, useCallback } from "react";
-import {
-  Button,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "~/components/ui";
+import type { FormEvent, ReactNode, ChangeEvent } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Button, Tabs, TabsList, TabsTrigger } from "~/components/ui";
+import { SimpleSelect, ShowData, Icon } from "~/components/common";
 import {
   type UploadMode,
   readFiles,
@@ -26,7 +18,6 @@ import {
 } from "./fileFormHelpers";
 import type { Category, FileData, Filter, PersonAccounts, Tx } from "~/types";
 import { applyCategory, getErrorMessage, getFromTo, getLastMonthYear, capitalize } from "~/lib";
-import { ShowData, Icon } from "~/components/common";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useStore } from "~/stores/tx-store";
@@ -134,13 +125,64 @@ const FileForm = ({ categories, people }: Props) => {
       fileInputRef.current.value = "";
     }
   };
+
   const options = people.flatMap((p) =>
     p.bankAccounts.map((a) => ({
+      value: a.id,
+      label: <OptionLabel option={{ person: p.name, account: a.name, bankAccountId: a.id }} />,
       person: p.name,
       account: a.name,
       bankAccountId: a.id,
     })),
   );
+
+  const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) {
+      return;
+    }
+    const data: FileData[] = [];
+    for (const file of files) {
+      data.push({
+        bankAccountId: findMatchingAccount(file.name, options),
+        file,
+        config: configs[0]!,
+      });
+    }
+    setFiles(data);
+  };
+
+  const onAccountChange = (value: string) => {
+    if (!value) {
+      return;
+    }
+    setFiles((p) => {
+      const newFiles = [...p];
+      if (!newFiles[0]) {
+        return newFiles;
+      }
+      newFiles[0] = { ...newFiles[0], bankAccountId: value };
+      return newFiles;
+    });
+  };
+
+  const onBankChange = (value: string) => {
+    if (!value) {
+      return;
+    }
+    setFiles((p) => {
+      const newFiles = [...p];
+      if (!newFiles[0]) {
+        return newFiles;
+      }
+      newFiles[0] = {
+        ...newFiles[0],
+        config: configs.find((i) => i.name === (value as keyof typeof configs))!,
+      };
+      return newFiles;
+    });
+  };
+
   if (people.length === 0) {
     return (
       <p>
@@ -154,6 +196,7 @@ const FileForm = ({ categories, people }: Props) => {
       </p>
     );
   }
+
   return (
     <>
       <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
@@ -180,10 +223,12 @@ const FileForm = ({ categories, people }: Props) => {
         </p>
         {password && (
           <div className="flex gap-2">
-            <Button asChild variant="secondary" className="cursor-pointer">
-              <label className="select-none" htmlFor="file-upload">
-                Välj filer
-              </label>
+            <Button
+              variant="secondary"
+              className="cursor-pointer"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              Välj filer
             </Button>
             <input
               className="hidden"
@@ -195,21 +240,7 @@ const FileForm = ({ categories, people }: Props) => {
                 resetProcessedUpload();
                 setError({ error: false, message: "" });
               }}
-              onChange={(e) => {
-                const files = e.target.files;
-                if (!files) {
-                  return;
-                }
-                const data: FileData[] = [];
-                for (const file of files) {
-                  data.push({
-                    bankAccountId: findMatchingAccount(file.name, options),
-                    file,
-                    config: configs[0]!,
-                  });
-                }
-                setFiles(data);
-              }}
+              onChange={onFileChange}
               type="file"
               name="files"
               multiple
@@ -230,7 +261,7 @@ const FileForm = ({ categories, people }: Props) => {
               disabled={txs.length === 0 || !password || loading}
             >
               Ladda upp
-              {loading && <Icon icon="Loader2Icon" className="animate-spin" />}
+              {loading && <Icon icon="Loader" className="animate-spin" />}
             </Button>
           </div>
         )}
@@ -239,60 +270,25 @@ const FileForm = ({ categories, people }: Props) => {
             {files.map(({ file, bankAccountId, config }, i) => (
               <li className="flex items-center gap-2" key={`${file.name}_${i}`}>
                 <h2>{file.name}</h2>
-                <Select
+                <SimpleSelect
                   value={bankAccountId}
-                  onValueChange={(value) => {
-                    setFiles((p) => {
-                      const newFiles = [...p];
-                      newFiles[i] = { ...newFiles[i]!, bankAccountId: value };
-                      return newFiles;
-                    });
-                  }}
-                >
-                  <SelectTrigger className="w-fit max-w-96">
-                    <SelectValue placeholder="Välj konto" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {options.map((option) => (
-                      <SelectItem key={option.bankAccountId} value={option.bankAccountId}>
-                        <span className="flex items-center gap-1">
-                          <span className="first-letter:uppercase">{option.person}</span>
-                          <span className="font-semibold first-letter:uppercase">
-                            {option.account}
-                          </span>
-                        </span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select
+                  onValueChange={onAccountChange}
+                  options={options.map((option) => ({
+                    value: option.value,
+                    label: option.label,
+                  }))}
+                  placeholder="Välj konto"
+                />
+                <SimpleSelect
                   value={config.name}
-                  onValueChange={(value) => {
-                    setFiles((p) => {
-                      const newFiles = [...p];
-                      newFiles[i] = {
-                        ...newFiles[i]!,
-                        config: configs.find((i) => i.name === (value as keyof typeof configs))!,
-                      };
-                      return newFiles;
-                    });
-                  }}
-                >
-                  <SelectTrigger className="w-fit max-w-96">
-                    <SelectValue placeholder="Välj konto" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {configs.map((option) => (
-                      <SelectItem
-                        key={option.name}
-                        value={option.name}
-                        className="first-letter:uppercase"
-                      >
-                        {option.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  onValueChange={onBankChange}
+                  options={configs.map((option) => ({
+                    value: option.name,
+                    label: option.name,
+                    className: "first-letter:uppercase",
+                  }))}
+                  placeholder="Välj bank"
+                />
               </li>
             ))}
           </ul>
@@ -334,6 +330,19 @@ const FileForm = ({ categories, people }: Props) => {
         />
       )}
     </>
+  );
+};
+
+const OptionLabel = ({
+  option,
+}: {
+  option: { person: string; account: string; bankAccountId: string };
+}) => {
+  return (
+    <span className="flex items-center gap-1">
+      <span className="first-letter:uppercase">{option.person}</span>
+      <span className="font-semibold first-letter:uppercase">{option.account}</span>
+    </span>
   );
 };
 

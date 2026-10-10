@@ -7,7 +7,7 @@ type Props = { icon?: boolean };
 const DeleteButton = ({ icon = true }: Props) => {
   const { pending } = useFormStatus();
   if (pending) {
-    return <Icon icon="Loader2Icon" className="animate-spin" />;
+    return <Icon icon="Loader" className="animate-spin" />;
   } else {
     if (icon) {
       return (

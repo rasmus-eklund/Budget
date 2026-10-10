@@ -5,7 +5,7 @@ import { Temporal } from "@js-temporal/polyfill";
 import { type FromTo } from "~/lib/zodSchemas";
 import DatePickerRange from "./DatePickerRange";
 import { useStore } from "~/stores/tx-store";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui";
+import { SimpleSelect } from "~/components/common";
 
 type Props = { changeDate: (dates: FromTo) => void };
 type DatePreset = "6-months" | "1-year" | "3-years" | "5-years" | "all";
@@ -18,10 +18,10 @@ type DatePresetOption = {
 };
 
 const datePresets: DatePresetOption[] = [
-  { label: "senaste 6 månaderna", value: "6-months", amount: 6, unit: "month" },
-  { label: "senaste året", value: "1-year", amount: 1, unit: "year" },
-  { label: "senaste 3 åren", value: "3-years", amount: 3, unit: "year" },
-  { label: "senaste 5 åren", value: "5-years", amount: 5, unit: "year" },
+  { label: "6 månaderna", value: "6-months", amount: 6, unit: "month" },
+  { label: "året", value: "1-year", amount: 1, unit: "year" },
+  { label: "3 åren", value: "3-years", amount: 3, unit: "year" },
+  { label: "5 åren", value: "5-years", amount: 5, unit: "year" },
   { label: "all data", value: "all" },
 ];
 
@@ -96,7 +96,7 @@ const FreeDates = ({ changeDate }: Props) => {
         range={{ from, to }}
         onChange={changeDates}
       />
-      <Select
+      <SimpleSelect
         value={selectedPreset}
         onValueChange={(value) => {
           const preset = value as DatePreset;
@@ -105,18 +105,9 @@ const FreeDates = ({ changeDate }: Props) => {
           setDates(presetDates);
           changeDate(presetDates);
         }}
-      >
-        <SelectTrigger className="w-full md:w-52">
-          <SelectValue placeholder="Välj period" />
-        </SelectTrigger>
-        <SelectContent>
-          {datePresets.map(({ label, value }) => (
-            <SelectItem key={value} value={value}>
-              {label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        options={datePresets.map(({ label, value }) => ({ value, label }))}
+        placeholder="Välj senaste"
+      />
     </div>
   );
 };

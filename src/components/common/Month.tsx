@@ -1,13 +1,7 @@
 "use client";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Button,
-} from "~/components/ui";
+import { Button } from "~/components/ui";
+import { SimpleSelect } from "~/components/common";
 import { months } from "~/constants";
 import Icon from "./Icon";
 import Tooltip from "./Tooltip";
@@ -34,7 +28,7 @@ const Month = ({ changeDate }: Props) => {
       className="flex flex-col gap-1 md:flex-row md:items-center"
       onSubmit={(e) => e.preventDefault()}
     >
-      <Select
+      <SimpleSelect
         value={year.toString()}
         onValueChange={async (value) => {
           if (!value) {
@@ -43,18 +37,12 @@ const Month = ({ changeDate }: Props) => {
           const data = { year: Number(value), month };
           await submitDates(getMonthRange(data));
         }}
-      >
-        <SelectTrigger data-testid="month-year-select" className="w-full md:w-22.5">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {years.reverse().map((year) => (
-            <SelectItem key={`year-${year}`} value={year.toString()}>
-              {year}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        options={years.reverse().map((y) => ({
+          value: y.toString(),
+          label: y,
+        }))}
+        testId="month-year-select"
+      />
       <div className="flex w-full items-center gap-1 md:w-fit">
         <Button
           data-testid="month-prev"
@@ -69,7 +57,7 @@ const Month = ({ changeDate }: Props) => {
         >
           <Icon icon="ChevronLeft" className="size-4" />
         </Button>
-        <Select
+        <SimpleSelect
           value={month.toString()}
           onValueChange={async (value) => {
             if (!value) {
@@ -78,22 +66,13 @@ const Month = ({ changeDate }: Props) => {
             const data = { year, month: Number(value) };
             await submitDates(getMonthRange(data));
           }}
-        >
-          <SelectTrigger data-testid="month-month-select" className="flex-1 md:w-32.5 md:flex-none">
-            <SelectValue placeholder="" />
-          </SelectTrigger>
-          <SelectContent>
-            {months.map((m, n) => (
-              <SelectItem
-                className="first-letter:capitalize"
-                key={`month-${m}`}
-                value={(n + 1).toString()}
-              >
-                {m}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          options={months.map((m, n) => ({
+            value: (n + 1).toString(),
+            label: m,
+            className: "first-letter:capitalize",
+          }))}
+          testId="month-month-select"
+        />
         <Button
           data-testid="month-next"
           disabled={year === mostRecentYear && month === mostRecentMonth}

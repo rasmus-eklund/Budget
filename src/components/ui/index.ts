@@ -70,7 +70,14 @@ export {
 } from "./form";
 export { Input } from "./input";
 export { Label } from "./label";
-export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor } from "./popover";
+export {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverDescription,
+} from "./popover";
 export {
   Select,
   SelectContent,
