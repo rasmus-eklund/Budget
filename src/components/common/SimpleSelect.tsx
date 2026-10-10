@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "cn";
 import type { ReactNode } from "react";
 import {
   Select,
@@ -40,7 +41,7 @@ const SimpleSelect = ({
   value,
   onValueChange,
   placeholder,
-  triggerClassName = "w-full md:w-fit max-w-96",
+  triggerClassName,
   testId,
 }: SimpleSelectProps) => {
   const flatOptions = isGrouped(options) ? options.flatMap((g) => g.options) : options;
@@ -56,7 +57,10 @@ const SimpleSelect = ({
       }}
       items={items}
     >
-      <SelectTrigger className={triggerClassName} data-testid={testId}>
+      <SelectTrigger
+        className={cn("h-10 w-full max-w-96 md:w-fit", triggerClassName)}
+        data-testid={testId}
+      >
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
