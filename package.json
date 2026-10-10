@@ -26,6 +26,7 @@
     "@base-ui/react": "^1.8.0",
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^3.10.0",
+    "@js-temporal/polyfill": "^0.5.1",
     "@kinde-oss/kinde-auth-nextjs": "^2.13.2",
     "@t3-oss/env-nextjs": "^0.9.2",
     "@tailwindcss/postcss": "^4.3.3",

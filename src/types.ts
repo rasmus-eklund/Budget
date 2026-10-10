@@ -1,19 +1,20 @@
-import type { Temporal } from "@js-temporal/polyfill";
-import type { FromTo } from "~/lib/zodSchemas";
+import type { Temporal } from '@js-temporal/polyfill';
+import type { FromTo } from '~/lib/zodSchemas';
 
-export type SortOption = "date-asc" | "date-desc" | "amount-asc" | "amount-desc";
+export type SortOption =
+  'date-asc' | 'date-desc' | 'amount-asc' | 'amount-desc';
 export type TxSort = { sort: SortOption };
 
 export type FilterTab =
-  | "aggregated"
-  | "transactions"
-  | "monthly"
-  | "categoryBars"
-  | "balanceOverTime";
+  | 'aggregated'
+  | 'transactions'
+  | 'monthly'
+  | 'categoryBars'
+  | 'balanceOverTime';
 
-export type DateTab = "month" | "day" | "year" | "free";
+export type DateTab = 'month' | 'day' | 'year' | 'free';
 
-export type PeriodGroupBy = "month" | "year";
+export type PeriodGroupBy = 'month' | 'year';
 
 export type Internal = {
   id: string;
@@ -31,7 +32,7 @@ export type Uniques = {
 
 export type FilterItem = Record<string, boolean>;
 
-export type TextFilterMode = "include" | "exclude";
+export type TextFilterMode = 'include' | 'exclude';
 
 export type TextFilter = {
   mode: TextFilterMode;
@@ -58,7 +59,10 @@ export type ChangeDatesOptions = {
   reset?: boolean;
 };
 
-export type ChangeDates = (dates: FromTo, options?: ChangeDatesOptions) => Promise<void>;
+export type ChangeDates = (
+  dates: FromTo,
+  options?: ChangeDatesOptions
+) => Promise<void>;
 
 export type Category = { name: string; match: { name: string }[] };
 export type PersonAccounts = {
