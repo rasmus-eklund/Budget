@@ -5,7 +5,7 @@ const numberSchema = z
   .string()
   .min(1, "Minst 1 siffra")
   .transform((val, ctx) => {
-    const cleaned = val.replace(/[^\d,.\-]/g, "").replace(/\s+/g, "");
+    const cleaned = val.replace(/[^\d,.-]/g, "").replace(/\s+/g, "");
     let normalized = cleaned;
     if (/,/.test(cleaned) && /\./.test(cleaned)) {
       normalized = cleaned.replace(/,/g, "");
