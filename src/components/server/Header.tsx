@@ -21,7 +21,7 @@ const Header = async () => {
         {authenticated ? (
           <HeaderMenu />
         ) : (
-          <Button data-cy="sign-in" render={<Link href="/login" />}>
+          <Button nativeButton={false} data-cy="sign-in" render={<Link href="/login" />}>
             Logga in
           </Button>
         )}
