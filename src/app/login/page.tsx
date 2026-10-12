@@ -26,12 +26,13 @@ const LoginPage = async ({ searchParams }: Props) => {
 
         <Button
           className="w-full"
+          nativeButton={false}
           render={
             <LoginLink postLoginRedirectURL="/transactions">Fortsätt till inloggning</LoginLink>
           }
         />
 
-        <Button variant="ghost" className="w-full" render={<Link href="/" />}>
+        <Button nativeButton={false} variant="ghost" className="w-full" render={<Link href="/" />}>
           Till startsidan
         </Button>
       </div>
