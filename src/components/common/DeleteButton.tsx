@@ -17,7 +17,7 @@ const DeleteButton = ({ icon = true }: Props) => {
       );
     }
     return (
-      <Button className="hover:cursor-pointer" variant="destructive">
+      <Button className="hover:cursor-pointer" variant="destructive" type="submit">
         Ta bort
       </Button>
     );
