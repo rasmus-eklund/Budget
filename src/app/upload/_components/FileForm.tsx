@@ -259,6 +259,7 @@ const FileForm = ({ categories, people }: Props) => {
             <Button
               className="flex items-center gap-2"
               disabled={txs.length === 0 || !password || loading}
+              type="submit"
             >
               Ladda upp
               {loading && <Icon icon="Loader" className="animate-spin" />}
